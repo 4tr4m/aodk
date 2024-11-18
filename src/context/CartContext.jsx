@@ -5,44 +5,57 @@ const CartContext = createContext();
 const loadInitialState = () => {
   try {
     const savedState = localStorage.getItem('cart');
-    return savedState ? JSON.parse(savedState) : { items: [] };
+    return savedState ? JSON.parse(savedState) : {
+      cart: [],
+      wishlist: []
+    };
   } catch (error) {
-    return { items: [] };
+    return {
+      cart: [],
+      wishlist: []
+    };
   }
 };
 
 const cartReducer = (state, action) => {
+  if (!state || !state.cart || !state.wishlist) {
+    state = {
+      cart: [],
+      wishlist: []
+    };
+  }
+
   switch (action.type) {
     case 'ADD_TO_CART': {
-      const existingItem = state.items.find(item => item.id === action.payload.id);
+      const existingItem = state.cart.find(item => item.id === action.payload.id);
       
       let updatedItems;
       if (existingItem) {
-        updatedItems = state.items.map(item =>
+        updatedItems = state.cart.map(item =>
           item.id === action.payload.id
             ? { ...item, quantity: (item.quantity || 0) + 1 }
             : item
         );
       } else {
-        updatedItems = [...state.items, { ...action.payload, quantity: 1 }];
+        updatedItems = [...state.cart, { ...action.payload, quantity: 1 }];
       }
 
       return {
         ...state,
-        items: updatedItems
+        cart: updatedItems
       };
     }
 
     case 'REMOVE_FROM_CART':
       return {
         ...state,
-        items: state.items.filter(item => item.id !== action.payload),
+        cart: state.cart.filter(item => item.id !== action.payload),
       };
 
     case 'UPDATE_QUANTITY':
       return {
         ...state,
-        items: state.items.map(item =>
+        cart: state.cart.map(item =>
           item.id === action.payload.id
             ? { ...item, quantity: action.payload.quantity }
             : item
@@ -52,7 +65,22 @@ const cartReducer = (state, action) => {
     case 'CLEAR_CART':
       return {
         ...state,
-        items: [],
+        cart: [],
+      };
+
+    case 'ADD_TO_WISHLIST':
+      if (!state.wishlist.find(item => item.id === action.payload.id)) {
+        return {
+          ...state,
+          wishlist: [...state.wishlist, action.payload]
+        };
+      }
+      return state;
+
+    case 'REMOVE_FROM_WISHLIST':
+      return {
+        ...state,
+        wishlist: state.wishlist.filter(item => item.id !== action.payload)
       };
 
     default:
@@ -64,7 +92,9 @@ export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, loadInitialState());
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(state));
+    if (state && (state.cart || state.wishlist)) {
+      localStorage.setItem('cart', JSON.stringify(state));
+    }
   }, [state]);
 
   return (

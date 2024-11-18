@@ -73,84 +73,139 @@
   text-align: center !important;
 }
 
-.add-to-cart-btn {
-  width: 100% !important;
-  padding: 10px !important;
-  border: 1px solid #0a683f !important;
-  color: #0a683f !important;
-  background: transparent !important;
-  cursor: pointer !important;
-  margin-top: auto !important;
-  transition: all 0.3s ease !important;
-  position: relative !important;
-  overflow: hidden !important;
+/* Product Card Buttons */
+.product-card .add-to-cart-btn,
+.product-card .modal-add-to-cart,
+.product-card .modal-add-to-wishlist {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid #0a683f;
+  border-radius: 4px;
+  color: #0a683f;
+  background: transparent;
+  cursor: pointer;
+  margin-top: auto;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
-.add-to-cart-btn:hover {
-  background: #0a683f !important;
-  color: white !important;
+.product-card .add-to-cart-btn:hover,
+.product-card .modal-add-to-cart:hover,
+.product-card .modal-add-to-wishlist:hover {
+  background: #0a683f;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(10, 104, 63, 0.2);
 }
 
-.add-to-cart-btn.success {
-  background: #0a683f !important;
-  color: white !important;
-  border-color: #0a683f !important;
-  pointer-events: none !important;
+.product-card .add-to-cart-btn.success,
+.product-card .modal-add-to-cart.success,
+.product-card .modal-add-to-wishlist.success {
+  background: #0a683f;
+  color: white;
+  border-color: #0a683f;
+  pointer-events: none;
 }
 
-.success-text {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
+.product-card .success-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
+.product-card .success-text svg {
+  font-size: 16px;
+}
+
+/* Success Modal */
 .success-modal {
-  position: fixed !important;
-  bottom: 30px !important;
-  right: 30px !important;
-  background: white !important;
-  padding: 20px 40px !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-  z-index: 1000 !important;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: white;
+  padding: 20px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1000;
 }
 
-.success-icon {
-  color: #0a683f !important;
-  font-size: 24px !important;
+.success-modal .success-icon {
+  color: #0a683f;
+  font-size: 24px;
 }
 
 .success-modal p {
-  color: #333 !important;
-  margin: 0 !important;
-  font-size: 16px !important;
+  color: #333;
+  margin: 0;
+  font-size: 16px;
 }
 
-/* Add ripple effect */
-.add-to-cart-btn::after {
-  content: '' !important;
-  position: absolute !important;
-  width: 100% !important;
-  height: 100% !important;
-  top: 0 !important;
-  left: 0 !important;
-  pointer-events: none !important;
-  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%) !important;
-  background-repeat: no-repeat !important;
-  background-position: 50% !important;
-  transform: scale(10, 10) !important;
-  opacity: 0 !important;
-  transition: transform .5s, opacity 1s !important;
+/* Ripple Effect */
+.product-card .add-to-cart-btn::after,
+.product-card .modal-add-to-cart::after,
+.product-card .modal-add-to-wishlist::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform .5s, opacity 1s;
 }
 
-.add-to-cart-btn:active::after {
-  transform: scale(0, 0) !important;
-  opacity: .3 !important;
-  transition: 0s !important;
+.product-card .add-to-cart-btn:active::after,
+.product-card .modal-add-to-cart:active::after,
+.product-card .modal-add-to-wishlist:active::after {
+  transform: scale(0, 0);
+  opacity: .3;
+  transition: 0s;
+}
+
+/* Product Actions */
+.product-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: auto;
+}
+
+/* Read More Button */
+.product-card .read-more {
+  width: 100%;
+  padding: 12px 20px;
+  border: 2px solid #666;
+  border-radius: 4px;
+  color: #666;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.product-card .read-more:hover {
+  background: #666;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(102, 102, 102, 0.2);
 }
 
 /* Responsive breakpoints with !important */

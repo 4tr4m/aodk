@@ -10,7 +10,8 @@ const Header = () => {
   const { state } = useCart();
   let timeoutId = null;
 
-  const cartItemsCount = state.items.reduce((sum, item) => sum + item.quantity, 0);
+  const cartItemsCount = state?.cart?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
+  const wishlistCount = state?.wishlist?.length || 0;
 
   const handleMouseEnter = () => {
     if (timeoutId) clearTimeout(timeoutId);
@@ -90,7 +91,7 @@ const Header = () => {
           </Link>
           <Link to="/wishlist" className="icon-wrapper">
             <AiOutlineHeart className="wishlist-icon" />
-            <span className="wishlist-count">0</span>
+            <span className="wishlist-count">{wishlistCount}</span>
           </Link>
         </div>
       </div>

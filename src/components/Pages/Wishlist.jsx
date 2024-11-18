@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import TopNavBar from '../Headers/TopNavBar';
@@ -15,16 +15,34 @@ const Wishlist = () => {
     dispatch({ type: 'REMOVE_FROM_WISHLIST', payload: id });
   };
 
-  const moveToCart = (product) => {
+  const addToCart = (item) => {
     dispatch({ 
       type: 'ADD_TO_CART', 
-      payload: { ...product, quantity: 1 } 
+      payload: {
+        ...item,
+        quantity: 1
+      }
     });
-    dispatch({ 
-      type: 'REMOVE_FROM_WISHLIST', 
-      payload: product.id 
-    });
+    removeFromWishlist(item.id);
   };
+
+  if (!state || !state.wishlist) {
+    return (
+      <>
+        <TopNavBar />
+        <Header />
+        <div className="empty-wishlist">
+          <h2>Wystąpił błąd</h2>
+          <p>Nie można załadować listy życzeń.</p>
+          <Link to="/" className="return-btn">
+            Wróć Do Sklepu
+          </Link>
+        </div>
+        <PreFooter />
+        <Footer />
+      </>
+    );
+  }
 
   if (state.wishlist.length === 0) {
     return (
@@ -33,7 +51,6 @@ const Wishlist = () => {
         <Header />
         <div className="empty-wishlist">
           <h2>Twoja lista życzeń jest pusta</h2>
-          <p>Dodaj produkty do listy życzeń, aby móc je później łatwo odnaleźć.</p>
           <Link to="/" className="return-btn">
             Wróć Do Sklepu
           </Link>
@@ -53,23 +70,25 @@ const Wishlist = () => {
         <div className="wishlist-items">
           {state.wishlist.map((item) => (
             <div key={item.id} className="wishlist-item">
-              <img src={item.image} alt={item.name} />
-              <div className="wishlist-item-info">
-                <h3>{item.name}</h3>
-                <p className="price">{item.price} zł</p>
+              <div className="product-info">
+                <img src={item.image} alt={item.name} />
+                <div className="product-details">
+                  <h3>{item.name}</h3>
+                  <p className="price">{item.price} zł</p>
+                </div>
               </div>
-              <div className="wishlist-item-actions">
+              <div className="wishlist-actions">
                 <button 
-                  className="move-to-cart"
-                  onClick={() => moveToCart(item)}
+                  className="add-to-cart-btn"
+                  onClick={() => addToCart(item)}
                 >
                   <FaShoppingCart /> Dodaj do koszyka
                 </button>
                 <button 
-                  className="remove-from-wishlist"
+                  className="remove-btn"
                   onClick={() => removeFromWishlist(item.id)}
                 >
-                  <FaTrash />
+                  <FaTrash /> Usuń
                 </button>
               </div>
             </div>
