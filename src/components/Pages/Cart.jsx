@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
-import { FaCheckCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaShoppingCart } from 'react-icons/fa';
 import TopNavBar from '../Headers/TopNavBar';
 import Header from '../Headers/Header';
 import PreFooter from '../Footer/PreFooter';
 import Footer from '../Footer/Footer';
+import ProductGrid from '../Section/ProductGrid';
 import './Cart.css';
 
 const Cart = () => {
@@ -60,11 +61,19 @@ const Cart = () => {
       <>
         <TopNavBar />
         <Header />
-        <div className="empty-cart">
-          <p>Twój koszyk aktualnie jest pusty.</p>
-          <button className="return-btn">
-            <Link to="/">Wróć Do Sklepu</Link>
-          </button>
+        <div className="cart-container">
+          <div className="empty-cart">
+            <FaShoppingCart className="empty-cart-icon" />
+            <h2>Twój koszyk jest pusty</h2>
+            <p>
+              Wygląda na to, że nie masz jeszcze żadnych produktów w koszyku. 
+              Zapraszamy do zapoznania się z naszą ofertą.
+            </p>
+            <button className="return-btn">
+              <Link to="/category">Przejdź Do Sklepu</Link>
+            </button>
+          </div>
+          <ProductGrid />
         </div>
         <PreFooter />
         <Footer />
@@ -119,7 +128,7 @@ const Cart = () => {
                 </div>
               ))}
             </div>
-            <Link to="/" className="continue-shopping">
+            <Link to="/category/produkty" className="continue-shopping">
               Powrót Do Sklepu
             </Link>
             

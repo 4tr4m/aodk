@@ -5,7 +5,8 @@ import TopNavBar from '../Headers/TopNavBar';
 import Header from '../Headers/Header';
 import PreFooter from '../Footer/PreFooter';
 import Footer from '../Footer/Footer';
-import { FaTrash, FaShoppingCart } from 'react-icons/fa';
+import ProductGrid from '../Section/ProductGrid';
+import { FaTrash, FaShoppingCart, FaHeart } from 'react-icons/fa';
 import './Wishlist.css';
 
 const Wishlist = () => {
@@ -31,12 +32,16 @@ const Wishlist = () => {
       <>
         <TopNavBar />
         <Header />
-        <div className="empty-wishlist">
-          <h2>Wystąpił błąd</h2>
-          <p>Nie można załadować listy życzeń.</p>
-          <Link to="/" className="return-btn">
-            Wróć Do Sklepu
-          </Link>
+        <div className="wishlist-container">
+          <div className="empty-wishlist">
+            <FaHeart className="empty-wishlist-icon" />
+            <h2>Wystąpił błąd</h2>
+            <p>Nie można załadować listy życzeń.</p>
+            <button className="return-btn">
+              <Link to="/category">Przejdź Do Sklepu</Link>
+            </button>
+          </div>
+          <ProductGrid />
         </div>
         <PreFooter />
         <Footer />
@@ -49,11 +54,19 @@ const Wishlist = () => {
       <>
         <TopNavBar />
         <Header />
-        <div className="empty-wishlist">
-          <h2>Twoja lista życzeń jest pusta</h2>
-          <Link to="/" className="return-btn">
-            Wróć Do Sklepu
-          </Link>
+        <div className="wishlist-container">
+          <div className="empty-wishlist">
+            <FaHeart className="empty-wishlist-icon" />
+            <h2>Twoja lista życzeń jest pusta</h2>
+            <p>
+              Wygląda na to, że nie masz jeszcze żadnych produktów w liście życzeń. 
+              Zapraszamy do zapoznania się z naszą ofertą.
+            </p>
+            <button className="return-btn">
+              <Link to="/category/produkty">Przejdź Do Sklepu</Link>
+            </button>
+          </div>
+          <ProductGrid />
         </div>
         <PreFooter />
         <Footer />

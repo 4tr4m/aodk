@@ -122,20 +122,28 @@
 
 .modal-add-to-cart {
   width: 100% !important;
-  padding: 10px !important;
-  border: 1px solid #0a683f !important;
+  padding: 12px 20px !important;
+  border: 2px solid #0a683f !important;
+  border-radius: 4px !important;
   color: #0a683f !important;
   background: transparent !important;
   cursor: pointer !important;
-  margin-top: auto !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
   transition: all 0.3s ease !important;
   position: relative !important;
   overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
 }
 
 .modal-add-to-cart:hover {
   background: #0a683f !important;
   color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 2px 8px rgba(10, 104, 63, 0.2) !important;
 }
 
 .modal-add-to-cart.success {
@@ -152,7 +160,11 @@
   gap: 8px !important;
 }
 
-/* Add ripple effect */
+.success-text svg {
+  font-size: 16px !important;
+}
+
+/* Ripple effect */
 .modal-add-to-cart::after {
   content: '' !important;
   position: absolute !important;
@@ -194,11 +206,14 @@
 
 .modal-add-to-wishlist {
   width: 100% !important;
-  padding: 10px !important;
-  border: 1px solid #ff4b6e !important;
+  padding: 12px 20px !important;
+  border: 2px solid #ff4b6e !important;
+  border-radius: 4px !important;
   color: #ff4b6e !important;
   background: transparent !important;
   cursor: pointer !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
   transition: all 0.3s ease !important;
   position: relative !important;
   overflow: hidden !important;
@@ -211,6 +226,8 @@
 .modal-add-to-wishlist:hover {
   background: #ff4b6e !important;
   color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 2px 8px rgba(255, 75, 110, 0.2) !important;
 }
 
 .modal-add-to-wishlist.success {

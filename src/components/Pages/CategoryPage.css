@@ -128,32 +128,72 @@
 }
 
 .product-actions {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin-top: auto !important;
 }
 
-.add-to-cart {
+.add-to-cart,
+.read-more {
   width: 100% !important;
-  padding: 10px !important;
-  border: 1px solid #0a683f !important;
+  padding: 12px 20px !important;
+  border: 2px solid #0a683f !important;
+  border-radius: 4px !important;
   color: #0a683f !important;
   background: transparent !important;
   cursor: pointer !important;
-  margin-top: auto !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
   transition: all 0.3s ease !important;
   position: relative !important;
   overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
 }
 
-.add-to-cart:hover {
+.read-more {
+  border-color: #666 !important;
+  color: #666 !important;
+}
+
+.add-to-cart:hover,
+.read-more:hover {
   background: #0a683f !important;
   color: white !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 2px 8px rgba(10, 104, 63, 0.2) !important;
 }
 
-/* Add ripple effect */
-.add-to-cart::after {
+.read-more:hover {
+  background: #666 !important;
+  box-shadow: 0 2px 8px rgba(102, 102, 102, 0.2) !important;
+}
+
+.add-to-cart.success {
+  background: #0a683f !important;
+  color: white !important;
+  border-color: #0a683f !important;
+  pointer-events: none !important;
+}
+
+.success-text {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+}
+
+.success-text svg {
+  font-size: 16px !important;
+}
+
+/* Ripple effect */
+.add-to-cart::after,
+.read-more::after {
   content: '' !important;
   position: absolute !important;
   width: 100% !important;
@@ -169,24 +209,11 @@
   transition: transform .5s, opacity 1s !important;
 }
 
-.add-to-cart:active::after {
+.add-to-cart:active::after,
+.read-more:active::after {
   transform: scale(0, 0) !important;
   opacity: .3 !important;
   transition: 0s !important;
-}
-
-.add-to-cart.success {
-  background: #0a683f !important;
-  color: white !important;
-  border-color: #0a683f !important;
-  pointer-events: none !important;
-}
-
-.success-text {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
 }
 
 .read-more {

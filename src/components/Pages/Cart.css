@@ -22,10 +22,57 @@
 
 .empty-cart {
   text-align: center;
-  padding: 40px;
+  padding: 30px 20px;
+  margin: 10px auto;
+  max-width: 600px;
   background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.empty-cart-icon {
+  font-size: 77px;
+  color: #0a683f;
+  margin-bottom: 12px;
+}
+
+.empty-cart h2 {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.empty-cart p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.empty-cart .return-btn {
+  display: inline-block;
+  padding: 14px 32px;
+  background: #0a683f;
+  color: white;
+  border: none;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(10, 104, 63, 0.2);
+}
+
+.empty-cart .return-btn:hover {
+  background: #085332;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(10, 104, 63, 0.3);
+}
+
+.empty-cart .return-btn a {
+  color: white;
+  text-decoration: none;
 }
 
 .cart-header {

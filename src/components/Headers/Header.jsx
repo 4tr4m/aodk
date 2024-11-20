@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { AiOutlineShoppingCart, AiOutlineHeart } from 'react-icons/ai';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Header.css';
 import { useCart } from '../../context/CartContext';
-import { Link } from 'react-router-dom';
 import categories from '../../Data/category-data';
 
 const Header = () => {
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const { state } = useCart();
+  const navigate = useNavigate();
+  const location = useLocation();
   let timeoutId = null;
 
   const cartItemsCount = state?.cart?.reduce((sum, item) => sum + (item.quantity || 0), 0) || 0;
@@ -45,7 +47,16 @@ const Header = () => {
 
   const handleShopClick = (e) => {
     e.preventDefault();
-    setDropdownVisible(!isDropdownVisible);
+    navigate('/category');
+  };
+
+  const handleOrderClick = (e) => {
+    e.preventDefault();
+    if (location.pathname === '/koszyk') {
+      navigate('/category');
+    } else {
+      navigate('/koszyk');
+    }
   };
 
   return (
@@ -79,7 +90,9 @@ const Header = () => {
                 ))}
               </ul>
             </li>
-            <li><Link to="/orders">Zamówienie</Link></li>
+            <li>
+              <a href="#" onClick={handleOrderClick}>Zamówienie</a>
+            </li>
             <li><Link to="/blog">Blog</Link></li>
             <li><Link to="/account">Moje konto</Link></li>
           </ul>

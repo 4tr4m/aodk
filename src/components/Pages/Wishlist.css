@@ -83,7 +83,57 @@
   
   .empty-wishlist {
     text-align: center;
-    padding: 40px 20px;
+    padding: 30px 20px;
+    margin: 10px auto;
+    max-width: 600px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  
+  .empty-wishlist-icon {
+    font-size: 80px;
+    color: #0a683f;
+    margin-bottom: 12px;
+  }
+  
+  .empty-wishlist h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  
+  .empty-wishlist p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  
+  .empty-wishlist .return-btn {
+    display: inline-block;
+    padding: 12px 28px;
+    background: #0a683f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(10, 104, 63, 0.2);
+  }
+  
+  .empty-wishlist .return-btn:hover {
+    background: #085332;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(10, 104, 63, 0.3);
+  }
+  
+  .empty-wishlist .return-btn a {
+    color: white;
+    text-decoration: none;
   }
   
   .return-btn {
