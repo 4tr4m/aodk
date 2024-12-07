@@ -1,48 +1,91 @@
-const categories = [
+// src/data/category-data.js
+export const kuchniaCategories = {
+  mainCategories: [
     {
-      title: 'Suplementy diety',
-      slug: 'suplementy-diety',
-      items: [
-        { name: 'Suplementy dla sportowców', slug: 'suplementy-dla-sportowcow' },
-        { name: 'Suplementy na pamięć', slug: 'suplementy-na-pamiec' },
-        { name: 'Suplementy na energię', slug: 'suplementy-na-energie' },
-        { name: 'Suplementy na zmęczenie', slug: 'suplementy-na-zmeczenie' },
-        { name: 'Suplementy na depresję', slug: 'suplementy-na-depresje' }
-      ]
+      link: '/kuchnia/obiady',
+      label: 'OBIADY',
+      shortDesc: 'Proste, smaczne i odżywcze obiady',
+      image: 'obiady.jpg',
+      imageCredit: 'Davor Nisevic'
     },
     {
-      title: 'Witaminy',
-      slug: 'witaminy',
-      items: [
-        { name: 'Witaminy dla kobiet', slug: 'witaminy-dla-kobiet' },
-        { name: 'Witaminy dla mężczyzn', slug: 'witaminy-dla-mezczyzn' },
-        { name: 'Witaminy D3', slug: 'witaminy-d3' },
-        { name: 'Witaminy B12', slug: 'witaminy-b12' },
-        { name: 'Multiwitaminy', slug: 'multiwitaminy' }
-      ]
+      link: '/kuchnia/zupy',
+      label: 'ZUPY',
+      shortDesc: 'Bazujące na bulionie, pyszne, bez smażenia',
+      image: 'zupy.jpg',
+      imageCredit: 'Nick Fewings'
     },
     {
-      title: 'Oleje i kwasy tłuszczowe',
-      slug: 'oleje-i-kwasy-tluszczowe',
-      items: [
-        { name: 'Olej lniany', slug: 'olej-lniany' },
-        { name: 'Olej konopny', slug: 'olej-konopny' },
-        { name: 'Olej z czarnuszki', slug: 'olej-z-czarnuszki' },
-        { name: 'Olej kokosowy', slug: 'olej-kokosowy' },
-        { name: 'MCT', slug: 'mct' }
-      ]
+      link: '/kuchnia/chleby',
+      label: 'CHLEBY',
+      shortDesc: 'Jak prawdziwe, bez glutenu',
+      image: 'chleby.jpg',
+      imageCredit: 'Bon Vivant'
     },
     {
-      title: 'Kwasy Omega',
-      slug: 'kwasy-omega',
-      items: [
-        { name: 'Omega 3', slug: 'omega-3' },
-        { name: 'Omega 6', slug: 'omega-6' },
-        { name: 'Omega 9', slug: 'omega-9' },
-        { name: 'DHA', slug: 'dha' },
-        { name: 'EPA', slug: 'epa' }
-      ]
+      link: '/kuchnia/smarowidla',
+      label: 'SMAROWIDŁA',
+      shortDesc: 'Do chleba i nie tylko',
+      image: 'smarowidla.jpg',
+      imageCredit: 'Caroline Attwood'
+    },
+    {
+      link: '/kuchnia/desery',
+      label: 'DESERY',
+      shortDesc: 'Deser, a może drugie śniadanie',
+      image: 'desery.jpg',
+      imageCredit: 'Hector Bermudez'
+    },
+    {
+      link: '/kuchnia/babeczki-muffiny',
+      label: 'BABECZKI i MUFFINY',
+      shortDesc: 'Warto mieć pod ręką na wynos',
+      image: 'babeczki.jpg',
+      imageCredit: 'Fausto Marques'
+    },
+    {
+      link: '/kuchnia/ciasta',
+      label: 'CIASTA',
+      shortDesc: 'Bez glutenu i bez nabiału krowiego',
+      image: 'ciasta.jpg',
+      imageCredit: 'Lindsay Cotter'
+    },
+    {
+      link: '/kuchnia/ciastka',
+      label: 'CIASTKA',
+      shortDesc: 'Bez glutenu, bez masła i bez margaryny',
+      image: 'ciastka.jpg',
+      imageCredit: 'Rai Vidanes'
+    },
+    {
+      link: '/kuchnia/smoothie',
+      label: 'SMOOTHIE',
+      shortDesc: 'Naturalne koktajle owocowe',
+      image: 'smoothie.jpg',
+      imageCredit: ''
+    },
+    {
+      link: '/kuchnia/inne',
+      label: 'INNE',
+      shortDesc: 'Pozostałe przepisy',
+      image: 'inne.jpg',
+      imageCredit: ''
+    },
+    {
+      link: '/kuchnia/swieta',
+      label: 'ŚWIĘTA',
+      shortDesc: 'Dania na specjalne okazje',
+      image: 'swieta.jpg',
+      imageCredit: ''
     }
-  ];
-  
-  export default categories;
+  ],
+  displayGroups: {
+    firstRow: ['OBIADY', 'ZUPY', 'CHLEBY', 'SMAROWIDŁA'],
+    secondRow: ['DESERY', 'BABECZKI i MUFFINY', 'CIASTA', 'CIASTKA']
+  }
+};
+
+export const skladnikCategories = [
+  { link: '/skladnik/owoce', label: 'Owoce' },
+  { link: '/skladnik/warzywa', label: 'Warzywa' },
+];
