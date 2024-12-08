@@ -26,7 +26,7 @@ const HeroHeader = () => {
           
           <div className="flex-2 flex flex-col items-center justify-center gap-[60px] max-w-3xl mx-auto px-[90px] py-[35px] relative -translate-y-[50px]">
             <div>
-              <h1 className="mt-[-20px] font-['Caveat'] text-xl font-semibold text-gray-50 leading-relaxed text-center tracking-[2px] px-[25px] w-full shadow-sm transition-all duration-300">
+              <h1 className="mt-[-20px] font-['Caveat'] text-xl font-semibold text-gray-50/80 leading-relaxed text-center tracking-[2px] px-[25px] w-full backdrop-blur-[0.5px] transition-all duration-300">
                 DIETA ELIMINACYJNA TRANSFORMUJĄCA FUNKCJONOWANIE W AUTYŹMIE I ZABURZENIACH NEUROROZWOJOWYCH
               </h1>
             </div>

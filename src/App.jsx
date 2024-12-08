@@ -12,8 +12,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/category" element={<CategoryPage />} />
-          <Route path="/category/:categorySlug" element={<CategoryPage />} />
+          <Route path="/kuchnia/:categorySlug" element={<CategoryPage />} />
           <Route path="/koszyk" element={<Cart />} />
           <Route path="/wishlist" element={<Wishlist />} /> {/* Add this route */}
         </Routes>

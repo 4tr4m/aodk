@@ -1,15 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaCheckCircle, FaHeart } from 'react-icons/fa';
+import React, { useEffect } from 'react';
+import { FaTimes, FaHeart } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
-import './ProductModal.css';
 
 const ProductModal = ({ product, onClose }) => {
   const { dispatch } = useCart();
-  const [showModal, setShowModal] = useState(false);
-  const [isAddedToCart, setIsAddedToCart] = useState(false);
-  const [isAddedToWishlist, setIsAddedToWishlist] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     const handleEsc = (event) => {
@@ -24,129 +18,89 @@ const ProductModal = ({ product, onClose }) => {
     };
   }, [onClose]);
 
-  const addToCart = () => {
-    const productToAdd = {
-      id: product.id,
-      name: product.name,
-      price: typeof product.price === 'string' 
-        ? parseFloat(product.price.replace(',', '.'))
-        : product.price,
-      image: product.image,
-      category: product.category,
-      quantity: 1
-    };
-    
-    dispatch({ 
-      type: 'ADD_TO_CART', 
-      payload: productToAdd
-    });
-
-    setIsAddedToCart(true);
-    setShowModal(true);
-    setSuccessMessage('Produkt dodany do koszyka!');
-
-    setTimeout(() => {
-      setShowModal(false);
-      setIsAddedToCart(false);
-    }, 2000);
-  };
-
-  const addToWishlist = () => {
-    dispatch({ 
-      type: 'ADD_TO_WISHLIST', 
-      payload: product
-    });
-
-    setIsAddedToWishlist(true);
-    setShowModal(true);
-    setSuccessMessage('Produkt dodany do ulubionych!');
-
-    setTimeout(() => {
-      setShowModal(false);
-      setIsAddedToWishlist(false);
-    }, 2000);
+  const addToFavorites = () => {
+    dispatch({ type: 'ADD_TO_FAVORITES', payload: product });
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>&times;</button>
-        
-        <div className="modal-product">
-          <div className="modal-product-image">
-            <img src={product.image} alt={product.name} />
+    <div 
+      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative animate-modalEntry shadow-2xl"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Close button */}
+        <button 
+          onClick={onClose}
+          className="absolute right-4 top-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300 group z-10"
+        >
+          <FaTimes className="text-gray-500 group-hover:text-gray-700 text-lg" />
+        </button>
+
+        <div className="flex flex-col gap-8 p-8">
+          {/* Header Section */}
+          <div className="text-center">
+            <h2 className="font-['Caveat'] text-4xl text-[#2D3748] mb-3 leading-tight">
+              {product.name}
+            </h2>
+            <p className="text-gray-600 font-['Lato'] leading-relaxed max-w-2xl mx-auto">
+              {product.fullDesc}
+            </p>
           </div>
-          
-          <div className="modal-product-info">
-            <h2>{product.name}</h2>
-            {product.subtitle && <p className="modal-subtitle">{product.subtitle}</p>}
-            <p className="modal-price">{product.price} zł</p>
-            
-            <div className="modal-description">
-              <h3>Opis produktu</h3>
-              <p>{product.description || 'Brak opisu produktu.'}</p>
+
+          {/* Image Section */}
+          <div className="max-w-2xl mx-auto w-full">
+            <div className="rounded-xl overflow-hidden bg-gray-100 shadow-md hover:shadow-lg transition-shadow duration-300">
+              <img 
+                src={`/img/${product.image}`}
+                alt={product.name} 
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute bottom-3 right-3 text-xs text-gray-300/90 font-['Lato'] italic bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
+                TY {product.imageCredit} <span className="text-rose-400">♥</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Recipe Content */}
+          <div className="max-w-2xl mx-auto w-full space-y-8">
+            {/* Ingredients */}
+            <div className="bg-gray-50 p-6 rounded-xl">
+              <h3 className="font-['Caveat'] text-2xl text-[#2D3748] mb-4">
+                Składniki
+              </h3>
+              <div className="text-gray-600 font-['Lato'] leading-relaxed whitespace-pre-line">
+                {product.ingredients}
+              </div>
             </div>
 
-            {product.properties && (
-              <div className="modal-properties">
-                {Object.entries(product.properties).map(([key, value]) => (
-                  <div key={key} className="property-item">
-                    <span className="property-label">{key}:</span>
-                    <span className="property-value">{value}</span>
-                  </div>
-                ))}
+            {/* Preparation */}
+            <div className="bg-gray-50 p-6 rounded-xl">
+              <h3 className="font-['Caveat'] text-2xl text-[#2D3748] mb-4">
+                Przygotowanie
+              </h3>
+              <div className="text-gray-600 font-['Lato'] leading-relaxed">
+                {product.preparation}
               </div>
-            )}
+            </div>
 
-            <div className="modal-buttons">
-              <button 
-                className={`modal-add-to-cart ${isAddedToCart ? 'success' : ''}`}
-                onClick={addToCart}
-                disabled={isAddedToCart}
+            {/* Action Button */}
+            <div className="flex justify-center pt-4">
+              <button
+                onClick={addToFavorites}
+                className="flex items-center justify-center gap-2 px-8 py-4 rounded-lg font-['Lato'] font-semibold
+                  border-2 border-rose-500 text-rose-500 hover:bg-rose-500 hover:text-white 
+                  transition-all duration-300 hover:-translate-y-0.5"
               >
-                {isAddedToCart ? (
-                  <span className="success-text">
-                    <FaCheckCircle /> Dodano do koszyka
-                  </span>
-                ) : (
-                  'Dodaj do koszyka'
-                )}
-              </button>
-
-              <button 
-                className={`modal-add-to-wishlist ${isAddedToWishlist ? 'success' : ''}`}
-                onClick={addToWishlist}
-                disabled={isAddedToWishlist}
-              >
-                {isAddedToWishlist ? (
-                  <span className="success-text">
-                    <FaHeart /> Dodano do ulubionych
-                  </span>
-                ) : (
-                  <>
-                    <FaHeart className="heart-icon" />
-                    Dodaj do ulubionych
-                  </>
-                )}
+                <FaHeart className="text-lg" />
+                Dodaj do ulubionych
               </button>
             </div>
           </div>
         </div>
       </div>
-
-      <AnimatePresence>
-        {showModal && (
-          <motion.div 
-            className="success-modal"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-          >
-            <FaCheckCircle className="success-icon" />
-            <p>{successMessage}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
