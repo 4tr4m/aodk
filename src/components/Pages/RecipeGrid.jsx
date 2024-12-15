@@ -1,49 +1,78 @@
 import React, { useState } from 'react';
 import ProductModal from './ProductModal';
+import { FiClock, FiArrowRight, FiAward } from 'react-icons/fi';
 
 const RecipeGrid = ({ recipes }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {recipes.map((recipe, index) => (
-        <div 
+        <article 
           key={index} 
-          className="group cursor-pointer"
+          className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg 
+            transition-all duration-300 transform hover:scale-[1.02] cursor-pointer"
           onClick={() => setSelectedRecipe(recipe)}
         >
-          <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300">
-            <div className="aspect-square overflow-hidden relative">
-              <img 
-                src={`/img/${recipe.image}`}
-                alt={recipe.name}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              {recipe.imageCredit && (
-                <div className="absolute bottom-3 right-3 text-xs text-gray-300/90 font-['Lato'] italic bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
-                  TY {recipe.imageCredit} <span className="text-rose-400">♥</span>
+          {/* Image Section */}
+          <div className="relative h-48 overflow-hidden">
+            <img 
+              src={`/img/${recipe.image}`}
+              alt={recipe.name}
+              className="w-full h-full object-cover transition-transform duration-700 
+                group-hover:scale-110 group-hover:rotate-1"
+            />
+            {recipe.imageCredit && (
+              <div className="absolute bottom-3 right-3 text-xs text-gray-300/90 
+                font-['Lato'] italic bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
+                TY {recipe.imageCredit} <span className="text-rose-400">♥</span>
+              </div>
+            )}
+            {/* Category Badge */}
+            <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm 
+              px-3 py-1 rounded-full shadow-sm">
+              <span className="text-sm font-medium text-gray-700">{recipe.category}</span>
+            </div>
+          </div>
+
+          {/* Content Section */}
+          <div className="p-5">
+            {/* Title */}
+            <h2 className="font-['Patrick_Hand'] text-xl mb-2 text-gray-800 leading-tight 
+              group-hover:text-[#2D3748] transition-colors duration-300">
+              {recipe.name}
+            </h2>
+
+            {/* Description */}
+            <p className="text-gray-600 text-sm mb-3 line-clamp-2 font-['Lato']">
+              {recipe.shortDesc}
+            </p>
+
+            {/* Meta Information */}
+            <div className="flex items-center gap-4 mb-4">
+              {recipe.time && (
+                <div className="flex items-center gap-1 text-gray-500">
+                  <FiClock className="text-yellow-500" />
+                  <span className="text-sm">{recipe.time}</span>
+                </div>
+              )}
+              {recipe.difficulty && (
+                <div className="flex items-center gap-1 text-gray-500">
+                  <FiAward className="text-yellow-500" />
+                  <span className="text-sm">Poziom: {recipe.difficulty}</span>
                 </div>
               )}
             </div>
-            <div className="p-6">
-              <h3 className="font-['Caveat'] text-2xl text-[#2D3748] mb-3 group-hover:text-[#1A202C] transition-colors duration-300">
-                {recipe.name}
-              </h3>
-              <p className="text-gray-600/90 text-sm mb-4 line-clamp-2 font-['Lato']">
-                {recipe.shortDesc}
-              </p>
-              <button 
-                className="w-full py-3 px-4 rounded-lg text-sm font-semibold 
-                  border-2 border-[#2D3748] text-[#2D3748] 
-                  hover:bg-[#2D3748] hover:text-white 
-                  transition-all duration-300 hover:-translate-y-0.5
-                  font-['Lato']"
-              >
-                Zobacz Przepis
-              </button>
-            </div>
+
+            {/* CTA Button */}
+            <button className="w-full flex items-center justify-center gap-2 bg-yellow-500 
+              hover:bg-yellow-600 text-white py-2.5 px-4 rounded-lg transition-all duration-300 
+              transform group-hover:scale-[1.02] font-['Patrick_Hand'] text-lg">
+              Zobacz przepis
+              <FiArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
+            </button>
           </div>
-        </div>
+        </article>
       ))}
 
       {selectedRecipe && (

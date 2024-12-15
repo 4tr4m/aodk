@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaPinterestP } from 'react-icons/fa';
 import { kuchniaCategories, skladnikCategories } from '../../Data/category-data';
 
@@ -23,54 +24,56 @@ const TopNavBar = () => {
             animation: activeDropdown ? `fadeInItem 0.4s ease-out forwards ${150 + (index * 50)}ms` : 'none'
           }}
         >
-          <a 
-            href={item.link} 
+          <Link 
+            to={item.link}
             className="text-[18px] font-['Patrick_Hand'] font-normal leading-[1.2] whitespace-nowrap text-gray-50/95 drop-shadow-sm hover:text-yellow-400 transition-all duration-300 mix-blend-normal block"
           >
             {item.label}
-          </a>
+          </Link>
         </li>
       ))}
     </ul>
   );
+
+  const navItems = [
+    { label: 'START', link: '/' },
+    { 
+      label: 'KUCHNIA', 
+      link: '/kuchnia',
+      dropdown: kuchniaItems,
+      type: 'kuchnia'
+    },
+    { 
+      label: 'SKŁADNIK', 
+      link: '/skladnik',
+      dropdown: skladnikItems,
+      type: 'skladnik'
+    },
+    { label: 'HISTORIA', link: '/historia' },
+    { label: 'ZNAJDKI', link: '/znajdki' },
+    { label: 'WIEDZA', link: '/wiedza' },
+    { label: 'BLOG', link: '/blog' },
+    { label: 'KONTAKT', link: '/kontakt' },
+  ];
 
   return (
     <div className="relative top-0 left-0 w-full z-50 text-gray-50 py-4">
       <div className="max-w-[1400px] mx-auto px-[60px] flex justify-between items-center relative z-50">
         <nav>
           <ul className="flex gap-12">
-            {[
-              { label: 'START', link: '/' },
-              { 
-                label: 'KUCHNIA', 
-                link: '/kuchnia',
-                dropdown: kuchniaItems,
-                type: 'kuchnia'
-              },
-              { 
-                label: 'SKŁADNIK', 
-                link: '/skladnik',
-                dropdown: skladnikItems,
-                type: 'skladnik'
-              },
-              { label: 'HISTORIA', link: '/historia' },
-              { label: 'ZNAJDKI', link: '/znajdki' },
-              { label: 'WIEDZA', link: '/wiedza' },
-              { label: 'BLOG', link: '/blog' },
-              { label: 'KONTAKT', link: '/kontakt' },
-            ].map((item, index) => (
+            {navItems.map((item, index) => (
               <li 
                 key={index} 
                 className="group relative transition-all duration-300 ease-in-out"
                 onMouseEnter={() => item.dropdown && handleMouseEnter(item.type)}
                 onMouseLeave={() => item.dropdown && setActiveDropdown(null)}
               >
-                <a 
-                  href={item.link}
+                <Link 
+                  to={item.link}
                   className="text-gray-50/90 no-underline text-[20px] font-['Patrick_Hand'] font-semibold uppercase tracking-wide transition-all duration-300 flex items-center gap-2 py-1.5 mix-blend-overlay hover:text-yellow-400 hover:scale-110 group-hover:text-yellow-400"
                 >
                   {item.label}
-                </a>
+                </Link>
                 {item.dropdown && renderDropdownMenu(item.dropdown)}
               </li>
             ))}
