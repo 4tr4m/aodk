@@ -14,7 +14,6 @@ const RecipeGrid = ({ recipes }) => {
             transition-all duration-300 transform hover:scale-[1.02] cursor-pointer"
           onClick={() => setSelectedRecipe(recipe)}
         >
-          {/* Image Section */}
           <div className="relative h-48 overflow-hidden">
             <img 
               src={`/img/${recipe.image}`}
@@ -28,27 +27,22 @@ const RecipeGrid = ({ recipes }) => {
                 TY {recipe.imageCredit} <span className="text-rose-400">♥</span>
               </div>
             )}
-            {/* Category Badge */}
             <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm 
               px-3 py-1 rounded-full shadow-sm">
               <span className="text-sm font-medium text-gray-700">{recipe.category}</span>
             </div>
           </div>
 
-          {/* Content Section */}
           <div className="p-5">
-            {/* Title */}
             <h2 className="font-['Patrick_Hand'] text-xl mb-2 text-gray-800 leading-tight 
               group-hover:text-[#2D3748] transition-colors duration-300">
               {recipe.name}
             </h2>
 
-            {/* Description */}
             <p className="text-gray-600 text-sm mb-3 line-clamp-2 font-['Lato']">
               {recipe.shortDesc}
             </p>
 
-            {/* Meta Information */}
             <div className="flex items-center gap-4 mb-4">
               {recipe.time && (
                 <div className="flex items-center gap-1 text-gray-500">
@@ -64,7 +58,6 @@ const RecipeGrid = ({ recipes }) => {
               )}
             </div>
 
-            {/* CTA Button */}
             <button className="w-full flex items-center justify-center gap-2 bg-yellow-500 
               hover:bg-yellow-600 text-white py-2.5 px-4 rounded-lg transition-all duration-300 
               transform group-hover:scale-[1.02] font-['Patrick_Hand'] text-lg">

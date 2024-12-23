@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import CategoryHeader from './CategoryHeader';
 import TopNavBar from '../Headers/TopNavBar';
+import Footer from '../Footer/Footer';
 import { blogPosts } from '../../Data/blog-data';
 
 const BlogPage = () => {
@@ -68,6 +69,7 @@ const BlogPage = () => {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './InfoSection.css';
-import LinkSection from './LinkSection';
 
 const InfoSection = () => {
   const navigate = useNavigate();
@@ -66,8 +65,6 @@ const InfoSection = () => {
           Zobacz więcej
         </button>
       </div>
-
-      <LinkSection />
     </section>
   );
 };

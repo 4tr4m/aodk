@@ -1,24 +1,24 @@
 import React from 'react';
 import TopNavBar from '../components/Headers/TopNavBar';
-import HealthyLifestyleBanner from '../components/Section/HealthyLifestyleBanner';
+import CategoryBanner from '../components/Section/CategoryBanner';
 import InfoSection from '../components/Section/InfoSection';
-import PreFooter from '../components/Footer/PreFooter';
 import Footer from '../components/Footer/Footer';
 import HeroHeader from '../components/Hero/HeroHeader';
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen">
-      <div className="relative h-screen overflow-hidden">
-        <TopNavBar />
-        <HeroHeader />
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-grow">
+        <div className="relative h-screen overflow-hidden">
+          <TopNavBar />
+          <HeroHeader />
+        </div>
+        <div className="relative z-10 bg-white">
+          <CategoryBanner />
+          <InfoSection />
+        </div>
       </div>
-      <div className="relative z-10 bg-white">
-        <HealthyLifestyleBanner />
-        <InfoSection />
-        <PreFooter />
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };

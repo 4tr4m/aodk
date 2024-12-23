@@ -1,11 +1,11 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
 import TopNavBar from '../Headers/TopNavBar';
 import CategoryHeader from './CategoryHeader';
 import CategorySidebar from './CategorySidebar';
 import Footer from '../Footer/Footer';
 import RecipeGrid from './RecipeGrid';
-import { recipes } from '../../Data/products-data';
 import { kuchniaCategories } from '../../Data/category-data';
 
 const CategoryPage = () => {
@@ -13,12 +13,13 @@ const CategoryPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const pageRef = useRef(null);
+  const { state } = useCart();
 
   const scrollToTop = useCallback(() => {
     if (pageRef.current) {
       pageRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
     }
-    window.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   const handleCategoryClick = useCallback((categoryLink) => {
@@ -43,17 +44,16 @@ const CategoryPage = () => {
   
   const getCategoryRecipes = () => {
     if (!categorySlug) {
-      return recipes;
+      return Object.values(state.allRecipes).flat();
     }
     if (!currentCategory) return [];
-    return recipes.filter(recipe => recipe.category === currentCategory.label);
+    return state.allRecipes[currentCategory.label] || [];
   };
 
   const categoryRecipes = getCategoryRecipes();
 
   return (
     <div ref={pageRef} className="min-h-screen bg-[#F6EFE9]">
-      {/* Header Section */}
       <div className="relative">
         <CategoryHeader />
         <div className="absolute top-0 left-0 w-full">
@@ -61,7 +61,6 @@ const CategoryPage = () => {
         </div>
       </div>
       
-      {/* Category Title Section */}
       <div className="pt-12 pb-6">
         <div className="max-w-7xl mx-auto px-5">
           <h1 className="font-['Caveat'] text-5xl text-[#2D3748] mb-3 text-center font-bold">
@@ -73,17 +72,14 @@ const CategoryPage = () => {
         </div>
       </div>
 
-      {/* Main Content Section */}
       <main className="pt-8 pb-16">
         <div className="max-w-7xl mx-auto px-5">
-          {/* Recipe Count */}
           <div className="mb-6">
             <span className="font-['Lato'] text-gray-500">
               Znalezione przepisy: <strong>{categoryRecipes.length}</strong>
             </span>
           </div>
 
-          {/* Content Grid */}
           <div className="flex flex-col md:flex-row gap-8">
             <CategorySidebar 
               categories={kuchniaCategories.mainCategories}
@@ -91,7 +87,6 @@ const CategoryPage = () => {
               onCategoryClick={handleCategoryClick}
             />
             
-            {/* Main Content Area */}
             <div className="flex-1 min-w-0">
               {categoryRecipes.length > 0 ? (
                 <RecipeGrid recipes={categoryRecipes} />

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductModal from './ProductModal';
 
-const ProductGrid = ({ items, isHomePage = false }) => {
+const CategoryGrid = ({ items, isHomePage = false }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
 
@@ -75,4 +75,4 @@ const ProductGrid = ({ items, isHomePage = false }) => {
   );
 };
 
-export default ProductGrid;
+export default CategoryGrid;

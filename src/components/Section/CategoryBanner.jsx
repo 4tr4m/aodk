@@ -1,8 +1,8 @@
 import React from 'react';
 import { kuchniaCategories } from '../../Data/category-data';
-import ProductGrid from '../Pages/ProductGrid';
+import CategoryGrid from '../Pages/CategoryGrid';
 
-const HealthyLifestyleBanner = () => {
+const CategoryBanner = () => {
   const firstRowItems = kuchniaCategories.mainCategories.filter(item => 
     kuchniaCategories.displayGroups.firstRow.includes(item.label)
   );
@@ -26,12 +26,12 @@ const HealthyLifestyleBanner = () => {
         <div className="space-y-12 sm:space-y-16 md:space-y-24">
           {/* First Row */}
           <div className="px-2 sm:px-4 md:px-0">
-            <ProductGrid items={firstRowItems} isHomePage={true} />
+            <CategoryGrid items={firstRowItems} isHomePage={true} />
           </div>
 
           {/* Second Row */}
           <div className="px-2 sm:px-4 md:px-0">
-            <ProductGrid items={secondRowItems} isHomePage={true} />
+            <CategoryGrid items={secondRowItems} isHomePage={true} />
           </div>
         </div>
       </div>
@@ -42,4 +42,4 @@ const HealthyLifestyleBanner = () => {
   );
 };
 
-export default HealthyLifestyleBanner;
+export default CategoryBanner;

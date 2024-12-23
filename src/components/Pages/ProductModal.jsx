@@ -19,7 +19,7 @@ const ProductModal = ({ product, onClose }) => {
   }, [onClose]);
 
   const addToFavorites = () => {
-    dispatch({ type: 'ADD_TO_FAVORITES', payload: product });
+    dispatch({ type: 'ADD_TO_WISHLIST', payload: product });
   };
 
   return (
@@ -31,7 +31,6 @@ const ProductModal = ({ product, onClose }) => {
         className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative animate-modalEntry shadow-2xl"
         onClick={e => e.stopPropagation()}
       >
-        {/* Close button */}
         <button 
           onClick={onClose}
           className="absolute right-4 top-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-300 group z-10"
@@ -40,7 +39,6 @@ const ProductModal = ({ product, onClose }) => {
         </button>
 
         <div className="flex flex-col gap-8 p-8">
-          {/* Header Section */}
           <div className="text-center">
             <h2 className="font-['Caveat'] text-4xl text-[#2D3748] mb-3 leading-tight">
               {product.name}
@@ -50,7 +48,6 @@ const ProductModal = ({ product, onClose }) => {
             </p>
           </div>
 
-          {/* Image Section */}
           <div className="max-w-2xl mx-auto w-full">
             <div className="rounded-xl overflow-hidden bg-gray-100 shadow-md hover:shadow-lg transition-shadow duration-300">
               <img 
@@ -58,15 +55,10 @@ const ProductModal = ({ product, onClose }) => {
                 alt={product.name} 
                 className="w-full h-full object-cover"
               />
-              <div className="absolute bottom-3 right-3 text-xs text-gray-300/90 font-['Lato'] italic bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
-                TY {product.imageCredit} <span className="text-rose-400">♥</span>
-              </div>
             </div>
           </div>
 
-          {/* Recipe Content */}
           <div className="max-w-2xl mx-auto w-full space-y-8">
-            {/* Ingredients */}
             <div className="bg-gray-50 p-6 rounded-xl">
               <h3 className="font-['Caveat'] text-2xl text-[#2D3748] mb-4">
                 Składniki
@@ -76,7 +68,6 @@ const ProductModal = ({ product, onClose }) => {
               </div>
             </div>
 
-            {/* Preparation */}
             <div className="bg-gray-50 p-6 rounded-xl">
               <h3 className="font-['Caveat'] text-2xl text-[#2D3748] mb-4">
                 Przygotowanie
@@ -86,7 +77,6 @@ const ProductModal = ({ product, onClose }) => {
               </div>
             </div>
 
-            {/* Action Button */}
             <div className="flex justify-center pt-4">
               <button
                 onClick={addToFavorites}

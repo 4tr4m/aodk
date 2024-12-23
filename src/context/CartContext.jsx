@@ -1,18 +1,46 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { Obiady } from '../Data/recipes/obiady-data';
+import { Zupy } from '../Data/recipes/zupy-data';
+import { Chleby } from '../Data/recipes/chleby-data';
+import { Smarowidla } from '../Data/recipes/smarowidla-data';
+import { Desery } from '../Data/recipes/desery-data';
+import { Babeczki } from '../Data/recipes/babeczki-data';
+import { Ciasta } from '../Data/recipes/ciasta-data';
+import { Ciastka } from '../Data/recipes/ciastka-data';
+import { Smoothie } from '../Data/recipes/smoothie-data';
+import { Inne } from '../Data/recipes/inne-data';
+import { Swieta } from '../Data/recipes/swieta-data';
 
 const CartContext = createContext();
 
 const loadInitialState = () => {
   try {
-    const savedState = localStorage.getItem('cart');
-    return savedState ? JSON.parse(savedState) : {
-      cart: [],
-      wishlist: []
+    const savedCart = localStorage.getItem('cart');
+    const savedWishlist = localStorage.getItem('wishlist');
+    
+    return {
+      cart: savedCart ? JSON.parse(savedCart) : [],
+      wishlist: savedWishlist ? JSON.parse(savedWishlist) : [],
+      allRecipes: {
+        OBIADY: Obiady,
+        ZUPY: Zupy,
+        CHLEBY: Chleby,
+        SMAROWIDŁA: Smarowidla,
+        DESERY: Desery,
+        'BABECZKI i MUFFINY': Babeczki,
+        CIASTA: Ciasta,
+        CIASTKA: Ciastka,
+        SMOOTHIE: Smoothie,
+        INNE: Inne,
+        ŚWIĘTA: Swieta
+      }
     };
   } catch (error) {
+    console.error('Error loading cart state:', error);
     return {
       cart: [],
-      wishlist: []
+      wishlist: [],
+      allRecipes: {}
     };
   }
 };
