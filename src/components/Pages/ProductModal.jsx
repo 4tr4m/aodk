@@ -72,7 +72,7 @@ const ProductModal = ({ product, onClose }) => {
               <h3 className="font-['Caveat'] text-2xl text-[#2D3748] mb-4">
                 Przygotowanie
               </h3>
-              <div className="text-gray-600 font-['Lato'] leading-relaxed">
+              <div className="text-gray-600 font-['Lato'] leading-relaxed whitespace-pre-line">
                 {product.preparation}
               </div>
             </div>

@@ -38,7 +38,7 @@ const CategoryGrid = ({ items, isHomePage = false }) => {
                   />
                   {/* Credit Badge */}
                   <div className="absolute bottom-3 right-3 text-xs text-gray-300/90 font-['Lato'] italic bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full z-10">
-                    TY {item.imageCredit} <span className="text-rose-400">♥</span>
+                    
                   </div>
                 </div>
 

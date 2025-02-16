@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { kuchniaCategories } from '../../Data/category-data';
 
 const Footer = () => {
   const handleScrollToTop = () => {
@@ -8,6 +9,10 @@ const Footer = () => {
       behavior: 'smooth'
     });
   };
+
+  // Split categories into two groups for the footer columns
+  const firstColumnCategories = kuchniaCategories.mainCategories.slice(0, 5);
+  const secondColumnCategories = kuchniaCategories.mainCategories.slice(5, 10);
 
   return (
     <div className="relative w-full">
@@ -43,51 +48,61 @@ const Footer = () => {
 
             <nav className="flex-1 lg:ml-16 w-full">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+                {/* First Column - Main Categories */}
                 <div className="space-y-6 text-center lg:text-left">
                   <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">Przepisy</h4>
                   <ul className="space-y-4">
-                    {['OBIADY', 'ZUPY', 'CHLEBY', 'SMAROWIDŁA', 'DESERY'].map((category) => (
-                      <li key={category}>
+                    {firstColumnCategories.map((category) => (
+                      <li key={category.label}>
                         <Link 
-                          to={`/przepisy/${category.toLowerCase()}`}
+                          to={category.link}
                           className="text-gray-200 hover:text-white transition-colors duration-200 flex items-center justify-center lg:justify-start group"
+                          onClick={handleScrollToTop}
                         >
                           <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2">→</span>
-                          {category}
+                          {category.label}
                         </Link>
                       </li>
                     ))}
                   </ul>
                 </div>
 
+                {/* Second Column - More Categories */}
                 <div className="space-y-6 text-center lg:text-left">
                   <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">Więcej przepisów</h4>
                   <ul className="space-y-4">
-                    {['BABECZKI i MUFFINY', 'CIASTA', 'CIASTKA', 'SMOOTHIE', 'INNE'].map((category) => (
-                      <li key={category}>
+                    {secondColumnCategories.map((category) => (
+                      <li key={category.label}>
                         <Link 
-                          to={`/przepisy/${category.toLowerCase().replace(' i ', '-')}`}
+                          to={category.link}
                           className="text-gray-200 hover:text-white transition-colors duration-200 flex items-center justify-center lg:justify-start group"
+                          onClick={handleScrollToTop}
                         >
                           <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2">→</span>
-                          {category}
+                          {category.label}
                         </Link>
                       </li>
                     ))}
                   </ul>
                 </div>
 
+                {/* Third Column - Contact Links */}
                 <div className="space-y-6 text-center lg:text-left">
                   <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">Kontakt</h4>
                   <ul className="space-y-4">
-                    {['Pomoc', 'O nas', 'Kontakt'].map((item) => (
-                      <li key={item}>
+                    {[
+                      { label: 'Pomoc', link: '/pomoc' },
+                      { label: 'O nas', link: '/o-nas' },
+                      { label: 'Kontakt', link: '/kontakt' }
+                    ].map((item) => (
+                      <li key={item.label}>
                         <Link 
-                          to={`/${item.toLowerCase().replace(' ', '-')}`}
+                          to={item.link}
                           className="text-gray-200 hover:text-white transition-colors duration-200 flex items-center justify-center lg:justify-start group"
+                          onClick={handleScrollToTop}
                         >
                           <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2">→</span>
-                          {item}
+                          {item.label}
                         </Link>
                       </li>
                     ))}

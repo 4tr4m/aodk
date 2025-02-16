@@ -120,8 +120,15 @@ export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, loadInitialState());
 
   useEffect(() => {
-    if (state && (state.cart || state.wishlist)) {
-      localStorage.setItem('cart', JSON.stringify(state));
+    try {
+      if (state.cart) {
+        localStorage.setItem('cart', JSON.stringify(state.cart));
+      }
+      if (state.wishlist) {
+        localStorage.setItem('wishlist', JSON.stringify(state.wishlist));
+      }
+    } catch (error) {
+      console.error('Error saving cart state:', error);
     }
   }, [state]);
 
@@ -139,5 +146,3 @@ export const useCart = () => {
   }
   return context;
 };
-
-

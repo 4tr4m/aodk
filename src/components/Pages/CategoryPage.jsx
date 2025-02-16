@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import TopNavBar from '../Headers/TopNavBar';
 import CategoryHeader from './CategoryHeader';
-import CategorySidebar from './CategorySidebar';
+import CategoryNav from './CategoryNav';
 import Footer from '../Footer/Footer';
 import RecipeGrid from './RecipeGrid';
 import { kuchniaCategories } from '../../Data/category-data';
@@ -16,19 +16,25 @@ const CategoryPage = () => {
   const { state } = useCart();
 
   const scrollToTop = useCallback(() => {
-    if (pageRef.current) {
-      pageRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   }, []);
 
   const handleCategoryClick = useCallback((categoryLink) => {
-    scrollToTop();
     if (location.pathname !== categoryLink) {
-      navigate(categoryLink);
+      // First scroll to top smoothly
+      scrollToTop();
+      
+      // Then navigate after a small delay to ensure smooth transition
+      setTimeout(() => {
+        navigate(categoryLink);
+      }, 300);
     }
   }, [navigate, location.pathname, scrollToTop]);
 
+  // Scroll to top when category changes
   useEffect(() => {
     scrollToTop();
   }, [categorySlug, scrollToTop]);
@@ -54,50 +60,50 @@ const CategoryPage = () => {
 
   return (
     <div ref={pageRef} className="min-h-screen bg-[#F6EFE9]">
-      <div className="relative">
+      <div className="relative mb-8">
         <CategoryHeader />
         <div className="absolute top-0 left-0 w-full">
           <TopNavBar />
         </div>
       </div>
       
-      <div className="pt-12 pb-6">
-        <div className="max-w-7xl mx-auto px-5">
-          <h1 className="font-['Caveat'] text-5xl text-[#2D3748] mb-3 text-center font-bold">
-            {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
-          </h1>
-          <p className="font-['Lato'] text-lg text-gray-600 text-center max-w-2xl mx-auto leading-relaxed">
-            {currentCategory?.description || 'Odkryj wszystkie nasze przepisy z różnych kategorii'}
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mb-12">
+        <h1 className="font-['Caveat'] text-4xl md:text-5xl text-[#2D3748] mb-4 text-center font-bold">
+          {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
+        </h1>
+        {currentCategory?.description && (
+          <p className="font-['Lato'] text-base md:text-lg text-gray-600 text-center max-w-3xl mx-auto leading-relaxed">
+            {currentCategory.description}
           </p>
-        </div>
+        )}
       </div>
 
-      <main className="pt-8 pb-16">
-        <div className="max-w-7xl mx-auto px-5">
-          <div className="mb-6">
+      <div className="sticky top-0 z-40 mb-8 shadow-sm bg-[#F6EFE9]">
+        <CategoryNav 
+          categories={kuchniaCategories.mainCategories}
+          currentSlug={categorySlug}
+          onCategoryClick={handleCategoryClick}
+        />
+      </div>
+
+      <main className="pb-16 transition-all duration-300">
+        <div className="max-w-7xl mx-auto px-4 md:px-8">
+          <div className="mb-8">
             <span className="font-['Lato'] text-gray-500">
               Znalezione przepisy: <strong>{categoryRecipes.length}</strong>
             </span>
           </div>
 
-          <div className="flex flex-col md:flex-row gap-8">
-            <CategorySidebar 
-              categories={kuchniaCategories.mainCategories}
-              currentSlug={categorySlug}
-              onCategoryClick={handleCategoryClick}
-            />
-            
-            <div className="flex-1 min-w-0">
-              {categoryRecipes.length > 0 ? (
-                <RecipeGrid recipes={categoryRecipes} />
-              ) : (
-                <div className="text-center py-12">
-                  <p className="text-gray-500 text-lg">
-                    Nie znaleziono przepisów w tej kategorii.
-                  </p>
-                </div>
-              )}
-            </div>
+          <div className="w-full transition-opacity duration-300">
+            {categoryRecipes.length > 0 ? (
+              <RecipeGrid recipes={categoryRecipes} />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">
+                  Nie znaleziono przepisów w tej kategorii.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </main>

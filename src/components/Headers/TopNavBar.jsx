@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaPinterestP } from 'react-icons/fa';
 import { FiMenu, FiX } from 'react-icons/fi';
-import { kuchniaCategories, skladnikCategories } from '../../Data/category-data';
+import { 
+  kuchniaCategories, 
+  skladnikCategories,
+  historiaCategories,
+  znajdkiCategories,
+  wiedzaCategories,
+  blogCategories
+} from '../../Data/category-data';
 
 const TopNavBar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -60,10 +67,30 @@ const TopNavBar = () => {
       dropdown: skladnikItems,
       type: 'skladnik'
     },
-    { label: 'HISTORIA', link: '/historia' },
-    { label: 'ZNAJDKI', link: '/znajdki' },
-    { label: 'WIEDZA', link: '/wiedza' },
-    { label: 'BLOG', link: '/blog' },
+    { 
+      label: 'HISTORIA', 
+      link: '/historia',
+      dropdown: historiaCategories,
+      type: 'historia'
+    },
+    { 
+      label: 'ZNAJDKI', 
+      link: '/znajdki',
+      dropdown: znajdkiCategories,
+      type: 'znajdki'
+    },
+    { 
+      label: 'WIEDZA', 
+      link: '/wiedza',
+      dropdown: wiedzaCategories,
+      type: 'wiedza'
+    },
+    { 
+      label: 'BLOG', 
+      link: '/blog',
+      dropdown: blogCategories,
+      type: 'blog'
+    },
     { label: 'KONTAKT', link: '/kontakt' },
   ];
 
