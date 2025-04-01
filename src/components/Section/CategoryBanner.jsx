@@ -1,23 +1,30 @@
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 import { kuchniaCategories } from '../../Data/category-data';
 import CategoryGrid from '../Pages/CategoryGrid';
 
 const CategoryBanner = () => {
-  const firstRowItems = kuchniaCategories.mainCategories.filter(item => 
+  const firstRowItems = useMemo(() => kuchniaCategories.mainCategories.filter(item => 
     kuchniaCategories.displayGroups.firstRow.includes(item.label)
-  );
+  ), []);
 
-  const secondRowItems = kuchniaCategories.mainCategories.filter(item => 
+  const secondRowItems = useMemo(() => kuchniaCategories.mainCategories.filter(item => 
     kuchniaCategories.displayGroups.secondRow.includes(item.label)
-  );
+  ), []);
 
   return (
     <section 
       id="category-banner"
-      className="relative w-full min-h-screen bg-[#F6EFE9] scroll-mt-16"
+      className="relative w-full min-h-screen bg-[#F6EFE9] scroll-mt-16 will-change-transform"
+      style={{
+        transform: 'translateZ(0)',
+        backfaceVisibility: 'hidden'
+      }}
     >
       {/* Top decorative wave overlay */}
-      <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#2D3748]/90 to-transparent pointer-events-none" />
+      <div 
+        className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-[#2D3748]/90 to-transparent pointer-events-none will-change-transform"
+        style={{ transform: 'translateZ(0)' }}
+      />
       
       {/* Content wrapper */}
       <div className="relative z-10 pt-16 pb-24 md:pt-24 md:pb-32">
@@ -66,4 +73,4 @@ const CategoryBanner = () => {
   );
 };
 
-export default CategoryBanner;
+export default memo(CategoryBanner);
