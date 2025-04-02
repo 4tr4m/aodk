@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import CategoryCarousel from '../UI/CategoryCarousel';
 import { kuchniaCategories } from '../../Data/category-data'; 
@@ -6,6 +6,7 @@ import { useInView } from 'react-intersection-observer';
 
 const BG_COLOR_LIGHTER = "gray-100";
 const SECTION_BG = `bg-${BG_COLOR_LIGHTER}`;
+const ACCENT_COLOR = 'bg-green-600'; // Solid green for consistency with buttons
 
 const CategoryBanner = () => {
   const [allCategoryItems, setAllCategoryItems] = useState([]);
@@ -45,6 +46,19 @@ const CategoryBanner = () => {
     }
   };
 
+  const titleVariant = {
+    hidden: { y: 10, opacity: 0 },
+    visible: { 
+      y: 0, 
+      opacity: 1,
+      transition: { 
+        type: "spring",
+        stiffness: 400,
+        damping: 30
+      }
+    }
+  };
+
   useEffect(() => {
     // Use the kuchniaCategories directly instead of fetching
     const categories = kuchniaCategories.mainCategories;
@@ -65,7 +79,6 @@ const CategoryBanner = () => {
   const headerRef = useRef(null);
 
   // Create a wavy divider SVG
-  const dividerHeight = 120;
   const dividerColor = '#F7FAFC'; // tailwind bg-gray-50
 
   return (
@@ -96,17 +109,19 @@ const CategoryBanner = () => {
           variants={itemAnimation}
         >
           <motion.h2 
-            className="text-4xl md:text-5xl lg:text-6xl font-['Playfair_Display'] font-bold text-gray-800 mb-4"
-            variants={itemAnimation}
+            className={`inline-block font-['Playfair_Display'] text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[#1A202C] 
+              relative pb-3 sm:pb-4 after:content-[''] after:absolute after:bottom-0 after:left-1/2 
+              after:-translate-x-1/2 after:w-24 sm:after:w-28 md:after:w-32 after:h-[3px] after:${ACCENT_COLOR} tracking-wide font-semibold`}
+            variants={titleVariant}
             ref={headerRef}
           >
-            Kategorie
+            ODŻYWCZE PRZEPISY
           </motion.h2>
           <motion.p 
-            className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto"
-            variants={itemAnimation}
+            className="mt-4 sm:mt-5 md:mt-6 text-gray-600 text-base sm:text-lg md:text-xl lg:text-2xl max-w-2xl sm:max-w-3xl mx-auto font-['Lato'] leading-relaxed tracking-wide"
+            variants={titleVariant}
           >
-            Odkryj przepisy dopasowane do różnych potrzeb dietetycznych i preferencji kulinarnych.
+            Odkryj nasze starannie wybrane przepisy, które łączą w sobie smak i wartości odżywcze
           </motion.p>
         </motion.div>
         

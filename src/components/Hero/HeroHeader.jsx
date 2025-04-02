@@ -1,6 +1,5 @@
 // HeroHeader.jsx
 import { useState, useCallback, memo } from 'react';
-import { Link } from 'react-router-dom';
 import InfoModal from '../Pages/InfoModal';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { HeroActionButton } from '../UI/Button';

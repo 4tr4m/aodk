@@ -3,35 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '../UI/Button';
 import InfoModal from '../Pages/InfoModal';
-import { FaUtensils, FaLeaf, FaHeartbeat, FaUserFriends } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
-
-const features = [
-  {
-    id: 'feature-1',
-    icon: <FaLeaf className="text-green-600 text-3xl md:text-4xl" />,
-    title: 'Naturalne Składniki',
-    description: 'Nasze przepisy opierają się na naturalnych, nieprzetworzonych składnikach, aby zapewnić maksymalne korzyści zdrowotne.'
-  },
-  {
-    id: 'feature-2',
-    icon: <FaHeartbeat className="text-green-600 text-3xl md:text-4xl" />,
-    title: 'Zdrowe Odżywianie',
-    description: 'Każdy przepis został opracowany z myślą o dostarczeniu niezbędnych składników odżywczych.'
-  },
-  {
-    id: 'feature-3',
-    icon: <FaUtensils className="text-green-600 text-3xl md:text-4xl" />,
-    title: 'Łatwe Przygotowanie',
-    description: 'Nasze przepisy są łatwe do przygotowania, nawet dla osób bez doświadczenia kulinarnego.'
-  },
-  {
-    id: 'feature-4',
-    icon: <FaUserFriends className="text-green-600 text-3xl md:text-4xl" />,
-    title: 'Dla Całej Rodziny',
-    description: 'Przepisy są dostosowane do potrzeb dzieci ze spektrum autyzmu, ale smakują wszystkim członkom rodziny.'
-  }
-];
 
 const InfoSection = () => {
   const navigate = useNavigate();
@@ -164,25 +135,56 @@ const InfoSection = () => {
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 py-4 sm:py-6"
               variants={staggerContainer}
             >
-              {features.map((feature, index) => (
-                <motion.div 
-                  key={feature.id}
-                  className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
-                  variants={fadeInUp}
-                  whileHover={{ y: -5 }}
-                >
-                  <div className="absolute inset-0 overflow-hidden">
-                    <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
-                    <div className="h-full w-full bg-gray-200">
-                      {feature.icon}
-                    </div>
+              <motion.div 
+                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
+                variants={fadeInUp}
+                whileHover={{ y: -5 }}
+              >
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
+                  <div className="h-full w-full bg-gray-200">
+                    <img src="/img/noGluten.jpg" alt="Bez glutenu" className="w-full h-full object-cover" />
                   </div>
-                  <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
-                    <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">{feature.title}</h3>
-                    <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">{feature.description}</p>
+                </div>
+                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
+                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Glutenu</h3>
+                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Wszystkie przepisy są bezpieczne dla osób z celiakią</p>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
+                variants={fadeInUp}
+                whileHover={{ y: -5 }}
+              >
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
+                  <div className="h-full w-full bg-gray-200">
+                    <img src="/img/noDairy.jpg" alt="Bez nabiału" className="w-full h-full object-cover" />
                   </div>
-                </motion.div>
-              ))}
+                </div>
+                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
+                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Nabiału</h3>
+                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Wykluczamy nabiał krowi ze wszystkich przepisów</p>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group sm:col-span-2 md:col-span-1"
+                variants={fadeInUp}
+                whileHover={{ y: -5 }}
+              >
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
+                  <div className="h-full w-full bg-gray-200">
+                    <img src="/img/noFry.jpg" alt="Bez smażenia" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
+                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Smażenia</h3>
+                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Zdrowe metody przygotowania potraw</p>
+                </div>
+              </motion.div>
             </motion.div>
 
             {/* CTA Section */}
