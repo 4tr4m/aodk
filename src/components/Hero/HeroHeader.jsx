@@ -78,27 +78,6 @@ const HeroHeader = () => {
                     Proste, odżywcze przepisy bez glutenu, nabiału krowiego, cukru i <br className="hidden sm:block" />
                     bez smażenia – wspierające zdrowie i rozwój
                   </h2>
-
-                  {/* Link button component for navigation */}
-                  <div className="relative h-16 sm:h-20 w-full flex items-center justify-center mt-6">
-                    <Link to="/przepisy" className="inline-block">
-                      <motion.div
-                        className="px-8 py-2.5 bg-green-600/80 backdrop-blur-sm rounded-full border border-white/50 cursor-pointer
-                              shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center"
-                        whileHover={{ 
-                          backgroundColor: "rgba(22, 163, 74, 0.9)",
-                          scale: 1.05,
-                          y: -2,
-                          transition: { duration: 0.2 }
-                        }}
-                        whileTap={{ scale: 0.97 }}
-                      >
-                        <span className="font-['Patrick_Hand'] text-base md:text-lg text-white tracking-wider drop-shadow-md uppercase px-2 whitespace-nowrap">
-                          ZOBACZ PRZEPISY
-                        </span>
-                      </motion.div>
-                    </Link>
-                  </div>
                 </motion.div>
               </div>
             </div>
@@ -125,8 +104,8 @@ const HeroHeader = () => {
             </div>
           </div>
           
-          {/* Integrated button using reusable component - hide on mobile */}
-          <div className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-0 right-0 mx-auto hidden sm:flex justify-center z-20">
+          {/* Integrated button using reusable component */}
+          <div className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-0 right-0 mx-auto flex justify-center z-20">
             <HeroActionButton 
               onClick={scrollToCategory} 
               text="ODKRYJ PRZEPISY"
@@ -134,7 +113,7 @@ const HeroHeader = () => {
             />
           </div>
 
-          {/* Subtle curved transition */}
+          {/* Smooth curved transition like between banner and info section */}
           <div className="absolute bottom-0 left-0 w-full h-8 sm:h-10 md:h-12 overflow-hidden">
             <div 
               className="w-[120%] h-8 sm:h-10 md:h-12 bg-[#F6EFE9] absolute -left-[10%]"
