@@ -105,7 +105,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
           }
         });
       }
-    }, 500);
+    }, 100);
   }, [activeIndex, isAnimating, startIndex, totalItems, itemsPerView]);
 
   useEffect(() => {
