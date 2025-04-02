@@ -28,7 +28,7 @@ const RecipeGrid = ({ recipes }) => {
             max-w-sm mx-auto w-full"
           onClick={() => handleRecipeClick(recipe)}
         >
-          <div className="relative h-48 overflow-hidden">
+          <div className="relative h-36 overflow-hidden">
             <img 
               src={`/img/${recipe.image}`}
               alt={recipe.name}
