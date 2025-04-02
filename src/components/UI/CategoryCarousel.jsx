@@ -167,11 +167,11 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
   if (!isMounted) return <div className="min-h-[200px] bg-gray-100/50"></div>;
 
   return (
-    <div className="relative w-full py-4 px-8 sm:px-10 md:px-12 lg:px-16">
+    <div className="relative w-full py-4 px-4 sm:px-8 md:px-12 lg:px-16 mx-auto">
       <div className="relative mx-auto max-w-[1600px]">
         {/* Navigation buttons positioned outside grid */}
         <motion.button
-          className="absolute -left-6 sm:-left-8 md:-left-10 lg:-left-12 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg z-40 backdrop-blur-sm bg-opacity-90 hover:bg-green-500 transition-all duration-300"
+          className="absolute -left-3 sm:-left-8 md:-left-10 lg:-left-12 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg z-40 backdrop-blur-sm bg-opacity-90 hover:bg-green-500 transition-all duration-300"
           onClick={handlePrev}
           variants={buttonVariants}
           initial="rest"
@@ -185,7 +185,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
         </motion.button>
         
         <motion.button
-          className="absolute -right-6 sm:-right-8 md:-right-10 lg:-right-12 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg z-40 backdrop-blur-sm bg-opacity-90 hover:bg-green-500 transition-all duration-300"
+          className="absolute -right-3 sm:-right-8 md:-right-10 lg:-right-12 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg z-40 backdrop-blur-sm bg-opacity-90 hover:bg-green-500 transition-all duration-300"
           onClick={handleNext}
           variants={buttonVariants}
           initial="rest"
@@ -199,13 +199,13 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
         </motion.button>
         
         {/* Improved edge gradients with more subtle appearance */}
-        <div className="absolute left-0 top-0 bottom-0 w-12 md:w-16 lg:w-20 bg-gradient-to-r from-gray-100 via-gray-100/70 to-transparent z-20 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-12 md:w-16 lg:w-20 bg-gradient-to-l from-gray-100 via-gray-100/70 to-transparent z-20 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-10 sm:w-12 md:w-16 lg:w-20 bg-gradient-to-r from-gray-100 via-gray-100/70 to-transparent z-20 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-10 sm:w-12 md:w-16 lg:w-20 bg-gradient-to-l from-gray-100 via-gray-100/70 to-transparent z-20 pointer-events-none" />
         
         <div className="overflow-hidden">
           <div 
             ref={scrollRef}
-            className="carousel-container flex gap-3 sm:gap-4 md:gap-5"
+            className="carousel-container flex gap-3 sm:gap-4 md:gap-5 mx-auto"
             style={{
               width: `${(100 * extendedItems.length) / itemsPerView}%`,
               transform: `translateX(-${(activeIndex * 100) / extendedItems.length}%)`,
@@ -224,7 +224,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
                 }}
               >
                 <motion.div 
-                  className="bg-white h-full rounded-2xl overflow-hidden shadow-[0_5px_15px_rgba(0,0,0,0.08)] hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)] transition-all duration-700 flex flex-col cursor-pointer"
+                  className="bg-white h-full rounded-2xl overflow-hidden shadow-[0_5px_15px_rgba(0,0,0,0.08)] hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)] transition-all duration-700 flex flex-col cursor-pointer mx-auto max-w-[95%]"
                   onClick={() => handleItemClick(item)}
                   whileHover={{ y: -8, scale: 1.02 }}
                   initial={false}

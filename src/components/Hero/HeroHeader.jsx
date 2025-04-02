@@ -125,8 +125,8 @@ const HeroHeader = () => {
             </div>
           </div>
           
-          {/* Integrated button using reusable component */}
-          <div className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-0 right-0 mx-auto flex justify-center z-20">
+          {/* Integrated button using reusable component - hide on mobile */}
+          <div className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-0 right-0 mx-auto hidden sm:flex justify-center z-20">
             <HeroActionButton 
               onClick={scrollToCategory} 
               text="ODKRYJ PRZEPISY"

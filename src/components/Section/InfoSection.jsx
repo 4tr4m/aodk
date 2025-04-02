@@ -87,7 +87,7 @@ const InfoSection = () => {
           <motion.div className="text-center mb-8 sm:mb-10 md:mb-12" variants={fadeInUp}>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
               <motion.div 
-                className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full shadow-md overflow-hidden cursor-pointer"
+                className="relative w-24 h-24 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full shadow-md overflow-hidden cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.3 }}
