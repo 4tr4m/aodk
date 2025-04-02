@@ -165,7 +165,7 @@ const TopNavBar = () => {
               { icon: FaFacebookF, link: "https://facebook.com" },
               { icon: FaInstagram, link: "https://instagram.com" },
               { icon: FaTiktok, link: "https://tiktok.com" },
-              { icon: FaYoutube, link: "https://youtube.com" },
+              { icon: FaYoutube, link: "https://youtubee.com" },
               { icon: FaPinterestP, link: "https://pinterest.com" }
             ].map((social, index) => (
               <a 
