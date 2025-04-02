@@ -5,6 +5,19 @@ import { FiClock, FiArrowRight, FiAward } from 'react-icons/fi';
 const RecipeGrid = ({ recipes }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
+  const handleRecipeClick = (recipe) => {
+    // First scroll to the top of the page
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+    
+    // Then set the selected recipe to show the modal
+    setTimeout(() => {
+      setSelectedRecipe(recipe);
+    }, 300); // Small delay to ensure smooth scrolling
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {recipes.map((recipe, index) => (
@@ -12,7 +25,7 @@ const RecipeGrid = ({ recipes }) => {
           key={index} 
           className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg 
             transition-all duration-300 transform hover:scale-[1.02] cursor-pointer"
-          onClick={() => setSelectedRecipe(recipe)}
+          onClick={() => handleRecipeClick(recipe)}
         >
           <div className="relative h-48 overflow-hidden">
             <img 
