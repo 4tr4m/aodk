@@ -160,20 +160,24 @@ export const HeroActionButton = ({ text = 'ODKRYJ PRZEPISY', to = '/przepisy', o
     <div className="inline-block">
       <motion.div
         className={`${padding} bg-green-600/80 backdrop-blur-sm rounded-full border border-white/50 cursor-pointer
-                shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center`}
+                shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center relative`}
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ 
-          y: [0, -3, 0],
+          scale: [1, 1.05, 1],
           opacity: 1,
           transition: {
-            y: { repeat: Infinity, duration: 2, ease: "easeInOut" },
+            scale: { 
+              repeat: Infinity, 
+              duration: 1.5, 
+              ease: "easeInOut",
+              repeatType: "reverse" 
+            },
             opacity: { duration: 0.3 }
           }
         }}
         whileHover={{ 
           backgroundColor: "rgba(22, 163, 74, 0.9)",
-          scale: 1.05,
-          y: -2,
+          scale: 1.08,
           transition: {
             duration: 0.2
           }
@@ -181,6 +185,21 @@ export const HeroActionButton = ({ text = 'ODKRYJ PRZEPISY', to = '/przepisy', o
         whileTap={{ scale: 0.97 }}
         onClick={onClick}
       >
+        {/* Pulse ring effect */}
+        <motion.span 
+          className="absolute inset-0 rounded-full border-2 border-green-400/40"
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ 
+            opacity: [0.7, 0, 0.7], 
+            scale: [0.85, 1.2, 0.85],
+            transition: { 
+              repeat: Infinity, 
+              duration: 2,
+              ease: "easeInOut"
+            }
+          }}
+        />
+        
         <motion.span 
           className={`font-['Patrick_Hand'] ${fontSize} text-white tracking-wider drop-shadow-md uppercase px-2 whitespace-nowrap`}
           initial={{ opacity: 0 }}

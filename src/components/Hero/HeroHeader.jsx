@@ -20,8 +20,15 @@ const HeroHeader = () => {
   }, [isOpen]);
 
   const scrollToCategory = useCallback(() => {
-    const element = document.getElementById('category-banner');
-    element?.scrollIntoView({ behavior: 'smooth' });
+    const element = document.getElementById('categories');
+    if (element) {
+      // Smooth scroll with slight offset to account for any fixed headers
+      const offsetTop = element.getBoundingClientRect().top + window.pageYOffset - 20;
+      window.scrollTo({
+        top: offsetTop,
+        behavior: 'smooth'
+      });
+    }
   }, []);
 
   return (
