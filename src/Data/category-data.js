@@ -88,27 +88,27 @@ export const kuchniaCategories = {
       imageCredit: '',
       description: 'Świąteczne dania to wyjątkowe smaki na szczególne chwile, które można przygotować w wersji bezglutenowej i beznabiałowej, a także bez potrzeby smażenia. Dzięki tym opcjom, możemy cieszyć się tradycyjnymi potrawami, dbając jednocześnie o zdrowie i lekkostrawność. Nowoczesne podejście do klasycznych świątecznych przepisów sprawia, że takie dania są równie smaczne, pełne aromatów i doskonałe na specjalne okazje. Z odrobiną kreatywności i odpowiednich składników możemy przygotować zdrowe, ale wciąż pyszne dania, które zaskoczą i zachwycą gości, sprawiając, że święta będą pełne smaku i radości.'
     },
-    {
-      link: '/kuchnia/salatki-surowki',
-      label: 'SAŁATKI i SURÓWKI',
-      shortDesc: 'Zdrowe i kolorowe dodatki do dań',
-      image: 'salatki.jpg',
-      description: 'Sałatki i surówki to doskonały sposób na wzbogacenie każdego posiłku o świeże warzywa i owoce. Pełne witamin, minerałów i błonnika, stanowią nie tylko zdrowy dodatek do dań głównych, ale mogą być również samodzielnym, lekkim posiłkiem. Nasze przepisy łączą w sobie różnorodne składniki, zapewniając nie tylko wartości odżywcze, ale także bogactwo smaków i tekstur. To idealna propozycja dla osób dbających o zdrowe odżywianie i poszukujących świeżych, sezonowych inspiracji kulinarnych.'
-    },
-    {
-      link: '/kuchnia/snaki',
-      label: 'SNAKI',
-      shortDesc: 'Zdrowe przekąski na każdą porę',
-      image: 'snaki.jpg',
-      description: 'Snaki to idealne rozwiązanie, gdy potrzebujemy szybkiej, ale zdrowej przekąski między posiłkami. Nasze propozycje są nie tylko smaczne, ale przede wszystkim odżywcze i przygotowane z naturalnych składników. Bez zbędnych dodatków i sztucznych konserwantów, stanowią doskonałą alternatywę dla sklepowych przekąsek. Każdy przepis został opracowany tak, aby zaspokoić głód i dostarczyć energii, jednocześnie dbając o zdrowe odżywianie.'
-    },
-    {
-      link: '/kuchnia/lunch',
-      label: 'LUNCH',
-      shortDesc: 'Szybkie i pożywne posiłki do pracy',
-      image: 'lunch.jpg',
-      description: 'Lunch to ważny posiłek w ciągu dnia, szczególnie gdy jesteśmy w pracy lub poza domem. Nasze przepisy na lunch są nie tylko szybkie w przygotowaniu, ale również łatwe do spakowania i zabrania ze sobą. Każda propozycja jest zbilansowana pod względem odżywczym, zapewniając odpowiednią ilość energii na pozostałą część dnia. Stawiamy na różnorodność składników i smaków, aby lunch był nie tylko zdrowy, ale również przyjemny.'
-    },
+    // {
+    //   link: '/kuchnia/salatki-surowki',
+    //   label: 'SAŁATKI i SURÓWKI',
+    //   shortDesc: 'Zdrowe i kolorowe dodatki do dań',
+    //   image: 'salatki.jpg',
+    //   description: 'Sałatki i surówki to doskonały sposób na wzbogacenie każdego posiłku o świeże warzywa i owoce. Pełne witamin, minerałów i błonnika, stanowią nie tylko zdrowy dodatek do dań głównych, ale mogą być również samodzielnym, lekkim posiłkiem. Nasze przepisy łączą w sobie różnorodne składniki, zapewniając nie tylko wartości odżywcze, ale także bogactwo smaków i tekstur. To idealna propozycja dla osób dbających o zdrowe odżywianie i poszukujących świeżych, sezonowych inspiracji kulinarnych.'
+    // },
+    // {
+    //   link: '/kuchnia/snaki',
+    //   label: 'SNAKI',
+    //   shortDesc: 'Zdrowe przekąski na każdą porę',
+    //   image: 'snaki.jpg',
+    //   description: 'Snaki to idealne rozwiązanie, gdy potrzebujemy szybkiej, ale zdrowej przekąski między posiłkami. Nasze propozycje są nie tylko smaczne, ale przede wszystkim odżywcze i przygotowane z naturalnych składników. Bez zbędnych dodatków i sztucznych konserwantów, stanowią doskonałą alternatywę dla sklepowych przekąsek. Każdy przepis został opracowany tak, aby zaspokoić głód i dostarczyć energii, jednocześnie dbając o zdrowe odżywianie.'
+    // },
+    // {
+    //   link: '/kuchnia/lunch',
+    //   label: 'LUNCH',
+    //   shortDesc: 'Szybkie i pożywne posiłki do pracy',
+    //   image: 'lunch.jpg',
+    //   description: 'Lunch to ważny posiłek w ciągu dnia, szczególnie gdy jesteśmy w pracy lub poza domem. Nasze przepisy na lunch są nie tylko szybkie w przygotowaniu, ale również łatwe do spakowania i zabrania ze sobą. Każda propozycja jest zbilansowana pod względem odżywczym, zapewniając odpowiednią ilość energii na pozostałą część dnia. Stawiamy na różnorodność składników i smaków, aby lunch był nie tylko zdrowy, ale również przyjemny.'
+    // },
   ],
   displayGroups: {
     firstRow: ['OBIADY', 'ZUPY', 'CHLEBY', 'SMAROWIDŁA'],

@@ -44,7 +44,7 @@ const HeroHeader = () => {
       <header className="min-h-screen flex flex-col">
         <div className="pt-8 pb-4 static text-gray-50 z-1 shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
           <div className="max-w-7xl mx-auto px-3 sm:px-5 flex flex-col md:flex-row items-center md:items-start justify-between gap-3 sm:gap-5 static">
-            <div className="flex-[0.8] max-w-[125px] sm:max-w-[250px] md:max-w-[450px] relative md:top-[-40px]">
+            <div className="flex-[0.8] max-w-[156px] sm:max-w-[250px] md:max-w-[450px] relative md:top-[-40px]">
               <motion.div 
                 onClick={togglePopup} 
                 className="cursor-pointer"
@@ -55,7 +55,8 @@ const HeroHeader = () => {
               </motion.div>
             </div>
             
-            <Link to="/przepisy" className="flex-2 group relative z-10 mt-4 md:mt-0">
+            {/* Hero text content - separated from the Link component */}
+            <div className="flex-2 group relative z-10 mt-4 md:mt-0">
               <div className="max-w-3xl mx-auto py-4 sm:py-6 px-4 sm:px-8 md:px-16 relative">
                 <div className="absolute inset-0 bg-gradient-radial from-black/10 via-transparent to-transparent transition-all duration-300 group-hover:from-black/20"></div>
                 <motion.div 
@@ -77,9 +78,30 @@ const HeroHeader = () => {
                     Proste, odżywcze przepisy bez glutenu, nabiału krowiego, cukru i <br className="hidden sm:block" />
                     bez smażenia – wspierające zdrowie i rozwój
                   </h2>
+
+                  {/* Link button component for navigation */}
+                  <div className="relative h-16 sm:h-20 w-full flex items-center justify-center mt-6">
+                    <Link to="/przepisy" className="inline-block">
+                      <motion.div
+                        className="px-8 py-2.5 bg-green-600/80 backdrop-blur-sm rounded-full border border-white/50 cursor-pointer
+                              shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center"
+                        whileHover={{ 
+                          backgroundColor: "rgba(22, 163, 74, 0.9)",
+                          scale: 1.05,
+                          y: -2,
+                          transition: { duration: 0.2 }
+                        }}
+                        whileTap={{ scale: 0.97 }}
+                      >
+                        <span className="font-['Patrick_Hand'] text-base md:text-lg text-white tracking-wider drop-shadow-md uppercase px-2 whitespace-nowrap">
+                          ZOBACZ PRZEPISY
+                        </span>
+                      </motion.div>
+                    </Link>
+                  </div>
                 </motion.div>
               </div>
-            </Link>
+            </div>
 
             <div className="hidden md:block flex-[0.8]"></div>
           </div>

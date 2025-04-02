@@ -123,7 +123,7 @@ const CategoryBanner = () => {
             </motion.p>
           </div>
 
-          <div className="relative">
+          <div className="relative flex justify-center">
             <motion.div 
               className={`absolute inset-0 bg-gradient-to-r from-transparent via-${BG_COLOR_LIGHTER} to-transparent 
                 rounded-xl overflow-hidden opacity-60`}
@@ -131,7 +131,7 @@ const CategoryBanner = () => {
               transition={{ duration: 0.3 }}
             />
             
-            <div className="relative px-1 sm:px-2 md:px-4 lg:px-8 overflow-hidden">
+            <div className="relative px-1 sm:px-2 md:px-4 lg:px-8 overflow-hidden w-full max-w-5xl mx-auto">
               <CategoryCarousel 
                 items={allCategoryItems}
                 showViewButton={true}

@@ -19,12 +19,13 @@ const RecipeGrid = ({ recipes }) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto">
       {recipes.map((recipe, index) => (
         <article 
           key={index} 
           className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg 
-            transition-all duration-300 transform hover:scale-[1.02] cursor-pointer"
+            transition-all duration-300 transform hover:scale-[1.02] cursor-pointer
+            max-w-sm mx-auto w-full"
           onClick={() => handleRecipeClick(recipe)}
         >
           <div className="relative h-48 overflow-hidden">
