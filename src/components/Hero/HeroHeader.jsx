@@ -44,7 +44,7 @@ const HeroHeader = () => {
       <header className="min-h-screen flex flex-col">
         <div className="pt-8 pb-4 static text-gray-50 z-1 shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
           <div className="max-w-7xl mx-auto px-3 sm:px-5 flex flex-col md:flex-row items-center md:items-start justify-between gap-3 sm:gap-5 static">
-            <div className="flex-[0.8] max-w-[250px] sm:max-w-[350px] md:max-w-[450px] relative md:top-[-40px]">
+            <div className="flex-[0.8] max-w-[125px] sm:max-w-[250px] md:max-w-[450px] relative md:top-[-40px]">
               <motion.div 
                 onClick={togglePopup} 
                 className="cursor-pointer"
@@ -69,11 +69,11 @@ const HeroHeader = () => {
                     <span className="text-xl sm:text-2xl md:text-3xl font-normal tracking-wider opacity-95 transition-all duration-300 group-hover:opacity-100">
                       TRANSFORMUJĄCA <br/>
                       FUNKCJONOWANIE <br/>
-                      W AUTYŹMIE I ZABURZENIACH <br/>
-                      NEUROROZWOJOWYCH
+                      W AUTYŹMIE I ZABURZENIACH <br className="hidden sm:block" />
+                      <span className="hidden sm:inline">NEUROROZWOJOWYCH</span>
                     </span>
                   </h1>
-                  <h2 className="mt-4 sm:mt-6 font-['Patrick_Hand'] text-base sm:text-lg md:text-xl font-normal text-gray-50/90 leading-relaxed text-center tracking-wide transition-all duration-300 group-hover:text-white">
+                  <h2 className="hidden sm:block mt-4 sm:mt-6 font-['Patrick_Hand'] text-base sm:text-lg md:text-xl font-normal text-gray-50/90 leading-relaxed text-center tracking-wide transition-all duration-300 group-hover:text-white">
                     Proste, odżywcze przepisy bez glutenu, nabiału krowiego, cukru i <br className="hidden sm:block" />
                     bez smażenia – wspierające zdrowie i rozwój
                   </h2>
