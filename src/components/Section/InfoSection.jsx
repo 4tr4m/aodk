@@ -1,95 +1,230 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Button } from '../UI/Button';
+import InfoModal from '../Pages/InfoModal';
 
 const InfoSection = () => {
   const navigate = useNavigate();
+  const prefersReducedMotion = useReducedMotion();
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   const handleClick = () => {
     navigate('/kuchnia');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const toggleInfoModal = () => {
+    setShowInfoModal(!showInfoModal);
+  };
+
+  // Animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
   return (
-    <section className="relative bg-[#F6EFE9] py-16 md:py-24 overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute left-0 top-1/4 w-24 h-24 md:w-32 md:h-32 bg-green-50/40 rounded-full 
-        blur-3xl -translate-x-1/2" />
-      <div className="absolute right-0 bottom-1/4 w-32 h-32 md:w-40 md:h-40 bg-green-50/40 rounded-full 
-        blur-3xl translate-x-1/2" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <img 
-              src="/img/logo.jpg" 
-              alt="Logo Autyzm od Kuchni" 
-              className="w-16 h-16 md:w-20 md:h-20 rounded-full shadow-md"
+    <>
+      <section className="relative bg-[#F6EFE9] py-10 sm:py-14 md:py-20 overflow-hidden will-change-transform">
+        {/* Decorative elements */}
+        {!prefersReducedMotion && (
+          <>
+            <motion.div 
+              className="absolute left-0 top-1/4 w-20 h-20 md:w-32 md:h-32 bg-green-50/40 rounded-full blur-3xl -translate-x-1/2"
+              animate={{ 
+                scale: [1, 1.1, 1],
+                opacity: [0.3, 0.4, 0.3] 
+              }}
+              transition={{ 
+                duration: 5,
+                repeat: Infinity,
+                ease: "easeInOut" 
+              }}
             />
-            <h2 className="font-['Caveat'] text-3xl md:text-4xl lg:text-5xl text-[#2D3748] font-bold">
-              Autyzm od Kuchni
-            </h2>
-          </div>
-          <p className="text-gray-600 text-lg md:text-xl max-w-2xl mx-auto font-['Lato']">
-            Zdrowe gotowanie wspierające rozwój
-          </p>
-        </div>
+            <motion.div 
+              className="absolute right-0 bottom-1/4 w-24 h-24 md:w-40 md:h-40 bg-green-50/40 rounded-full blur-3xl translate-x-1/2"
+              animate={{ 
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.5, 0.3] 
+              }}
+              transition={{ 
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 1 
+              }}
+            />
+          </>
+        )}
 
-        {/* Main Content */}
-        <div className="space-y-12 max-w-3xl mx-auto">
-          <div className="prose prose-lg text-gray-600 font-['Lato']">
-            <p className="mb-6">
-              Dieta w autyzmie odgrywa kluczową rolę w codziennym funkcjonowaniu. 
-              <span className="text-green-700 font-semibold"> Odpowiednio dobrane posiłki mogą znacząco 
-              wpłynąć na samopoczucie i rozwój</span>. Nasze przepisy zostały stworzone z myślą o 
-              specjalnych potrzebach żywieniowych, eliminując składniki, które często powodują problemy.
-            </p>
-
-            <p className="mb-6">
-              Wszystkie nasze przepisy są <span className="text-green-700 font-semibold">bezglutenowe, 
-              bez nabiału krowiego i bez zbędnego cukru</span>. Stawiamy na naturalne składniki i proste 
-              metody przygotowania, które nie wymagają smażenia.
-            </p>
-          </div>
-
-          {/* Features Section */}
-          <div className="grid md:grid-cols-3 gap-8 py-8">
-            <div className="text-center p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="font-['Caveat'] text-2xl text-[#2D3748] mb-3">Bez Glutenu</h3>
-              <p className="text-gray-600">Wszystkie przepisy są bezpieczne dla osób z celiakią</p>
+        <motion.div 
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          variants={staggerContainer}
+        >
+          {/* Header Section */}
+          <motion.div className="text-center mb-8 sm:mb-10 md:mb-12" variants={fadeInUp}>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+              <motion.div 
+                className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full shadow-md overflow-hidden cursor-pointer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.3 }}
+                onClick={toggleInfoModal}
+              >
+                <div className="absolute inset-0 bg-black/30"></div>
+                <img 
+                  src="/img/logo.png" 
+                  alt="Logo Autyzm od Kuchni" 
+                  className="w-full h-full object-cover relative z-1"
+                />
+              </motion.div>
+              <motion.h2 
+                className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-[#2D3748] font-bold tracking-wide mt-2 sm:mt-0"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                Autyzm od Kuchni
+              </motion.h2>
             </div>
-            <div className="text-center p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="font-['Caveat'] text-2xl text-[#2D3748] mb-3">Bez Nabiału</h3>
-              <p className="text-gray-600">Wykluczamy nabiał krowi ze wszystkich przepisów</p>
-            </div>
-            <div className="text-center p-6 bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="font-['Caveat'] text-2xl text-[#2D3748] mb-3">Bez Smażenia</h3>
-              <p className="text-gray-600">Zdrowe metody przygotowania potraw</p>
-            </div>
-          </div>
+            <motion.p className="text-gray-600 text-lg md:text-xl lg:text-2xl max-w-2xl mx-auto font-['Lato'] leading-relaxed tracking-wide">
+              Zdrowe gotowanie wspierające rozwój
+            </motion.p>
+          </motion.div>
 
-          {/* CTA Section */}
-          <div className="text-center bg-gradient-to-r from-green-50 via-green-100/50 to-green-50 
-            rounded-3xl p-8 md:p-12">
-            <h3 className="font-['Caveat'] text-3xl text-[#2D3748] mb-6">
-              Odkryj Nasze Przepisy
-            </h3>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-              Znajdź inspirację wśród naszych sprawdzonych przepisów, które łączą w sobie smak i wartości 
-              odżywcze, wspierając prawidłowy rozwój i dobre samopoczucie.
-            </p>
-            <button 
-              onClick={handleClick}
-              className="bg-green-600 text-white px-8 py-3 rounded-full font-['Lato'] text-lg
-                hover:bg-green-700 transform hover:scale-105 transition-all duration-300
-                shadow-md hover:shadow-lg"
+          {/* Main Content */}
+          <motion.div className="space-y-8 sm:space-y-10 max-w-3xl mx-auto" variants={fadeInUp}>
+            <motion.div className="prose prose-lg text-gray-600 font-['Lato'] space-y-4" variants={fadeInUp}>
+              <motion.p className="text-base sm:text-lg leading-relaxed px-2 sm:px-0">
+                Dieta w autyzmie odgrywa kluczową rolę w codziennym funkcjonowaniu. 
+                <span className="text-green-700 font-semibold"> Odpowiednio dobrane posiłki mogą znacząco 
+                wpłynąć na samopoczucie i rozwój</span>. Nasze przepisy zostały stworzone z myślą o 
+                specjalnych potrzebach żywieniowych, eliminując składniki, które często powodują problemy.
+              </motion.p>
+
+              <motion.p className="text-base sm:text-lg leading-relaxed px-2 sm:px-0">
+                Wszystkie nasze przepisy są <span className="text-green-700 font-semibold">bezglutenowe, 
+                bez nabiału krowiego i bez zbędnego cukru</span>. Stawiamy na naturalne składniki i proste 
+                metody przygotowania, które nie wymagają smażenia.
+              </motion.p>
+            </motion.div>
+
+            {/* Features Section */}
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 py-4 sm:py-6"
+              variants={staggerContainer}
             >
-              Zobacz Przepisy
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
+              <motion.div 
+                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
+                variants={fadeInUp}
+                whileHover={{ y: -5 }}
+              >
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
+                  <div className="h-full w-full bg-gray-200">
+                    <img src="/img/noGluten.jpg" alt="Bez glutenu" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
+                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Glutenu</h3>
+                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Wszystkie przepisy są bezpieczne dla osób z celiakią</p>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
+                variants={fadeInUp}
+                whileHover={{ y: -5 }}
+              >
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
+                  <div className="h-full w-full bg-gray-200">
+                    <img src="/img/noDairy.jpg" alt="Bez nabiału" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
+                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Nabiału</h3>
+                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Wykluczamy nabiał krowi ze wszystkich przepisów</p>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group sm:col-span-2 md:col-span-1"
+                variants={fadeInUp}
+                whileHover={{ y: -5 }}
+              >
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
+                  <div className="h-full w-full bg-gray-200">
+                    <img src="/img/noFry.jpg" alt="Bez smażenia" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
+                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Smażenia</h3>
+                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Zdrowe metody przygotowania potraw</p>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* CTA Section */}
+            <motion.div 
+              className="text-center bg-gradient-to-r from-green-50/80 via-green-100/50 to-green-50/80 rounded-xl sm:rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 shadow-sm"
+              variants={fadeInUp}
+            >
+              <motion.h3 
+                className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-[#2D3748] mb-4 sm:mb-6 font-semibold tracking-wide"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 400 }}
+              >
+                Odkryj Nasze Przepisy
+              </motion.h3>
+              <motion.p className="text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+                Znajdź inspirację wśród naszych sprawdzonych przepisów, które łączą w sobie smak i wartości 
+                odżywcze, wspierając prawidłowy rozwój i dobre samopoczucie.
+              </motion.p>
+              <motion.div 
+                className="flex justify-center"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Button 
+                  text="Zobacz Przepisy" 
+                  size="lg" 
+                  variant="primary" 
+                  onClick={handleClick}
+                  animate={true}
+                  className="px-6 sm:px-8 md:px-10 py-2 sm:py-3 text-base sm:text-lg font-semibold shadow-md hover:shadow-lg cursor-pointer"
+                />
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Modal positioned outside the section to appear in the center of the page */}
+      <InfoModal isOpen={showInfoModal} togglePopup={toggleInfoModal} />
+    </>
   );
 };
 

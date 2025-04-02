@@ -9,7 +9,6 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
     if (!container || !element) return;
 
     const containerWidth = container.offsetWidth;
-    const scrollLeft = container.scrollLeft;
     const elementLeft = element.offsetLeft;
     const elementWidth = element.offsetWidth;
 
