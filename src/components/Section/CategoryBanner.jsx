@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import CategoryCarousel from '../UI/CategoryCarousel';
-import { getCategories } from '../../data/categories';
+import { kuchniaCategories } from '../../Data/category-data'; 
 import { useInView } from 'react-intersection-observer';
 
 const BG_COLOR_LIGHTER = "gray-100";
 const SECTION_BG = `bg-${BG_COLOR_LIGHTER}`;
 
 const CategoryBanner = () => {
-  const [categories, setCategories] = useState([]);
   const [allCategoryItems, setAllCategoryItems] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const bannerRef = useRef(null);
@@ -47,28 +46,20 @@ const CategoryBanner = () => {
   };
 
   useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const data = await getCategories();
-        setCategories(data);
-        
-        // Format categories for the carousel with images and links
-        const items = data.map(category => ({
-          id: category.id,
-          label: category.name,
-          image: category.image || 'category-default.jpg',
-          shortDesc: category.description || 'Odkryj nasze pyszne przepisy!',
-          link: `/kategoria/${category.id}`
-        }));
-        
-        setAllCategoryItems(items);
-        setIsLoaded(true);
-      } catch (error) {
-        console.error('Error loading categories:', error);
-      }
-    };
+    // Use the kuchniaCategories directly instead of fetching
+    const categories = kuchniaCategories.mainCategories;
     
-    loadCategories();
+    // Format categories for the carousel
+    const items = categories.map(category => ({
+      id: category.label,
+      label: category.label,
+      image: category.image || 'category-default.jpg',
+      shortDesc: category.shortDesc || 'Odkryj nasze pyszne przepisy!',
+      link: category.link
+    }));
+    
+    setAllCategoryItems(items);
+    setIsLoaded(true);
   }, []);
 
   const headerRef = useRef(null);
