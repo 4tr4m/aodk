@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
-import { FaSearch, FaTimes } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SearchBar = memo(function SearchBar({ 
@@ -10,7 +10,9 @@ const SearchBar = memo(function SearchBar({
   suggestions = [],
   onSuggestionSelect,
   highlightedTerm = '',
-  minCharsForSuggestions = 3
+  minCharsForSuggestions = 2,
+  onChange,
+  showCloseButton = true
 }) {
   const [isOpen, setIsOpen] = useState(initialOpen);
   const [searchTerm, setSearchTerm] = useState('');
@@ -35,17 +37,23 @@ const SearchBar = memo(function SearchBar({
     const value = event.target.value;
     setSearchTerm(value);
     
+    // Notify parent component of change
+    if (onChange) {
+      onChange(value);
+    }
+    
     // Show suggestions only if we have more than minimum characters
     setShowSuggestions(value.length >= minCharsForSuggestions && suggestions.length > 0);
     setSelectedSuggestionIndex(-1); // Reset selection when typing
-  }, [suggestions, minCharsForSuggestions]);
+  }, [suggestions, minCharsForSuggestions, onChange]);
 
-  const handleSuggestionClick = useCallback((suggestion) => {
+  const handleSuggestionClick = useCallback((suggestion, index) => {
     if (onSuggestionSelect) {
       onSuggestionSelect(suggestion);
     } else {
       setSearchTerm(suggestion.name);
       setShowSuggestions(false);
+      setSelectedSuggestionIndex(index);
       // Submit the search
       if (onSearchSubmit) {
         onSearchSubmit(suggestion.name);
@@ -58,7 +66,7 @@ const SearchBar = memo(function SearchBar({
     
     // If a suggestion is selected, use that
     if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < suggestions.length) {
-      handleSuggestionClick(suggestions[selectedSuggestionIndex]);
+      handleSuggestionClick(suggestions[selectedSuggestionIndex], selectedSuggestionIndex);
       return;
     }
     
@@ -161,21 +169,61 @@ const SearchBar = memo(function SearchBar({
     };
   }, [isOpen, closeSearch, showSuggestions]);
 
-  // Helper function to highlight the matching text
+  // Helper function to normalize Polish characters
+  const normalizePolishChars = (text) => {
+    if (!text) return '';
+    return text
+      .toLowerCase()
+      .replace(/ą/g, 'a')
+      .replace(/ć/g, 'c')
+      .replace(/ę/g, 'e')
+      .replace(/ł/g, 'l')
+      .replace(/ń/g, 'n')
+      .replace(/ó/g, 'o')
+      .replace(/ś/g, 's')
+      .replace(/ź/g, 'z')
+      .replace(/ż/g, 'z');
+  };
+
+  // Updated highlightMatch function
   const highlightMatch = (text, term) => {
     if (!term || typeof text !== 'string') return text;
     
     const lowerText = text.toLowerCase();
-    const lowerTerm = term.toLowerCase();
+    const normalizedText = normalizePolishChars(text.toLowerCase());
+    const normalizedTerm = normalizePolishChars(term.toLowerCase());
     
-    if (!lowerText.includes(lowerTerm)) return text;
+    // If exact match found with accents
+    if (lowerText.includes(term.toLowerCase())) {
+      const parts = text.split(new RegExp(`(${term})`, 'gi'));
+      return parts.map((part, index) => 
+        part.toLowerCase() === term.toLowerCase() ? 
+          <span key={index} className="bg-green-100 text-green-800 font-medium">{part}</span> : 
+          part
+      );
+    }
     
-    const parts = text.split(new RegExp(`(${term})`, 'gi'));
-    return parts.map((part, index) => 
-      part.toLowerCase() === lowerTerm ? 
-        <span key={index} className="bg-green-100 text-green-800 font-medium">{part}</span> : 
-        part
-    );
+    // If match found after normalizing Polish chars
+    if (normalizedText.includes(normalizedTerm)) {
+      // We need to find position of the match in normalized text
+      const startPos = normalizedText.indexOf(normalizedTerm);
+      const endPos = startPos + normalizedTerm.length;
+      
+      // Extract the original text segment that matches
+      const beforeMatch = text.substring(0, startPos);
+      const match = text.substring(startPos, endPos);
+      const afterMatch = text.substring(endPos);
+      
+      return (
+        <>
+          {beforeMatch}
+          <span className="bg-green-100 text-green-800 font-medium">{match}</span>
+          {afterMatch}
+        </>
+      );
+    }
+    
+    return text;
   };
 
   return (
@@ -219,18 +267,20 @@ const SearchBar = memo(function SearchBar({
         </button>
 
         {/* Close Icon */}
-        <button
-          type="button"
-          onClick={closeSearch}
-          aria-label="Close search"
-          className={`
-            absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 transform cursor-pointer text-xl sm:text-2xl text-gray-600
-            hover:text-gray-800 hover:scale-110 transition-all duration-[800ms] ease-in-out
-            ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10 pointer-events-none'}
-          `}
-        >
-          <FaTimes />
-        </button>
+        {showCloseButton !== false && (
+          <button
+            type="button"
+            onClick={closeSearch}
+            aria-label="Close search"
+            className={`
+              absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 transform cursor-pointer text-xl sm:text-2xl text-gray-600
+              hover:text-gray-800 hover:scale-110 transition-all duration-[800ms] ease-in-out
+              ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10 pointer-events-none'}
+            `}
+          >
+            <FaSearch />
+          </button>
+        )}
       </form>
 
       {/* Suggestions dropdown */}
@@ -241,31 +291,52 @@ const SearchBar = memo(function SearchBar({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute z-50 mt-2 w-full max-w-3xl sm:max-w-4xl md:max-w-5xl max-h-[60vh] overflow-y-auto rounded-lg shadow-lg bg-white border border-gray-200 left-1/2 transform -translate-x-1/2"
+            className="absolute z-50 top-full w-full mx-auto left-0 right-0 mt-2 max-h-[60vh] overflow-y-auto rounded-lg shadow-lg bg-white border border-gray-200"
             ref={suggestionsRef}
+            style={{
+              position: 'absolute',
+              top: '100%'
+            }}
           >
             <ul className="py-2 divide-y divide-gray-100">
               {suggestions.map((suggestion, index) => (
                 <li 
                   key={suggestion.id || index}
-                  className={`px-4 py-2 cursor-pointer hover:bg-gray-50 transition-colors duration-200
+                  className={`px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors duration-200
                     ${selectedSuggestionIndex === index ? 'bg-gray-100' : ''}
                   `}
-                  onClick={() => handleSuggestionClick(suggestion)}
+                  onClick={() => handleSuggestionClick(suggestion, index)}
                 >
-                  <div className="font-medium text-gray-800">
-                    {highlightMatch(suggestion.name, highlightedTerm || searchTerm)}
+                  <div className="font-medium text-gray-800 text-sm sm:text-base">
+                    {highlightMatch(
+                      typeof suggestion.name === 'string'
+                        ? suggestion.name
+                        : '',
+                      highlightedTerm || searchTerm
+                    )}
                   </div>
                   
                   {suggestion.category && (
-                    <div className="text-sm text-gray-500">
-                      Kategoria: {highlightMatch(suggestion.category, highlightedTerm || searchTerm)}
+                    <div className="text-xs sm:text-sm text-gray-500">
+                      Kategoria: {highlightMatch(
+                        typeof suggestion.category === 'string'
+                          ? suggestion.category
+                          : '',
+                        highlightedTerm || searchTerm
+                      )}
                     </div>
                   )}
                   
                   {suggestion.ingredients && (
-                    <div className="text-sm text-gray-500 line-clamp-1">
-                      Składniki: {highlightMatch(suggestion.ingredients.join(', '), highlightedTerm || searchTerm)}
+                    <div className="text-xs sm:text-sm text-gray-500 line-clamp-1">
+                      Składniki: {highlightMatch(
+                        Array.isArray(suggestion.ingredients) 
+                          ? suggestion.ingredients.join(', ') 
+                          : typeof suggestion.ingredients === 'string'
+                            ? suggestion.ingredients
+                            : '',
+                        highlightedTerm || searchTerm
+                      )}
                     </div>
                   )}
                 </li>

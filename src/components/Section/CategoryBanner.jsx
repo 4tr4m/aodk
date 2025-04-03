@@ -171,10 +171,8 @@ const CategoryBanner = () => {
       
       // Set a new timeout to debounce the search
       searchTimeoutRef.current = setTimeout(async () => {
-        // Get search results from service
-        const searchResults = await searchService.searchRecipes(term);
-        // Format the results for the search bar
-        const formattedSuggestions = searchService.formatSuggestions(searchResults);
+        // Get search suggestions from service
+        const formattedSuggestions = await searchService.getSuggestions(term);
         setSuggestions(formattedSuggestions);
       }, 300); // 300ms debounce delay
     } catch (error) {

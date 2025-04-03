@@ -1,115 +1,104 @@
 import recipeService from './recipeService';
 
-const searchService = {
-  // Filter recipes based on search term
-  searchRecipes: async (searchTerm, maxResults = 10) => {
-    if (!searchTerm || searchTerm.length < 3) {
+// Helper function to format recipe as a search suggestion
+const formatRecipeAsSuggestion = (recipe) => {
+  return {
+    id: recipe.id,
+    name: recipe.name || '',
+    category: recipe.category || '',
+    ingredients: recipe.ingredients || [],
+    image: recipe.image || '',
+    slug: recipe.slug || '',
+  };
+};
+
+// Search recipes based on search term
+const searchRecipes = async (searchTerm, limit = 50) => {
+  if (!searchTerm || searchTerm.trim().length < 2) {
+    return [];
+  }
+
+  try {
+    const allRecipes = await recipeService.getAllRecipes();
+    
+    if (!allRecipes || !Array.isArray(allRecipes)) {
+      console.error('Invalid recipes data:', allRecipes);
       return [];
     }
 
-    try {
-      // Get all recipes from Supabase
-      const recipes = await recipeService.getAllRecipes();
-      
-      if (!recipes || recipes.length === 0) {
-        return [];
-      }
-
-      const lowerSearchTerm = searchTerm.toLowerCase();
-      
-      // Filter recipes that match the search term in name, category, or ingredients
-      const filteredRecipes = recipes.filter(recipe => {
-        // Check recipe name
-        if (recipe.name && recipe.name.toLowerCase().includes(lowerSearchTerm)) {
-          return true;
-        }
-        
-        // Check recipe category
-        if (recipe.category && recipe.category.toLowerCase().includes(lowerSearchTerm)) {
-          return true;
-        }
-        
-        // Check recipe ingredients
-        if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
-          return recipe.ingredients.some(ingredient => {
-            if (typeof ingredient === 'string') {
-              return ingredient.toLowerCase().includes(lowerSearchTerm);
-            } else if (ingredient && typeof ingredient === 'object' && ingredient.name) {
-              return ingredient.name.toLowerCase().includes(lowerSearchTerm);
-            }
-            return false;
-          });
-        }
-        
-        return false;
-      });
-      
-      // Add a match score to each recipe to help sort by relevance
-      const scoredRecipes = filteredRecipes.map(recipe => {
+    const term = searchTerm.toLowerCase().trim();
+    
+    // Score and filter recipes based on relevance
+    const scoredRecipes = allRecipes
+      .map(recipe => {
         let score = 0;
         
-        // Higher score for matches in name
-        if (recipe.name && recipe.name.toLowerCase().includes(lowerSearchTerm)) {
-          score += 10;
-          // Even higher score for matches at the beginning of name
-          if (recipe.name.toLowerCase().startsWith(lowerSearchTerm)) {
-            score += 5;
+        // Name match (highest priority)
+        if (recipe.name && recipe.name.toLowerCase().includes(term)) {
+          score += 100;
+          // Bonus for exact match or match at start of name
+          if (recipe.name.toLowerCase() === term) {
+            score += 50;
+          } else if (recipe.name.toLowerCase().startsWith(term)) {
+            score += 25;
           }
         }
         
-        // Medium score for matches in category
-        if (recipe.category && recipe.category.toLowerCase().includes(lowerSearchTerm)) {
-          score += 5;
+        // Category match
+        if (recipe.category && recipe.category.toLowerCase().includes(term)) {
+          score += 50;
         }
         
-        // Lower score for matches in ingredients
+        // Ingredients match
         if (recipe.ingredients && Array.isArray(recipe.ingredients)) {
           recipe.ingredients.forEach(ingredient => {
-            let ingredientName = '';
-            if (typeof ingredient === 'string') {
-              ingredientName = ingredient;
-            } else if (ingredient && typeof ingredient === 'object' && ingredient.name) {
-              ingredientName = ingredient.name;
-            }
-            
-            if (ingredientName.toLowerCase().includes(lowerSearchTerm)) {
-              score += 2;
-              // Slightly higher score if the ingredient starts with the search term
-              if (ingredientName.toLowerCase().startsWith(lowerSearchTerm)) {
-                score += 1;
-              }
+            if (ingredient && ingredient.toLowerCase().includes(term)) {
+              score += 25;
             }
           });
         }
         
-        return {
-          ...recipe,
-          score
-        };
-      });
+        // Preparation steps match
+        if (recipe.preparation && Array.isArray(recipe.preparation)) {
+          recipe.preparation.forEach(step => {
+            if (step && step.toLowerCase().includes(term)) {
+              score += 10;
+            }
+          });
+        }
+        
+        return { recipe, score };
+      })
+      .filter(item => item.score > 0) // Only keep matches
+      .sort((a, b) => b.score - a.score) // Sort by score (descending)
+      .slice(0, limit) // Limit number of results
+      .map(item => item.recipe); // Extract recipes
       
-      // Sort by score (highest first) and limit results
-      return scoredRecipes
-        .sort((a, b) => b.score - a.score)
-        .slice(0, maxResults);
-    } catch (error) {
-      console.error("Error in search service:", error.message);
-      return [];
-    }
-  },
-  
-  // Format suggestions for the search bar
-  formatSuggestions: (recipes) => {
-    return recipes.map(recipe => ({
-      id: recipe.id,
-      name: recipe.name,
-      category: recipe.category,
-      ingredients: Array.isArray(recipe.ingredients) 
-        ? recipe.ingredients.map(ing => typeof ing === 'string' ? ing : ing.name)
-        : [],
-      original: recipe // Keep the original recipe data
-    }));
+    return scoredRecipes;
+  } catch (error) {
+    console.error('Error searching recipes:', error);
+    throw new Error('Failed to search recipes');
   }
+};
+
+// Get search suggestions based on partial input
+const getSuggestions = async (searchTerm, limit = 10) => {
+  if (!searchTerm || searchTerm.trim().length < 2) {
+    return [];
+  }
+  
+  try {
+    const matchingRecipes = await searchRecipes(searchTerm, limit);
+    return matchingRecipes.map(formatRecipeAsSuggestion);
+  } catch (error) {
+    console.error('Error getting suggestions:', error);
+    return [];
+  }
+};
+
+const searchService = {
+  searchRecipes,
+  getSuggestions
 };
 
 export default searchService; 
