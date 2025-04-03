@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import { motion, useReducedMotion } from 'framer-motion';
-import { Button } from '../UI/Button';
+import { InfoActionButton } from '../UI/Button';
 import InfoModal from '../Pages/InfoModal';
 
 const InfoSection = () => {
-  const navigate = useNavigate();
   const prefersReducedMotion = useReducedMotion();
   const [showInfoModal, setShowInfoModal] = useState(false);
 
-  const handleClick = () => {
-    navigate('/kuchnia');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  // const handleClick = () => {
+  //   navigate('/kuchnia');
+  //   window.scrollTo({ top: 0, behavior: 'smooth' });
+  // };
 
   const toggleInfoModal = () => {
     setShowInfoModal(!showInfoModal);
@@ -83,47 +82,52 @@ const InfoSection = () => {
           viewport={{ once: true, amount: 0.1 }}
           variants={staggerContainer}
         >
-          {/* Header Section */}
-          <motion.div className="text-center mb-8 sm:mb-10 md:mb-12" variants={fadeInUp}>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+          {/* Header Section - Enhanced UX/UI */}
+          <motion.div className="text-center mb-8 sm:mb-10 md:mb-12 relative" variants={fadeInUp}>
+            <div className="inline-flex flex-col items-center relative mb-2 sm:mb-3">
               <motion.div 
-                className="relative w-32 h-32 sm:w-20 sm:h-20 md:w-24 md:h-24 lg:w-28 lg:h-28 rounded-full shadow-md overflow-hidden cursor-pointer"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.3 }}
+                className="relative w-40 h-40 sm:w-44 sm:h-44 md:w-48 md:h-48 rounded-full shadow-lg overflow-hidden cursor-pointer border-4 border-white/50 mb-4"
+                whileHover={{ scale: 1.08, boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.1)' }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300, damping: 15 }}
                 onClick={toggleInfoModal}
               >
-                <div className="absolute inset-0 bg-black/30"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-400/20 to-gray-600/30 backdrop-blur-[2px]"></div>
                 <img 
                   src="/img/logo.png" 
                   alt="Logo Autyzm od Kuchni" 
-                  className="w-full h-full object-cover relative z-1"
+                  className="w-full h-full object-contain p-3 sm:p-4 relative z-10 filter drop-shadow(0 1px 1px rgba(0,0,0,0.3))"
                 />
               </motion.div>
               <motion.h2 
-                className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-[#2D3748] font-bold tracking-wide mt-2 sm:mt-0"
-                whileHover={{ scale: 1.02 }}
+                className="font-['Playfair_Display'] text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[#1A202C] font-extrabold tracking-tight mt-2 sm:mt-0 drop-shadow-sm"
+                whileHover={{ scale: 1.02, color: '#2C5282' }}
                 transition={{ type: "spring", stiffness: 400 }}
               >
                 Autyzm od Kuchni
               </motion.h2>
+              <motion.p 
+                className="text-gray-500 text-lg md:text-xl lg:text-2xl max-w-2xl mx-auto font-['Lato'] leading-relaxed tracking-wide mt-2"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+              >
+                Zdrowe gotowanie wspierające rozwój
+              </motion.p>
             </div>
-            <motion.p className="text-gray-600 text-lg md:text-xl lg:text-2xl max-w-2xl mx-auto font-['Lato'] leading-relaxed tracking-wide">
-              Zdrowe gotowanie wspierające rozwój
-            </motion.p>
           </motion.div>
 
           {/* Main Content */}
-          <motion.div className="space-y-8 sm:space-y-10 max-w-3xl mx-auto" variants={fadeInUp}>
+          <motion.div className="space-y-8 sm:space-y-10 max-w-3xl mx-auto mt-6 sm:mt-8" variants={fadeInUp}>
             <motion.div className="prose prose-lg text-gray-600 font-['Lato'] space-y-4" variants={fadeInUp}>
-              <motion.p className="text-base sm:text-lg leading-relaxed px-2 sm:px-0">
+              <motion.p className="text-lg sm:text-xl leading-relaxed px-2 sm:px-0">
                 Dieta w autyzmie odgrywa kluczową rolę w codziennym funkcjonowaniu. 
                 <span className="text-green-700 font-semibold"> Odpowiednio dobrane posiłki mogą znacząco 
                 wpłynąć na samopoczucie i rozwój</span>. Nasze przepisy zostały stworzone z myślą o 
                 specjalnych potrzebach żywieniowych, eliminując składniki, które często powodują problemy.
               </motion.p>
 
-              <motion.p className="text-base sm:text-lg leading-relaxed px-2 sm:px-0">
+              <motion.p className="text-lg sm:text-xl leading-relaxed px-2 sm:px-0">
                 Wszystkie nasze przepisy są <span className="text-green-700 font-semibold">bezglutenowe, 
                 bez nabiału krowiego i bez zbędnego cukru</span>. Stawiamy na naturalne składniki i proste 
                 metody przygotowania, które nie wymagają smażenia.
@@ -187,34 +191,38 @@ const InfoSection = () => {
               </motion.div>
             </motion.div>
 
-            {/* CTA Section */}
+            {/* CTA Section - Enhanced UX/UI */}
             <motion.div 
-              className="text-center bg-gradient-to-r from-green-50/80 via-green-100/50 to-green-50/80 rounded-xl sm:rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 shadow-sm"
+              className="text-center bg-gradient-to-br from-green-100 via-green-50 to-yellow-50/80 rounded-2xl sm:rounded-3xl md:rounded-[30px] p-6 sm:p-8 md:p-12 shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden relative"
               variants={fadeInUp}
+              whileHover={{ scale: 1.01, transition: { duration: 0.3 } }}
             >
+              {/* Subtle background elements */}
+              <div className="absolute inset-0 opacity-10 pointer-events-none">
+                <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-green-200/50 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-yellow-100/50 rounded-full blur-3xl"></div>
+              </div>
+              
               <motion.h3 
-                className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-[#2D3748] mb-4 sm:mb-6 font-semibold tracking-wide"
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 400 }}
+                className="relative font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-green-800 mb-4 sm:mb-6 font-bold tracking-tight drop-shadow-sm"
+                whileHover={{ scale: 1.02, transition: { type: "spring", stiffness: 400 } }}
               >
                 Odkryj Nasze Przepisy
               </motion.h3>
-              <motion.p className="text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed">
+              <motion.p className="relative text-gray-700 mb-8 sm:mb-10 max-w-2xl mx-auto text-base sm:text-lg md:text-xl leading-relaxed">
                 Znajdź inspirację wśród naszych sprawdzonych przepisów, które łączą w sobie smak i wartości 
                 odżywcze, wspierając prawidłowy rozwój i dobre samopoczucie.
               </motion.p>
               <motion.div 
-                className="flex justify-center"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                className="relative flex justify-center"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.99 }}
+                transition={{ type: "spring", stiffness: 300 }}
               >
-                <Button 
-                  text="Zobacz Przepisy" 
+                <InfoActionButton 
+                  text="ODKRYJ PRZEPISY" 
+                  to="/kuchnia"
                   size="lg" 
-                  variant="primary" 
-                  onClick={handleClick}
-                  animate={true}
-                  className="px-6 sm:px-8 md:px-10 py-2 sm:py-3 text-base sm:text-lg font-semibold shadow-md hover:shadow-lg cursor-pointer"
                 />
               </motion.div>
             </motion.div>

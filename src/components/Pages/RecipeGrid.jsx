@@ -15,7 +15,7 @@ const RecipeGrid = ({ recipes }) => {
     // Then set the selected recipe to show the modal
     setTimeout(() => {
       setSelectedRecipe(recipe);
-    }, 300); // Small delay to ensure smooth scrolling
+    }, 1000); // Small delay to ensure smooth scrolling
   };
 
   return (

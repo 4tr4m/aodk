@@ -150,11 +150,33 @@ export const Button = ({
 };
 
 /**
- * Hero section action button with enhanced animations
+ * Hero section action button - TYLKO DO PRZEWIJANIA W DÓŁ
  */
-export const HeroActionButton = ({ text = 'ODKRYJ PRZEPISY', to = '/przepisy', onClick, size = 'hero' }) => {
+export const HeroActionButton = ({ 
+  text = 'ODKRYJ PRZEPISY', 
+  size = 'hero' 
+}) => {
   // Use the standardized button dimensions
   const { padding, fontSize } = BUTTON_STYLES[size];
+
+  // Prosta funkcja przewijania w dół do sekcji kategorii
+  const scrollDown = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    
+    // Znajdź element po ID
+    const categorySection = document.getElementById('categories');
+    
+    if (categorySection) {
+      // Jeśli znaleziono element, scrolluj do niego
+      categorySection.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+    } else {
+      // Jeśli nie znaleziono elementu, użyj window.location.hash jako fallback
+      window.location.hash = 'categories';
+    }
+  };
 
   return (
     <div className="inline-block">
@@ -183,7 +205,7 @@ export const HeroActionButton = ({ text = 'ODKRYJ PRZEPISY', to = '/przepisy', o
           }
         }}
         whileTap={{ scale: 0.97 }}
-        onClick={onClick}
+        onClick={scrollDown}
       >
         {/* Pulse ring effect */}
         <motion.span 
@@ -213,5 +235,80 @@ export const HeroActionButton = ({ text = 'ODKRYJ PRZEPISY', to = '/przepisy', o
   );
 };
 
+/**
+ * Info section action button - TYLKO DO NAWIGACJI
+ */
+export const InfoActionButton = ({ 
+  text = 'ODKRYJ PRZEPISY', 
+  to = '/kuchnia',
+  size = 'lg' 
+}) => {
+  // Use the standardized button dimensions
+  const { padding, fontSize } = BUTTON_STYLES[size];
+
+  // Bezpośrednia nawigacja z przewinięciem na górę
+  const navigate = () => {
+    // Przekierowanie do innej strony za pomocą window.location
+    window.location.href = to;
+    // Przewinięcie na górę strony
+    window.scrollTo(0, 0);
+  };
+
+  return (
+    <div className="inline-block">
+      <motion.div
+        className={`${padding} bg-green-600/80 backdrop-blur-sm rounded-full border border-white/50 cursor-pointer
+                shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center relative`}
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ 
+          scale: [1, 1.05, 1],
+          opacity: 1,
+          transition: {
+            scale: { 
+              repeat: Infinity, 
+              duration: 1.5, 
+              ease: "easeInOut",
+              repeatType: "reverse" 
+            },
+            opacity: { duration: 0.3 }
+          }
+        }}
+        whileHover={{ 
+          backgroundColor: "rgba(22, 163, 74, 0.9)",
+          scale: 1.08,
+          transition: {
+            duration: 0.2
+          }
+        }}
+        whileTap={{ scale: 0.97 }}
+        onClick={navigate}
+      >
+        {/* Pulse ring effect */}
+        <motion.span 
+          className="absolute inset-0 rounded-full border-2 border-green-400/40"
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ 
+            opacity: [0.7, 0, 0.7], 
+            scale: [0.85, 1.2, 0.85],
+            transition: { 
+              repeat: Infinity, 
+              duration: 2,
+              ease: "easeInOut"
+            }
+          }}
+        />
+        
+        <motion.span 
+          className={`font-['Patrick_Hand'] ${fontSize} text-white tracking-wider drop-shadow-md uppercase px-2 whitespace-nowrap`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1, duration: 0.2 }}
+        >
+          {text}
+        </motion.span>
+      </motion.div>
+    </div>
+  );
+};
 
 export default Button; 

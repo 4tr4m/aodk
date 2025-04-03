@@ -36,12 +36,17 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
   // Start from the middle section for balanced scrolling in both directions
   const startIndex = Math.floor(extendedItems.length / 3);
 
-  // Define handleNext with useCallback to avoid recreation on every render
+  // Handle next slide with useCallback to avoid recreation on every render
   const handleNext = useCallback(() => {
     if (isAnimating || resetInProgressRef.current) return;
     
     setIsAnimating(true);
     setActiveIndex(prev => prev + 1);
+    
+    // Reset timer when manually navigating
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
     
     setTimeout(() => {
       setIsAnimating(false);
@@ -69,7 +74,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
           }
         });
       }
-    }, 2100);
+    }, 1100);
   }, [activeIndex, isAnimating, extendedItems.length, itemsPerView, totalItems, startIndex]);
 
   // Handle previous slide
@@ -78,6 +83,11 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
     
     setIsAnimating(true);
     setActiveIndex(prev => prev - 1);
+    
+    // Reset timer when manually navigating
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
     
     setTimeout(() => {
       setIsAnimating(false);
@@ -105,7 +115,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
           }
         });
       }
-    }, 100);
+    }, 1100);
   }, [activeIndex, isAnimating, startIndex, totalItems, itemsPerView]);
 
   useEffect(() => {
@@ -129,15 +139,23 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
 
   // Auto-advance carousel
   useEffect(() => {
-    if (isMounted && !isAnimating) {
+    if (isMounted) {
+      // Clear any existing interval
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+      
+      // Set new interval
       timerRef.current = setInterval(() => {
-        handleNext();
-      }, 7000);
+        if (!isAnimating && !resetInProgressRef.current) {
+          handleNext();
+        }
+      }, 5000); // Change to 5 seconds
       
       return () => clearInterval(timerRef.current);
     }
     return () => {};
-  }, [isAnimating, isMounted, handleNext]);
+  }, [isMounted, isAnimating, handleNext]);
 
   const handleItemClick = useCallback((item) => {
     if (item.link) {
@@ -210,7 +228,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
               width: `${(100 * extendedItems.length) / itemsPerView}%`,
               transform: `translateX(-${(activeIndex * 100) / extendedItems.length}%)`,
               willChange: 'transform',
-              transition: 'transform 2s cubic-bezier(0.22, 1, 0.36, 1)'
+              transition: 'transform 1s cubic-bezier(0.22, 1, 0.36, 1)'
             }}
           >
             {extendedItems.map((item, index) => (

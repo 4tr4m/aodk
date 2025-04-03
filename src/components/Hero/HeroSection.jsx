@@ -1,10 +1,10 @@
-// HeroHeader.jsx
+// HeroSection.jsx
 import { useState, useCallback, memo } from 'react';
 import InfoModal from '../Pages/InfoModal';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { HeroActionButton } from '../UI/Button';
 
-const HeroHeader = () => {
+const HeroSection = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { scrollY } = useScroll();
   
@@ -18,18 +18,6 @@ const HeroHeader = () => {
   const togglePopup = useCallback(() => {
     setIsOpen(!isOpen);
   }, [isOpen]);
-
-  const scrollToCategory = useCallback(() => {
-    const element = document.getElementById('categories');
-    if (element) {
-      // Smooth scroll with slight offset to account for any fixed headers
-      const offsetTop = element.getBoundingClientRect().top + window.pageYOffset - 20;
-      window.scrollTo({
-        top: offsetTop,
-        behavior: 'smooth'
-      });
-    }
-  }, []);
 
   return (
     <>
@@ -101,7 +89,7 @@ const HeroHeader = () => {
           {/* Enhanced gradient overlay with text integration */}
           <div className="w-full h-48 sm:h-56 md:h-64 bg-gradient-to-b from-transparent via-[#2D3748]/60 to-[#2D3748]/95">
             {/* Integrated banner text */}
-            <div className="absolute bottom-20 sm:bottom-24 md:bottom-32 w-full text-center">
+            <div className="absolute bottom-24 sm:bottom-28 md:bottom-36 w-full text-center">
               <p className="text-white/80 text-xs sm:text-sm md:text-base font-['Patrick_Hand'] tracking-wide px-4">
                 KUCHNIA, KTÓRA ODŻYWIA: PRZEPISY WSPIERAJĄCE W AUTYŹMIE
               </p>
@@ -111,22 +99,42 @@ const HeroHeader = () => {
           </div>
           
           {/* Integrated button using reusable component */}
-          <div className="absolute bottom-8 sm:bottom-12 md:bottom-16 left-0 right-0 mx-auto flex justify-center z-20">
-            <HeroActionButton 
-              onClick={scrollToCategory} 
-              text="ODKRYJ PRZEPISY"
-              size="hero"
-            />
+          <div className="absolute bottom-[65px] sm:bottom-[70px] md:bottom-[80px] left-0 right-0 mx-auto flex justify-center z-30">
+            <a href="#categories" onClick={(e) => {
+              e.preventDefault();
+              document.getElementById('categories').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }}>
+              <HeroActionButton 
+                text="ODKRYJ PRZEPISY" 
+                size="hero"
+              />
+            </a>
           </div>
+          
+          {/* Dodatkowy gradient dla płynniejszego przejścia */}
+          <div className="absolute bottom-8 sm:bottom-10 md:bottom-14 left-0 w-full h-16 sm:h-20 md:h-24 z-10 pointer-events-none"
+            style={{
+              background: 'linear-gradient(to bottom, rgba(45,55,72,0), rgba(247,250,252,0.4))'
+            }}
+          ></div>
 
           {/* Smooth curved transition like between banner and info section */}
-          <div className="absolute bottom-0 left-0 w-full h-8 sm:h-10 md:h-12 overflow-hidden">
+          <div className="absolute bottom-0 left-0 w-full h-10 sm:h-12 md:h-16 overflow-hidden">
+            <div className="absolute bottom-0 left-0 w-full h-36 z-10 pointer-events-none"
+               style={{
+                 background: 'linear-gradient(to top, rgba(247,250,252,1), rgba(247,250,252,0.7), rgba(247,250,252,0))'
+               }}
+            ></div>
             <div 
-              className="w-[120%] h-8 sm:h-10 md:h-12 bg-[#F6EFE9] absolute -left-[10%]"
+              className="w-[150%] h-10 sm:h-12 md:h-16 bg-[#F7FAFC] absolute -left-[25%]"
               style={{
                 borderTopLeftRadius: '100%',
                 borderTopRightRadius: '100%',
-                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)'
+                boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.08)',
+                backgroundImage: 'linear-gradient(to bottom, rgba(247,250,252,0.8), rgba(247,250,252,1))'
               }}
             ></div>
           </div>
@@ -138,4 +146,4 @@ const HeroHeader = () => {
   );
 };
 
-export default memo(HeroHeader);
+export default memo(HeroSection);
