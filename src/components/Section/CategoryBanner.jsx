@@ -5,6 +5,8 @@ import { kuchniaCategories } from '../../Data/category-data';
 import { useInView } from 'react-intersection-observer';
 import SearchBar from '../UI/SearchBar';
 import { FaSearch } from 'react-icons/fa';
+import searchService from '../../services/searchService';
+import { useNavigate } from 'react-router-dom';
 
 // Constants
 const BG_COLOR_LIGHTER = "gray-100";
@@ -124,9 +126,14 @@ const CategoryBanner = () => {
   const [allCategoryItems, setAllCategoryItems] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const navigate = useNavigate();
   
   // Refs
   const bannerRef = useRef(null);
+  const searchTimeoutRef = useRef(null);
   
   // Animation controls
   const controls = useAnimation();
@@ -138,16 +145,75 @@ const CategoryBanner = () => {
   // Handlers
   const toggleSearch = useCallback(() => {
     setIsSearching(prev => !prev);
+    // Reset suggestions when opening search
+    setSuggestions([]);
   }, []);
   
   const handleSearchClose = useCallback(() => {
     setIsSearching(false);
+    setSuggestions([]);
   }, []);
 
+  // Search function with debounce
+  const performSearch = useCallback(async (term) => {
+    if (term.length < 3) {
+      setSuggestions([]);
+      return;
+    }
+    
+    try {
+      setSearchTerm(term);
+      
+      // Clear any existing timeout
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      
+      // Set a new timeout to debounce the search
+      searchTimeoutRef.current = setTimeout(async () => {
+        // Get search results from service
+        const searchResults = await searchService.searchRecipes(term);
+        // Format the results for the search bar
+        const formattedSuggestions = searchService.formatSuggestions(searchResults);
+        setSuggestions(formattedSuggestions);
+      }, 300); // 300ms debounce delay
+    } catch (error) {
+      console.error("Error performing search:", error);
+      setSuggestions([]);
+    }
+  }, []);
+
+  // Handle search input changes
+  const handleSearchInput = useCallback((term) => {
+    performSearch(term);
+  }, [performSearch]);
+
+  // Handle selecting a suggestion
+  const handleSuggestionSelect = useCallback((suggestion) => {
+    // Navigate to the recipe page or use modal
+    if (suggestion && suggestion.original) {
+      // For now, just console log the selection
+      console.log("Selected recipe:", suggestion.original);
+      
+      // You could navigate to a specific recipe page
+      // navigate(`/recipe/${suggestion.id}`);
+      
+      // Or close the search and show details
+      setIsSearching(false);
+      setSuggestions([]);
+    }
+  }, []);
+
+  // Handle search submission
   const handleSearchSubmit = useCallback((searchTerm) => {
     console.log("Search submitted in banner:", searchTerm);
-    // Future implementation: filter recipes based on search term
-  }, []);
+    
+    // Example: Navigate to search results page
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+      setIsSearching(false);
+    }
+  }, [navigate]);
 
   // Load categories
   useEffect(() => {
@@ -187,6 +253,15 @@ const CategoryBanner = () => {
       document.removeEventListener('keydown', handleEscKey);
     };
   }, [isSearching]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Define wave divider color
   const dividerColor = '#F7FAFC'; // tailwind bg-gray-50
@@ -248,8 +323,14 @@ const CategoryBanner = () => {
                 >
                   <SearchBar 
                     placeholder="Szukaj przepisów..." 
-                    onSearchSubmit={handleSearchSubmit} 
+                    onSearchSubmit={handleSearchSubmit}
                     onClose={handleSearchClose}
+                    onChange={handleSearchInput}
+                    initialOpen={true}
+                    suggestions={suggestions}
+                    onSuggestionSelect={handleSuggestionSelect}
+                    highlightedTerm={searchTerm}
+                    minCharsForSuggestions={3}
                   />
                 </motion.div>
               )}

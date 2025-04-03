@@ -6,6 +6,7 @@ import ContactPage from './components/Pages/ContactPage';
 import CategoryPage from './components/Pages/CategoryPage';
 import BlogPage from './components/Pages/Blog';
 import ArticlePage from './components/Pages/ArticlePage';
+import SearchPage from './components/Pages/SearchPage';
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<ArticlePage />} />
           <Route path="/kontakt" element={<ContactPage />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>
