@@ -11,15 +11,15 @@ function SearchBar({ placeholder = "Search...", onSearchSubmit, onClose, initial
   };
 
   const closeSearch = () => {
+    console.log("SearchBar closeSearch() called");
     setIsOpen(false);
     setSearchTerm(''); // Clear search on close
     
-    // Make sure to call the onClose handler after a tiny delay to ensure state updates
-    setTimeout(() => {
-      if (onClose) {
-        onClose(); // Notify parent component
-      }
-    }, 50);
+    // Call the onClose handler immediately - don't delay
+    if (onClose) {
+      console.log("Calling onClose callback");
+      onClose(); // Notify parent component
+    }
   };
 
   const handleInputChange = (event) => {
@@ -45,6 +45,20 @@ function SearchBar({ placeholder = "Search...", onSearchSubmit, onClose, initial
       }, 100); // Reduced timing for smoother experience
       return () => clearTimeout(timer);
     }
+  }, [isOpen]);
+
+  // Handle ESC key press to close search
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape' && isOpen) {
+        closeSearch();
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
   }, [isOpen]);
 
   return (

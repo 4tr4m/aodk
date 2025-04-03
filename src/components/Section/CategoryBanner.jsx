@@ -95,8 +95,26 @@ const CategoryBanner = () => {
   
   // Handle search closing from within the SearchBar component
   const handleSearchClose = () => {
+    console.log("Search closed, setting isSearching to false");
     setIsSearching(false);
   };
+
+  // Add fallback for Escape key to close search
+  useEffect(() => {
+    if (!isSearching) return;
+    
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape') {
+        console.log("Escape pressed in CategoryBanner, closing search");
+        setIsSearching(false);
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [isSearching]);
 
   return (
     <section 
@@ -126,15 +144,15 @@ const CategoryBanner = () => {
           variants={itemAnimation}
         >
           <div className="flex items-center justify-center">
-            <AnimatePresence mode="sync" initial={false}>
+            <AnimatePresence mode="wait" initial={false}>
               {!isSearching ? (
                 <motion.div 
-                  key="title"
+                  key="title-container"
                   className="flex items-center gap-3 sm:gap-4"
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
                 >
                   <motion.h2 
                     className={`inline-block font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1A202C] 
@@ -146,27 +164,36 @@ const CategoryBanner = () => {
                     ODŻYWCZE PRZEPISY
                   </motion.h2>
                   <motion.div 
-                    className="cursor-pointer relative -top-[10px]"
+                    className="cursor-pointer relative -top-[10px] select-none"
                     whileHover={{ scale: 1.15 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={toggleSearch}
                     initial={{ scale: 1 }}
                     animate={{ 
-                      scale: [1, 1.1, 1],
+                      scale: [1, 1.15, 1],
+                      boxShadow: [
+                        '0 0 0 rgba(34, 197, 94, 0)',
+                        '0 0 15px rgba(34, 197, 94, 0.5)',
+                        '0 0 0 rgba(34, 197, 94, 0)'
+                      ],
                       transition: { 
                         repeat: Infinity, 
-                        repeatType: "reverse", 
-                        duration: 1.5,
-                        ease: "easeInOut"
+                        repeatType: "loop", 
+                        duration: 2,
+                        ease: "easeInOut",
+                        times: [0, 0.5, 1]
                       }
                     }}
                   >
-                    <FaSearch className="text-3xl sm:text-4xl md:text-5xl text-green-600 hover:text-green-700 transition-colors drop-shadow-md" />
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-green-500/20 blur-md rounded-full scale-110 opacity-0 animate-pulse"></div>
+                      <FaSearch className="text-4xl sm:text-4xl md:text-5xl text-green-600 hover:text-green-500 transition-colors drop-shadow-md relative z-10" />
+                    </div>
                   </motion.div>
                 </motion.div>
               ) : (
                 <motion.div
-                  key="searchbar"
+                  key="searchbar-container"
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: "auto" }}
                   exit={{ opacity: 0, width: 0 }}
@@ -178,6 +205,7 @@ const CategoryBanner = () => {
                     placeholder="Szukaj przepisów..." 
                     onSearchSubmit={handleSearchSubmit} 
                     onClose={handleSearchClose}
+                    key="search-bar-component"
                   />
                 </motion.div>
               )}
