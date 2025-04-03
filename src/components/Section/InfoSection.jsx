@@ -83,10 +83,10 @@ const InfoSection = () => {
           variants={staggerContainer}
         >
           {/* Header Section - Enhanced UX/UI */}
-          <motion.div className="text-center mb-8 sm:mb-10 md:mb-12 relative" variants={fadeInUp}>
-            <div className="inline-flex flex-col items-center relative mb-2 sm:mb-3">
+          <motion.div className="text-center mb-12 sm:mb-16 md:mb-20 relative" variants={fadeInUp}>
+            <div className="inline-flex flex-col items-center relative mb-4 sm:mb-6">
               <motion.div 
-                className="relative w-40 h-40 sm:w-44 sm:h-44 md:w-48 md:h-48 rounded-full shadow-lg overflow-hidden cursor-pointer border-4 border-white/50 mb-4"
+                className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full shadow-lg overflow-hidden cursor-pointer border-4 border-white/50 mb-4"
                 whileHover={{ scale: 1.08, boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.1)' }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 300, damping: 15 }}
@@ -96,7 +96,7 @@ const InfoSection = () => {
                 <img 
                   src="/img/logo.png" 
                   alt="Logo Autyzm od Kuchni" 
-                  className="w-full h-full object-contain p-3 sm:p-4 relative z-10 filter drop-shadow(0 1px 1px rgba(0,0,0,0.3))"
+                  className="w-full h-full object-contain p-2 relative z-10 filter drop-shadow(0 1px 1px rgba(0,0,0,0.3))"
                 />
               </motion.div>
               <motion.h2 
@@ -118,16 +118,16 @@ const InfoSection = () => {
           </motion.div>
 
           {/* Main Content */}
-          <motion.div className="space-y-8 sm:space-y-10 max-w-3xl mx-auto mt-6 sm:mt-8" variants={fadeInUp}>
+          <motion.div className="space-y-8 sm:space-y-10 max-w-3xl mx-auto" variants={fadeInUp}>
             <motion.div className="prose prose-lg text-gray-600 font-['Lato'] space-y-4" variants={fadeInUp}>
-              <motion.p className="text-lg sm:text-xl leading-relaxed px-2 sm:px-0">
+              <motion.p className="text-base sm:text-lg leading-relaxed px-2 sm:px-0">
                 Dieta w autyzmie odgrywa kluczową rolę w codziennym funkcjonowaniu. 
                 <span className="text-green-700 font-semibold"> Odpowiednio dobrane posiłki mogą znacząco 
                 wpłynąć na samopoczucie i rozwój</span>. Nasze przepisy zostały stworzone z myślą o 
                 specjalnych potrzebach żywieniowych, eliminując składniki, które często powodują problemy.
               </motion.p>
 
-              <motion.p className="text-lg sm:text-xl leading-relaxed px-2 sm:px-0">
+              <motion.p className="text-base sm:text-lg leading-relaxed px-2 sm:px-0">
                 Wszystkie nasze przepisy są <span className="text-green-700 font-semibold">bezglutenowe, 
                 bez nabiału krowiego i bez zbędnego cukru</span>. Stawiamy na naturalne składniki i proste 
                 metody przygotowania, które nie wymagają smażenia.

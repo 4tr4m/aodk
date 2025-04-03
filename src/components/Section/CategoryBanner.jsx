@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import CategoryCarousel from '../UI/CategoryCarousel';
 import { kuchniaCategories } from '../../Data/category-data'; 
 import { useInView } from 'react-intersection-observer';
+import SearchBar from '../UI/SearchBar';
+import { FaSearch } from 'react-icons/fa';
 
 const BG_COLOR_LIGHTER = "gray-100";
 const SECTION_BG = `bg-${BG_COLOR_LIGHTER}`;
@@ -11,6 +13,7 @@ const ACCENT_COLOR = 'bg-green-600'; // Solid green for consistency with buttons
 const CategoryBanner = () => {
   const [allCategoryItems, setAllCategoryItems] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const bannerRef = useRef(null);
   const controls = useAnimation();
   const [ref, inView] = useInView({
@@ -81,6 +84,20 @@ const CategoryBanner = () => {
   // Create a wavy divider SVG
   const dividerColor = '#F7FAFC'; // tailwind bg-gray-50
 
+  const handleSearchSubmit = (searchTerm) => {
+    console.log("Search submitted in banner:", searchTerm);
+    // Future implementation: filter recipes based on search term
+  };
+
+  const toggleSearch = () => {
+    setIsSearching(!isSearching);
+  };
+  
+  // Handle search closing from within the SearchBar component
+  const handleSearchClose = () => {
+    setIsSearching(false);
+  };
+
   return (
     <section 
       id="categories" 
@@ -105,18 +122,68 @@ const CategoryBanner = () => {
         className="container mx-auto px-4 pt-10 sm:pt-12 md:pt-16 lg:pt-20"
       >
         <motion.div 
-          className="text-center mb-8 md:mb-12"
+          className="text-center mb-8 md:mb-12 relative"
           variants={itemAnimation}
         >
-          <motion.h2 
-            className={`inline-block font-['Playfair_Display'] text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-[#1A202C] 
-              relative pb-3 sm:pb-4 after:content-[''] after:absolute after:bottom-0 after:left-1/2 
-              after:-translate-x-1/2 after:w-24 sm:after:w-28 md:after:w-32 after:h-[3px] after:${ACCENT_COLOR} tracking-wide font-semibold`}
-            variants={titleVariant}
-            ref={headerRef}
-          >
-            ODŻYWCZE PRZEPISY
-          </motion.h2>
+          <div className="flex items-center justify-center">
+            <AnimatePresence mode="sync" initial={false}>
+              {!isSearching ? (
+                <motion.div 
+                  key="title"
+                  className="flex items-center gap-3 sm:gap-4"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.h2 
+                    className={`inline-block font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1A202C] 
+                      relative pb-3 sm:pb-4 after:content-[''] after:absolute after:bottom-0 after:left-1/2 
+                      after:-translate-x-1/2 after:w-24 sm:after:w-28 md:after:w-32 after:h-[3px] after:${ACCENT_COLOR} tracking-wide font-semibold`}
+                    variants={titleVariant}
+                    ref={headerRef}
+                  >
+                    ODŻYWCZE PRZEPISY
+                  </motion.h2>
+                  <motion.div 
+                    className="cursor-pointer relative -top-[10px]"
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={toggleSearch}
+                    initial={{ scale: 1 }}
+                    animate={{ 
+                      scale: [1, 1.1, 1],
+                      transition: { 
+                        repeat: Infinity, 
+                        repeatType: "reverse", 
+                        duration: 1.5,
+                        ease: "easeInOut"
+                      }
+                    }}
+                  >
+                    <FaSearch className="text-3xl sm:text-4xl md:text-5xl text-green-600 hover:text-green-700 transition-colors drop-shadow-md" />
+                  </motion.div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="searchbar"
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: "auto" }}
+                  exit={{ opacity: 0, width: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full mx-auto py-2"
+                  style={{ maxWidth: "calc(100% - 40px)" }}
+                >
+                  <SearchBar 
+                    placeholder="Szukaj przepisów..." 
+                    onSearchSubmit={handleSearchSubmit} 
+                    onClose={handleSearchClose}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          
           <motion.p 
             className="mt-4 sm:mt-5 md:mt-6 text-gray-600 text-base sm:text-lg md:text-xl lg:text-2xl max-w-2xl sm:max-w-3xl mx-auto font-['Lato'] leading-relaxed tracking-wide"
             variants={titleVariant}
