@@ -66,6 +66,7 @@ const HeroSection = () => {
                       FUNKCJONOWANIE <br/>
                       W AUTYŹMIE I ZABURZENIACH <br className="hidden sm:block" />
                       <span className="hidden sm:inline">NEUROROZWOJOWYCH</span>
+                      <span className="sm:hidden">NEURO-<br/>ROZWOJOWYCH</span>
                     </span>
                   </h1>
                   <h2 className="hidden sm:block mt-4 sm:mt-6 font-['Patrick_Hand'] text-base sm:text-lg md:text-xl font-normal text-gray-50/90 leading-relaxed text-center tracking-wide transition-all duration-300 group-hover:text-white">
@@ -89,7 +90,7 @@ const HeroSection = () => {
           {/* Enhanced gradient overlay with text integration */}
           <div className="w-full h-48 sm:h-56 md:h-64 bg-gradient-to-b from-transparent via-[#2D3748]/60 to-[#2D3748]/95">
             {/* Integrated banner text */}
-            <div className="absolute bottom-24 sm:bottom-28 md:bottom-36 w-full text-center">
+            <div className="hidden sm:block absolute bottom-24 sm:bottom-28 md:bottom-36 w-full text-center">
               <p className="text-white/80 text-xs sm:text-sm md:text-base font-['Patrick_Hand'] tracking-wide px-4">
                 KUCHNIA, KTÓRA ODŻYWIA: PRZEPISY WSPIERAJĄCE W AUTYŹMIE
               </p>
@@ -110,6 +111,7 @@ const HeroSection = () => {
               <HeroActionButton 
                 text="ODKRYJ PRZEPISY" 
                 size="hero"
+                className="scale-[1.25] sm:scale-100" // Increase size by 25% on mobile only
               />
             </a>
           </div>

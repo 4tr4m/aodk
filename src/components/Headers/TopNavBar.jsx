@@ -25,7 +25,7 @@ const TopNavBar = () => {
   const renderDropdownMenu = (items) => (
     <ul className={`
       ${isMobileMenuOpen 
-        ? 'relative bg-gray-800 w-full mt-2 rounded-md shadow-lg'
+        ? 'relative bg-gray-800/95 w-full mt-2 rounded-md shadow-lg border border-gray-700'
         : 'absolute left-0 bg-black/85 min-w-[240px] py-3 flex flex-col opacity-0 invisible transition-all duration-500 ease-in-out delay-150 -translate-y-4 transform origin-top scale-95 group-hover:scale-100 group-hover:translate-y-0 group-hover:opacity-100 group-hover:visible backdrop-blur-sm rounded-lg'
       }
     `}>
@@ -33,7 +33,7 @@ const TopNavBar = () => {
         <li 
           key={index} 
           className={`
-            px-4 py-2 transform transition-all duration-300 hover:bg-white/5
+            px-4 py-2 transform transition-all duration-300 hover:bg-white/10
             ${!isMobileMenuOpen && 'opacity-0 -translate-y-2'}
           `}
           style={{ 
@@ -101,7 +101,7 @@ const TopNavBar = () => {
         <div className="flex w-full md:hidden justify-between items-center mb-4">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-white p-2 bg-black/50 backdrop-blur-sm rounded-lg flex items-center gap-2"
+            className="text-white p-2 bg-black/70 backdrop-blur-sm rounded-lg flex items-center gap-2"
           >
             {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             <span className="font-['Patrick_Hand'] text-base">MENU</span>
@@ -127,19 +127,25 @@ const TopNavBar = () => {
 
         {/* Navigation */}
         <nav className={`w-full md:w-auto ${isMobileMenuOpen ? 'block' : 'hidden md:block'}`}>
-          <ul className={`flex flex-col md:flex-row md:gap-12 w-full ${isMobileMenuOpen ? 'bg-black/75 backdrop-blur-md rounded-lg p-4 shadow-xl' : ''}`}>
+          <ul className={`flex flex-col md:flex-row md:gap-12 w-full ${isMobileMenuOpen ? 'bg-black/90 backdrop-blur-md rounded-lg p-4 shadow-xl' : ''}`}>
             {navItems.map((item, index) => (
               <li 
                 key={index} 
                 className="group relative transition-all duration-300 ease-in-out"
                 onMouseEnter={() => !isMobileMenuOpen && item.dropdown && handleMouseEnter(item.type)}
                 onMouseLeave={() => !isMobileMenuOpen && item.dropdown && setActiveDropdown(null)}
-                onClick={() => item.dropdown && isMobileMenuOpen && setActiveDropdown(activeDropdown === item.type ? null : item.type)}
+                onClick={() => item.dropdown && isMobileMenuOpen ? setActiveDropdown(activeDropdown === item.type ? null : item.type) : null}
               >
                 <Link 
                   to={item.link}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`text-gray-50/90 no-underline text-[20px] font-['Patrick_Hand'] font-semibold uppercase tracking-wide transition-all duration-300 flex items-center gap-2 py-3 md:py-1.5 px-4 md:px-0 mix-blend-overlay hover:text-yellow-400 hover:scale-110 group-hover:text-yellow-400 ${isMobileMenuOpen ? 'bg-black/40 backdrop-blur-sm rounded-lg mb-2 text-white mix-blend-normal' : ''}`}
+                  onClick={(e) => {
+                    if (item.dropdown && isMobileMenuOpen) {
+                      e.preventDefault(); // Prevent navigation on mobile when there's a dropdown
+                    } else {
+                      setIsMobileMenuOpen(false);
+                    }
+                  }}
+                  className={`text-gray-50/90 no-underline text-[20px] font-['Patrick_Hand'] font-semibold uppercase tracking-wide transition-all duration-300 flex items-center gap-2 py-3 md:py-1.5 px-4 md:px-0 mix-blend-overlay hover:text-yellow-400 hover:scale-110 group-hover:text-yellow-400 ${isMobileMenuOpen ? 'bg-black/70 backdrop-blur-sm rounded-lg mb-2 text-white mix-blend-normal' : ''}`}
                 >
                   {item.label}
                   {item.dropdown && isMobileMenuOpen && (
