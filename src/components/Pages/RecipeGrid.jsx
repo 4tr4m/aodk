@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ProductModal from './ProductModal';
 import { FiClock, FiArrowRight, FiAward } from 'react-icons/fi';
+import { motion } from 'framer-motion';
 
 const RecipeGrid = ({ recipes }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
@@ -15,20 +16,47 @@ const RecipeGrid = ({ recipes }) => {
     // Then set the selected recipe to show the modal
     setTimeout(() => {
       setSelectedRecipe(recipe);
-    }, 1000); // Small delay to ensure smooth scrolling
+    }, 800); // Small delay to ensure smooth scrolling
+  };
+
+  // Animation variants
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5 }
+    }
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto">
+    <motion.div 
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
       {recipes.map((recipe, index) => (
-        <article 
+        <motion.article 
           key={index} 
-          className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg 
+          className="group bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl 
             transition-all duration-300 transform hover:scale-[1.02] cursor-pointer
-            max-w-sm mx-auto w-full"
+            max-w-sm mx-auto w-full flex flex-col"
           onClick={() => handleRecipeClick(recipe)}
+          variants={item}
+          whileHover={{ y: -5 }}
         >
-          <div className="relative h-36 overflow-hidden">
+          <div className="relative h-48 overflow-hidden">
             <img 
               src={`/img/${recipe.image}`}
               alt={recipe.name}
@@ -47,39 +75,45 @@ const RecipeGrid = ({ recipes }) => {
             </div>
           </div>
 
-          <div className="p-5">
-            <h2 className="font-['Patrick_Hand'] text-xl mb-2 text-gray-800 leading-tight 
-              group-hover:text-[#2D3748] transition-colors duration-300">
-              {recipe.name}
-            </h2>
+          <div className="p-5 flex flex-col h-[230px]">
+            <div className="flex-grow flex flex-col items-center">
+              <h2 className="font-['Playfair_Display'] text-xl text-center mb-3 text-gray-800 leading-tight 
+                group-hover:text-[#2D3748] transition-colors duration-300">
+                {recipe.name}
+              </h2>
 
-            <p className="text-gray-600 text-sm mb-3 line-clamp-2 font-['Lato']">
-              {recipe.shortDesc}
-            </p>
+              <p className="text-gray-600 text-sm mb-4 line-clamp-2 text-center font-['Lato']">
+                {recipe.shortDesc}
+              </p>
 
-            <div className="flex items-center gap-4 mb-4">
-              {recipe.time && (
-                <div className="flex items-center gap-1 text-gray-500">
-                  <FiClock className="text-yellow-500" />
-                  <span className="text-sm">{recipe.time}</span>
-                </div>
-              )}
-              {recipe.difficulty && (
-                <div className="flex items-center gap-1 text-gray-500">
-                  <FiAward className="text-yellow-500" />
-                  <span className="text-sm">Poziom: {recipe.difficulty}</span>
-                </div>
-              )}
+              <div className="flex items-center justify-center gap-6 mb-auto w-full">
+                {recipe.time && (
+                  <div className="flex items-center gap-1.5 text-gray-600">
+                    <FiClock className="text-green-500" />
+                    <span className="text-sm">{recipe.time}</span>
+                  </div>
+                )}
+                {recipe.difficulty && (
+                  <div className="flex items-center gap-1.5 text-gray-600">
+                    <FiAward className="text-green-500" />
+                    <span className="text-sm">Poziom: {recipe.difficulty}</span>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <button className="w-full flex items-center justify-center gap-2 bg-yellow-500 
-              hover:bg-yellow-600 text-white py-2.5 px-4 rounded-lg transition-all duration-300 
-              transform group-hover:scale-[1.02] font-['Patrick_Hand'] text-lg">
+            <motion.button 
+              className="w-full mt-4 flex items-center justify-center gap-2 bg-green-600 
+                hover:bg-green-700 text-white py-3 px-4 rounded-lg transition-all duration-300 
+                shadow-md hover:shadow-lg font-['Lato'] font-medium text-lg"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+            >
               Zobacz przepis
               <FiArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
-            </button>
+            </motion.button>
           </div>
-        </article>
+        </motion.article>
       ))}
 
       {selectedRecipe && (
@@ -88,7 +122,7 @@ const RecipeGrid = ({ recipes }) => {
           onClose={() => setSelectedRecipe(null)} 
         />
       )}
-    </div>
+    </motion.div>
   );
 };
 

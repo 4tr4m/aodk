@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
   const scrollRef = useRef(null);
@@ -69,79 +70,91 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
   }, []);
 
   return (
-    <div ref={containerRef} className="relative w-full bg-[#F6EFE9]">
+    <div ref={containerRef} className="relative w-full bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative">
         {/* Left Arrow */}
         {showLeftArrow && (
-          <button
+          <motion.button
             onClick={() => handleScroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-gradient-to-r from-[#F6EFE9] to-transparent"
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-gradient-to-r from-gray-100 to-transparent"
             aria-label="Scroll left"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-          </button>
+          </motion.button>
         )}
 
         {/* Right Arrow */}
         {showRightArrow && (
-          <button
+          <motion.button
             onClick={() => handleScroll('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-gradient-to-l from-[#F6EFE9] to-transparent"
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-gradient-to-l from-gray-100 to-transparent"
             aria-label="Scroll right"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </button>
+          </motion.button>
         )}
 
         <div 
           ref={scrollRef}
-          className="w-full overflow-x-auto pb-4 pt-2 hide-scrollbar scroll-smooth"
+          className="w-full overflow-x-auto py-4 hide-scrollbar scroll-smooth"
           onScroll={updateArrows}
           style={{
             msOverflowStyle: 'none',
             scrollbarWidth: 'none',
           }}
         >
-          <div className="flex flex-nowrap gap-3 min-w-min pb-2">
-            <button
+          <div className="flex flex-nowrap gap-4 min-w-min pb-2">
+            <motion.button
               data-active={!currentSlug}
               onClick={() => onCategoryClick('/kuchnia')}
               className={`
-                whitespace-nowrap px-6 py-2.5 rounded-full font-['Lato'] text-base 
-                transition-all duration-300 border border-transparent
+                whitespace-nowrap px-7 py-3 rounded-full font-['Lato'] text-base sm:text-lg
+                transition-all duration-300 border-2 shadow-md hover:shadow-lg
                 ${!currentSlug 
-                  ? 'bg-green-600 text-white shadow-md scale-105' 
-                  : 'bg-white/90 text-gray-700 hover:bg-white hover:border-gray-100 hover:scale-105'
+                  ? 'bg-green-600 text-white border-green-600 scale-105' 
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-green-200'
                 }
               `}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
             >
               Wszystkie
-            </button>
+            </motion.button>
             
             {categories.map((category, index) => {
               const categorySlug = category.link.split('/').pop();
               const isActive = categorySlug === currentSlug;
               
               return (
-                <button
+                <motion.button
                   key={index}
                   data-active={isActive}
                   onClick={() => onCategoryClick(category.link)}
                   className={`
-                    whitespace-nowrap px-6 py-2.5 rounded-full font-['Lato'] text-base
-                    transition-all duration-300 border border-transparent
+                    whitespace-nowrap px-7 py-3 rounded-full font-['Lato'] text-base sm:text-lg
+                    transition-all duration-300 border-2 shadow-md hover:shadow-lg
                     ${isActive 
-                      ? 'bg-green-600 text-white shadow-md scale-105' 
-                      : 'bg-white/90 text-gray-700 hover:bg-white hover:border-gray-100 hover:scale-105'
+                      ? 'bg-green-600 text-white border-green-600 scale-105' 
+                      : 'bg-white text-gray-700 border-gray-200 hover:border-green-200'
                     }
                   `}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.98 }}
+                  initial={{ opacity: 0, y: 10, transition: { delay: index * 0.05 } }}
+                  animate={{ opacity: 1, y: 0, transition: { duration: 0.3, delay: index * 0.05 } }}
                 >
                   {category.label}
-                </button>
+                </motion.button>
               );
             })}
           </div>
