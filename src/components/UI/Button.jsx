@@ -154,7 +154,8 @@ export const Button = ({
  */
 export const HeroActionButton = ({ 
   text = 'ODKRYJ PRZEPISY', 
-  size = 'hero' 
+  size = 'hero',
+  className = ''
 }) => {
   // Use the standardized button dimensions
   const { padding, fontSize } = BUTTON_STYLES[size];
@@ -179,7 +180,7 @@ export const HeroActionButton = ({
   };
 
   return (
-    <div className="inline-block">
+    <div className={`inline-block ${className}`}>
       <motion.div
         className={`${padding} bg-green-600/80 backdrop-blur-sm rounded-full border border-white/50 cursor-pointer
                 shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center relative`}

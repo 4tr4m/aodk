@@ -38,14 +38,18 @@ const HeroSection = () => {
       <header className="min-h-screen flex flex-col">
         <div className="pt-8 pb-4 static text-gray-50 z-1 shadow-[0_2px_4px_rgba(0,0,0,0.3)]">
           <div className="max-w-7xl mx-auto px-3 sm:px-5 flex flex-col md:flex-row items-center md:items-start justify-between gap-3 sm:gap-5 static">
-            <div className="flex-[0.8] max-w-[156px] sm:max-w-[250px] md:max-w-[450px] relative md:top-[-40px]">
+            <div className="flex-[0.8] max-w-[200px] sm:max-w-[250px] md:max-w-[450px] relative md:top-[-40px]">
               <motion.div 
                 onClick={togglePopup} 
                 className="cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
-                <img src="/img/logo.png" alt="Autyzm od kuchni" className="w-full h-auto block overflow-visible relative z-1" />
+                <img 
+                  src="/img/logo.png" 
+                  alt="Autyzm od kuchni" 
+                  className="w-full h-auto block overflow-visible relative z-1 scale-125 sm:scale-100" 
+                />
               </motion.div>
             </div>
             
@@ -91,11 +95,13 @@ const HeroSection = () => {
           <div className="w-full h-48 sm:h-56 md:h-64 bg-gradient-to-b from-transparent via-[#2D3748]/60 to-[#2D3748]/95">
             {/* Integrated banner text */}
             <div className="hidden sm:block absolute bottom-24 sm:bottom-28 md:bottom-36 w-full text-center">
-              <p className="text-white/80 text-xs sm:text-sm md:text-base font-['Patrick_Hand'] tracking-wide px-4">
-                KUCHNIA, KTÓRA ODŻYWIA: PRZEPISY WSPIERAJĄCE W AUTYŹMIE
-              </p>
-              {/* Subtle divider line */}
-              <div className="w-16 sm:w-20 md:w-24 h-[1px] bg-green-300/50 mx-auto mt-2"></div>
+              <div className="transform scale-125 origin-center">
+                <p className="text-white/80 text-xs sm:text-base md:text-lg font-['Patrick_Hand'] tracking-wide px-4">
+                  KUCHNIA, KTÓRA ODŻYWIA: PRZEPISY WSPIERAJĄCE W AUTYŹMIE
+                </p>
+                {/* Subtle divider line */}
+                <div className="w-16 sm:w-20 md:w-24 h-[1px] bg-green-300/50 mx-auto mt-2"></div>
+              </div>
             </div>
           </div>
           
@@ -111,7 +117,7 @@ const HeroSection = () => {
               <HeroActionButton 
                 text="ODKRYJ PRZEPISY" 
                 size="hero"
-                className="scale-[1.25] sm:scale-100" // Increase size by 25% on mobile only
+                className="transform scale-125"
               />
             </a>
           </div>

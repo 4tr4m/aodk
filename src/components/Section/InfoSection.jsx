@@ -92,10 +92,11 @@ const InfoSection = () => {
                 transition={{ type: "spring", stiffness: 300, damping: 15 }}
                 onClick={toggleInfoModal}
               >
+                <div className="absolute inset-0 bg-gradient-to-br from-gray-400/30 to-gray-600/40 backdrop-blur-[1px]"></div>
                 <img 
                   src="/img/logo.png" 
                   alt="Logo Autyzm od Kuchni" 
-                  className="w-full h-full object-contain p-1 sm:p-2 relative z-10 filter drop-shadow(0 2px 2px rgba(0,0,0,0.5)) contrast-[1.2] brightness-[1.1]"
+                  className="w-full h-full object-contain p-1 sm:p-2 relative z-10 filter drop-shadow(0 2px 2px rgba(0,0,0,0.5)) contrast-[1.25] brightness-[1.15]"
                 />
               </motion.div>
               <motion.h2 
