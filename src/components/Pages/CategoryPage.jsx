@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import TopNavBar from '../Headers/TopNavBar';
@@ -14,6 +14,13 @@ const CategoryPage = () => {
   const location = useLocation();
   const pageRef = useRef(null);
   const { state } = useCart();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!state.isLoading) {
+      setLoading(false);
+    }
+  }, [state.isLoading]);
 
   const scrollToTop = useCallback(() => {
     window.scrollTo({
@@ -24,17 +31,14 @@ const CategoryPage = () => {
 
   const handleCategoryClick = useCallback((categoryLink) => {
     if (location.pathname !== categoryLink) {
-      // First scroll to top smoothly
       scrollToTop();
       
-      // Then navigate after a small delay to ensure smooth transition
       setTimeout(() => {
         navigate(categoryLink);
       }, 300);
     }
   }, [navigate, location.pathname, scrollToTop]);
 
-  // Scroll to top when category changes
   useEffect(() => {
     scrollToTop();
   }, [categorySlug, scrollToTop]);
@@ -52,8 +56,11 @@ const CategoryPage = () => {
     if (!categorySlug) {
       return Object.values(state.allRecipes).flat();
     }
+    
     if (!currentCategory) return [];
-    return state.allRecipes[currentCategory.label] || [];
+    
+    const categoryKey = currentCategory.label;
+    return state.allRecipes[categoryKey] || [];
   };
 
   const categoryRecipes = getCategoryRecipes();
@@ -90,12 +97,20 @@ const CategoryPage = () => {
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="mb-8">
             <span className="font-['Lato'] text-gray-500">
-              Znalezione przepisy: <strong>{categoryRecipes.length}</strong>
+              {loading ? (
+                "Ładowanie przepisów..."
+              ) : (
+                <>Znalezione przepisy: <strong>{categoryRecipes.length}</strong></>
+              )}
             </span>
           </div>
 
           <div className="w-full transition-opacity duration-300">
-            {categoryRecipes.length > 0 ? (
+            {loading ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg mb-4">Ładowanie przepisów...</p>
+              </div>
+            ) : categoryRecipes.length > 0 ? (
               <RecipeGrid recipes={categoryRecipes} />
             ) : (
               <div className="text-center py-12">

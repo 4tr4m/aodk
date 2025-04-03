@@ -1,6 +1,6 @@
 export const Chleby = [
   {
-    "id": "mieszanka-1",
+    "id": "mieszanka-2",
     "name": "Uniwersalna Mieszanka Mąk Bezglutenowych",
     "category": "CHLEBY",
     "shortDesc": "Mieszanka mąk bezglutenowych, idealna do zastąpienia mąki pszennej w wypiekach.",

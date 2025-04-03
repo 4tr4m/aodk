@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "dotenv": "^16.4.7",
+    "esm": "^3.2.25",
     "framer-motion": "^11.18.2",
     "jquery": "^3.7.1",
     "owl.carousel": "^2.3.4",
@@ -21,7 +24,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "test-supabase": "node -r dotenv/config src/scripts/testSupabaseConnection.js"
   },
   "eslintConfig": {
     "extends": [

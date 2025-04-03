@@ -288,7 +288,7 @@ export const Babeczki = [
 }
 ,
 {
-  "id": "babeczka-8",
+  "id": "babeczka-12",
   "name": "Bananowe muffinki karobowe",
   "category": "BABECZKI",
   "shortDesc": "Przepyszna i zdrowa alternatywa",
@@ -311,7 +311,7 @@ export const Babeczki = [
 }
 ,
 {
-  "id": "babeczka-9",
+  "id": "babeczka-13",
   "name": "Muffinki na majonezie / Zeberki / Straciatella",
   "category": "BABECZKI",
   "shortDesc": "Smak majonezu jest niewyczuwalny",
@@ -333,7 +333,7 @@ export const Babeczki = [
 }
 ,
 {
-  "id": "babeczka-10",
+  "id": "babeczka-14",
   "name": "Babeczki bananowe z borówkami na mące kokosowej",
   "category": "BABECZKI",
   "shortDesc": "Idealne też na dietę paleo",
@@ -356,7 +356,7 @@ export const Babeczki = [
   "path": "babeczki"
 },
 {
-  "id": "babeczka-11",
+  "id": "babeczka-15",
   "name": "Muffinki jogurtowe wege",
   "category": "BABECZKI",
   "shortDesc": "Tzw. kubeczkowe",
@@ -379,7 +379,7 @@ export const Babeczki = [
 },
 
 {
-  "id": "babeczka-12",
+  "id": "babeczka-16",
   "name": "Muffinki owsiane",
   "category": "BABECZKI",
   "shortDesc": "Idealne na zdrową przekąskę",
@@ -404,7 +404,7 @@ export const Babeczki = [
   "path": "babeczki"
 },
 {
-  "id": "babeczka-13",
+  "id": "babeczka-17",
   "name": "Alternatywne muffinki owsiane bez jogurtu",
   "category": "BABECZKI",
   "shortDesc": "Poprostu pyszne",
@@ -427,7 +427,7 @@ export const Babeczki = [
 },
 
 {
-  "id": "babeczka-14",
+  "id": "babeczka-18",
   "name": "Muffinki daktylowe brownie",
   "category": "BABECZKI",
   "shortDesc": "Czekoladowa rozkosz",
@@ -449,7 +449,7 @@ export const Babeczki = [
 },
 
 {
-  "id": "babeczka-15",
+  "id": "babeczka-19",
   "name": "Muffinki bananowo kokosowo orzechowe",
   "category": "BABECZKI",
   "shortDesc": "Aromatyczne",

@@ -1,7 +1,7 @@
 export const Ciasta = [
 
   {
-    "id": "mieszanka-1",
+    "id": "mieszanka-3",
     "name": "Uniwersalna Mieszanka Mąk Bezglutenowych",
     "category": "CIASTKA",
     "shortDesc": "Mieszanka mąk bezglutenowych, idealna do zastąpienia mąki pszennej w wypiekach.",

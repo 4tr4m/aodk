@@ -1,6 +1,39 @@
-# Getting Started with Create React App
+# Kuchni Recipe App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a recipe application that stores and displays various recipes.
+
+## Setting Up Supabase
+
+This application uses Supabase as a backend database. Follow these steps to set up your Supabase project:
+
+1. Create an account at [Supabase](https://supabase.com/)
+2. Create a new project
+3. Go to Project Settings > API and copy your URL and anon key
+4. Create a `.env` file in the root directory of the project based on `.env.example`
+5. Add your Supabase URL and anon key to the `.env` file:
+   ```
+   REACT_APP_SUPABASE_URL=your-supabase-project-url
+   REACT_APP_SUPABASE_ANON_KEY=your-supabase-anon-key
+   ```
+
+### Setting Up the Database
+
+1. Go to your Supabase project's SQL Editor
+2. Create the necessary tables by running the SQL queries in `database/schema.sql`
+
+### Migrating Recipes to Supabase
+
+To migrate your recipe data from JavaScript files to Supabase:
+
+1. Make sure your `.env` file is properly configured
+2. Install the required dependencies:
+   ```
+   npm install @supabase/supabase-js esm
+   ```
+3. Run the migration script:
+   ```
+   npx esm src/scripts/migrateRecipesToSupabase.js
+   ```
 
 ## Available Scripts
 
@@ -39,11 +72,21 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
+## Project Structure
+
+- `src/Data/recipes/` - Contains the local JavaScript recipe data files
+- `src/lib/supabase.js` - Supabase client configuration
+- `src/services/recipeService.js` - Service for interacting with recipe data in Supabase
+- `src/scripts/migrateRecipesToSupabase.js` - Script to migrate recipe data to Supabase
+- `database/schema.sql` - SQL schema for Supabase tables
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+To learn about Supabase, check out the [Supabase documentation](https://supabase.com/docs).
 
 ### Code Splitting
 
