@@ -1,27 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaPinterestP } from 'react-icons/fa';
 import { FiMenu, FiX } from 'react-icons/fi';
-import { 
-  kuchniaCategories, 
-  skladnikCategories,
-  historiaCategories,
-  znajdkiCategories,
-  wiedzaCategories,
-  blogCategories
-} from '../../Data/category-data';
+import { supabase } from '../../lib/supabase';
 
 const TopNavBar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [categories, setCategories] = useState({
+    kuchnia: [],
+    skladnik: [],
+    historia: [],
+    znajdki: [],
+    wiedza: [],
+    blog: []
+  });
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*')
+          .order('order', { ascending: true });
+
+        if (error) throw error;
+
+        // Group categories by type
+        const groupedCategories = data.reduce((acc, category) => {
+          if (!acc[category.type]) {
+            acc[category.type] = [];
+          }
+          if (category.image) { // Only include categories with images
+            acc[category.type].push(category);
+          }
+          return acc;
+        }, {});
+
+        setCategories(groupedCategories);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleMouseEnter = (type) => {
     setActiveDropdown(type);
   };
-
-  // Filter out items without images
-  const kuchniaItems = kuchniaCategories.mainCategories.filter(item => item.image);
-  const skladnikItems = skladnikCategories;
 
   const renderDropdownMenu = (items) => (
     <ul className={`
@@ -61,31 +88,31 @@ const TopNavBar = () => {
     { 
       label: 'KUCHNIA', 
       link: '/kuchnia',
-      dropdown: kuchniaItems,
+      dropdown: categories.kuchnia,
       type: 'kuchnia'
     },
     { 
       label: 'HISTORIA', 
       link: '/historia',
-      dropdown: historiaCategories,
+      dropdown: categories.historia,
       type: 'historia'
     },
     { 
       label: 'ZNAJDKI', 
       link: '/znajdki',
-      dropdown: znajdkiCategories,
+      dropdown: categories.znajdki,
       type: 'znajdki'
     },
     { 
       label: 'WIEDZA', 
       link: '/wiedza',
-      dropdown: wiedzaCategories,
+      dropdown: categories.wiedza,
       type: 'wiedza'
     },
     { 
       label: 'BLOG', 
       link: '/blog',
-      dropdown: blogCategories,
+      dropdown: categories.blog,
       type: 'blog'
     },
     { label: 'KONTAKT', link: '/kontakt' },
