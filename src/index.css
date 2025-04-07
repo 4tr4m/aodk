@@ -13,6 +13,50 @@
   }
 }
 
+/* Add keyframe animation for search icon pulsing */
+@keyframes pulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(34, 197, 94, 0.3)); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.5)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(34, 197, 94, 0.3)); }
+}
+
+/* Enhanced tooltip animation */
+@keyframes tooltipFade {
+  0%, 100% { opacity: 0; transform: translateY(10px); }
+  10%, 90% { opacity: 1; transform: translateY(0); }
+}
+
+/* Modal animations */
+@keyframes modalGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(34, 197, 94, 0.1); }
+  50% { box-shadow: 0 0 30px rgba(34, 197, 94, 0.2); }
+}
+
+@keyframes floatIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.search-icon {
+  animation: pulse 2.5s infinite ease-in-out;
+  filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.4));
+}
+
+.search-tooltip {
+  animation: tooltipFade 5s ease-in-out;
+  animation-delay: 1s;
+  animation-iteration-count: 3;
+}
+
+.modal-container {
+  animation: modalGlow 4s infinite ease-in-out;
+}
+
+.modal-item {
+  animation: floatIn 0.5s ease-out forwards;
+  opacity: 0;
+}
+
 /* Essential resets */
 *, *::before, *::after {
   box-sizing: border-box;

@@ -69,35 +69,88 @@ TitleWithSearch.displayName = 'TitleWithSearch';
 
 // Search icon component (memoized)
 const SearchIcon = memo(({ toggleSearch }) => {
-  return (
-    <motion.div 
-      className="cursor-pointer relative -top-[10px] select-none"
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.95 }}
-      onClick={toggleSearch}
-      animate={{ 
-        scale: [1, 1.15, 1],
-        transition: { 
-          repeat: Infinity, 
-          repeatType: "loop", 
-          duration: 2.5,
-          ease: "easeInOut",
-          times: [0, 0.5, 1],
-          delay: 0 // Explicit zero delay to start immediately
+  const [showTutorial, setShowTutorial] = useState(() => {
+    // Check if this is the first visit
+    try {
+      const hasSeenTutorial = localStorage.getItem('hasSeenSearchTutorial');
+      return hasSeenTutorial !== 'true';
+    } catch (e) {
+      // In case localStorage is not available
+      return true;
+    }
+  });
+
+  // Hide tutorial after a few seconds and save to localStorage
+  useEffect(() => {
+    if (showTutorial) {
+      const timer = setTimeout(() => {
+        setShowTutorial(false);
+        try {
+          localStorage.setItem('hasSeenSearchTutorial', 'true');
+        } catch (e) {
+          // Handle localStorage error silently
         }
-      }}
-    >
-      <div className="relative flex items-center justify-center">
-        <div 
-          className="absolute inset-0 rounded-full animate-pulse" 
-          style={{
-            background: 'radial-gradient(circle, rgba(34,197,94,0.3) 0%, rgba(34,197,94,0) 70%)',
-            transform: 'scale(1.5)',
-          }}
-        ></div>
-        <FaSearch className="text-[2.75rem] sm:text-[3rem] md:text-[3.25rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10" />
-      </div>
-    </motion.div>
+      }, 16000); // Show for 16 seconds (allows tooltip animation to run 3 times)
+      
+      return () => clearTimeout(timer);
+    }
+  }, [showTutorial]);
+
+  return (
+    <div className="relative">
+      <motion.div 
+        className="cursor-pointer relative -top-[10px] select-none search-icon-container"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={toggleSearch}
+        initial={{ scale: 1 }}
+        animate={{ 
+          scale: [1, 1.15, 1],
+          transition: { 
+            repeat: Infinity, 
+            repeatType: "loop", 
+            duration: 2.5,
+            ease: "easeInOut",
+            times: [0, 0.5, 1],
+            delay: 0 // Explicit zero delay to start immediately
+          }
+        }}
+      >
+        <div className="relative flex items-center justify-center">
+          {/* Multiple pulse rings for enhanced visibility */}
+          <div 
+            className="absolute inset-0 rounded-full animate-ping opacity-30" 
+            style={{
+              background: 'radial-gradient(circle, rgba(34,197,94,0.5) 0%, rgba(34,197,94,0) 70%)',
+              transform: 'scale(1.8)',
+              animationDuration: '3s',
+            }}
+          ></div>
+          <div 
+            className="absolute inset-0 rounded-full animate-pulse" 
+            style={{
+              background: 'radial-gradient(circle, rgba(34,197,94,0.3) 0%, rgba(34,197,94,0) 70%)',
+              transform: 'scale(1.5)',
+            }}
+          ></div>
+          {/* Attention ring */}
+          <div className="absolute -inset-1 rounded-full bg-green-400/20 animate-pulse"></div>
+          
+          <FaSearch className="text-[2.5rem] sm:text-[2.75rem] md:text-[3rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" />
+        </div>
+      </motion.div>
+      
+      {/* Tutorial tooltip */}
+      {showTutorial && (
+        <div className="absolute -bottom-24 -right-4 sm:right-0 md:right-4 w-[240px] search-tooltip z-50">
+          <div className="bg-white px-4 py-3 rounded-lg shadow-lg border-2 border-green-300 relative">
+            <div className="absolute -top-2 right-6 w-4 h-4 bg-white border-t-2 border-l-2 border-green-300 transform rotate-45"></div>
+            <p className="text-gray-700 text-sm font-medium mb-1">Szukaj przepisów dopasowanych do diety</p>
+            <p className="text-green-600 text-xs font-bold">Kliknij, aby znaleźć idealne przepisy!</p>
+          </div>
+        </div>
+      )}
+    </div>
   );
 });
 
@@ -106,12 +159,14 @@ SearchIcon.displayName = 'SearchIcon';
 // Wave divider component (memoized)
 const WaveDivider = memo(({ position = 'top', color }) => {
   const isTop = position === 'top';
+  const opacity = isTop ? '1' : '0.6'; // Make bottom divider more subtle
   return (
     <div className={`absolute ${isTop ? 'top-0' : 'bottom-0'} left-0 right-0 w-full overflow-hidden ${!isTop ? 'transform rotate-180' : ''}`}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" className="relative block w-full h-[70px] sm:h-[120px]">
         <path 
           d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
           fill={color}
+          opacity={opacity}
         ></path>
       </svg>
     </div>
@@ -188,19 +243,13 @@ const CategoryBanner = () => {
 
   // Handle selecting a suggestion
   const handleSuggestionSelect = useCallback((suggestion) => {
-    // Navigate to the recipe page or use modal
     if (suggestion && suggestion.original) {
-      // For now, just console log the selection
-      console.log("Selected recipe:", suggestion.original);
-      
-      // You could navigate to a specific recipe page
-      // navigate(`/recipe/${suggestion.id}`);
-      
-      // Or close the search and show details
+      // Navigate to search page with the suggestion name as query
+      navigate(`/search?q=${encodeURIComponent(suggestion.name)}`);
       setIsSearching(false);
       setSuggestions([]);
     }
-  }, []);
+  }, [navigate]);
 
   // Handle search submission
   const handleSearchSubmit = useCallback((searchTerm) => {
@@ -233,6 +282,13 @@ const CategoryBanner = () => {
   useEffect(() => {
     if (inView) {
       controls.start('visible');
+      // Make sure search icon animation starts immediately
+      document.querySelectorAll('.search-icon-container').forEach(el => {
+        const icon = el.querySelector('.search-icon');
+        if (icon) {
+          icon.style.animation = 'pulse 2.5s infinite ease-in-out';
+        }
+      });
     }
   }, [controls, inView]);
 

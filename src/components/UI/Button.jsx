@@ -17,8 +17,8 @@ const BUTTON_STYLES = {
     fontSize: 'text-lg',
   },
   hero: {
-    padding: 'px-10 py-3',
-    fontSize: 'text-lg',
+    padding: 'px-8 py-2.5',
+    fontSize: 'text-base',
   }
 };
 

@@ -112,8 +112,8 @@ const ProductModal = ({ product, onClose }) => {
                 </div>
               </div>
 
-              {/* Ingredients */}
-              <div className="mb-6">
+              {/* Ingredients - Hidden for now */}
+              {/* <div className="mb-6">
                 <h3 className="font-['Playfair_Display'] text-xl text-[#2D3748] mb-3 font-bold">
                   Składniki
                 </h3>
@@ -122,7 +122,7 @@ const ProductModal = ({ product, onClose }) => {
                     <li key={index} className="text-gray-700">{ingredient}</li>
                   ))}
                 </ul>
-              </div>
+              </div> */}
 
               {/* Preparation */}
               <div className="mb-6">

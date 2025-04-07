@@ -21,6 +21,7 @@ const SearchPage = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(null);
   const suggestionsRef = useRef(null);
+  const [searchTimeout, setSearchTimeout] = useState(null);
 
   // Define performSearch BEFORE the useEffect that uses it
   const performSearch = useCallback(async (term) => {
@@ -52,22 +53,32 @@ const SearchPage = () => {
     }
   }, [location.search, performSearch]);
 
-  // Handle search input and live suggestions
+  // Handle search input and live suggestions with reduced debounce
   const handleSearchInput = useCallback(async (value) => {
     setSearchTerm(value);
     
+    // Clear existing timeout
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
     if (value.length >= 2) {
-      try {
-        const results = await searchService.getSuggestions(value);
-        setSuggestions(results);
-      } catch (error) {
-        console.error('Error getting suggestions:', error);
-        setSuggestions([]);
-      }
+      // Set a new, shorter timeout (150ms instead of default)
+      const timeout = setTimeout(async () => {
+        try {
+          const results = await searchService.getSuggestions(value);
+          setSuggestions(results);
+        } catch (error) {
+          console.error('Error getting suggestions:', error);
+          setSuggestions([]);
+        }
+      }, 150); // Reduced from typical 300ms to 150ms for more responsiveness
+      
+      setSearchTimeout(timeout);
     } else {
       setSuggestions([]);
     }
-  }, []);
+  }, [searchTimeout]);
 
   // Handle selecting a suggestion
   const handleSuggestionSelect = useCallback((suggestion) => {
@@ -115,6 +126,15 @@ const SearchPage = () => {
     const regex = new RegExp(`(${searchTerm})`, 'gi');
     return text.replace(regex, '<span class="font-bold">$1</span>');
   };
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [searchTimeout]);
 
   return (
     <div ref={pageRef} className="min-h-screen bg-gray-100">
@@ -195,7 +215,8 @@ const SearchPage = () => {
                       </div>
                     )}
                     
-                    {suggestion.ingredients && (
+                    {/* Ingredients hidden for now */}
+                    {/* {suggestion.ingredients && (
                       <div className="text-xs sm:text-sm text-gray-500 line-clamp-1">
                         Składniki: {highlightMatch(
                           Array.isArray(suggestion.ingredients) 
@@ -206,7 +227,7 @@ const SearchPage = () => {
                           searchTerm
                         )}
                       </div>
-                    )}
+                    )} */}
                   </li>
                 ))}
               </ul>

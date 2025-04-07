@@ -1,6 +1,6 @@
 import { memo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { IoClose, IoLeaf } from 'react-icons/io5';
+import { IoClose, IoLeaf, IoInformationCircle } from 'react-icons/io5';
 
 const InfoModal = memo(({ isOpen, togglePopup }) => {
   // Zablokuj scrollowanie strony gdy modal jest otwarty
@@ -60,11 +60,28 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
     }
   };
 
+  // Staggered animation for content items
+  const staggeredItems = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.08,
+        delayChildren: 0.3
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 10, opacity: 0 },
+    visible: { y: 0, opacity: 1 }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
         <motion.div 
-          className="fixed inset-0 flex items-center justify-center bg-black/60 z-50 p-4 backdrop-blur-sm"
+          className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 p-4 backdrop-blur-md"
           onClick={togglePopup}
           variants={backdropVariants}
           initial="hidden"
@@ -72,121 +89,142 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
           exit="exit"
         >
           <motion.div 
-            className="bg-white rounded-xl shadow-2xl max-w-2xl mx-auto relative overflow-hidden"
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto relative overflow-hidden modal-container"
             onClick={e => e.stopPropagation()}
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
+            style={{ maxHeight: 'calc(100vh - 40px)' }}
           >
-            {/* Header with decorative elements */}
-            <div className="bg-gradient-to-r from-green-900 to-green-800 p-5 text-white relative">
-              <motion.div 
-                className="absolute -right-4 -top-4 w-24 h-24 bg-green-600/20 rounded-full blur-xl"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1, transition: { delay: 0.2, duration: 0.5 } }}
-              />
-              <motion.div 
-                className="absolute left-12 -bottom-6 w-16 h-16 bg-green-500/20 rounded-full blur-xl"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1, transition: { delay: 0.3, duration: 0.5 } }}
-              />
-              
-              <div className="flex items-center space-x-3">
+            {/* Decorative elements */}
+            <motion.div 
+              className="absolute -left-20 -top-20 w-40 h-40 rounded-full bg-green-100 blur-2xl opacity-50"
+              animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div 
+              className="absolute right-0 bottom-0 w-60 h-60 rounded-full bg-green-50 blur-3xl opacity-40"
+              animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.4, 0.2] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            />
+            
+            {/* Header with improved visual design */}
+            <div className="relative bg-gradient-to-r from-green-800 to-green-700 p-5 text-white">
+              <div className="flex items-center gap-3">
                 <motion.div
                   initial={{ rotate: -30, opacity: 0 }}
                   animate={{ rotate: 0, opacity: 1 }}
                   transition={{ delay: 0.2, duration: 0.3, type: 'spring' }}
+                  className="p-2 bg-white/10 rounded-full"
                 >
-                  <IoLeaf className="text-2xl text-green-200" />
+                  <IoLeaf className="text-2xl text-green-100" />
                 </motion.div>
-                <h3 className="font-['Caveat'] text-2xl mb-0 relative">
+                <h3 className="font-['Caveat'] text-3xl mb-0 relative">
                   Zasady, które stosuję w Autyzm od Kuchni
                 </h3>
               </div>
             </div>
             
-            {/* Modal content with improved layout */}
-            <div className="p-6 max-h-[70vh] overflow-y-auto text-gray-700 prose prose-green">
-              <p className="mb-4">
-                Na „Autyzm od Kuchni" dzielę się przepisami, które przez ponad 10 lat zbierałam i dostosowywałam do potrzeb mojego syna z autyzmem.
-              </p>
-              <p className="mb-4">
-                Miały one ogromny wpływ na jego rozwój i wciąż wspierają jego codzienne funkcjonowanie.
-                Łączę pełnowartościowe, odżywcze składniki w prostych i szybkich przepisach, które poprawiają zdrowie i samopoczucie.
-              </p>
+            {/* Content with grid layout to avoid scrolling */}
+            <motion.div 
+              className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700"
+              variants={staggeredItems}
+              initial="hidden"
+              animate="visible"
+            >
+              <div>
+                <motion.p 
+                  className="mb-3 text-sm md:text-base modal-item"
+                  variants={itemVariants}
+                  style={{ animationDelay: '0.1s' }}
+                >
+                  Na „Autyzm od Kuchni" dzielę się przepisami, które przez ponad 10 lat zbierałam i dostosowywałam do potrzeb mojego syna z autyzmem.
+                </motion.p>
+                <motion.p 
+                  className="mb-3 text-sm md:text-base modal-item"
+                  variants={itemVariants}
+                  style={{ animationDelay: '0.2s' }}
+                >
+                  Miały one ogromny wpływ na jego rozwój i wciąż wspierają jego codzienne funkcjonowanie.
+                </motion.p>
+                
+                <motion.div 
+                  className="mt-4 p-3 border-l-4 border-green-600 bg-green-50 rounded-r text-xs md:text-sm text-gray-600 flex items-start gap-2"
+                  variants={itemVariants}
+                  style={{ animationDelay: '0.5s' }}
+                >
+                  <IoInformationCircle className="text-green-700 text-lg flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="mb-1">Aby poznać naszą drogę, zapraszam do sekcji <span className="text-green-700 font-semibold">HISTORIA</span>.</p>
+                    <p>Po alternatywne przepisy z glutenem, zapraszam na <span className="text-green-700 font-semibold">ZDROWE JEMY</span>.</p>
+                  </div>
+                </motion.div>
+              </div>
               
-              <motion.p 
-                className="mb-4 font-semibold text-green-800"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                W mojej kuchni:
-              </motion.p>
-              
-              <ul className="list-none pl-0 mb-4 space-y-2">
-                {[
-                  'nie stosuję glutenu',
-                  'nie używam nabiału krowiego (sporadycznie sięgam po nabiał kozi)',
-                  'nie dodaję cukru (używam ksylitolu i miodu, gdy to konieczne)',
-                  'nigdy nie smażę',
-                  'nie stosuję margaryny, używam masła klarowanego (ghee) lub oleju kokosowego',
-                  'nieodłącznym elementem są JAJKA (wiejskie ze sprawdzonego źródła)'
-                ].map((item, index) => (
-                  <motion.li 
-                    key={index}
-                    className="flex items-center gap-3 pl-2 py-1 rounded-lg bg-green-50/50 hover:bg-green-50 transition-colors duration-200"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 + index * 0.1 }}
-                  >
-                    <span className="text-green-600 font-bold">•</span>
-                    {item}
-                  </motion.li>
-                ))}
-              </ul>
-              
-              <p className="mb-4">
-                Wyznaję zasadę, że wszystko jest dobre w umiarkowanych ilościach, a rzeczy, które szkodzą, staram się ograniczać.
-                Opieram się na zasadach diety czystożerczej, ale w sytuacjach, gdy nie mam innych alternatyw, sporadycznie stosuję kukurydzę i ryż.
-              </p>
-              <p className="mb-4">
-                Chcę, by moje doświadczenia stały się inspiracją dla innych, pokazując, jak świadome wybory żywieniowe mogą wspierać zdrowie i poprawiać jakość życia.
-              </p>
-              
-              <motion.div 
-                className="mt-6 p-4 border-l-4 border-green-600 bg-green-50 rounded-r text-sm text-gray-600"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                <p className="mb-1">Aby poznać naszą drogę i początki, zapraszam do sekcji <span className="text-green-700 font-semibold">HISTORIA</span>.</p>
-                <p>Po alternatywne, zdrowe przepisy z glutenem (orkisz i durum), które stosuję dla reszty rodziny, zapraszam na <span className="text-green-700 font-semibold">ZDROWE JEMY</span>.</p>
-              </motion.div>
-            </div>
+              <div>
+                <motion.p 
+                  className="mb-2 font-semibold text-green-800 modal-item"
+                  variants={itemVariants}
+                  style={{ animationDelay: '0.3s' }}
+                >
+                  W mojej kuchni:
+                </motion.p>
+                
+                <ul className="list-none pl-0 mb-3 space-y-1.5">
+                  {[
+                    'nie stosuję glutenu',
+                    'nie używam nabiału krowiego',
+                    'nie dodaję cukru (używam ksylitolu)',
+                    'nigdy nie smażę',
+                    'nie stosuję margaryny',
+                    'używam jaj (wiejskie ze sprawdzonego źródła)'
+                  ].map((item, index) => (
+                    <motion.li 
+                      key={index}
+                      className="flex items-center gap-2 pl-2 py-1 text-sm rounded-lg bg-green-50/50 hover:bg-green-50 transition-colors duration-200 modal-item"
+                      variants={itemVariants}
+                      style={{ animationDelay: `${0.4 + index * 0.08}s` }}
+                    >
+                      <span className="text-green-600 font-bold">•</span>
+                      {item}
+                    </motion.li>
+                  ))}
+                </ul>
+                
+                <motion.p 
+                  className="text-sm md:text-base modal-item"
+                  variants={itemVariants}
+                  style={{ animationDelay: '0.9s' }}
+                >
+                  Chcę, by moje doświadczenia stały się inspiracją dla innych, pokazując, jak świadome wybory żywieniowe mogą wspierać zdrowie.
+                </motion.p>
+              </div>
+            </motion.div>
             
             {/* Footer with enhanced button */}
-            <div className="p-5 bg-gray-50 border-t flex justify-end">
+            <div className="p-4 bg-gray-50 border-t flex justify-end">
               <motion.button 
                 onClick={togglePopup} 
-                className="px-6 py-2.5 bg-green-700 text-white rounded-lg hover:bg-green-600 transition-all duration-300 flex items-center gap-2 group shadow-sm hover:shadow-md"
+                className="px-6 py-2 bg-green-700 text-white rounded-full hover:bg-green-600 transition-all duration-300 flex items-center gap-2 group shadow-md hover:shadow-lg"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
+                aria-label="Zamknij"
               >
                 Zamknij
                 <IoClose className="text-xl opacity-80 group-hover:opacity-100" />
               </motion.button>
             </div>
             
-            {/* Close button in the corner */}
+            {/* Improved close button */}
             <motion.button
-              className="absolute right-3 top-3 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors"
+              className="absolute right-3 top-3 w-9 h-9 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors shadow-lg z-10"
               onClick={togglePopup}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
+              aria-label="Zamknij"
             >
-              <IoClose />
+              <IoClose className="text-xl" />
             </motion.button>
           </motion.div>
         </motion.div>

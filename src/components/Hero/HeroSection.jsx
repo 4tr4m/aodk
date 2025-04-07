@@ -117,7 +117,7 @@ const HeroSection = () => {
               <HeroActionButton 
                 text="ODKRYJ PRZEPISY" 
                 size="hero"
-                className="transform scale-125"
+                className="transform scale-110"
               />
             </a>
           </div>
@@ -125,7 +125,7 @@ const HeroSection = () => {
           {/* Dodatkowy gradient dla płynniejszego przejścia */}
           <div className="absolute bottom-8 sm:bottom-10 md:bottom-14 left-0 w-full h-16 sm:h-20 md:h-24 z-10 pointer-events-none"
             style={{
-              background: 'linear-gradient(to bottom, rgba(45,55,72,0), rgba(247,250,252,0.4))'
+              background: 'linear-gradient(to bottom, rgba(45,55,72,0), rgba(247,250,252,0.3))'
             }}
           ></div>
 
@@ -133,7 +133,7 @@ const HeroSection = () => {
           <div className="absolute bottom-0 left-0 w-full h-10 sm:h-12 md:h-16 overflow-hidden">
             <div className="absolute bottom-0 left-0 w-full h-36 z-10 pointer-events-none"
                style={{
-                 background: 'linear-gradient(to top, rgba(247,250,252,1), rgba(247,250,252,0.7), rgba(247,250,252,0))'
+                 background: 'linear-gradient(to top, rgba(247,250,252,1), rgba(247,250,252,0.6), rgba(247,250,252,0))'
                }}
             ></div>
             <div 
@@ -141,8 +141,8 @@ const HeroSection = () => {
               style={{
                 borderTopLeftRadius: '100%',
                 borderTopRightRadius: '100%',
-                boxShadow: 'inset 0 4px 8px rgba(0,0,0,0.08)',
-                backgroundImage: 'linear-gradient(to bottom, rgba(247,250,252,0.8), rgba(247,250,252,1))'
+                boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.05)',
+                backgroundImage: 'linear-gradient(to bottom, rgba(247,250,252,0.7), rgba(247,250,252,1))'
               }}
             ></div>
           </div>

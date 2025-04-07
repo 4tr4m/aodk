@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaTimes } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SearchBar = memo(function SearchBar({ 
@@ -37,7 +37,7 @@ const SearchBar = memo(function SearchBar({
     const value = event.target.value;
     setSearchTerm(value);
     
-    // Notify parent component of change
+    // Notify parent component of change immediately
     if (onChange) {
       onChange(value);
     }
@@ -278,7 +278,7 @@ const SearchBar = memo(function SearchBar({
               ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10 pointer-events-none'}
             `}
           >
-            <FaSearch />
+            <FaTimes />
           </button>
         )}
       </form>
@@ -327,7 +327,8 @@ const SearchBar = memo(function SearchBar({
                     </div>
                   )}
                   
-                  {suggestion.ingredients && (
+                  {/* Ingredients hidden for now */}
+                  {/* {suggestion.ingredients && (
                     <div className="text-xs sm:text-sm text-gray-500 line-clamp-1">
                       Składniki: {highlightMatch(
                         Array.isArray(suggestion.ingredients) 
@@ -338,7 +339,7 @@ const SearchBar = memo(function SearchBar({
                         highlightedTerm || searchTerm
                       )}
                     </div>
-                  )}
+                  )} */}
                 </li>
               ))}
             </ul>
