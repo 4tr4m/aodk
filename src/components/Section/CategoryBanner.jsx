@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import CategoryCarousel from '../UI/CategoryCarousel';
-import { kuchniaCategories } from '../../Data/category-data'; 
 import { useInView } from 'react-intersection-observer';
 import SearchBar from '../UI/SearchBar';
 import { FaSearch } from 'react-icons/fa';
 import searchService from '../../services/searchService';
+import categoryService from '../../services/categoryService';
 import { useNavigate } from 'react-router-dom';
 
 // Constants
@@ -183,6 +183,7 @@ const CategoryBanner = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [error, setError] = useState(null);
   
   const navigate = useNavigate();
   
@@ -262,22 +263,32 @@ const CategoryBanner = () => {
     }
   }, [navigate]);
 
-  // Load categories
+  // Load categories from Supabase
   useEffect(() => {
-    const categories = kuchniaCategories.mainCategories;
-    
-    const items = categories
-      .filter(category => category.image) // Only include categories with images
-      .map(category => ({
-        id: category.label,
-        label: category.label,
-        image: category.image,
-        shortDesc: category.shortDesc || 'Odkryj nasze pyszne przepisy!',
-        link: category.link
-      }));
-    
-    setAllCategoryItems(items);
-    setIsLoaded(true);
+    const loadCategories = async () => {
+      try {
+        const categories = await categoryService.getCategories();
+        const items = categories
+          .filter(category => category.image) // Only include categories with images
+          .map(category => ({
+            id: category.id,
+            label: category.label,
+            image: category.image,
+            shortDesc: category.shortDesc || 'Odkryj nasze pyszne przepisy!',
+            link: category.link
+          }));
+        
+        setAllCategoryItems(items);
+        setIsLoaded(true);
+        setError(null);
+      } catch (err) {
+        console.error('Error loading categories:', err);
+        setError('Nie udało się załadować kategorii');
+        setIsLoaded(true);
+      }
+    };
+
+    loadCategories();
   }, []);
 
   // Start animations when in view
@@ -354,7 +365,7 @@ const CategoryBanner = () => {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ 
                     duration: 1,
-                    ease: [0.25, 0.1, 0.25, 1.0] // Smooth cubic bezier curve
+                    ease: [0.25, 0.1, 0.25, 1.0]
                   }}
                 >
                   <TitleWithSearch 
@@ -407,7 +418,7 @@ const CategoryBanner = () => {
           variants={itemAnimation}
           className="w-full mx-auto"
         >
-          {isLoaded && (
+          {isLoaded && !error && (
             <div className="relative flex justify-center">
               <motion.div 
                 className={`absolute inset-0 bg-gradient-to-r from-transparent via-${BG_COLOR_LIGHTER} to-transparent 
@@ -428,6 +439,12 @@ const CategoryBanner = () => {
                   showViewButton={true}
                 />
               </div>
+            </div>
+          )}
+          
+          {error && (
+            <div className="text-center text-red-600 p-4">
+              {error}
             </div>
           )}
         </motion.div>
