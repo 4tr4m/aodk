@@ -244,9 +244,9 @@ const SearchBar = memo(function SearchBar({
             h-12 sm:h-14 border-0 border-b-2 border-green-600 bg-transparent
             text-gray-700 placeholder-gray-500 outline-none focus:ring-0
             text-center text-xl sm:text-2xl font-['Lato'] tracking-wide
-            transition-all duration-[1000ms] ease-in-out
+            transition-all duration-[800ms] ease-in-out
             ${isOpen
-              ? 'w-full max-w-3xl sm:max-w-4xl md:max-w-5xl lg:max-w-6xl opacity-100 px-10 sm:px-12'
+              ? 'w-full max-w-full opacity-100 px-10 sm:px-12'
               : 'w-0 opacity-0 p-0 pointer-events-none'
             }
           `}
@@ -293,10 +293,6 @@ const SearchBar = memo(function SearchBar({
             transition={{ duration: 0.2 }}
             className="absolute z-50 top-full w-full mx-auto left-0 right-0 mt-2 max-h-[60vh] overflow-y-auto rounded-lg shadow-lg bg-white border border-gray-200"
             ref={suggestionsRef}
-            style={{
-              position: 'absolute',
-              top: '100%'
-            }}
           >
             <ul className="py-2 divide-y divide-gray-100">
               {suggestions.map((suggestion, index) => (
