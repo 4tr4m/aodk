@@ -7,6 +7,8 @@ import CategoryPage from './components/Pages/CategoryPage';
 import BlogPage from './components/Pages/Blog';
 import ArticlePage from './components/Pages/ArticlePage';
 import SearchPage from './components/Pages/SearchPage';
+import HistoriaOMnie from './components/Pages/HistoriaOMnie';
+import HistoriaOAutyzmie from './components/Pages/HistoriaOAutyzmie';
 
 const App = () => {
   return (
@@ -20,6 +22,8 @@ const App = () => {
           <Route path="/blog/:slug" element={<ArticlePage />} />
           <Route path="/kontakt" element={<ContactPage />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/historia/o-mnie" element={<HistoriaOMnie />} />
+          <Route path="/historia/o-autyzmie" element={<HistoriaOAutyzmie />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

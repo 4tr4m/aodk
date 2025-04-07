@@ -71,7 +71,7 @@ const TopNavBar = () => {
     // },
     { 
       label: 'HISTORIA', 
-      link: '/historia',
+      link: '/historia/o-mnie',
       dropdown: historiaCategories,
       type: 'historia'
     },
