@@ -204,21 +204,9 @@ const SearchPage = () => {
                       )}
                     </div>
                     
-                    {suggestion.category && (
-                      <div className="text-xs sm:text-sm text-gray-500">
-                        Kategoria: {highlightMatch(
-                          typeof suggestion.category === 'string'
-                            ? suggestion.category
-                            : '',
-                          searchTerm
-                        )}
-                      </div>
-                    )}
-                    
-                    {/* Ingredients hidden for now */}
-                    {/* {suggestion.ingredients && (
-                      <div className="text-xs sm:text-sm text-gray-500 line-clamp-1">
-                        Składniki: {highlightMatch(
+                    {suggestion.ingredients && (
+                      <div className="text-xs sm:text-sm text-gray-500 line-clamp-2">
+                        {highlightMatch(
                           Array.isArray(suggestion.ingredients) 
                             ? suggestion.ingredients.join(', ') 
                             : typeof suggestion.ingredients === 'string'
@@ -227,7 +215,7 @@ const SearchPage = () => {
                           searchTerm
                         )}
                       </div>
-                    )} */}
+                    )}
                   </li>
                 ))}
               </ul>

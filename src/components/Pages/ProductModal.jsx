@@ -35,16 +35,6 @@ const ProductModal = ({ product, onClose }) => {
     };
   }, [onClose]);
 
-  // Format ingredients to handle newlines
-  const formatIngredients = (ingredients) => {
-    if (!ingredients) return [];
-    // If ingredients is already an array, return it
-    if (Array.isArray(ingredients)) return ingredients;
-    
-    // If ingredients is a string, split by newlines
-    return ingredients.split('\n').filter(line => line.trim());
-  };
-
   // Format preparation steps
   const formatPreparation = (preparation) => {
     if (!preparation) return '';
@@ -111,18 +101,6 @@ const ProductModal = ({ product, onClose }) => {
                   )}
                 </div>
               </div>
-
-              {/* Ingredients - Hidden for now */}
-              {/* <div className="mb-6">
-                <h3 className="font-['Playfair_Display'] text-xl text-[#2D3748] mb-3 font-bold">
-                  Składniki
-                </h3>
-                <ul className="list-disc pl-5 space-y-1">
-                  {formatIngredients(product.ingredients).map((ingredient, index) => (
-                    <li key={index} className="text-gray-700">{ingredient}</li>
-                  ))}
-                </ul>
-              </div> */}
 
               {/* Preparation */}
               <div className="mb-6">

@@ -316,21 +316,9 @@ const SearchBar = memo(function SearchBar({
                     )}
                   </div>
                   
-                  {suggestion.category && (
-                    <div className="text-xs sm:text-sm text-gray-500">
-                      Kategoria: {highlightMatch(
-                        typeof suggestion.category === 'string'
-                          ? suggestion.category
-                          : '',
-                        highlightedTerm || searchTerm
-                      )}
-                    </div>
-                  )}
-                  
-                  {/* Ingredients hidden for now */}
-                  {/* {suggestion.ingredients && (
-                    <div className="text-xs sm:text-sm text-gray-500 line-clamp-1">
-                      Składniki: {highlightMatch(
+                  {suggestion.ingredients && (
+                    <div className="text-xs sm:text-sm text-gray-500 line-clamp-2">
+                      {highlightMatch(
                         Array.isArray(suggestion.ingredients) 
                           ? suggestion.ingredients.join(', ') 
                           : typeof suggestion.ingredients === 'string'
@@ -339,7 +327,7 @@ const SearchBar = memo(function SearchBar({
                         highlightedTerm || searchTerm
                       )}
                     </div>
-                  )} */}
+                  )}
                 </li>
               ))}
             </ul>
