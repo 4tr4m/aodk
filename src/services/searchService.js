@@ -1,179 +1,135 @@
-import recipeService from './recipeService';
+import { supabase } from '../supabaseClient';
+import { cleanIngredient } from '../utils/ingredientExtractor';
 
-// Cache for recipes to avoid repeated fetches
+// Cache for recipes
 let recipesCache = null;
-let lastSearchTerm = '';
-let lastSearchResults = [];
-let lastSuggestionsCache = {};
+let lastFetchTime = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-// Helper function to format recipe as a search suggestion
-const formatRecipeAsSuggestion = (recipe) => {
-  return {
-    id: recipe.id,
-    name: recipe.name || '',
-    category: recipe.category || '',
-    ingredients: recipe.ingredients || [],
-    image: recipe.image || '',
-    slug: recipe.slug || '',
-    original: recipe // Keep the original recipe data for direct access
-  };
-};
-
-// Function to fetch and cache all recipes
-const getAndCacheAllRecipes = async () => {
-  if (recipesCache) return recipesCache;
-  
-  try {
-    const allRecipes = await recipeService.getAllRecipes();
-    if (allRecipes && Array.isArray(allRecipes)) {
-      recipesCache = allRecipes;
-      // Pre-process recipes to optimize search
-      recipesCache.forEach(recipe => {
-        // Lowercase search fields for faster matching
-        recipe._searchName = recipe.name ? recipe.name.toLowerCase() : '';
-        recipe._searchCategory = recipe.category ? recipe.category.toLowerCase() : '';
-        recipe._searchIngredients = recipe.ingredients 
-          ? Array.isArray(recipe.ingredients) 
-            ? recipe.ingredients.join(' ').toLowerCase()
-            : recipe.ingredients.toLowerCase()
-          : '';
-      });
-    }
-    return recipesCache;
-  } catch (error) {
-    console.error('Error caching recipes:', error);
-    return [];
-  }
-};
-
-// Fast search for small changes in search term
-const incrementalSearch = (searchTerm) => {
-  // If new term is extension of old term, filter last results
-  if (searchTerm.startsWith(lastSearchTerm) && lastSearchResults.length > 0) {
-    const term = searchTerm.toLowerCase().trim();
-    return lastSearchResults.filter(recipe => {
-      return (
-        (recipe._searchName && recipe._searchName.includes(term)) ||
-        (recipe._searchCategory && recipe._searchCategory.includes(term)) ||
-        (recipe._searchIngredients && recipe._searchIngredients.includes(term))
-      );
-    });
-  }
-  return null; // Signal that incremental search isn't applicable
-};
-
-// Search recipes based on search term
-const searchRecipes = async (searchTerm, limit = 50) => {
-  if (!searchTerm || searchTerm.trim().length < 2) {
-    return [];
-  }
-
-  const term = searchTerm.toLowerCase().trim();
-  
-  // Return cached results if exact same search
-  if (term === lastSearchTerm && lastSearchResults.length > 0) {
-    return lastSearchResults;
-  }
-  
-  // Try incremental search for better performance
-  const incrementalResults = incrementalSearch(term);
-  if (incrementalResults) {
-    lastSearchTerm = term;
-    lastSearchResults = incrementalResults;
-    return incrementalResults;
-  }
-
-  try {
-    const allRecipes = await getAndCacheAllRecipes();
-    
-    if (!allRecipes || !Array.isArray(allRecipes)) {
-      console.error('Invalid recipes data:', allRecipes);
-      return [];
+async function fetchAllRecipes() {
+    // Return cached recipes if they're still valid
+    if (recipesCache && lastFetchTime && (Date.now() - lastFetchTime < CACHE_DURATION)) {
+        return recipesCache;
     }
 
-    // Score and filter recipes based on relevance - using pre-processed fields
-    const scoredRecipes = allRecipes
-      .map(recipe => {
-        let score = 0;
-        
-        // Name match (highest priority) - using pre-processed field
-        if (recipe._searchName && recipe._searchName.includes(term)) {
-          score += 100;
-          // Bonus for exact match or match at start of name
-          if (recipe._searchName === term) {
-            score += 50;
-          } else if (recipe._searchName.startsWith(term)) {
-            score += 25;
-          }
-        }
-        
-        // Category match - using pre-processed field
-        if (recipe._searchCategory && recipe._searchCategory.includes(term)) {
-          score += 50;
-        }
-        
-        // Ingredients match - using pre-processed field
-        if (recipe._searchIngredients && recipe._searchIngredients.includes(term)) {
-          score += 25;
-        }
-        
-        return { recipe, score };
-      })
-      .filter(item => item.score > 0) // Only keep matches
-      .sort((a, b) => b.score - a.score) // Sort by score (descending)
-      .slice(0, limit) // Limit number of results
-      .map(item => item.recipe); // Extract recipes
-      
-    // Update cache
-    lastSearchTerm = term;
-    lastSearchResults = scoredRecipes;
-      
-    return scoredRecipes;
-  } catch (error) {
-    console.error('Error searching recipes:', error);
-    throw new Error('Failed to search recipes');
-  }
-};
+    const { data: recipes, error } = await supabase
+        .from('recipes')
+        .select('*');
 
-// Get search suggestions based on partial input
-const getSuggestions = async (searchTerm, limit = 10) => {
-  if (!searchTerm || searchTerm.trim().length < 2) {
-    return [];
-  }
-  
-  const term = searchTerm.toLowerCase().trim();
-  
-  // Check suggestion cache first
-  if (lastSuggestionsCache[term]) {
-    return lastSuggestionsCache[term];
-  }
-  
-  try {
-    const matchingRecipes = await searchRecipes(searchTerm, limit);
-    const suggestions = matchingRecipes.map(formatRecipeAsSuggestion);
+    if (error) throw error;
+
+    recipesCache = recipes;
+    lastFetchTime = Date.now();
+    return recipes;
+}
+
+function formatRecipeAsSuggestion(recipe, searchTerm) {
+    return {
+        name: recipe.name,
+        category: recipe.category,
+        ingredients: recipe.base_ingredients?.join(', ') || '',
+        original: recipe
+    };
+}
+
+function scoreRecipe(recipe, searchTerms) {
+    let score = 0;
+    const searchTermsLower = searchTerms.map(term => term.toLowerCase());
     
-    // Cache the suggestions
-    lastSuggestionsCache[term] = suggestions;
-    
-    // Limit cache size
-    const cacheKeys = Object.keys(lastSuggestionsCache);
-    if (cacheKeys.length > 50) {
-      delete lastSuggestionsCache[cacheKeys[0]];
+    // Name matching (highest priority)
+    if (recipe.name.toLowerCase().includes(searchTermsLower[0])) {
+        score += 100;
     }
-    
-    return suggestions;
-  } catch (error) {
-    console.error('Error getting suggestions:', error);
-    return [];
-  }
-};
 
-// Initialize cache on app start
-getAndCacheAllRecipes();
+    // Category matching
+    if (recipe.category?.toLowerCase().includes(searchTermsLower[0])) {
+        score += 50;
+    }
 
-const searchService = {
-  searchRecipes,
-  getSuggestions
-};
+    // Ingredient matching - support up to 8 ingredients
+    if (recipe.base_ingredients) {
+        const cleanedSearchTerms = searchTerms
+            .slice(0, 8) // Limit to 8 ingredients
+            .map(term => term.toLowerCase().trim());
+        
+        // Count exact ingredient matches
+        const matchedTerms = cleanedSearchTerms.filter(term => 
+            recipe.base_ingredients.some(ingredient => 
+                ingredient === term || ingredient.includes(term)
+            )
+        );
 
-export default searchService; 
+        // Higher score for more matched ingredients
+        const matchRatio = matchedTerms.length / cleanedSearchTerms.length;
+        score += matchRatio * 150; // Increased weight for ingredient matches
+
+        // Bonus for exact matches
+        matchedTerms.forEach(term => {
+            if (recipe.base_ingredients.includes(term)) {
+                score += 50; // Higher bonus for exact matches
+            }
+        });
+
+        // If all search terms matched, give significant bonus
+        if (matchedTerms.length === cleanedSearchTerms.length && cleanedSearchTerms.length > 1) {
+            score += 200;
+        }
+    }
+
+    return score;
+}
+
+export async function getSuggestions(searchTerm) {
+    if (!searchTerm || searchTerm.length < 2) return [];
+
+    try {
+        const recipes = await fetchAllRecipes();
+        const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length >= 2);
+
+        // Score and filter recipes
+        const scoredRecipes = recipes
+            .map(recipe => ({
+                recipe,
+                score: scoreRecipe(recipe, searchTerms)
+            }))
+            .filter(item => item.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 10);
+
+        // Format results as suggestions
+        return scoredRecipes.map(item => formatRecipeAsSuggestion(item.recipe, searchTerm));
+
+    } catch (error) {
+        console.error('Error getting suggestions:', error);
+        return [];
+    }
+}
+
+export async function searchRecipes(searchTerm) {
+    if (!searchTerm) return [];
+
+    try {
+        const recipes = await fetchAllRecipes();
+        const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length >= 2);
+
+        // Score and filter recipes
+        const scoredRecipes = recipes
+            .map(recipe => ({
+                recipe,
+                score: scoreRecipe(recipe, searchTerms)
+            }))
+            .filter(item => item.score > 0)
+            .sort((a, b) => b.score - a.score);
+
+        return scoredRecipes.map(item => item.recipe);
+
+    } catch (error) {
+        console.error('Error searching recipes:', error);
+        return [];
+    }
+}
+
+export default {
+    getSuggestions,
+    searchRecipes
+}; 

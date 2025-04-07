@@ -9,7 +9,12 @@ const MEASUREMENTS = {
         'gram', 'gramy', 'gramów',
         'kg', 'g', 'ml', 'l',
         'sztuka', 'sztuki', 'sztuk', 'szt',
-        'opakowanie', 'opakowania', 'opakowań', 'opak'
+        'opakowanie', 'opakowania', 'opakowań', 'opak',
+        'garść', 'garści',
+        'kostka', 'kostki',
+        'puszka', 'puszki',
+        'kropla', 'krople', 'kropli',
+        'szczypta', 'szczypt'
     ],
     adjectives: [
         'duży', 'duża', 'duże',
@@ -18,14 +23,35 @@ const MEASUREMENTS = {
         'świeży', 'świeża', 'świeże',
         'posiekany', 'posiekana', 'posiekane',
         'starty', 'starta', 'starte',
-        'pokrojony', 'pokrojona', 'pokrojone'
+        'pokrojony', 'pokrojona', 'pokrojone',
+        'dojrzały', 'dojrzała', 'dojrzałe',
+        'młody', 'młoda', 'młode',
+        'ugotowany', 'ugotowana', 'ugotowane',
+        'obrany', 'obrana', 'obrane',
+        'oczyszczony', 'oczyszczona', 'oczyszczone',
+        'umyty', 'umyta', 'umyte',
+        'suszona', 'suszony', 'suszone'
     ],
     phrases: [
         'do smaku',
         'według uznania',
         'do dekoracji',
         'trochę',
-        'kilka'
+        'kilka',
+        'około',
+        'mniej więcej',
+        'najlepiej',
+        'opcjonalnie',
+        'ewentualnie',
+        'lub',
+        'albo'
+    ],
+    prefixes: [
+        'bio',
+        'eko',
+        'świeżo',
+        'drobno',
+        'grubo'
     ]
 };
 
@@ -39,31 +65,63 @@ const adjectiveRegex = new RegExp(
 const phraseRegex = new RegExp(
     `\\b(${MEASUREMENTS.phrases.join('|')})\\b`, 'gi'
 );
+const prefixRegex = new RegExp(
+    `\\b(${MEASUREMENTS.prefixes.join('|')})\\s+`, 'gi'
+);
 const numberRegex = /\d+(\s*[,-]\s*\d+)?/g;
+const parenthesesRegex = /\(([^)]+)\)/g;
+const punctuationRegex = /[.,\/#!$%\^&\*;:{}=\-_`~()]/g;
+
+// Common ingredient corrections
+const CORRECTIONS = {
+    'papryka czerwona': 'papryka',
+    'papryka zielona': 'papryka',
+    'papryka żółta': 'papryka',
+    'cebula czerwona': 'cebula',
+    'cebula biała': 'cebula',
+    'mąka pszenna': 'mąka',
+    'mąka kukurydziana': 'mąka kukurydziana',
+    'mąka ryżowa': 'mąka ryżowa',
+    'mleko kokosowe': 'mleko kokosowe',
+    'mleko migdałowe': 'mleko migdałowe',
+    'mleko owsiane': 'mleko owsiane',
+    'olej kokosowy': 'olej kokosowy',
+    'olej rzepakowy': 'olej rzepakowy',
+    'olej oliwkowy': 'oliwa z oliwek'
+};
 
 export function cleanIngredient(ingredient) {
     if (!ingredient) return '';
     
     let cleaned = ingredient.toLowerCase().trim();
     
-    // Remove numbers
-    cleaned = cleaned.replace(numberRegex, '');
+    // Remove content in parentheses
+    cleaned = cleaned.replace(parenthesesRegex, '');
     
-    // Remove measurements
+    // Remove numbers and measurements
+    cleaned = cleaned.replace(numberRegex, '');
     cleaned = cleaned.replace(measurementRegex, '');
     
-    // Remove adjectives
+    // Remove adjectives and prefixes
     cleaned = cleaned.replace(adjectiveRegex, '');
+    cleaned = cleaned.replace(prefixRegex, '');
     
     // Remove common phrases
     cleaned = cleaned.replace(phraseRegex, '');
     
-    // Remove bullet points and extra whitespace
+    // Remove punctuation and extra whitespace
     cleaned = cleaned
+        .replace(punctuationRegex, '')
         .replace(/^\s*[-•]\s*/, '')
         .replace(/\s+/g, ' ')
-        .replace(/,/g, '')
         .trim();
+    
+    // Apply corrections for known variations
+    for (const [key, value] of Object.entries(CORRECTIONS)) {
+        if (cleaned === key) {
+            return value;
+        }
+    }
     
     return cleaned;
 }
