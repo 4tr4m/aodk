@@ -3,7 +3,61 @@ import supabase from '../lib/supabase-browser';
 // Cache for recipes
 let recipesCache = null;
 let lastFetchTime = null;
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Helper to detect mobile devices
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+// Longer cache duration for mobile devices to save battery and data
+const CACHE_DURATION = isMobile ? 15 * 60 * 1000 : 5 * 60 * 1000; // 15 minutes for mobile, 5 minutes for desktop
+
+// Common Polish word endings for ingredients
+const WORD_VARIATIONS = {
+    'ko': ['ka', 'ek', 'ki', 'kow'], // jabłko -> jabłka, jabłek
+    'ka': ['ko', 'ek', 'ki', 'kow'], // marchewka -> marchewek
+    'ek': ['ka', 'ko', 'ki', 'kow'], // pomidorek -> pomidorki
+    'ki': ['ka', 'ko', 'ek', 'kow'], // jabłki -> jabłko
+};
+
+// Helper function to get word stem (remove last 2 letters)
+function getWordStem(word) {
+    return word.slice(0, -2);
+}
+
+// Helper function to check if words match including variations
+function wordsMatch(word1, word2) {
+    word1 = word1.toLowerCase();
+    word2 = word2.toLowerCase();
+
+    // Direct match
+    if (word1 === word2) return true;
+
+    // Get the last two letters of each word
+    const ending1 = word1.slice(-2);
+    const ending2 = word2.slice(-2);
+
+    // Get stems
+    const stem1 = getWordStem(word1);
+    const stem2 = getWordStem(word2);
+
+    // If stems match, check if endings are related
+    if (stem1 === stem2) return true;
+
+    // Check if either word's ending has variations that match the other word
+    if (WORD_VARIATIONS[ending1]) {
+        const variations = WORD_VARIATIONS[ending1];
+        if (variations.some(ending => stem1 + ending === word2)) return true;
+    }
+
+    if (WORD_VARIATIONS[ending2]) {
+        const variations = WORD_VARIATIONS[ending2];
+        if (variations.some(ending => stem2 + ending === word1)) return true;
+    }
+
+    // Partial match (one word contains the other)
+    if (word1.includes(word2) || word2.includes(word1)) return true;
+
+    return false;
+}
 
 // Function to clear cache - call this when data structure changes
 export function clearCache() {
@@ -15,6 +69,7 @@ export function clearCache() {
 async function fetchAllRecipes() {
     // Return cached recipes if they're still valid
     if (recipesCache && lastFetchTime && (Date.now() - lastFetchTime < CACHE_DURATION)) {
+        console.log(`Using cached recipes (${isMobile ? 'mobile' : 'desktop'} cache duration: ${CACHE_DURATION/1000}s)`);
         return recipesCache;
     }
 
@@ -70,7 +125,15 @@ function recipeMatchesAllTerms(recipe, searchTerms) {
     // Check if all search terms are found in either name or ingredients
     return searchTerms.every(term => {
         const normalizedTerm = normalizePolishChars(term.trim());
-        return normalizedIngredients.includes(normalizedTerm) || normalizedName.includes(normalizedTerm);
+        
+        // Check name match
+        if (normalizedName.includes(normalizedTerm)) return true;
+        
+        // Check ingredients with word variations
+        const ingredientWords = normalizedIngredients.split(/[\s,]+/);
+        return ingredientWords.some(ingredient => 
+            wordsMatch(ingredient, normalizedTerm)
+        );
     });
 }
 
@@ -98,12 +161,17 @@ function scoreRecipe(recipe, searchTerms) {
         }
     }
 
-    // Ingredient matching
+    // Ingredient matching with word variations
     if (recipe.base_ingredients) {
+        const ingredientWords = normalizedIngredients.split(/[\s,]+/);
+        
         for (const term of searchTermsNormalized) {
-            if (normalizedIngredients.includes(term)) {
-                score += 75; // Significant score for ingredient match
-                console.log('Ingredient match found:', term);
+            for (const ingredient of ingredientWords) {
+                if (wordsMatch(ingredient, term)) {
+                    score += 75; // Significant score for ingredient match
+                    console.log('Ingredient match found:', term, 'matches with', ingredient);
+                    break; // Don't count multiple matches for the same term
+                }
             }
         }
 
