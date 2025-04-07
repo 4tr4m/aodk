@@ -42,6 +42,7 @@ const variantClasses = {
  * @param {boolean} props.animate - Whether to add animation effects
  * @param {boolean} props.fullWidth - Whether the button should take full width
  * @param {Object} props.customStyles - Additional custom styles to apply
+ * @param {Object} props.state - State to pass to Link component
  */
 export const Button = ({ 
   text, 
@@ -54,6 +55,7 @@ export const Button = ({
   className = '',
   customStyles = {},
   children,
+  state = null,
   ...props 
 }) => {
   // Size classes
@@ -134,7 +136,7 @@ export const Button = ({
   // Render as link or button
   if (to) {
     return (
-      <Link to={to} className="inline-block">
+      <Link to={to} className="inline-block" state={state}>
         <MotionButton>
           {buttonContent}
         </MotionButton>

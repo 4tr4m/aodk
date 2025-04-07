@@ -54,7 +54,7 @@ const SearchIcon = ({ toggleSearch }) => {
           {/* Attention ring */}
           <div className="absolute -inset-1 rounded-full bg-green-400/20 animate-pulse"></div>
           
-          <FaSearch className="text-[2.5rem] sm:text-[2.75rem] md:text-[3rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" />
+          <FaSearch className="text-[2.6rem] sm:text-[2.85rem] md:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" />
         </div>
       </motion.div>
     </div>
@@ -74,6 +74,10 @@ const CategoryPage = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const searchTimeoutRef = useRef(null);
+  const [showDescription, setShowDescription] = useState(false);
+
+  // State for occasional toggle button attention animation
+  const [highlightToggle, setHighlightToggle] = useState(false);
 
   useEffect(() => {
     if (!state.isLoading) {
@@ -93,14 +97,29 @@ const CategoryPage = () => {
       scrollToTop();
       
       setTimeout(() => {
-        navigate(categoryLink);
+        navigate(categoryLink, { state: { scrollToTitle: true } });
       }, 300);
+    } else {
+      // If already on the category page, scroll to the title
+      document.getElementById('category-title')?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [navigate, location.pathname, scrollToTop]);
 
   useEffect(() => {
     scrollToTop();
   }, [categorySlug, scrollToTop]);
+
+  // Effect to scroll to title if coming from another category
+  useEffect(() => {
+    if (location.state?.scrollToTitle) {
+      // Small delay to ensure the component is fully rendered
+      setTimeout(() => {
+        document.getElementById('category-title')?.scrollIntoView({ behavior: 'smooth' });
+        // Clean up state to prevent scrolling on future updates
+        navigate(location.pathname, { replace: true, state: {} });
+      }, 500);
+    }
+  }, [location.state, navigate, location.pathname]);
 
   const getCurrentCategory = () => {
     if (!categorySlug) return null;
@@ -239,6 +258,36 @@ const CategoryPage = () => {
     };
   }, []);
 
+  // Handle window resize for description visibility
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Occasionally animate the toggle button to draw attention
+  useEffect(() => {
+    if (isMobile && !showDescription && currentCategory?.description) {
+      const timer = setTimeout(() => {
+        setHighlightToggle(true);
+        
+        // Reset after animation completes
+        const resetTimer = setTimeout(() => {
+          setHighlightToggle(false);
+        }, 1500);
+        
+        return () => clearTimeout(resetTimer);
+      }, 5000); // Trigger after 5 seconds on page
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile, showDescription, currentCategory]);
+
   return (
     <div ref={pageRef} className="min-h-screen bg-gray-100">
       <SEO 
@@ -255,13 +304,13 @@ const CategoryPage = () => {
       </div>
       
       <motion.div 
-        className="max-w-7xl mx-auto px-4 md:px-8 mb-12 text-center"
+        className="max-w-7xl mx-auto px-4 md:px-8 mb-8 md:mb-12 text-center"
         initial="hidden"
         animate="visible"
         variants={fadeIn}
       >
         {/* Header with H1 and Search */}
-        <div className="flex flex-col items-center justify-center relative">
+        <div id="category-title" className="flex flex-col items-center justify-center relative">
           {/* Title and SearchBar with transitions */}
           <AnimatePresence mode="wait" initial={false}>
             {!isSearching ? (
@@ -271,12 +320,12 @@ const CategoryPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="flex items-center justify-center gap-4"
+                className="flex flex-row flex-wrap items-center justify-center gap-3 sm:gap-4"
               >
-                <h1 className="font-['Playfair_Display'] text-4xl md:text-5xl lg:text-6xl text-[#2D3748] font-bold tracking-wide">
+                <h1 className="font-['Playfair_Display'] text-4xl md:text-5xl lg:text-6xl text-[#2D3748] font-bold tracking-wide text-center">
                   {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
                 </h1>
-                <div className="ml-5">
+                <div className="ml-1 sm:ml-3 flex-shrink-0">
                   <SearchIcon toggleSearch={toggleSearch} />
                 </div>
               </motion.div>
@@ -306,19 +355,95 @@ const CategoryPage = () => {
           
           {/* Description - shown only when not searching */}
           {currentCategory?.description && !isSearching && (
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="font-['Lato'] text-base md:text-lg lg:text-xl text-gray-600 text-center max-w-3xl mx-auto leading-relaxed mt-4"
-            >
-              {currentCategory.description}
-            </motion.p>
+            <div className="w-full mt-2 mb-4 md:mb-0 md:mt-4 relative">
+              {/* Mobile toggle button - centered with better positioning */}
+              <div className="relative md:hidden flex justify-center items-center">
+                <motion.button
+                  className={`flex items-center justify-center mx-auto px-5 py-1.5 backdrop-blur-sm border rounded-full text-sm shadow-sm hover:shadow-md transition-all duration-300 ${
+                    highlightToggle 
+                      ? 'bg-green-100 border-green-300 text-green-700' 
+                      : 'bg-green-50/70 border-green-100 text-gray-700 hover:bg-green-50/90'
+                  }`}
+                  onClick={() => setShowDescription(!showDescription)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ y: 0 }}
+                  animate={highlightToggle ? 
+                    { 
+                      y: [0, -4, 0, -4, 0],
+                      scale: [1, 1.05, 1, 1.05, 1],
+                      transition: { duration: 1.5 }
+                    } : 
+                    { 
+                      y: [0, -2, 0],
+                      transition: {
+                        y: {
+                          duration: 2,
+                          repeat: Infinity,
+                          repeatType: "loop"
+                        }
+                      }
+                    }
+                  }
+                >
+                  {showDescription ? (
+                    <span className="flex items-center">
+                      Ukryj opis
+                      <motion.span 
+                        className="ml-1.5 text-green-600" 
+                        initial={{ rotate: 0 }}
+                        animate={{ rotate: 180 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        ▼
+                      </motion.span>
+                    </span>
+                  ) : (
+                    <span className="flex items-center">
+                      Pokaż opis
+                      <motion.span className="ml-1.5 text-green-600">▼</motion.span>
+                    </span>
+                  )}
+                </motion.button>
+              </div>
+              
+              {/* Description with animation */}
+              <AnimatePresence mode="wait">
+                {(showDescription || !isMobile) && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                    animate={{ 
+                      opacity: 1, 
+                      height: "auto", 
+                      marginTop: isMobile ? 4 : 16
+                    }}
+                    exit={{ 
+                      opacity: 0, 
+                      height: 0, 
+                      marginTop: 0,
+                      transition: { 
+                        opacity: { duration: 0.2 }, 
+                        height: { duration: 0.3 } 
+                      }
+                    }}
+                    transition={{ 
+                      duration: 0.4,
+                      ease: "easeInOut" 
+                    }}
+                    className="overflow-hidden"
+                  >
+                    <p className="font-['Lato'] text-base md:text-lg lg:text-xl text-gray-600 text-center max-w-3xl mx-auto leading-relaxed">
+                      {currentCategory.description}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           )}
         </div>
       </motion.div>
 
-      <div className="sticky top-0 z-40 mb-8 shadow-md bg-gray-100">
+      <div className="sticky top-0 z-40 mb-6 shadow-md bg-gray-100">
         <CategoryNav 
           categories={kuchniaCategories.mainCategories.filter(cat => cat.image)}
           currentSlug={categorySlug}

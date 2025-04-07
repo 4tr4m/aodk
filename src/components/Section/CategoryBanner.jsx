@@ -7,6 +7,7 @@ import SearchBar from '../UI/SearchBar';
 import { FaSearch } from 'react-icons/fa';
 import searchService from '../../services/searchService';
 import { useNavigate } from 'react-router-dom';
+import supabase from '../../lib/supabase-browser';
 
 // Constants
 const BG_COLOR_LIGHTER = "gray-100";
@@ -52,7 +53,7 @@ const titleVariant = {
 // Title with search icon component (memoized)
 const TitleWithSearch = memo(({ title, toggleSearch, accentColor }) => {
   return (
-    <div className="flex items-center gap-3 sm:gap-4">
+    <div className="flex items-center justify-center flex-wrap gap-3 sm:gap-4">
       <h2 
         className={`inline-block font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1A202C] 
           relative pb-3 sm:pb-4 after:content-[''] after:absolute after:bottom-0 after:left-1/2 
@@ -60,7 +61,9 @@ const TitleWithSearch = memo(({ title, toggleSearch, accentColor }) => {
       >
         {title}
       </h2>
-      <SearchIcon toggleSearch={toggleSearch} />
+      <div className="ml-1 sm:ml-2 flex-shrink-0">
+        <SearchIcon toggleSearch={toggleSearch} />
+      </div>
     </div>
   );
 });
@@ -136,7 +139,7 @@ const SearchIcon = memo(({ toggleSearch }) => {
           {/* Attention ring */}
           <div className="absolute -inset-1 rounded-full bg-green-400/20 animate-pulse"></div>
           
-          <FaSearch className="text-[2.5rem] sm:text-[2.75rem] md:text-[3rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" />
+          <FaSearch className="text-[2.6rem] sm:text-[2.85rem] md:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" />
         </div>
       </motion.div>
       
@@ -264,20 +267,63 @@ const CategoryBanner = () => {
 
   // Load categories
   useEffect(() => {
-    const categories = kuchniaCategories.mainCategories;
-    
-    const items = categories
-      .filter(category => category.image) // Only include categories with images
-      .map(category => ({
-        id: category.label,
-        label: category.label,
-        image: category.image,
-        shortDesc: category.shortDesc || 'Odkryj nasze pyszne przepisy!',
-        link: category.link
-      }));
-    
-    setAllCategoryItems(items);
-    setIsLoaded(true);
+    const fetchCategories = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*');
+
+        if (error) {
+          console.error("Error fetching categories:", error);
+          // Fallback to hardcoded categories
+          loadFallbackCategories();
+          return;
+        }
+
+        // Filter categories to only include those with images
+        const items = data
+          .filter(category => category.image_path)
+          .map(category => ({
+            id: category.id,
+            label: category.name,
+            image: category.image_path,
+            shortDesc: category.description || 'Odkryj nasze pyszne przepisy!',
+            link: `/kuchnia/${category.slug || category.id}`
+          }));
+        
+        if (items.length === 0) {
+          // If no categories found in Supabase, use fallback
+          loadFallbackCategories();
+        } else {
+          setAllCategoryItems(items);
+          setIsLoaded(true);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        // Fallback to hardcoded categories
+        loadFallbackCategories();
+      }
+    };
+
+    // Helper function to use fallback categories
+    const loadFallbackCategories = () => {
+      const categories = kuchniaCategories.mainCategories;
+      
+      const items = categories
+        .filter(category => category.image) // Only include categories with images
+        .map(category => ({
+          id: category.label,
+          label: category.label,
+          image: category.image,
+          shortDesc: category.shortDesc || 'Odkryj nasze pyszne przepisy!',
+          link: category.link
+        }));
+      
+      setAllCategoryItems(items);
+      setIsLoaded(true);
+    };
+
+    fetchCategories();
   }, []);
 
   // Start animations when in view
@@ -407,27 +453,37 @@ const CategoryBanner = () => {
           variants={itemAnimation}
           className="w-full mx-auto"
         >
-          {isLoaded && (
-            <div className="relative flex justify-center">
-              <motion.div 
-                className={`absolute inset-0 bg-gradient-to-r from-transparent via-${BG_COLOR_LIGHTER} to-transparent 
-                  opacity-0 pointer-events-none`} 
-                animate={{
-                  opacity: [0, 0.4, 0],
-                  transition: { 
-                    duration: 5,
-                    repeat: Infinity,
-                    repeatType: "reverse"
-                  }
-                }}
-              />
-              
-              <div className="relative px-1 sm:px-2 md:px-4 lg:px-8 overflow-hidden w-full max-w-[100%] md:max-w-[900px] lg:max-w-[1200px] xl:max-w-[1400px] mx-auto">
-                <CategoryCarousel 
-                  items={allCategoryItems}
-                  showViewButton={true}
+          {isLoaded ? (
+            allCategoryItems.length > 0 ? (
+              <div className="relative flex justify-center">
+                <motion.div 
+                  className={`absolute inset-0 bg-gradient-to-r from-transparent via-${BG_COLOR_LIGHTER} to-transparent 
+                    opacity-0 pointer-events-none`} 
+                  animate={{
+                    opacity: [0, 0.4, 0],
+                    transition: { 
+                      duration: 5,
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }
+                  }}
                 />
+                
+                <div className="relative px-1 sm:px-2 md:px-4 lg:px-8 overflow-hidden w-full max-w-[100%] md:max-w-[900px] lg:max-w-[1200px] xl:max-w-[1400px] mx-auto">
+                  <CategoryCarousel 
+                    items={allCategoryItems}
+                    showViewButton={true}
+                  />
+                </div>
               </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-600 text-lg">Nie znaleziono kategorii.</p>
+              </div>
+            )
+          ) : (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
             </div>
           )}
         </motion.div>
