@@ -63,12 +63,12 @@ const TopNavBar = () => {
       dropdown: kuchniaItems,
       type: 'kuchnia'
     },
-    { 
-      label: 'SKŁADNIK', 
-      link: '/skladnik',
-      dropdown: skladnikItems,
-      type: 'skladnik'
-    },
+    // { 
+    //   label: 'SKŁADNIK', 
+    //   link: '/skladnik',
+    //   dropdown: skladnikItems,
+    //   type: 'skladnik'
+    // },
     { 
       label: 'HISTORIA', 
       link: '/historia',

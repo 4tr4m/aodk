@@ -7,6 +7,8 @@ import SearchBar from '../UI/SearchBar';
 import Spinner from '../UI/Spinner';
 import searchService from '../../services/searchService';
 import CategoryHeader from './CategoryHeader';
+import CategoryNav from './CategoryNav';
+import { kuchniaCategories } from '../../Data/category-data';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SearchPage = () => {
@@ -20,8 +22,15 @@ const SearchPage = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(null);
+  const [currentCategory, setCurrentCategory] = useState(null);
   const suggestionsRef = useRef(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
+
+  // Get current category from URL
+  useEffect(() => {
+    const path = location.pathname.split('/').pop();
+    setCurrentCategory(path === 'search' ? null : path);
+  }, [location]);
 
   // Define performSearch BEFORE the useEffect that uses it
   const performSearch = useCallback(async (term) => {
@@ -41,6 +50,13 @@ const SearchPage = () => {
       setLoading(false);
     }
   }, []);
+
+  // Handle category selection
+  const handleCategoryClick = useCallback((categoryPath) => {
+    const category = categoryPath.split('/').pop();
+    setCurrentCategory(category === 'kuchnia' ? null : category);
+    navigate(categoryPath);
+  }, [navigate]);
 
   // THEN use it in the useEffect
   useEffect(() => {
@@ -175,6 +191,20 @@ const SearchPage = () => {
           />
         </div>
 
+        {/* Category Navigation */}
+        <motion.div 
+          className="mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <CategoryNav
+            categories={kuchniaCategories.mainCategories}
+            currentSlug={currentCategory}
+            onCategoryClick={handleCategoryClick}
+          />
+        </motion.div>
+
         {/* Suggestions dropdown */}
         <AnimatePresence>
           {showSuggestions && suggestions.length > 0 && (
@@ -239,6 +269,7 @@ const SearchPage = () => {
             <div>
               <h2 className="text-xl font-semibold mb-4 text-green-700">
                 Wyniki wyszukiwania dla: <span className="font-bold">"{searchTerm}"</span>
+                {currentCategory && <span className="ml-2 text-gray-600">w kategorii: {currentCategory}</span>}
               </h2>
               <RecipeGrid recipes={recipes} />
             </div>
