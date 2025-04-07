@@ -25,7 +25,7 @@ const TopNavBar = () => {
   const renderDropdownMenu = (items) => (
     <ul className={`
       ${isMobileMenuOpen 
-        ? 'relative bg-gray-800/95 w-full mt-2 rounded-md shadow-lg border border-gray-700'
+        ? 'relative bg-white/95 w-full mt-2 rounded-md shadow-lg border border-gray-200'
         : 'absolute left-0 bg-black/85 min-w-[240px] py-3 flex flex-col opacity-0 invisible transition-all duration-500 ease-in-out delay-150 -translate-y-4 transform origin-top scale-95 group-hover:scale-100 group-hover:translate-y-0 group-hover:opacity-100 group-hover:visible backdrop-blur-sm rounded-lg'
       }
     `}>
@@ -33,7 +33,8 @@ const TopNavBar = () => {
         <li 
           key={index} 
           className={`
-            px-4 py-2 transform transition-all duration-300 hover:bg-white/10
+            px-4 py-2 transform transition-all duration-300 
+            ${isMobileMenuOpen ? 'hover:bg-gray-100' : 'hover:bg-white/10'}
             ${!isMobileMenuOpen && 'opacity-0 -translate-y-2'}
           `}
           style={{ 
@@ -44,7 +45,8 @@ const TopNavBar = () => {
           <Link 
             to={item.link}
             onClick={() => setIsMobileMenuOpen(false)}
-            className="text-[18px] font-['Patrick_Hand'] font-normal leading-[1.2] whitespace-nowrap text-gray-50/95 drop-shadow-sm hover:text-yellow-400 transition-all duration-300 mix-blend-normal block"
+            className={`text-[18px] font-['Patrick_Hand'] font-normal leading-[1.2] whitespace-nowrap transition-all duration-300 mix-blend-normal block
+              ${isMobileMenuOpen ? 'text-gray-800 hover:text-green-600' : 'text-gray-50/95 hover:text-yellow-400'}`}
           >
             {item.label}
           </Link>
@@ -127,7 +129,7 @@ const TopNavBar = () => {
 
         {/* Navigation */}
         <nav className={`w-full md:w-auto ${isMobileMenuOpen ? 'block' : 'hidden md:block'}`}>
-          <ul className={`flex flex-col md:flex-row md:gap-12 w-full ${isMobileMenuOpen ? 'bg-black/90 backdrop-blur-md rounded-lg p-4 shadow-xl' : ''}`}>
+          <ul className={`flex flex-col md:flex-row md:gap-12 w-full ${isMobileMenuOpen ? 'bg-white/95 backdrop-blur-md rounded-lg p-4 shadow-xl' : ''}`}>
             {navItems.map((item, index) => (
               <li 
                 key={index} 
@@ -140,20 +142,21 @@ const TopNavBar = () => {
                   to={item.link}
                   onClick={(e) => {
                     if (item.dropdown && isMobileMenuOpen) {
-                      e.preventDefault(); // Prevent navigation on mobile when there's a dropdown
+                      e.preventDefault();
                     } else {
                       setIsMobileMenuOpen(false);
                     }
                   }}
-                  className={`text-gray-50/90 no-underline text-[20px] font-['Patrick_Hand'] font-semibold uppercase tracking-wide transition-all duration-300 flex items-center gap-2 py-3 md:py-1.5 px-4 md:px-0 mix-blend-overlay hover:text-yellow-400 hover:scale-110 group-hover:text-yellow-400 ${isMobileMenuOpen ? 'bg-black/70 backdrop-blur-sm rounded-lg mb-2 text-white mix-blend-normal' : ''}`}
+                  className={`text-gray-50/90 no-underline text-[20px] font-['Patrick_Hand'] font-semibold uppercase tracking-wide transition-all duration-300 flex items-center gap-2 py-3 md:py-1.5 px-4 md:px-0 mix-blend-overlay hover:text-yellow-400 hover:scale-110 group-hover:text-yellow-400 
+                    ${isMobileMenuOpen ? 'bg-gray-50/95 backdrop-blur-sm rounded-lg mb-2 text-gray-800 mix-blend-normal hover:text-green-600' : ''}`}
                 >
                   {item.label}
                   {item.dropdown && isMobileMenuOpen && (
                     <span className="ml-auto">
                       {activeDropdown === item.type ? (
-                        <FiX size={20} />
+                        <FiX size={20} className="text-gray-600" />
                       ) : (
-                        <span className="text-xl">+</span>
+                        <span className="text-xl text-gray-600">+</span>
                       )}
                     </span>
                   )}

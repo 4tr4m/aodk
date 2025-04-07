@@ -129,7 +129,7 @@ const CategoryPage = () => {
 
       <div className="sticky top-0 z-40 mb-8 shadow-md bg-gray-100">
         <CategoryNav 
-          categories={kuchniaCategories.mainCategories}
+          categories={kuchniaCategories.mainCategories.filter(cat => cat.image)}
           currentSlug={categorySlug}
           onCategoryClick={handleCategoryClick}
         />

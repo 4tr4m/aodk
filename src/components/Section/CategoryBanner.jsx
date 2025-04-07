@@ -266,13 +266,15 @@ const CategoryBanner = () => {
   useEffect(() => {
     const categories = kuchniaCategories.mainCategories;
     
-    const items = categories.map(category => ({
-      id: category.label,
-      label: category.label,
-      image: category.image || 'category-default.jpg',
-      shortDesc: category.shortDesc || 'Odkryj nasze pyszne przepisy!',
-      link: category.link
-    }));
+    const items = categories
+      .filter(category => category.image) // Only include categories with images
+      .map(category => ({
+        id: category.label,
+        label: category.label,
+        image: category.image,
+        shortDesc: category.shortDesc || 'Odkryj nasze pyszne przepisy!',
+        link: category.link
+      }));
     
     setAllCategoryItems(items);
     setIsLoaded(true);
