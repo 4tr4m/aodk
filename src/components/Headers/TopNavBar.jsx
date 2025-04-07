@@ -6,9 +6,9 @@ import {
   kuchniaCategories, 
   skladnikCategories,
   historiaCategories,
-  znajdkiCategories,
   wiedzaCategories,
-  blogCategories
+  blogCategories,
+  znajdkiCategories
 } from '../../Data/category-data';
 
 const TopNavBar = () => {
@@ -78,7 +78,6 @@ const TopNavBar = () => {
     { 
       label: 'ZNAJDKI', 
       link: '/znajdki',
-      dropdown: znajdkiCategories,
       type: 'znajdki'
     },
     { 
@@ -129,7 +128,7 @@ const TopNavBar = () => {
 
         {/* Navigation */}
         <nav className={`w-full md:w-auto ${isMobileMenuOpen ? 'block' : 'hidden md:block'}`}>
-          <ul className={`flex flex-col md:flex-row md:gap-12 w-full ${isMobileMenuOpen ? 'bg-black/90 backdrop-blur-md rounded-lg p-4 shadow-xl' : ''}`}>
+          <ul className={`flex flex-col md:flex-row md:gap-10 lg:gap-12 w-full ${isMobileMenuOpen ? 'bg-black/90 backdrop-blur-md rounded-lg p-4 shadow-xl' : ''}`}>
             {navItems.map((item, index) => (
               <li 
                 key={index} 
