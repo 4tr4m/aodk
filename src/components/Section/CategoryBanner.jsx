@@ -267,7 +267,7 @@ const CategoryBanner = () => {
     const categories = kuchniaCategories.mainCategories;
     
     const items = categories
-      .filter(category => category.image) // Only include categories with images
+      .filter(category => category.image && category.image.trim() !== '') // Only include categories with valid images
       .map(category => ({
         id: category.label,
         label: category.label,

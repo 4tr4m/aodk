@@ -19,14 +19,15 @@ const TopNavBar = () => {
     setActiveDropdown(type);
   };
 
-  const kuchniaItems = kuchniaCategories.mainCategories;
+  // Filter out items without images
+  const kuchniaItems = kuchniaCategories.mainCategories.filter(item => item.image);
   const skladnikItems = skladnikCategories;
 
   const renderDropdownMenu = (items) => (
     <ul className={`
       ${isMobileMenuOpen 
-        ? 'relative bg-black/90 w-full mt-2 rounded-md shadow-lg border border-gray-700'
-        : 'absolute left-0 bg-black/85 min-w-[240px] py-3 flex flex-col opacity-0 invisible transition-all duration-500 ease-in-out delay-150 -translate-y-4 transform origin-top scale-95 group-hover:scale-100 group-hover:translate-y-0 group-hover:opacity-100 group-hover:visible backdrop-blur-sm rounded-lg'
+        ? 'relative bg-black w-full mt-2 rounded-md shadow-lg border border-gray-700'
+        : 'absolute left-0 bg-black min-w-[240px] py-3 flex flex-col opacity-0 invisible transition-all duration-500 ease-in-out delay-150 -translate-y-4 transform origin-top scale-95 group-hover:scale-100 group-hover:translate-y-0 group-hover:opacity-100 group-hover:visible rounded-lg'
       }
     `}>
       {items.map((item, index) => (
@@ -45,8 +46,8 @@ const TopNavBar = () => {
           <Link 
             to={item.link}
             onClick={() => setIsMobileMenuOpen(false)}
-            className={`text-[18px] font-['Patrick_Hand'] font-normal leading-[1.2] whitespace-nowrap transition-all duration-300 mix-blend-normal block
-              ${isMobileMenuOpen ? 'text-gray-100 hover:text-yellow-400' : 'text-gray-50/95 hover:text-yellow-400'}`}
+            className={`text-[18px] font-['Patrick_Hand'] font-normal leading-[1.2] whitespace-nowrap transition-all duration-300 block
+              text-gray-100 hover:text-yellow-400`}
           >
             {item.label}
           </Link>
@@ -63,12 +64,6 @@ const TopNavBar = () => {
       dropdown: kuchniaItems,
       type: 'kuchnia'
     },
-    // { 
-    //   label: 'SKŁADNIK', 
-    //   link: '/skladnik',
-    //   dropdown: skladnikItems,
-    //   type: 'skladnik'
-    // },
     { 
       label: 'HISTORIA', 
       link: '/historia',
@@ -103,7 +98,7 @@ const TopNavBar = () => {
         <div className="flex w-full md:hidden justify-between items-center mb-4">
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="text-white p-2 bg-black/90 backdrop-blur-sm rounded-lg flex items-center gap-2"
+            className="text-white p-2 bg-black rounded-lg flex items-center gap-2"
           >
             {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             <span className="font-['Patrick_Hand'] text-base">MENU</span>
@@ -119,7 +114,7 @@ const TopNavBar = () => {
                 href={social.link} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-50 text-sm transition-all duration-300 flex items-center justify-center w-8 h-8 bg-black/90 backdrop-blur-sm rounded-full hover:scale-110 hover:text-yellow-400"
+                className="text-gray-50 text-sm transition-all duration-300 flex items-center justify-center w-8 h-8 bg-black rounded-full hover:scale-110 hover:text-yellow-400"
               >
                 <social.icon />
               </a>
@@ -129,7 +124,7 @@ const TopNavBar = () => {
 
         {/* Navigation */}
         <nav className={`w-full md:w-auto ${isMobileMenuOpen ? 'block' : 'hidden md:block'}`}>
-          <ul className={`flex flex-col md:flex-row md:gap-12 w-full ${isMobileMenuOpen ? 'bg-black/90 backdrop-blur-md rounded-lg p-4 shadow-xl' : ''}`}>
+          <ul className={`flex flex-col md:flex-row md:gap-12 w-full ${isMobileMenuOpen ? 'bg-black rounded-lg p-4 shadow-xl' : ''}`}>
             {navItems.map((item, index) => (
               <li 
                 key={index} 
@@ -147,8 +142,8 @@ const TopNavBar = () => {
                       setIsMobileMenuOpen(false);
                     }
                   }}
-                  className={`text-gray-50/90 no-underline text-[20px] font-['Patrick_Hand'] font-semibold uppercase tracking-wide transition-all duration-300 flex items-center gap-2 py-3 md:py-1.5 px-4 md:px-0 mix-blend-overlay hover:text-yellow-400 hover:scale-110 group-hover:text-yellow-400 
-                    ${isMobileMenuOpen ? 'bg-black/80 backdrop-blur-sm rounded-lg mb-2 text-gray-100 mix-blend-normal hover:text-yellow-400' : ''}`}
+                  className={`text-gray-50 no-underline text-[20px] font-['Patrick_Hand'] font-semibold uppercase tracking-wide transition-all duration-300 flex items-center gap-2 py-3 md:py-1.5 px-4 md:px-0 hover:text-yellow-400 hover:scale-110 group-hover:text-yellow-400 
+                    ${isMobileMenuOpen ? 'bg-black rounded-lg mb-2' : ''}`}
                 >
                   {item.label}
                   {item.dropdown && isMobileMenuOpen && (
