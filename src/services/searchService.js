@@ -5,6 +5,13 @@ let recipesCache = null;
 let lastFetchTime = null;
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
+// Function to clear cache - call this when data structure changes
+export function clearCache() {
+    recipesCache = null;
+    lastFetchTime = null;
+    console.log('Cache cleared');
+}
+
 async function fetchAllRecipes() {
     // Return cached recipes if they're still valid
     if (recipesCache && lastFetchTime && (Date.now() - lastFetchTime < CACHE_DURATION)) {
@@ -15,8 +22,12 @@ async function fetchAllRecipes() {
         .from('recipes')
         .select('id, name, category, base_ingredients, image, shortdesc');
 
-    if (error) throw error;
+    if (error) {
+        console.error('Error fetching recipes:', error);
+        return [];
+    }
 
+    console.log('Fetched recipes:', recipes?.length || 0);
     recipesCache = recipes;
     lastFetchTime = Date.now();
     return recipes;
@@ -24,69 +35,100 @@ async function fetchAllRecipes() {
 
 function formatRecipeAsSuggestion(recipe) {
     return {
+        id: recipe.id,
         name: recipe.name,
         category: recipe.category,
-        ingredients: recipe.base_ingredients?.join(', ') || '',
+        ingredients: recipe.base_ingredients || '',
         image: recipe.image,
         shortdesc: recipe.shortdesc,
         original: recipe
     };
 }
 
-function scoreRecipe(recipe, searchTerms) {
-    let score = 0;
+// Helper function to normalize Polish characters
+function normalizePolishChars(text) {
+    if (!text) return '';
+    return text
+        .toLowerCase()
+        .replace(/ą/g, 'a')
+        .replace(/ć/g, 'c')
+        .replace(/ę/g, 'e')
+        .replace(/ł/g, 'l')
+        .replace(/ń/g, 'n')
+        .replace(/ó/g, 'o')
+        .replace(/ś/g, 's')
+        .replace(/ź/g, 'z')
+        .replace(/ż/g, 'z');
+}
+
+function recipeMatchesAllTerms(recipe, searchTerms) {
+    if (!recipe.base_ingredients) return false;
     
-    // Skip if no base_ingredients
-    if (!recipe.base_ingredients || !Array.isArray(recipe.base_ingredients)) {
-        return score;
+    const normalizedIngredients = normalizePolishChars(recipe.base_ingredients);
+    const normalizedName = normalizePolishChars(recipe.name || '');
+    
+    // Check if all search terms are found in either name or ingredients
+    return searchTerms.every(term => {
+        const normalizedTerm = normalizePolishChars(term.trim());
+        return normalizedIngredients.includes(normalizedTerm) || normalizedName.includes(normalizedTerm);
+    });
+}
+
+function scoreRecipe(recipe, searchTerms) {
+    // If recipe doesn't match all terms, return 0 score immediately
+    if (!recipeMatchesAllTerms(recipe, searchTerms)) {
+        return 0;
     }
 
-    const recipeIngredients = recipe.base_ingredients.map(ing => ing.toLowerCase());
-    const searchTermsLower = searchTerms.map(term => term.toLowerCase().trim());
+    let score = 0;
+    const normalizedName = normalizePolishChars(recipe.name || '');
+    const normalizedIngredients = normalizePolishChars(recipe.base_ingredients || '');
+    const searchTermsNormalized = searchTerms.map(term => normalizePolishChars(term.trim()));
+    
+    // Debug logging
+    console.log('Scoring recipe:', recipe.name);
+    console.log('Search terms:', searchTermsNormalized);
+    console.log('Base ingredients:', recipe.base_ingredients);
     
     // Name matching (highest priority)
-    if (recipe.name.toLowerCase().includes(searchTermsLower[0])) {
-        score += 100;
-    }
-
-    // Ingredient matching
-    const matchedIngredients = searchTermsLower.filter(term => 
-        recipeIngredients.some(ingredient => ingredient.includes(term))
-    );
-
-    // Score based on how many ingredients matched
-    if (matchedIngredients.length > 0) {
-        // Base score for any match
-        score += 50;
-        
-        // Additional score based on match ratio
-        const matchRatio = matchedIngredients.length / searchTermsLower.length;
-        score += matchRatio * 100;
-
-        // Bonus for exact matches
-        const exactMatches = searchTermsLower.filter(term => 
-            recipeIngredients.includes(term)
-        );
-        score += exactMatches.length * 25;
-
-        // Extra bonus if ALL search terms matched
-        if (matchedIngredients.length === searchTermsLower.length) {
-            score += 200;
+    for (const term of searchTermsNormalized) {
+        if (normalizedName.includes(term)) {
+            score += 100;
+            console.log('Name match found:', term);
         }
     }
 
+    // Ingredient matching
+    if (recipe.base_ingredients) {
+        for (const term of searchTermsNormalized) {
+            if (normalizedIngredients.includes(term)) {
+                score += 75; // Significant score for ingredient match
+                console.log('Ingredient match found:', term);
+            }
+        }
+
+        // Extra points for matching all terms
+        score += 150;
+        console.log('All terms found!');
+    }
+
+    console.log('Final score:', score);
     return score;
 }
 
 export async function getSuggestions(searchTerm) {
     if (!searchTerm || searchTerm.length < 2) return [];
 
+    console.log('Getting suggestions for:', searchTerm);
+
     try {
         const recipes = await fetchAllRecipes();
-        const searchTerms = searchTerm.toLowerCase()
+        const searchTerms = searchTerm
             .split(' ')
             .filter(term => term.length >= 2)
             .slice(0, 8); // Limit to 8 ingredients
+
+        console.log('Processing search terms:', searchTerms);
 
         // Score and filter recipes
         const scoredRecipes = recipes
@@ -98,6 +140,7 @@ export async function getSuggestions(searchTerm) {
             .sort((a, b) => b.score - a.score)
             .slice(0, 10); // Top 10 suggestions
 
+        console.log('Found matches:', scoredRecipes.length);
         return scoredRecipes.map(item => formatRecipeAsSuggestion(item.recipe));
 
     } catch (error) {
@@ -109,9 +152,11 @@ export async function getSuggestions(searchTerm) {
 export async function searchRecipes(searchTerm) {
     if (!searchTerm) return [];
 
+    console.log('Searching for:', searchTerm);
+
     try {
         const recipes = await fetchAllRecipes();
-        const searchTerms = searchTerm.toLowerCase()
+        const searchTerms = searchTerm
             .split(' ')
             .filter(term => term.length >= 2)
             .slice(0, 8); // Limit to 8 ingredients
@@ -125,6 +170,7 @@ export async function searchRecipes(searchTerm) {
             .filter(item => item.score > 0)
             .sort((a, b) => b.score - a.score);
 
+        console.log('Found matches:', scoredRecipes.length);
         return scoredRecipes.map(item => item.recipe);
 
     } catch (error) {
@@ -133,7 +179,11 @@ export async function searchRecipes(searchTerm) {
     }
 }
 
-export default {
+// Create a named export object
+const searchService = {
     getSuggestions,
-    searchRecipes
-}; 
+    searchRecipes,
+    clearCache
+};
+
+export default searchService; 
