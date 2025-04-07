@@ -8,6 +8,7 @@ import Footer from '../Footer/Footer';
 import RecipeGrid from './RecipeGrid';
 import { kuchniaCategories } from '../../Data/category-data';
 import { motion } from 'framer-motion';
+import SEO from '../SEO/SEO';
 
 const CategoryPage = () => {
   const { categorySlug } = useParams();
@@ -76,8 +77,33 @@ const CategoryPage = () => {
     }
   };
 
+  // Get SEO data based on the current category
+  const getSEOData = () => {
+    if (!currentCategory) {
+      return {
+        title: "Przepisy - Autyzm od Kuchni | Dieta eliminacyjna bez glutenu i nabiału",
+        description: "Odkryj nasze przepisy bez glutenu, nabiału i cukru wspierające funkcjonowanie osób z autyzmem i zaburzeniami neurorozwojowymi.",
+        keywords: "przepisy, dieta eliminacyjna, bez glutenu, bez nabiału, bez cukru, autyzm, zaburzenia neurorozwojowe"
+      };
+    }
+    
+    return {
+      title: `${currentCategory.label} - Przepisy | Autyzm od Kuchni`,
+      description: currentCategory.description || `Przepisy ${currentCategory.label} bez glutenu, nabiału i cukru wspierające osoby z autyzmem i zaburzeniami neurorozwojowymi.`,
+      keywords: `${currentCategory.label}, przepisy, dieta eliminacyjna, bez glutenu, bez nabiału, bez cukru, autyzm, zaburzenia neurorozwojowe`
+    };
+  };
+
+  const seoData = getSEOData();
+
   return (
     <div ref={pageRef} className="min-h-screen bg-gray-100">
+      <SEO 
+        title={seoData.title}
+        description={seoData.description}
+        keywords={seoData.keywords}
+        canonical={`https://autyzmkuchni.pl/kuchnia${categorySlug ? `/${categorySlug}` : ''}`}
+      />
       <div className="relative mb-8">
         <CategoryHeader />
         <div className="absolute top-0 left-0 w-full">

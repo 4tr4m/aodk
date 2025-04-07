@@ -4,10 +4,17 @@ import CategoryHeader from './CategoryHeader';
 import TopNavBar from '../Headers/TopNavBar';
 import Footer from '../Footer/Footer';
 import { blogPosts } from '../../Data/blog-data';
+import SEO from '../SEO/SEO';
 
 const BlogPage = () => {
   return (
     <div>
+      <SEO 
+        title="Blog - Autyzm od Kuchni | Wiedza o diecie eliminacyjnej w autyzmie"
+        description="Artykuły, porady i przemyślenia dotyczące diety eliminacyjnej w autyzmie. Dowiedz się więcej o diecie bez glutenu, nabiału i cukru."
+        keywords="blog o autyzmie, dieta w autyzmie, blog dieta eliminacyjna, porady, autyzm a dieta, dieta bezglutenowa, zaburzenia neurorozwojowe"
+        canonical="https://autyzmkuchni.pl/blog"
+      />
       {/* Mini hero section with TopNavBar */}
       <div className="relative">
         <CategoryHeader />

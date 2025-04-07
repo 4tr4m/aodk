@@ -4,6 +4,7 @@ import CategoryHeader from './CategoryHeader';
 import TopNavBar from '../Headers/TopNavBar';
 import { blogPosts } from '../../Data/blog-data';
 import { articleDetails } from '../../Data/article-data';
+import SEO from '../SEO/SEO';
 
 const ArticlePage = () => {
   const { slug } = useParams();
@@ -25,8 +26,27 @@ const ArticlePage = () => {
     articleDetail.relatedArticles.includes(post.slug)
   );
 
+  // Extract first paragraph for meta description (strip HTML tags)
+  const getMetaDescription = () => {
+    const content = articleDetail.content;
+    const firstParagraph = content.match(/<p>(.*?)<\/p>/);
+    if (firstParagraph && firstParagraph[1]) {
+      // Remove HTML tags
+      return firstParagraph[1].replace(/<\/?[^>]+(>|$)/g, "").substring(0, 160);
+    }
+    return blogPost.excerpt || "Artykuł na temat diety eliminacyjnej w autyzmie.";
+  };
+
   return (
     <div>
+      <SEO 
+        title={`${blogPost.title} | Autyzm od Kuchni`}
+        description={getMetaDescription()}
+        keywords={`${blogPost.category}, autyzm, dieta eliminacyjna, ${blogPost.tags?.join(', ') || ''}`}
+        ogType="article"
+        ogImage={blogPost.image}
+        canonical={`https://autyzmkuchni.pl/blog/${slug}`}
+      />
       {/* Mini hero section with TopNavBar */}
       <div className="relative">
         <CategoryHeader />

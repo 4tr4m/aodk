@@ -4,10 +4,17 @@ import CategoryBanner from '../components/Section/CategoryBanner';
 import InfoSection from '../components/Section/InfoSection';
 import Footer from '../components/Footer/Footer';
 import HeroSection from '../components/Hero/HeroSection';
+import SEO from '../components/SEO/SEO';
 
 const HomePage = () => {
   return (
     <div className="flex flex-col min-h-screen">
+      <SEO 
+        title="Autyzm od Kuchni - Dieta eliminacyjna bez glutenu, nabiału i cukru"
+        description="Odkryj jak dieta eliminacyjna bez glutenu, nabiału i cukru może wspierać funkcjonowanie osób z autyzmem i zaburzeniami neurorozwojowymi."
+        keywords="autyzm, dieta eliminacyjna, dieta w autyzmie, bez glutenu, bez nabiału, bez cukru, przepisy, zaburzenia neurorozwojowe, GAPS, zdrowe odżywianie"
+        canonical="https://autyzmkuchni.pl/"
+      />
       <div className="flex-grow">
         <div className="relative h-screen overflow-hidden">
           <TopNavBar />
