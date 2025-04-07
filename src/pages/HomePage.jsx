@@ -18,7 +18,11 @@ const HomePage = () => {
       <div className="flex-grow">
         <div className="relative h-screen overflow-hidden">
           <TopNavBar />
-          <HeroSection />
+          <div className="h-full flex flex-col">
+            <div className="flex-grow flex items-center justify-center pb-16 sm:pb-0">
+              <HeroSection />
+            </div>
+          </div>
         </div>
         <div className="relative z-10 bg-white">
           <CategoryBanner />
