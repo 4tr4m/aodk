@@ -1,5 +1,4 @@
-import { supabase } from '../supabaseClient';
-import { cleanIngredient } from '../utils/ingredientExtractor';
+import supabase from '../lib/supabase-browser';
 
 // Cache for recipes
 let recipesCache = null;
@@ -14,7 +13,7 @@ async function fetchAllRecipes() {
 
     const { data: recipes, error } = await supabase
         .from('recipes')
-        .select('*');
+        .select('id, name, category, base_ingredients, image, shortdesc');
 
     if (error) throw error;
 
@@ -23,55 +22,55 @@ async function fetchAllRecipes() {
     return recipes;
 }
 
-function formatRecipeAsSuggestion(recipe, searchTerm) {
+function formatRecipeAsSuggestion(recipe) {
     return {
         name: recipe.name,
         category: recipe.category,
         ingredients: recipe.base_ingredients?.join(', ') || '',
+        image: recipe.image,
+        shortdesc: recipe.shortdesc,
         original: recipe
     };
 }
 
 function scoreRecipe(recipe, searchTerms) {
     let score = 0;
-    const searchTermsLower = searchTerms.map(term => term.toLowerCase());
+    
+    // Skip if no base_ingredients
+    if (!recipe.base_ingredients || !Array.isArray(recipe.base_ingredients)) {
+        return score;
+    }
+
+    const recipeIngredients = recipe.base_ingredients.map(ing => ing.toLowerCase());
+    const searchTermsLower = searchTerms.map(term => term.toLowerCase().trim());
     
     // Name matching (highest priority)
     if (recipe.name.toLowerCase().includes(searchTermsLower[0])) {
         score += 100;
     }
 
-    // Category matching
-    if (recipe.category?.toLowerCase().includes(searchTermsLower[0])) {
+    // Ingredient matching
+    const matchedIngredients = searchTermsLower.filter(term => 
+        recipeIngredients.some(ingredient => ingredient.includes(term))
+    );
+
+    // Score based on how many ingredients matched
+    if (matchedIngredients.length > 0) {
+        // Base score for any match
         score += 50;
-    }
-
-    // Ingredient matching - support up to 8 ingredients
-    if (recipe.base_ingredients) {
-        const cleanedSearchTerms = searchTerms
-            .slice(0, 8) // Limit to 8 ingredients
-            .map(term => term.toLowerCase().trim());
         
-        // Count exact ingredient matches
-        const matchedTerms = cleanedSearchTerms.filter(term => 
-            recipe.base_ingredients.some(ingredient => 
-                ingredient === term || ingredient.includes(term)
-            )
-        );
-
-        // Higher score for more matched ingredients
-        const matchRatio = matchedTerms.length / cleanedSearchTerms.length;
-        score += matchRatio * 150; // Increased weight for ingredient matches
+        // Additional score based on match ratio
+        const matchRatio = matchedIngredients.length / searchTermsLower.length;
+        score += matchRatio * 100;
 
         // Bonus for exact matches
-        matchedTerms.forEach(term => {
-            if (recipe.base_ingredients.includes(term)) {
-                score += 50; // Higher bonus for exact matches
-            }
-        });
+        const exactMatches = searchTermsLower.filter(term => 
+            recipeIngredients.includes(term)
+        );
+        score += exactMatches.length * 25;
 
-        // If all search terms matched, give significant bonus
-        if (matchedTerms.length === cleanedSearchTerms.length && cleanedSearchTerms.length > 1) {
+        // Extra bonus if ALL search terms matched
+        if (matchedIngredients.length === searchTermsLower.length) {
             score += 200;
         }
     }
@@ -84,7 +83,10 @@ export async function getSuggestions(searchTerm) {
 
     try {
         const recipes = await fetchAllRecipes();
-        const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length >= 2);
+        const searchTerms = searchTerm.toLowerCase()
+            .split(' ')
+            .filter(term => term.length >= 2)
+            .slice(0, 8); // Limit to 8 ingredients
 
         // Score and filter recipes
         const scoredRecipes = recipes
@@ -94,10 +96,9 @@ export async function getSuggestions(searchTerm) {
             }))
             .filter(item => item.score > 0)
             .sort((a, b) => b.score - a.score)
-            .slice(0, 10);
+            .slice(0, 10); // Top 10 suggestions
 
-        // Format results as suggestions
-        return scoredRecipes.map(item => formatRecipeAsSuggestion(item.recipe, searchTerm));
+        return scoredRecipes.map(item => formatRecipeAsSuggestion(item.recipe));
 
     } catch (error) {
         console.error('Error getting suggestions:', error);
@@ -110,7 +111,10 @@ export async function searchRecipes(searchTerm) {
 
     try {
         const recipes = await fetchAllRecipes();
-        const searchTerms = searchTerm.toLowerCase().split(' ').filter(term => term.length >= 2);
+        const searchTerms = searchTerm.toLowerCase()
+            .split(' ')
+            .filter(term => term.length >= 2)
+            .slice(0, 8); // Limit to 8 ingredients
 
         // Score and filter recipes
         const scoredRecipes = recipes
