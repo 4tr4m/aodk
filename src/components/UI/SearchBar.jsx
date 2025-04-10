@@ -324,10 +324,20 @@ const SearchBar = memo(function SearchBar({
                         )}
                       </div>
 
-                      {/* Matching ingredients for recipes */}
-                      {suggestion.type === 'recipe' && suggestion.matchingIngredients && suggestion.matchingIngredients.length > 0 && (
+                      {/* Short description */}
+                      {suggestion.shortdesc && (
+                        <div className="mt-1 text-xs text-gray-600 line-clamp-2">
+                          {highlightMatch(
+                            suggestion.shortdesc,
+                            highlightedTerm || searchTerm
+                          )}
+                        </div>
+                      )}
+
+                      {/* Always show ingredients */}
+                      {suggestion.ingredients && (
                         <div className="mt-1 flex flex-wrap gap-1">
-                          {suggestion.matchingIngredients.map((ingredient, i) => (
+                          {suggestion.ingredients.split(/\s+/).map((ingredient, i) => (
                             <span 
                               key={i}
                               className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
@@ -335,20 +345,6 @@ const SearchBar = memo(function SearchBar({
                               {highlightMatch(ingredient, highlightedTerm || searchTerm)}
                             </span>
                           ))}
-                        </div>
-                      )}
-
-                      {/* Category for recipes */}
-                      {suggestion.type === 'recipe' && suggestion.category && (
-                        <div className="mt-1 text-xs text-gray-500">
-                          Kategoria: {suggestion.category}
-                        </div>
-                      )}
-
-                      {/* Short description for recipes */}
-                      {suggestion.type === 'recipe' && suggestion.shortdesc && (
-                        <div className="mt-1 text-xs text-gray-600 line-clamp-2">
-                          {suggestion.shortdesc}
                         </div>
                       )}
                     </div>
