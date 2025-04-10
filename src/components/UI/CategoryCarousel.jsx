@@ -7,6 +7,11 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
+  
   const timerRef = useRef(null);
   const scrollRef = useRef(null);
   const resetInProgressRef = useRef(false);
@@ -181,6 +186,62 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
     }
   };
 
+  // Handle touch events
+  const handleTouchStart = (e) => {
+    setTouchStart(e.targetTouches[0].clientX);
+    setTouchEnd(e.targetTouches[0].clientX);
+    setIsDragging(true);
+    
+    // Pause auto-advance while touching
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    
+    setTouchEnd(e.targetTouches[0].clientX);
+    const diff = touchStart - e.targetTouches[0].clientX;
+    setDragOffset(diff);
+    
+    // Prevent default scrolling while swiping
+    e.preventDefault();
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    setDragOffset(0);
+    
+    if (!touchStart || !touchEnd) return;
+    
+    const diff = touchStart - touchEnd;
+    const minSwipeDistance = 50; // minimum distance for swipe
+    
+    if (Math.abs(diff) > minSwipeDistance) {
+      if (diff > 0) {
+        // Swiped left
+        handleNext();
+      } else {
+        // Swiped right
+        handlePrev();
+      }
+    }
+    
+    setTouchStart(null);
+    setTouchEnd(null);
+    
+    // Resume auto-advance
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+    timerRef.current = setInterval(() => {
+      if (!isAnimating && !resetInProgressRef.current) {
+        handleNext();
+      }
+    }, 5000);
+  };
+
   if (!isMounted) return <div className="min-h-[200px] bg-gray-100/50"></div>;
 
   return (
@@ -222,13 +283,17 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
         <div className="overflow-hidden px-6 sm:px-4">
           <div 
             ref={scrollRef}
-            className="carousel-container flex gap-0 sm:gap-2 md:gap-3 lg:gap-4 mx-auto"
+            className="carousel-container flex gap-0 sm:gap-2 md:gap-3 lg:gap-4 mx-auto touch-pan-y"
             style={{
               width: `${(100 * extendedItems.length) / itemsPerView}%`,
-              transform: `translateX(-${(activeIndex * 100) / extendedItems.length}%)`,
+              transform: `translateX(${-((activeIndex * 100) / extendedItems.length) + (isDragging ? -dragOffset / scrollRef.current?.offsetWidth * 100 : 0)}%)`,
               willChange: 'transform',
-              transition: 'transform 1s cubic-bezier(0.22, 1, 0.36, 1)'
+              transition: isDragging ? 'none' : 'transform 1s cubic-bezier(0.22, 1, 0.36, 1)',
+              cursor: isDragging ? 'grabbing' : 'grab'
             }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
             {extendedItems.map((item, index) => (
               <div 
