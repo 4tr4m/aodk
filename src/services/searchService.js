@@ -122,32 +122,6 @@ async function fetchAllRecipes() {
     return recipes;
 }
 
-// Enhanced suggestion format
-function formatRecipeAsSuggestion(recipe, searchTerm) {
-    const normalizedSearchTerm = normalizePolishChars(searchTerm.toLowerCase());
-    const normalizedName = normalizePolishChars(recipe.name.toLowerCase());
-    const normalizedIngredients = normalizePolishChars(recipe.base_ingredients.toLowerCase());
-    
-    // Check if search term matches ingredients
-    const matchingIngredients = recipe.base_ingredients
-        .split(/[\s,]+/)
-        .filter(ingredient => 
-            normalizePolishChars(ingredient.toLowerCase()).includes(normalizedSearchTerm)
-        );
-
-    return {
-        id: recipe.id,
-        name: recipe.name,
-        category: recipe.category,
-        ingredients: recipe.base_ingredients,
-        matchingIngredients: matchingIngredients,
-        image: recipe.image,
-        shortdesc: recipe.shortdesc,
-        original: recipe,
-        type: matchingIngredients.length > 0 ? 'ingredient' : 'recipe'
-    };
-}
-
 // Helper function to normalize Polish characters
 function normalizePolishChars(text) {
     if (!text) return '';
@@ -162,6 +136,36 @@ function normalizePolishChars(text) {
         .replace(/ś/g, 's')
         .replace(/ź/g, 'z')
         .replace(/ż/g, 'z');
+}
+
+// Enhanced suggestion format
+function formatRecipeAsSuggestion(recipe, searchTerm) {
+    if (!recipe || !recipe.name) return null;
+    
+    const normalizedSearchTerm = normalizePolishChars(searchTerm.toLowerCase());
+    const normalizedName = normalizePolishChars(recipe.name.toLowerCase());
+    const normalizedIngredients = recipe.base_ingredients ? 
+        normalizePolishChars(recipe.base_ingredients.toLowerCase()) : '';
+    
+    // Check if search term matches ingredients
+    const matchingIngredients = recipe.base_ingredients ? 
+        recipe.base_ingredients
+            .split(/[\s,]+/)
+            .filter(ingredient => 
+                normalizePolishChars(ingredient.toLowerCase()).includes(normalizedSearchTerm)
+            ) : [];
+
+    return {
+        id: recipe.id,
+        name: recipe.name,
+        category: recipe.category,
+        ingredients: recipe.base_ingredients || '',
+        matchingIngredients: matchingIngredients,
+        image: recipe.image,
+        shortdesc: recipe.shortdesc,
+        original: recipe,
+        type: matchingIngredients.length > 0 ? 'ingredient' : 'recipe'
+    };
 }
 
 function recipeMatchesAllTerms(recipe, searchTerms) {
@@ -230,8 +234,6 @@ function scoreRecipe(recipe, searchTerms) {
 export async function getSuggestions(searchTerm) {
     if (!searchTerm || searchTerm.length < 2) return [];
 
-    console.log('Getting suggestions for:', searchTerm);
-
     try {
         const recipes = await fetchAllRecipes();
         const searchTerms = searchTerm
@@ -239,60 +241,45 @@ export async function getSuggestions(searchTerm) {
             .filter(term => term.length >= 2)
             .slice(0, 8);
 
-        console.log('Processing search terms:', searchTerms);
-
-        // Get all unique ingredients from recipes
-        const allIngredients = new Set();
-        recipes.forEach(recipe => {
-            if (recipe.base_ingredients) {
-                recipe.base_ingredients.split(/[\s,]+/).forEach(ingredient => {
-                    allIngredients.add(ingredient.trim());
-                });
-            }
-        });
-
-        // Find matching ingredients
-        const matchingIngredients = Array.from(allIngredients)
-            .filter(ingredient => {
-                const normalizedIngredient = normalizePolishChars(ingredient.toLowerCase());
-                return searchTerms.some(term => 
-                    normalizedIngredient.includes(normalizePolishChars(term.toLowerCase()))
-                );
-            })
-            .slice(0, 5); // Limit to 5 ingredient suggestions
-
         // Score and filter recipes
         const scoredRecipes = recipes
-            .map(recipe => ({
-                recipe,
-                score: scoreRecipe(recipe, searchTerms)
-            }))
+            .map(recipe => {
+                const normalizedName = normalizePolishChars(recipe.name || '');
+                const normalizedIngredients = normalizePolishChars(recipe.base_ingredients || '');
+                
+                let score = 0;
+                
+                // Name matching (highest priority)
+                searchTerms.forEach(term => {
+                    const normalizedTerm = normalizePolishChars(term.toLowerCase());
+                    if (normalizedName.includes(normalizedTerm)) {
+                        score += 100;
+                        if (normalizedName.startsWith(normalizedTerm)) {
+                            score += 50;
+                        }
+                    }
+                });
+
+                // Ingredient matching (lower priority)
+                if (recipe.base_ingredients) {
+                    searchTerms.forEach(term => {
+                        const normalizedTerm = normalizePolishChars(term.toLowerCase());
+                        if (normalizedIngredients.includes(normalizedTerm)) {
+                            score += 30;
+                        }
+                    });
+                }
+
+                return { recipe, score };
+            })
             .filter(item => item.score > 0)
             .sort((a, b) => b.score - a.score)
-            .slice(0, 5); // Limit to 5 recipe suggestions
+            .slice(0, 5);
 
         // Format suggestions
-        const recipeSuggestions = scoredRecipes.map(item => 
-            formatRecipeAsSuggestion(item.recipe, searchTerm)
-        );
-
-        // Combine and sort suggestions
-        const suggestions = [
-            ...recipeSuggestions,
-            ...matchingIngredients.map(ingredient => ({
-                id: `ingredient-${ingredient}`,
-                name: ingredient,
-                type: 'ingredient',
-                matchingIngredients: [ingredient]
-            }))
-        ];
-
-        // Sort by relevance (recipes with matching names first, then ingredients)
-        suggestions.sort((a, b) => {
-            if (a.type === 'recipe' && b.type === 'ingredient') return -1;
-            if (a.type === 'ingredient' && b.type === 'recipe') return 1;
-            return 0;
-        });
+        const suggestions = scoredRecipes
+            .map(item => formatRecipeAsSuggestion(item.recipe, searchTerm))
+            .filter(Boolean);
 
         return suggestions;
 

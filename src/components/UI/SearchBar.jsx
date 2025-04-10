@@ -48,6 +48,8 @@ const SearchBar = memo(function SearchBar({
   }, [suggestions, minCharsForSuggestions, onChange]);
 
   const handleSuggestionClick = useCallback((suggestion, index) => {
+    if (!suggestion || !suggestion.name) return;
+    
     if (onSuggestionSelect) {
       onSuggestionSelect(suggestion);
     } else {
@@ -285,7 +287,7 @@ const SearchBar = memo(function SearchBar({
 
       {/* Suggestions dropdown */}
       <AnimatePresence>
-        {showSuggestions && suggestions.length > 0 && (
+        {showSuggestions && suggestions && suggestions.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -295,9 +297,9 @@ const SearchBar = memo(function SearchBar({
             ref={suggestionsRef}
           >
             <ul className="py-2 divide-y divide-gray-100">
-              {suggestions.map((suggestion, index) => (
+              {suggestions.filter(s => s && s.name).map((suggestion, index) => (
                 <li 
-                  key={suggestion.id}
+                  key={suggestion.id || index}
                   className={`px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors duration-200
                     ${selectedSuggestionIndex === index ? 'bg-gray-100' : ''}
                   `}
