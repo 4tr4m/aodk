@@ -18,6 +18,34 @@ const WORD_VARIATIONS = {
     'ki': ['ka', 'ko', 'ek', 'kow'], // jabłki -> jabłko
 };
 
+// Ingredient glossary with common variations and synonyms
+const INGREDIENT_GLOSSARY = {
+    'jablko': ['jabłko', 'jabłka', 'jabłek', 'jabłkami'],
+    'marchewka': ['marchew', 'marchewki', 'marchewek', 'marchewką'],
+    'pomidor': ['pomidory', 'pomidorów', 'pomidorami', 'pomidorki'],
+    'cebula': ['cebule', 'cebul', 'cebulą', 'cebulki'],
+    'czosnek': ['czosnku', 'czosnkiem', 'czosnkowy'],
+    'ziemniak': ['ziemniaki', 'ziemniaków', 'ziemniakami', 'ziemniaczany'],
+    'maka': ['mąka', 'mąki', 'mąką', 'mączka'],
+    'cukier': ['cukru', 'cukrem', 'cukrowy'],
+    'sól': ['soli', 'solą'],
+    'pieprz': ['pieprzu', 'pieprzem'],
+    'olej': ['oleju', 'olejem', 'olejowy'],
+    'masło': ['masła', 'masłem', 'maślany'],
+    'jajko': ['jajka', 'jajek', 'jajkami', 'jajeczny'],
+    'mleko': ['mleka', 'mlekiem', 'mleczny'],
+    'ser': ['sery', 'serów', 'serami', 'serowy'],
+    'kurczak': ['kurczaka', 'kurczakiem', 'kurczakowy'],
+    'wołowina': ['wołowiną', 'wołowinę', 'wołowy'],
+    'wieprzowina': ['wieprzowiną', 'wieprzowinę', 'wieprzowy'],
+    'ryba': ['ryby', 'ryb', 'rybą', 'rybny'],
+    'makaron': ['makaronu', 'makaronem', 'makaronowy'],
+    'ryż': ['ryżu', 'ryżem', 'ryżowy'],
+    'kasza': ['kasze', 'kaszy', 'kaszami'],
+    'pizza': ['pizze', 'pizzą', 'pizzowy'],
+    'pierogi': ['pierogów', 'pierogami', 'pierogowy']
+};
+
 // Helper function to get word stem (remove last 2 letters)
 function getWordStem(word) {
     return word.slice(0, -2);
@@ -57,6 +85,12 @@ function wordsMatch(word1, word2) {
     if (word1.includes(word2) || word2.includes(word1)) return true;
 
     return false;
+}
+
+// Helper function to get ingredient variations
+function getIngredientVariations(ingredient) {
+    const normalizedIngredient = normalizePolishChars(ingredient.toLowerCase());
+    return INGREDIENT_GLOSSARY[normalizedIngredient] || [ingredient];
 }
 
 // Function to clear cache - call this when data structure changes
@@ -126,61 +160,56 @@ function recipeMatchesAllTerms(recipe, searchTerms) {
     return searchTerms.every(term => {
         const normalizedTerm = normalizePolishChars(term.trim());
         
-        // Check name match
-        if (normalizedName.includes(normalizedTerm)) return true;
+        // Check name match first (exact match)
+        if (normalizedName.includes(normalizedTerm)) {
+            return true;
+        }
         
-        // Check ingredients with word variations
+        // Check ingredients with variations
         const ingredientWords = normalizedIngredients.split(/[\s,]+/);
+        const termVariations = getIngredientVariations(normalizedTerm);
+        
         return ingredientWords.some(ingredient => 
-            wordsMatch(ingredient, normalizedTerm)
+            termVariations.some(variation => 
+                ingredient === variation
+            )
         );
     });
 }
 
 function scoreRecipe(recipe, searchTerms) {
-    // If recipe doesn't match all terms, return 0 score immediately
-    if (!recipeMatchesAllTerms(recipe, searchTerms)) {
-        return 0;
-    }
-
     let score = 0;
     const normalizedName = normalizePolishChars(recipe.name || '');
     const normalizedIngredients = normalizePolishChars(recipe.base_ingredients || '');
     const searchTermsNormalized = searchTerms.map(term => normalizePolishChars(term.trim()));
     
-    // Debug logging
-    console.log('Scoring recipe:', recipe.name);
-    console.log('Search terms:', searchTermsNormalized);
-    console.log('Base ingredients:', recipe.base_ingredients);
-    
     // Name matching (highest priority)
     for (const term of searchTermsNormalized) {
         if (normalizedName.includes(term)) {
-            score += 100;
-            console.log('Name match found:', term);
+            // Exact match in name gets highest score
+            score += 200;
+            // If the match is at the beginning of the name, give extra points
+            if (normalizedName.startsWith(term)) {
+                score += 100;
+            }
         }
     }
 
-    // Ingredient matching with word variations
+    // Ingredient matching (lower priority)
     if (recipe.base_ingredients) {
         const ingredientWords = normalizedIngredients.split(/[\s,]+/);
         
         for (const term of searchTermsNormalized) {
             for (const ingredient of ingredientWords) {
-                if (wordsMatch(ingredient, term)) {
-                    score += 75; // Significant score for ingredient match
-                    console.log('Ingredient match found:', term, 'matches with', ingredient);
-                    break; // Don't count multiple matches for the same term
+                // Only exact matches for ingredients
+                if (ingredient === term) {
+                    score += 50;
+                    break;
                 }
             }
         }
-
-        // Extra points for matching all terms
-        score += 150;
-        console.log('All terms found!');
     }
 
-    console.log('Final score:', score);
     return score;
 }
 
