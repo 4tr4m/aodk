@@ -122,15 +122,29 @@ async function fetchAllRecipes() {
     return recipes;
 }
 
-function formatRecipeAsSuggestion(recipe) {
+// Enhanced suggestion format
+function formatRecipeAsSuggestion(recipe, searchTerm) {
+    const normalizedSearchTerm = normalizePolishChars(searchTerm.toLowerCase());
+    const normalizedName = normalizePolishChars(recipe.name.toLowerCase());
+    const normalizedIngredients = normalizePolishChars(recipe.base_ingredients.toLowerCase());
+    
+    // Check if search term matches ingredients
+    const matchingIngredients = recipe.base_ingredients
+        .split(/[\s,]+/)
+        .filter(ingredient => 
+            normalizePolishChars(ingredient.toLowerCase()).includes(normalizedSearchTerm)
+        );
+
     return {
         id: recipe.id,
         name: recipe.name,
         category: recipe.category,
-        ingredients: recipe.base_ingredients || '',
+        ingredients: recipe.base_ingredients,
+        matchingIngredients: matchingIngredients,
         image: recipe.image,
         shortdesc: recipe.shortdesc,
-        original: recipe
+        original: recipe,
+        type: matchingIngredients.length > 0 ? 'ingredient' : 'recipe'
     };
 }
 
@@ -223,9 +237,29 @@ export async function getSuggestions(searchTerm) {
         const searchTerms = searchTerm
             .split(' ')
             .filter(term => term.length >= 2)
-            .slice(0, 8); // Limit to 8 ingredients
+            .slice(0, 8);
 
         console.log('Processing search terms:', searchTerms);
+
+        // Get all unique ingredients from recipes
+        const allIngredients = new Set();
+        recipes.forEach(recipe => {
+            if (recipe.base_ingredients) {
+                recipe.base_ingredients.split(/[\s,]+/).forEach(ingredient => {
+                    allIngredients.add(ingredient.trim());
+                });
+            }
+        });
+
+        // Find matching ingredients
+        const matchingIngredients = Array.from(allIngredients)
+            .filter(ingredient => {
+                const normalizedIngredient = normalizePolishChars(ingredient.toLowerCase());
+                return searchTerms.some(term => 
+                    normalizedIngredient.includes(normalizePolishChars(term.toLowerCase()))
+                );
+            })
+            .slice(0, 5); // Limit to 5 ingredient suggestions
 
         // Score and filter recipes
         const scoredRecipes = recipes
@@ -235,10 +269,32 @@ export async function getSuggestions(searchTerm) {
             }))
             .filter(item => item.score > 0)
             .sort((a, b) => b.score - a.score)
-            .slice(0, 10); // Top 10 suggestions
+            .slice(0, 5); // Limit to 5 recipe suggestions
 
-        console.log('Found matches:', scoredRecipes.length);
-        return scoredRecipes.map(item => formatRecipeAsSuggestion(item.recipe));
+        // Format suggestions
+        const recipeSuggestions = scoredRecipes.map(item => 
+            formatRecipeAsSuggestion(item.recipe, searchTerm)
+        );
+
+        // Combine and sort suggestions
+        const suggestions = [
+            ...recipeSuggestions,
+            ...matchingIngredients.map(ingredient => ({
+                id: `ingredient-${ingredient}`,
+                name: ingredient,
+                type: 'ingredient',
+                matchingIngredients: [ingredient]
+            }))
+        ];
+
+        // Sort by relevance (recipes with matching names first, then ingredients)
+        suggestions.sort((a, b) => {
+            if (a.type === 'recipe' && b.type === 'ingredient') return -1;
+            if (a.type === 'ingredient' && b.type === 'recipe') return 1;
+            return 0;
+        });
+
+        return suggestions;
 
     } catch (error) {
         console.error('Error getting suggestions:', error);

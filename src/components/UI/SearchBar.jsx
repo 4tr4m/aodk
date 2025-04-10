@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
-import { FaSearch, FaTimes } from 'react-icons/fa';
+import { FaSearch, FaTimes, FaUtensils, FaList } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SearchBar = memo(function SearchBar({ 
@@ -297,33 +297,60 @@ const SearchBar = memo(function SearchBar({
             <ul className="py-2 divide-y divide-gray-100">
               {suggestions.map((suggestion, index) => (
                 <li 
-                  key={suggestion.id || index}
+                  key={suggestion.id}
                   className={`px-4 py-3 cursor-pointer hover:bg-gray-50 transition-colors duration-200
                     ${selectedSuggestionIndex === index ? 'bg-gray-100' : ''}
                   `}
                   onClick={() => handleSuggestionClick(suggestion, index)}
                 >
-                  <div className="font-medium text-gray-800 text-sm sm:text-base">
-                    {highlightMatch(
-                      typeof suggestion.name === 'string'
-                        ? suggestion.name
-                        : '',
-                      highlightedTerm || searchTerm
-                    )}
-                  </div>
-                  
-                  {suggestion.ingredients && (
-                    <div className="text-xs sm:text-sm text-gray-500 line-clamp-2">
-                      {highlightMatch(
-                        Array.isArray(suggestion.ingredients) 
-                          ? suggestion.ingredients.join(', ') 
-                          : typeof suggestion.ingredients === 'string'
-                            ? suggestion.ingredients
-                            : '',
-                        highlightedTerm || searchTerm
+                  <div className="flex items-start gap-3">
+                    {/* Icon based on suggestion type */}
+                    <div className="mt-1">
+                      {suggestion.type === 'recipe' ? (
+                        <FaUtensils className="text-green-600" />
+                      ) : (
+                        <FaList className="text-blue-600" />
                       )}
                     </div>
-                  )}
+
+                    <div className="flex-1 min-w-0">
+                      {/* Suggestion title */}
+                      <div className="font-medium text-gray-800 text-sm sm:text-base">
+                        {highlightMatch(
+                          suggestion.name,
+                          highlightedTerm || searchTerm
+                        )}
+                      </div>
+
+                      {/* Matching ingredients for recipes */}
+                      {suggestion.type === 'recipe' && suggestion.matchingIngredients && suggestion.matchingIngredients.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {suggestion.matchingIngredients.map((ingredient, i) => (
+                            <span 
+                              key={i}
+                              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
+                            >
+                              {highlightMatch(ingredient, highlightedTerm || searchTerm)}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Category for recipes */}
+                      {suggestion.type === 'recipe' && suggestion.category && (
+                        <div className="mt-1 text-xs text-gray-500">
+                          Kategoria: {suggestion.category}
+                        </div>
+                      )}
+
+                      {/* Short description for recipes */}
+                      {suggestion.type === 'recipe' && suggestion.shortdesc && (
+                        <div className="mt-1 text-xs text-gray-600 line-clamp-2">
+                          {suggestion.shortdesc}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </li>
               ))}
             </ul>
