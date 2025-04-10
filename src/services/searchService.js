@@ -10,53 +10,6 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 // Longer cache duration for mobile devices to save battery and data
 const CACHE_DURATION = isMobile ? 15 * 60 * 1000 : 5 * 60 * 1000; // 15 minutes for mobile, 5 minutes for desktop
 
-// Common Polish word endings for ingredients
-const WORD_VARIATIONS = {
-    'ko': ['ka', 'ek', 'ki', 'kow'], // jabłko -> jabłka, jabłek
-    'ka': ['ko', 'ek', 'ki', 'kow'], // marchewka -> marchewek
-    'ek': ['ka', 'ko', 'ki', 'kow'], // pomidorek -> pomidorki
-    'ki': ['ka', 'ko', 'ek', 'kow'], // jabłki -> jabłko
-};
-
-// Ingredient glossary with common variations and synonyms
-const INGREDIENT_GLOSSARY = {
-    'jablko': ['jabłko', 'jabłka', 'jabłek', 'jabłkami'],
-    'marchewka': ['marchew', 'marchewki', 'marchewek', 'marchewką'],
-    'pomidor': ['pomidory', 'pomidorów', 'pomidorami', 'pomidorki'],
-    'cebula': ['cebule', 'cebul', 'cebulą', 'cebulki'],
-    'czosnek': ['czosnku', 'czosnkiem', 'czosnkowy'],
-    'ziemniak': ['ziemniaki', 'ziemniaków', 'ziemniakami', 'ziemniaczany'],
-    'maka': ['mąka', 'mąki', 'mąką', 'mączka'],
-    'cukier': ['cukru', 'cukrem', 'cukrowy'],
-    'sól': ['soli', 'solą'],
-    'pieprz': ['pieprzu', 'pieprzem'],
-    'olej': ['oleju', 'olejem', 'olejowy'],
-    'masło': ['masła', 'masłem', 'maślany'],
-    'jajko': ['jajka', 'jajek', 'jajkami', 'jajeczny'],
-    'mleko': ['mleka', 'mlekiem', 'mleczny'],
-    'ser': ['sery', 'serów', 'serami', 'serowy'],
-    'kurczak': ['kurczaka', 'kurczakiem', 'kurczakowy'],
-    'wołowina': ['wołowiną', 'wołowinę', 'wołowy'],
-    'wieprzowina': ['wieprzowiną', 'wieprzowinę', 'wieprzowy'],
-    'ryba': ['ryby', 'ryb', 'rybą', 'rybny'],
-    'makaron': ['makaronu', 'makaronem', 'makaronowy'],
-    'ryż': ['ryżu', 'ryżem', 'ryżowy'],
-    'kasza': ['kasze', 'kaszy', 'kaszami'],
-    'pizza': ['pizze', 'pizzą', 'pizzowy'],
-    'pierogi': ['pierogów', 'pierogami', 'pierogowy']
-};
-
-// Helper function to get word stem (remove last 2 letters)
-function getWordStem(word) {
-    return word.slice(0, -2);
-}
-
-// Helper function to get ingredient variations
-function getIngredientVariations(ingredient) {
-    const normalizedIngredient = normalizePolishChars(ingredient.toLowerCase());
-    return INGREDIENT_GLOSSARY[normalizedIngredient] || [ingredient];
-}
-
 // Function to clear cache - call this when data structure changes
 export function clearCache() {
     recipesCache = null;
