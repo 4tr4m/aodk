@@ -94,7 +94,7 @@ const HeroSection = () => {
           {/* Enhanced gradient overlay with text integration */}
           <div className="w-full h-48 sm:h-56 md:h-64 bg-gradient-to-b from-transparent via-[#2D3748]/60 to-[#2D3748]/95">
             {/* Integrated banner text */}
-            <div className="hidden sm:block absolute bottom-24 sm:bottom-28 md:bottom-36 w-full text-center">
+            <div className="hidden sm:block absolute bottom-[120px] sm:bottom-[130px] md:bottom-[150px] w-full text-center">
               <div className="transform scale-125 origin-center">
                 <p className="text-white/80 text-xs sm:text-base md:text-lg font-['Patrick_Hand'] tracking-wide px-4">
                   KUCHNIA, KTÓRA ODŻYWIA: PRZEPISY WSPIERAJĄCE W AUTYŹMIE
@@ -106,7 +106,7 @@ const HeroSection = () => {
           </div>
           
           {/* Integrated button using reusable component */}
-          <div className="absolute bottom-[65px] sm:bottom-[70px] md:bottom-[80px] left-0 right-0 mx-auto flex justify-center z-30">
+          <div className="absolute bottom-[85px] sm:bottom-[90px] md:bottom-[100px] left-0 right-0 mx-auto flex justify-center z-30">
             <a href="#categories" onClick={(e) => {
               e.preventDefault();
               document.getElementById('categories').scrollIntoView({ 
