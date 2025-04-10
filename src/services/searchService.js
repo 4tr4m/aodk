@@ -51,42 +51,6 @@ function getWordStem(word) {
     return word.slice(0, -2);
 }
 
-// Helper function to check if words match including variations
-function wordsMatch(word1, word2) {
-    word1 = word1.toLowerCase();
-    word2 = word2.toLowerCase();
-
-    // Direct match
-    if (word1 === word2) return true;
-
-    // Get the last two letters of each word
-    const ending1 = word1.slice(-2);
-    const ending2 = word2.slice(-2);
-
-    // Get stems
-    const stem1 = getWordStem(word1);
-    const stem2 = getWordStem(word2);
-
-    // If stems match, check if endings are related
-    if (stem1 === stem2) return true;
-
-    // Check if either word's ending has variations that match the other word
-    if (WORD_VARIATIONS[ending1]) {
-        const variations = WORD_VARIATIONS[ending1];
-        if (variations.some(ending => stem1 + ending === word2)) return true;
-    }
-
-    if (WORD_VARIATIONS[ending2]) {
-        const variations = WORD_VARIATIONS[ending2];
-        if (variations.some(ending => stem2 + ending === word1)) return true;
-    }
-
-    // Partial match (one word contains the other)
-    if (word1.includes(word2) || word2.includes(word1)) return true;
-
-    return false;
-}
-
 // Helper function to get ingredient variations
 function getIngredientVariations(ingredient) {
     const normalizedIngredient = normalizePolishChars(ingredient.toLowerCase());
@@ -163,33 +127,6 @@ function formatRecipeAsSuggestion(recipe, searchTerm) {
         original: recipe,
         type: matchingIngredients.length > 0 ? 'ingredient' : 'recipe'
     };
-}
-
-function recipeMatchesAllTerms(recipe, searchTerms) {
-    if (!recipe.base_ingredients) return false;
-    
-    const normalizedIngredients = normalizePolishChars(recipe.base_ingredients);
-    const normalizedName = normalizePolishChars(recipe.name || '');
-    
-    // Check if all search terms are found in either name or ingredients
-    return searchTerms.every(term => {
-        const normalizedTerm = normalizePolishChars(term.trim());
-        
-        // Check name match first (exact match)
-        if (normalizedName.includes(normalizedTerm)) {
-            return true;
-        }
-        
-        // Check ingredients with variations
-        const ingredientWords = normalizedIngredients.split(/[\s,]+/);
-        const termVariations = getIngredientVariations(normalizedTerm);
-        
-        return ingredientWords.some(ingredient => 
-            termVariations.some(variation => 
-                ingredient === variation
-            )
-        );
-    });
 }
 
 function scoreRecipe(recipe, searchTerms) {
