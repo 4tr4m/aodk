@@ -143,9 +143,6 @@ function formatRecipeAsSuggestion(recipe, searchTerm) {
     if (!recipe || !recipe.name) return null;
     
     const normalizedSearchTerm = normalizePolishChars(searchTerm.toLowerCase());
-    const normalizedName = normalizePolishChars(recipe.name.toLowerCase());
-    const normalizedIngredients = recipe.base_ingredients ? 
-        normalizePolishChars(recipe.base_ingredients.toLowerCase()) : '';
     
     // Check if search term matches ingredients
     const matchingIngredients = recipe.base_ingredients ? 
