@@ -121,6 +121,10 @@ const CategoryPage = () => {
     }
   }, [location.state, navigate, location.pathname]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [categorySlug]);
+
   const getCurrentCategory = () => {
     if (!categorySlug) return null;
     return kuchniaCategories.mainCategories.find(cat => 
