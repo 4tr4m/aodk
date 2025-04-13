@@ -100,9 +100,9 @@ const SearchIcon = memo(({ toggleSearch }) => {
   }, [showTutorial]);
 
   return (
-    <div className="relative">
+    <div className="relative inline-block">
       <motion.div 
-        className="cursor-pointer relative -top-[10px] select-none search-icon-container"
+        className="cursor-pointer relative select-none search-icon-container"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={toggleSearch}
@@ -115,7 +115,7 @@ const SearchIcon = memo(({ toggleSearch }) => {
             duration: 2.5,
             ease: "easeInOut",
             times: [0, 0.5, 1],
-            delay: 0 // Explicit zero delay to start immediately
+            delay: 0
           }
         }}
       >
@@ -145,11 +145,13 @@ const SearchIcon = memo(({ toggleSearch }) => {
       
       {/* Tutorial tooltip */}
       {showTutorial && (
-        <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 w-[240px] sm:w-[280px] search-tooltip z-50 sm:left-[calc(50%-20px)]">
+        <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full -top-4 w-[240px] sm:w-[280px] search-tooltip">
           <div className="bg-white px-4 py-3 rounded-lg shadow-lg border-2 border-green-300 relative">
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-green-300 transform rotate-45"></div>
-            <p className="text-gray-700 text-sm font-medium mb-1">Szukaj przepisów dopasowanych do diety</p>
-            <p className="text-green-600 text-xs font-bold">Kliknij, aby znaleźć idealne przepisy!</p>
+            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-green-300 transform rotate-45 z-0"></div>
+            <div className="relative z-10 bg-white">
+              <p className="text-gray-700 text-sm font-medium mb-1">Szukaj przepisów dopasowanych do diety</p>
+              <p className="text-green-600 text-xs font-bold">Kliknij, aby znaleźć idealne przepisy!</p>
+            </div>
           </div>
         </div>
       )}
