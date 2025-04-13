@@ -173,7 +173,11 @@ const ProductModal = ({ product, onClose }) => {
                     {recipe.tags.split(',').map((tag, i) => (
                       <span 
                         key={i}
-                        className="px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700"
+                        className={`px-3 py-1 rounded-full text-sm ${
+                          i % 3 === 0 ? 'bg-green-100 text-green-800' :
+                          i % 3 === 1 ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}
                       >
                         {tag.trim()}
                       </span>
@@ -182,15 +186,28 @@ const ProductModal = ({ product, onClose }) => {
                 )}
               </div>
 
+              {/* Full Description */}
+              {recipe.fulldesc && (
+                <div className="mb-8">
+                  <h3 className="flex items-center gap-2 font-['Playfair_Display'] text-xl text-[#2D3748] font-bold mb-4">
+                    <FaUtensils className="text-green-600" />
+                    Opis
+                  </h3>
+                  <p className="text-gray-700 leading-relaxed">
+                    {recipe.fulldesc}
+                  </p>
+                </div>
+              )}
+
               {/* Ingredients */}
-              {recipe.base_ingredients && (
+              {recipe.ingredients && (
                 <div className="mb-8">
                   <h3 className="flex items-center gap-2 font-['Playfair_Display'] text-xl text-[#2D3748] font-bold mb-4">
                     <FaUtensils className="text-green-600" />
                     Składniki
                   </h3>
                   <ul className="space-y-2">
-                    {recipe.base_ingredients.split('\n').map((ingredient, i) => (
+                    {recipe.ingredients.split('\n').map((ingredient, i) => (
                       <li 
                         key={i}
                         className="flex items-start gap-3 text-gray-700"
