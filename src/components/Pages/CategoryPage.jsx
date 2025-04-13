@@ -320,12 +320,12 @@ const CategoryPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="flex flex-row flex-wrap items-center justify-center gap-3 sm:gap-4"
+                className="flex items-center justify-center gap-3 sm:gap-4 flex-nowrap w-full px-4"
               >
-                <h1 className="font-['Playfair_Display'] text-4xl md:text-5xl lg:text-6xl text-[#2D3748] font-bold tracking-wide text-center">
+                <h1 className="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#2D3748] font-bold tracking-wide text-center break-words flex-shrink">
                   {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
                 </h1>
-                <div className="ml-1 sm:ml-3 flex-shrink-0">
+                <div className="flex-shrink-0">
                   <SearchIcon toggleSearch={toggleSearch} />
                 </div>
               </motion.div>
@@ -432,9 +432,15 @@ const CategoryPage = () => {
                     }}
                     className="overflow-hidden"
                   >
-                    <p className="font-['Lato'] text-base md:text-lg lg:text-xl text-gray-600 text-center max-w-3xl mx-auto leading-relaxed">
-                      {currentCategory.description}
-                    </p>
+                    <p 
+                      className="font-['Lato'] text-base md:text-lg lg:text-xl text-gray-600 text-center max-w-3xl mx-auto leading-relaxed"
+                      dangerouslySetInnerHTML={{
+                        __html: currentCategory.description.replace(
+                          /{LINK}/g,
+                          '<span class="inline-block relative group"><a href="/kuchnia/ciastka/mieszanka-1" class="relative z-10 text-green-600 font-medium transition-colors duration-300 group-hover:text-green-700">optymalną domową mieszankę na mąkę bezglutenową</a><span class="absolute bottom-0 left-0 w-full h-[30%] bg-green-100 transform transition-all duration-300 -z-0 group-hover:h-[90%] group-hover:bg-green-50"></span></span>'
+                        )
+                      }}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>

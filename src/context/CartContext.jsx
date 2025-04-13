@@ -190,7 +190,7 @@ export const CartProvider = ({ children }) => {
           CHLEBY: recipes.filter(recipe => recipe.category === 'CHLEBY'),
           SMAROWIDŁA: recipes.filter(recipe => recipe.category === 'SMAROWIDŁA'),
           DESERY: recipes.filter(recipe => recipe.category === 'DESERY'),
-          BABECZKI: recipes.filter(recipe => recipe.category === 'BABECZKI'),
+          BABECZKI: recipes.filter(recipe => recipe.category === 'BABECZKI i MUFFINY'),
           CIASTA: recipes.filter(recipe => recipe.category === 'CIASTA'),
           CIASTKA: recipes.filter(recipe => recipe.category === 'CIASTKA'),
           SMOOTHIE: recipes.filter(recipe => recipe.category === 'SMOOTHIE'),
