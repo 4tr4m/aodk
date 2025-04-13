@@ -91,26 +91,35 @@ const ProductModal = ({ product, onClose }) => {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/60 backdrop-blur-sm"
+        onClick={(e) => {
+          // Close modal when clicking the backdrop
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
+        }}
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ type: "spring", duration: 0.5 }}
-          className="relative bg-white w-full max-w-5xl rounded-xl shadow-2xl my-4 min-h-[50vh] max-h-[90vh] overflow-hidden"
+          className="relative bg-white w-full max-w-5xl rounded-xl shadow-2xl my-4 mx-4 overflow-hidden"
           ref={modalRef}
         >
-          {/* Fixed close button */}
+          {/* Close button - made more visible and accessible */}
           <button 
             onClick={onClose}
-            className="absolute top-2 right-2 z-50 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+            className="absolute top-4 right-4 z-50 bg-white/90 backdrop-blur-sm rounded-full p-2.5 shadow-lg 
+              hover:bg-gray-100 transition-colors duration-300 border border-gray-200"
             aria-label="Close modal"
           >
             <FiX size={24} className="text-gray-600" />
           </button>
 
-          <div className="flex flex-col h-full">
-            {/* Product Image - Now full width on all screens */}
+          <div className="flex flex-col max-h-[90vh] md:max-h-[85vh]">
+            {/* Product Image - Responsive height */}
             <div className="w-full h-48 sm:h-64 md:h-72 lg:h-80 bg-gray-100 relative overflow-hidden">
               <img 
                 src={`/img/${recipe.image}`} 
@@ -123,13 +132,15 @@ const ProductModal = ({ product, onClose }) => {
                   TY {recipe.imageCredit} <span className="text-rose-400">♥</span>
                 </div>
               )}
-              <div className="absolute top-0 left-0 bg-green-600/90 text-white px-3 py-1 rounded-br-lg text-sm font-medium">
+              {/* Category tag - made more visible */}
+              <div className="absolute top-0 left-0 bg-green-600/90 text-white px-4 py-2 rounded-br-lg 
+                text-sm font-medium shadow-md backdrop-blur-sm">
                 {recipe.category}
               </div>
             </div>
 
-            {/* Scrollable content */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+            {/* Scrollable content with improved padding and spacing */}
+            <div className="flex-1 overflow-y-auto p-6 sm:p-8">
               <div className="flex justify-between items-start mb-4">
                 <h2 className="font-['Playfair_Display'] text-2xl md:text-3xl text-[#2D3748] mb-2 font-bold leading-tight pr-8">
                   {recipe.name}
@@ -284,21 +295,21 @@ const ProductModal = ({ product, onClose }) => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 mt-6 sticky bottom-0 bg-white py-4 border-t border-gray-100 -mx-4 px-4 sm:-mx-6 sm:px-6">
+              {/* Action Buttons - Made sticky and more visible */}
+              <div className="sticky bottom-0 left-0 right-0 bg-white py-4 border-t border-gray-100 mt-8 -mx-6 sm:-mx-8 px-6 sm:px-8 flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleAddToCart}
                   className="bg-yellow-500 hover:bg-yellow-600 text-white py-3 px-6 rounded-lg 
-                  transition-all duration-300 flex-1 flex items-center justify-center gap-2 font-medium
-                  shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/30"
+                    transition-all duration-300 flex-1 flex items-center justify-center gap-2 font-medium
+                    shadow-lg shadow-yellow-500/20 hover:shadow-yellow-500/30"
                 >
                   <span>Dodaj do koszyka</span>
                 </button>
                 <button
                   onClick={handleAddToWishlist}
                   className="border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-50 
-                  py-3 px-6 rounded-lg transition-all duration-300 flex-1 flex items-center 
-                  justify-center gap-2 font-medium"
+                    py-3 px-6 rounded-lg transition-all duration-300 flex-1 flex items-center 
+                    justify-center gap-2 font-medium"
                 >
                   <span>Zapisz na później</span>
                 </button>

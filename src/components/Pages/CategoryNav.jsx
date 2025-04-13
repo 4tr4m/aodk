@@ -46,6 +46,12 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
     }
   }, [currentSlug]);
 
+  // Handle category click with scroll to top
+  const handleCategoryClick = (link) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    onCategoryClick(link);
+  };
+
   // Show/hide arrows based on scroll position
   const [showLeftArrow, setShowLeftArrow] = React.useState(false);
   const [showRightArrow, setShowRightArrow] = React.useState(true);
@@ -114,7 +120,7 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
           <div className="flex flex-nowrap gap-4 min-w-min pb-2">
             <motion.button
               data-active={!currentSlug}
-              onClick={() => onCategoryClick('/kuchnia')}
+              onClick={() => handleCategoryClick('/kuchnia')}
               className={`
                 whitespace-nowrap px-7 py-3 rounded-full font-['Lato'] text-base sm:text-lg
                 transition-all duration-300 border-2 shadow-md hover:shadow-lg
@@ -139,7 +145,7 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
                 <motion.button
                   key={index}
                   data-active={isActive}
-                  onClick={() => onCategoryClick(category.link)}
+                  onClick={() => handleCategoryClick(category.link)}
                   className={`
                     whitespace-nowrap px-7 py-3 rounded-full font-['Lato'] text-base sm:text-lg
                     transition-all duration-300 border-2 shadow-md hover:shadow-lg
