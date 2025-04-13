@@ -207,22 +207,19 @@ const SearchBar = memo(function SearchBar({
     
     // If match found after normalizing Polish chars
     if (normalizedText.includes(normalizedTerm)) {
-      // We need to find position of the match in normalized text
-      const startPos = normalizedText.indexOf(normalizedTerm);
-      const endPos = startPos + normalizedTerm.length;
-      
-      // Extract the original text segment that matches
-      const beforeMatch = text.substring(0, startPos);
-      const match = text.substring(startPos, endPos);
-      const afterMatch = text.substring(endPos);
-      
-      return (
-        <>
-          {beforeMatch}
-          <span className="bg-green-100 text-green-800 font-medium">{match}</span>
-          {afterMatch}
-        </>
-      );
+      const words = text.split(/\s+/);
+      return words.map((word, index) => {
+        const normalizedWord = normalizePolishChars(word.toLowerCase());
+        if (normalizedWord.includes(normalizedTerm)) {
+          return (
+            <React.Fragment key={index}>
+              {index > 0 ? ' ' : ''}
+              <span className="bg-green-100 text-green-800 font-medium">{word}</span>
+            </React.Fragment>
+          );
+        }
+        return <React.Fragment key={index}>{index > 0 ? ' ' : ''}{word}</React.Fragment>;
+      });
     }
     
     return text;
@@ -336,13 +333,13 @@ const SearchBar = memo(function SearchBar({
 
                       {/* Always show ingredients */}
                       {suggestion.ingredients && (
-                        <div className="mt-1 flex flex-wrap gap-1">
-                          {suggestion.ingredients.split(/\s+/).map((ingredient, i) => (
+                        <div className="mt-1 flex flex-wrap gap-1 justify-center">
+                          {suggestion.ingredients.split(',').map((ingredient, i) => (
                             <span 
                               key={i}
                               className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
                             >
-                              {highlightMatch(ingredient, highlightedTerm || searchTerm)}
+                              {highlightMatch(ingredient.trim(), highlightedTerm || searchTerm)}
                             </span>
                           ))}
                         </div>

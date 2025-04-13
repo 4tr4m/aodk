@@ -63,9 +63,9 @@ const HeroSection = () => {
                   initial="rest"
                   whileHover="hover"
                 >
-                  <h1 className="font-['Caveat'] text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-relaxed text-center tracking-wide mb-4 sm:mb-6 transition-all duration-300 group-hover:text-gray-50 drop-shadow-lg group-hover:drop-shadow-xl">
+                  <h1 className="font-['Caveat'] text-xl sm:text-2xl md:text-4xl font-bold text-white leading-relaxed text-center tracking-wide mb-4 sm:mb-6 transition-all duration-300 group-hover:text-gray-50 drop-shadow-lg group-hover:drop-shadow-xl">
                     DIETA ELIMINACYJNA <br/>
-                    <span className="text-xl sm:text-2xl md:text-3xl font-normal tracking-wider opacity-95 transition-all duration-300 group-hover:opacity-100">
+                    <span className="text-lg sm:text-xl md:text-3xl font-normal tracking-wider opacity-95 transition-all duration-300 group-hover:opacity-100">
                       TRANSFORMUJĄCA <br/>
                       FUNKCJONOWANIE <br/>
                       W AUTYŹMIE I ZABURZENIACH <br className="hidden sm:block" />
