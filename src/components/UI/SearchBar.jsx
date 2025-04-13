@@ -171,60 +171,6 @@ const SearchBar = memo(function SearchBar({
     };
   }, [isOpen, closeSearch, showSuggestions]);
 
-  // Helper function to normalize Polish characters
-  const normalizePolishChars = (text) => {
-    if (!text) return '';
-    return text
-      .toLowerCase()
-      .replace(/ą/g, 'a')
-      .replace(/ć/g, 'c')
-      .replace(/ę/g, 'e')
-      .replace(/ł/g, 'l')
-      .replace(/ń/g, 'n')
-      .replace(/ó/g, 'o')
-      .replace(/ś/g, 's')
-      .replace(/ź/g, 'z')
-      .replace(/ż/g, 'z');
-  };
-
-  // Updated highlightMatch function
-  const highlightMatch = (text, term) => {
-    if (!term || typeof text !== 'string') return text;
-    
-    const lowerText = text.toLowerCase();
-    const normalizedText = normalizePolishChars(text.toLowerCase());
-    const normalizedTerm = normalizePolishChars(term.toLowerCase());
-    
-    // If exact match found with accents
-    if (lowerText.includes(term.toLowerCase())) {
-      const parts = text.split(new RegExp(`(${term})`, 'gi'));
-      return parts.map((part, index) => 
-        part.toLowerCase() === term.toLowerCase() ? 
-          <span key={index} className="bg-green-100 text-green-800 font-medium">{part}</span> : 
-          part
-      );
-    }
-    
-    // If match found after normalizing Polish chars
-    if (normalizedText.includes(normalizedTerm)) {
-      const words = text.split(/\s+/);
-      return words.map((word, index) => {
-        const normalizedWord = normalizePolishChars(word.toLowerCase());
-        if (normalizedWord.includes(normalizedTerm)) {
-          return (
-            <React.Fragment key={index}>
-              {index > 0 ? ' ' : ''}
-              <span className="bg-green-100 text-green-800 font-medium">{word}</span>
-            </React.Fragment>
-          );
-        }
-        return <React.Fragment key={index}>{index > 0 ? ' ' : ''}{word}</React.Fragment>;
-      });
-    }
-    
-    return text;
-  };
-
   return (
     <div className="relative w-full">
       <form
@@ -315,19 +261,13 @@ const SearchBar = memo(function SearchBar({
                     <div className="flex-1 min-w-0">
                       {/* Suggestion title */}
                       <div className="font-medium text-gray-800 text-sm sm:text-base">
-                        {highlightMatch(
-                          suggestion.name,
-                          highlightedTerm || searchTerm
-                        )}
+                        {suggestion.name}
                       </div>
 
                       {/* Short description */}
                       {suggestion.shortdesc && (
                         <div className="mt-1 text-xs text-gray-600 line-clamp-2">
-                          {highlightMatch(
-                            suggestion.shortdesc,
-                            highlightedTerm || searchTerm
-                          )}
+                          {suggestion.shortdesc}
                         </div>
                       )}
 
@@ -339,7 +279,7 @@ const SearchBar = memo(function SearchBar({
                               key={i}
                               className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800"
                             >
-                              {highlightMatch(ingredient.trim(), highlightedTerm || searchTerm)}
+                              {ingredient.trim()}
                             </span>
                           ))}
                         </div>

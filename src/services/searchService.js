@@ -64,7 +64,8 @@ function formatRecipeAsSuggestion(recipe, searchTerm) {
     // Check if search term matches ingredients
     const matchingIngredients = recipe.base_ingredients ? 
         recipe.base_ingredients
-            .split(/[\s,]+/)
+            .split(',')
+            .map(ingredient => ingredient.trim())
             .filter(ingredient => 
                 normalizePolishChars(ingredient.toLowerCase()).includes(normalizedSearchTerm)
             ) : [];
@@ -85,7 +86,6 @@ function formatRecipeAsSuggestion(recipe, searchTerm) {
 function scoreRecipe(recipe, searchTerms) {
     let score = 0;
     const normalizedName = normalizePolishChars(recipe.name || '');
-    const normalizedIngredients = normalizePolishChars(recipe.base_ingredients || '');
     const searchTermsNormalized = searchTerms.map(term => normalizePolishChars(term.trim()));
     
     // Name matching (highest priority)
@@ -102,12 +102,13 @@ function scoreRecipe(recipe, searchTerms) {
 
     // Ingredient matching (lower priority)
     if (recipe.base_ingredients) {
-        const ingredientWords = normalizedIngredients.split(/[\s,]+/);
+        const ingredients = recipe.base_ingredients.split(',')
+            .map(i => normalizePolishChars(i.trim()));
         
         for (const term of searchTermsNormalized) {
-            for (const ingredient of ingredientWords) {
-                // Only exact matches for ingredients
-                if (ingredient === term) {
+            for (const ingredient of ingredients) {
+                // Match against full ingredient
+                if (ingredient.includes(term)) {
                     score += 50;
                     break;
                 }
@@ -123,38 +124,36 @@ export async function getSuggestions(searchTerm) {
 
     try {
         const recipes = await fetchAllRecipes();
-        const searchTerms = searchTerm
-            .split(' ')
-            .filter(term => term.length >= 2)
-            .slice(0, 8);
+        const searchTerms = searchTerm.split(',').map(term => normalizePolishChars(term.toLowerCase().trim()));
 
         // Score and filter recipes
         const scoredRecipes = recipes
             .map(recipe => {
                 const normalizedName = normalizePolishChars(recipe.name || '');
-                const normalizedIngredients = normalizePolishChars(recipe.base_ingredients || '');
-                
                 let score = 0;
                 
-                // Name matching (highest priority)
-                searchTerms.forEach(term => {
-                    const normalizedTerm = normalizePolishChars(term.toLowerCase());
-                    if (normalizedName.includes(normalizedTerm)) {
+                // For each search term
+                for (const term of searchTerms) {
+                    if (term.length < 2) continue; // Skip very short terms
+                    
+                    // Name matching (highest priority)
+                    if (normalizedName.includes(term)) {
                         score += 100;
-                        if (normalizedName.startsWith(normalizedTerm)) {
+                        if (normalizedName.startsWith(term)) {
                             score += 50;
                         }
                     }
-                });
 
-                // Ingredient matching (lower priority)
-                if (recipe.base_ingredients) {
-                    searchTerms.forEach(term => {
-                        const normalizedTerm = normalizePolishChars(term.toLowerCase());
-                        if (normalizedIngredients.includes(normalizedTerm)) {
+                    // Ingredient matching (lower priority)
+                    if (recipe.base_ingredients) {
+                        const ingredients = recipe.base_ingredients.split(',')
+                            .map(i => normalizePolishChars(i.trim()));
+                        
+                        // Check if any ingredient matches the current term
+                        if (ingredients.some(ingredient => ingredient.includes(term))) {
                             score += 30;
                         }
-                    });
+                    }
                 }
 
                 return { recipe, score };
@@ -183,10 +182,7 @@ export async function searchRecipes(searchTerm) {
 
     try {
         const recipes = await fetchAllRecipes();
-        const searchTerms = searchTerm
-            .split(' ')
-            .filter(term => term.length >= 2)
-            .slice(0, 8); // Limit to 8 ingredients
+        const searchTerms = searchTerm.split(',').map(term => normalizePolishChars(term.toLowerCase().trim()));
 
         // Score and filter recipes
         const scoredRecipes = recipes

@@ -145,7 +145,7 @@ const SearchIcon = memo(({ toggleSearch }) => {
       
       {/* Tutorial tooltip */}
       {showTutorial && (
-        <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 w-[240px] sm:w-[280px] search-tooltip z-50">
+        <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 w-[240px] sm:w-[280px] search-tooltip z-50 sm:left-[calc(50%-20px)]">
           <div className="bg-white px-4 py-3 rounded-lg shadow-lg border-2 border-green-300 relative">
             <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-green-300 transform rotate-45"></div>
             <p className="text-gray-700 text-sm font-medium mb-1">Szukaj przepisów dopasowanych do diety</p>

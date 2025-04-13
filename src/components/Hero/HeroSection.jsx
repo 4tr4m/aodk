@@ -70,7 +70,7 @@ const HeroSection = () => {
                       FUNKCJONOWANIE <br/>
                       W AUTYŹMIE I ZABURZENIACH <br className="hidden sm:block" />
                       <span className="hidden sm:inline">NEUROROZWOJOWYCH</span>
-                      <span className="sm:hidden">NEURO-<br/>ROZWOJOWYCH</span>
+                      <span className="sm:hidden text-[0.9em]">NEUROROZWOJOWYCH</span>
                     </span>
                   </h1>
                   <h2 className="hidden sm:block mt-4 sm:mt-6 font-['Patrick_Hand'] text-base sm:text-lg md:text-xl font-normal text-gray-50/90 leading-relaxed text-center tracking-wide transition-all duration-300 group-hover:text-white">
