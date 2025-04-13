@@ -91,15 +91,24 @@ const ProductModal = ({ product, onClose }) => {
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-start justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
           transition={{ type: "spring", duration: 0.5 }}
-          className="bg-white w-full max-w-5xl rounded-xl shadow-2xl max-h-[90vh] overflow-hidden"
+          className="relative bg-white w-full max-w-5xl rounded-xl shadow-2xl my-4 min-h-[50vh] max-h-[90vh] overflow-hidden"
           ref={modalRef}
         >
+          {/* Fixed close button */}
+          <button 
+            onClick={onClose}
+            className="absolute top-2 right-2 z-50 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg hover:bg-gray-100 transition-colors"
+            aria-label="Close modal"
+          >
+            <FiX size={24} className="text-gray-600" />
+          </button>
+
           <div className="flex flex-col h-full">
             {/* Product Image - Now full width on all screens */}
             <div className="w-full h-48 sm:h-64 md:h-72 lg:h-80 bg-gray-100 relative overflow-hidden">
@@ -119,39 +128,53 @@ const ProductModal = ({ product, onClose }) => {
               </div>
             </div>
 
-            {/* Product Info */}
-            <div className="flex-1 p-4 sm:p-6 overflow-y-auto">
+            {/* Scrollable content */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6">
               <div className="flex justify-between items-start mb-4">
-                <h2 className="font-['Playfair_Display'] text-2xl md:text-3xl text-[#2D3748] mb-2 font-bold leading-tight">
+                <h2 className="font-['Playfair_Display'] text-2xl md:text-3xl text-[#2D3748] mb-2 font-bold leading-tight pr-8">
                   {recipe.name}
                 </h2>
-                <button 
-                  onClick={onClose}
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
-                >
-                  <FiX size={24} />
-                </button>
               </div>
 
-              {/* Tags Section */}
-              {(recipe.tags || recipe.tags2 || recipe.tags3) && (
-                <div className="mb-6">
+              {/* Tags Section with different colors */}
+              <div className="mb-6 space-y-3">
+                {recipe.tags && (
                   <div className="flex flex-wrap gap-2">
-                    {[...(recipe.tags?.split(',') || []), 
-                      ...(recipe.tags2?.split(',') || []),
-                      ...(recipe.tags3?.split(',') || [])]
-                      .filter(Boolean)
-                      .map((tag, i) => (
-                        <span 
-                          key={i}
-                          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800"
-                        >
-                          {tag.trim()}
-                        </span>
+                    {recipe.tags.split(',').map((tag, i) => (
+                      <span 
+                        key={i}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                      >
+                        {tag.trim()}
+                      </span>
                     ))}
                   </div>
-                </div>
-              )}
+                )}
+                {recipe.tags2 && (
+                  <div className="flex flex-wrap gap-2">
+                    {recipe.tags2.split(',').map((tag, i) => (
+                      <span 
+                        key={i}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800"
+                      >
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {recipe.tags3 && (
+                  <div className="flex flex-wrap gap-2">
+                    {recipe.tags3.split(',').map((tag, i) => (
+                      <span 
+                        key={i}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-rose-100 text-rose-800"
+                      >
+                        {tag.trim()}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
 
               {/* Recipe details */}
               <div className="mb-6">
@@ -239,7 +262,7 @@ const ProductModal = ({ product, onClose }) => {
                 </div>
               )}
 
-              {/* Preparation - Enhanced */}
+              {/* Preparation - Enhanced with better step visualization */}
               <div className="mb-6 bg-yellow-50/50 p-4 rounded-lg border border-yellow-100">
                 <div className="flex items-center gap-2 mb-4">
                   <FaUtensils className="text-yellow-600" />
@@ -247,11 +270,11 @@ const ProductModal = ({ product, onClose }) => {
                     Przygotowanie
                   </h3>
                 </div>
-                <div className="text-gray-700 space-y-4">
+                <div className="text-gray-700 space-y-6">
                   {formatPreparation(recipe.preparation).map((step, i) => (
-                    <div key={i} className="flex gap-3 items-start">
+                    <div key={i} className="flex gap-4 items-start group hover:bg-yellow-50/50 p-3 -mx-3 rounded-lg transition-colors">
                       {formatPreparation(recipe.preparation).length > 1 && (
-                        <div className="flex-shrink-0 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-sm mt-0.5">
+                        <div className="flex-shrink-0 w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-sm mt-0.5 group-hover:scale-110 transition-transform">
                           {i+1}
                         </div>
                       )}
