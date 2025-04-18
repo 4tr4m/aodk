@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { kuchniaCategories } from '../../Data/category-data';
 import InfoModal from '../Pages/InfoModal';
 
 const Footer = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const navigate = useNavigate();
 
-  const handleScrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+  const handleLinkClick = (link) => {
+    // First navigate to the page
+    navigate(link);
+    // Then scroll to top with a small delay to ensure navigation completed
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }, 100);
   };
 
   const toggleInfoModal = () => {
@@ -66,14 +72,13 @@ const Footer = () => {
                   <ul className="space-y-4 flex flex-col items-center lg:items-start">
                     {firstColumnCategories.map((category) => (
                       <li key={category.label} className="w-full text-center lg:text-left">
-                        <Link 
-                          to={category.link}
+                        <button 
+                          onClick={() => handleLinkClick(category.link)}
                           className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group"
-                          onClick={handleScrollToTop}
                         >
                           <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2">→</span>
                           {category.label}
-                        </Link>
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -87,14 +92,13 @@ const Footer = () => {
                   <ul className="space-y-4 flex flex-col items-center lg:items-start">
                     {secondColumnCategories.map((category) => (
                       <li key={category.label} className="w-full text-center lg:text-left">
-                        <Link 
-                          to={category.link}
+                        <button 
+                          onClick={() => handleLinkClick(category.link)}
                           className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group"
-                          onClick={handleScrollToTop}
                         >
                           <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2">→</span>
                           {category.label}
-                        </Link>
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -112,14 +116,13 @@ const Footer = () => {
                       { label: 'Kontakt', link: '/kontakt' }
                     ].map((item) => (
                       <li key={item.label} className="w-full text-center lg:text-left">
-                        <Link 
-                          to={item.link}
+                        <button 
+                          onClick={() => handleLinkClick(item.link)}
                           className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group"
-                          onClick={handleScrollToTop}
                         >
                           <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2">→</span>
                           {item.label}
-                        </Link>
+                        </button>
                       </li>
                     ))}
                   </ul>
