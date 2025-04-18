@@ -55,13 +55,14 @@ const TitleWithSearch = memo(({ title, toggleSearch, accentColor }) => {
   return (
     <div className="flex items-center justify-center flex-wrap gap-3 sm:gap-4">
       <h2 
-        className={`inline-block font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#1A202C] 
+        className={`inline-block font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-[#1A202C] 
           relative pb-3 sm:pb-4 after:content-[''] after:absolute after:bottom-0 after:left-1/2 
-          after:-translate-x-1/2 after:w-24 sm:after:w-28 md:after:w-32 after:h-[3px] after:${accentColor} tracking-wide font-semibold`}
+          after:-translate-x-1/2 after:w-24 sm:after:w-28 md:after:w-32 after:h-[3px] after:${accentColor} 
+          tracking-wide font-semibold max-w-[80%] sm:max-w-none break-words`}
       >
         {title}
       </h2>
-      <div className="ml-1 sm:ml-2 flex-shrink-0">
+      <div className="flex-shrink-0">
         <SearchIcon toggleSearch={toggleSearch} />
       </div>
     </div>
@@ -442,7 +443,7 @@ const CategoryBanner = () => {
           
             {/* Description - always visible */}
             <motion.p 
-              className="mt-4 sm:mt-5 md:mt-6 text-gray-600 text-base sm:text-lg md:text-xl lg:text-2xl max-w-2xl sm:max-w-3xl mx-auto font-['Lato'] leading-relaxed tracking-wide"
+              className="mt-2 sm:mt-3 md:mt-4 text-gray-600 text-base sm:text-lg md:text-xl lg:text-2xl max-w-2xl sm:max-w-3xl mx-auto font-['Lato'] leading-relaxed tracking-wide"
               variants={titleVariant}
             >
               Odkryj nasze starannie wybrane przepisy, które łączą w sobie smak i wartości odżywcze
