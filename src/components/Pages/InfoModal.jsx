@@ -129,21 +129,21 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
             
             {/* Content with grid layout to avoid scrolling */}
             <motion.div 
-              className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700"
+              className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-gray-700"
               variants={staggeredItems}
               initial="hidden"
               animate="visible"
             >
               <div>
                 <motion.p 
-                  className="mb-3 text-sm md:text-base modal-item"
+                  className="mb-2 text-sm md:text-base modal-item"
                   variants={itemVariants}
                   style={{ animationDelay: '0.1s' }}
                 >
                   Na „Autyzm od Kuchni" dzielę się przepisami, które przez ponad 10 lat zbierałam i dostosowywałam do potrzeb mojego syna z autyzmem.
                 </motion.p>
                 <motion.p 
-                  className="mb-3 text-sm md:text-base modal-item"
+                  className="mb-2 text-sm md:text-base modal-item"
                   variants={itemVariants}
                   style={{ animationDelay: '0.2s' }}
                 >
@@ -151,13 +151,13 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
                 </motion.p>
                 
                 <motion.div 
-                  className="mt-4 p-3 border-l-4 border-green-600 bg-green-50 rounded-r text-xs md:text-sm text-gray-600 flex items-start gap-2"
+                  className="mt-3 p-3 border-l-4 border-green-600 bg-green-50 rounded-r text-xs md:text-sm text-gray-600 flex items-start gap-2"
                   variants={itemVariants}
                   style={{ animationDelay: '0.5s' }}
                 >
                   <IoInformationCircle className="text-green-700 text-lg flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="mb-1">Aby poznać naszą drogę, zapraszam do sekcji <Link to="/historia" className="text-green-700 font-semibold hover:text-green-800 transition-colors">HISTORIA</Link>.</p>
+                    <p className="mb-1">Aby poznać naszą drogę, zapraszam do sekcji <Link to="/historia/o-mnie" className="text-green-700 font-semibold hover:text-green-800 transition-colors">HISTORIA</Link>.</p>
                     <p>Po alternatywne przepisy z glutenem, zapraszam na <span className="text-green-700 font-semibold">ZDROWE JEMY</span>.</p>
                   </div>
                 </motion.div>
@@ -202,20 +202,6 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
                 </motion.p>
               </div>
             </motion.div>
-            
-            {/* Footer with enhanced button */}
-            <div className="p-4 bg-gray-50 border-t flex justify-end">
-              <motion.button 
-                onClick={togglePopup} 
-                className="px-6 py-2 bg-green-700 text-white rounded-full hover:bg-green-600 transition-all duration-300 flex items-center gap-2 group shadow-md hover:shadow-lg"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-                aria-label="Zamknij"
-              >
-                Zamknij
-                <IoClose className="text-xl opacity-80 group-hover:opacity-100" />
-              </motion.button>
-            </div>
             
             {/* Improved close button */}
             <motion.button

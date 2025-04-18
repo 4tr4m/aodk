@@ -83,8 +83,8 @@ const InfoSection = () => {
           variants={staggerContainer}
         >
           {/* Header Section - Enhanced UX/UI */}
-          <motion.div className="text-center mb-12 sm:mb-16 md:mb-20 relative" variants={fadeInUp}>
-            <div className="inline-flex flex-col items-center relative mb-4 sm:mb-6">
+          <motion.div className="text-center mb-6 sm:mb-8 relative" variants={fadeInUp}>
+            <div className="inline-flex flex-col items-center relative mb-2">
               <motion.div 
                 className="relative w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 rounded-full shadow-lg overflow-hidden cursor-pointer border-4 border-white/50 mb-4"
                 whileHover={{ scale: 1.08, boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.1)' }}
@@ -107,7 +107,7 @@ const InfoSection = () => {
                 Autyzm od Kuchni
               </motion.h2>
               <motion.p 
-                className="text-gray-500 text-lg md:text-xl lg:text-2xl max-w-2xl mx-auto font-['Lato'] leading-relaxed tracking-wide mt-2"
+                className="text-gray-500 text-2xl md:text-3xl lg:text-4xl max-w-2xl mx-auto font-['Lato'] leading-relaxed tracking-wide mt-2"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
@@ -118,7 +118,7 @@ const InfoSection = () => {
           </motion.div>
 
           {/* Main Content */}
-          <motion.div className="space-y-8 sm:space-y-10 max-w-3xl mx-auto" variants={fadeInUp}>
+          <motion.div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto" variants={fadeInUp}>
             <motion.div className="prose prose-lg text-gray-600 font-['Lato'] space-y-4" variants={fadeInUp}>
               <motion.p className="text-lg sm:text-xl md:text-2xl leading-relaxed px-2 sm:px-0">
                 Dieta w autyzmie odgrywa kluczową rolę w codziennym funkcjonowaniu. 
