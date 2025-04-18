@@ -1,6 +1,7 @@
 import { memo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IoClose, IoLeaf, IoInformationCircle } from 'react-icons/io5';
+import { Link } from 'react-router-dom';
 
 const InfoModal = memo(({ isOpen, togglePopup }) => {
   // Zablokuj scrollowanie strony gdy modal jest otwarty
@@ -81,7 +82,7 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div 
-          className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 p-4 backdrop-blur-md"
+          className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 p-4 backdrop-blur-md cursor-pointer"
           onClick={togglePopup}
           variants={backdropVariants}
           initial="hidden"
@@ -89,7 +90,7 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
           exit="exit"
         >
           <motion.div 
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto relative overflow-hidden modal-container"
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto relative overflow-hidden modal-container cursor-default"
             onClick={e => e.stopPropagation()}
             variants={modalVariants}
             initial="hidden"
@@ -156,7 +157,7 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
                 >
                   <IoInformationCircle className="text-green-700 text-lg flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="mb-1">Aby poznać naszą drogę, zapraszam do sekcji <span className="text-green-700 font-semibold">HISTORIA</span>.</p>
+                    <p className="mb-1">Aby poznać naszą drogę, zapraszam do sekcji <Link to="/historia" className="text-green-700 font-semibold hover:text-green-800 transition-colors">HISTORIA</Link>.</p>
                     <p>Po alternatywne przepisy z glutenem, zapraszam na <span className="text-green-700 font-semibold">ZDROWE JEMY</span>.</p>
                   </div>
                 </motion.div>
