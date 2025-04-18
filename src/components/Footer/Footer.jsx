@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { kuchniaCategories } from '../../Data/category-data';
 import InfoModal from '../Pages/InfoModal';
 
@@ -8,9 +8,10 @@ const Footer = () => {
   const navigate = useNavigate();
 
   const handleLinkClick = (link) => {
-    // First navigate to the page
+    // Navigate first
     navigate(link);
-    // Then scroll to top with a small delay to ensure navigation completed
+    
+    // Then scroll to top after a small delay to ensure the new page has loaded
     setTimeout(() => {
       window.scrollTo({
         top: 0,

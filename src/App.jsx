@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import HomePage from './pages/HomePage';
 import ContactPage from './components/Pages/ContactPage';
@@ -11,10 +11,22 @@ import HistoriaOMnie from './components/Pages/HistoriaOMnie';
 import HistoriaOAutyzmie from './components/Pages/HistoriaOAutyzmie';
 import ZnajdkiPage from './components/Pages/ZnajdkiPage';
 
+// Scroll to top on route change
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+};
+
 const App = () => {
   return (
     <CartProvider>
       <Router>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/kuchnia" element={<CategoryPage />} />

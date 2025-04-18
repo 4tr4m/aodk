@@ -79,7 +79,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
           }
         });
       }
-    }, 1100);
+    }, 600);
   }, [activeIndex, isAnimating, extendedItems.length, itemsPerView, totalItems, startIndex]);
 
   // Handle previous slide
@@ -120,7 +120,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
           }
         });
       }
-    }, 1100);
+    }, 600);
   }, [activeIndex, isAnimating, startIndex, totalItems, itemsPerView]);
 
   useEffect(() => {
