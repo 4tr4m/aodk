@@ -80,34 +80,44 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative">
         {/* Left Arrow */}
         {showLeftArrow && (
-          <motion.button
-            onClick={() => handleScroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-gradient-to-r from-gray-100 to-transparent"
-            aria-label="Scroll left"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+          <motion.div
+            className="absolute left-0 top-1/2 z-10 w-12 h-12 flex items-center justify-center bg-gradient-to-r from-gray-100 to-transparent"
             style={{ transform: 'translateY(-50%)' }}
           >
-            <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </motion.button>
+            <motion.button
+              onClick={() => handleScroll('left')}
+              className="w-full h-full flex items-center justify-center"
+              aria-label="Scroll left"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ transformOrigin: 'center' }}
+            >
+              <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </motion.button>
+          </motion.div>
         )}
 
         {/* Right Arrow */}
         {showRightArrow && (
-          <motion.button
-            onClick={() => handleScroll('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-gradient-to-l from-gray-100 to-transparent"
-            aria-label="Scroll right"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+          <motion.div
+            className="absolute right-0 top-1/2 z-10 w-12 h-12 flex items-center justify-center bg-gradient-to-l from-gray-100 to-transparent"
             style={{ transform: 'translateY(-50%)' }}
           >
-            <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </motion.button>
+            <motion.button
+              onClick={() => handleScroll('right')}
+              className="w-full h-full flex items-center justify-center"
+              aria-label="Scroll right"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              style={{ transformOrigin: 'center' }}
+            >
+              <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </motion.button>
+          </motion.div>
         )}
 
         <div 
@@ -118,16 +128,18 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
             msOverflowStyle: 'none',
             scrollbarWidth: 'none',
             WebkitOverflowScrolling: 'touch',
-            scrollSnapType: 'x mandatory'
+            scrollSnapType: 'x proximity'
           }}
         >
-          <div className="flex flex-nowrap gap-4 min-w-min pb-2">
+          <div className="flex flex-nowrap gap-2 sm:gap-3 min-w-min pb-2 px-2">
             <motion.button
               data-active={!currentSlug}
               onClick={() => handleCategoryClick('/kuchnia')}
               className={`
-                whitespace-nowrap px-7 py-3 rounded-full font-['Lato'] text-base sm:text-lg
+                whitespace-nowrap px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 rounded-full 
+                font-['Lato'] text-sm sm:text-base
                 transition-all duration-300 border-2 shadow-md hover:shadow-lg
+                min-w-[80px] sm:min-w-[100px]
                 ${!currentSlug 
                   ? 'bg-green-600 text-white border-green-600 scale-105' 
                   : 'bg-white text-gray-700 border-gray-200 hover:border-green-200'
@@ -137,7 +149,7 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
               whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
-              style={{ scrollSnapAlign: 'start' }}
+              style={{ scrollSnapAlign: 'center' }}
             >
               Wszystkie
             </motion.button>
@@ -152,8 +164,10 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
                   data-active={isActive}
                   onClick={() => handleCategoryClick(category.link)}
                   className={`
-                    whitespace-nowrap px-7 py-3 rounded-full font-['Lato'] text-base sm:text-lg
+                    whitespace-nowrap px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 rounded-full 
+                    font-['Lato'] text-sm sm:text-base
                     transition-all duration-300 border-2 shadow-md hover:shadow-lg
+                    min-w-[80px] sm:min-w-[100px]
                     ${isActive 
                       ? 'bg-green-600 text-white border-green-600 scale-105' 
                       : 'bg-white text-gray-700 border-gray-200 hover:border-green-200'
@@ -163,7 +177,7 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
                   whileTap={{ scale: 0.98 }}
                   initial={{ opacity: 0, y: 10, transition: { delay: index * 0.05 } }}
                   animate={{ opacity: 1, y: 0, transition: { duration: 0.3, delay: index * 0.05 } }}
-                  style={{ scrollSnapAlign: 'start' }}
+                  style={{ scrollSnapAlign: 'center' }}
                 >
                   {category.label}
                 </motion.button>
