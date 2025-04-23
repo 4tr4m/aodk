@@ -47,13 +47,18 @@ const ProductModal = ({ product, onClose }) => {
       const newHeight = Math.max(0, 160 * (1 - progress));
       const newOpacity = Math.max(0, 1 - progress);
       
-      setImageHeight(newHeight);
-      setImageOpacity(newOpacity);
+      // Force the image to completely disappear when scrolled past maxScroll
+      if (scrollY >= maxScroll) {
+        setImageHeight(0);
+        setImageOpacity(0);
+      } else {
+        setImageHeight(newHeight);
+        setImageOpacity(newOpacity);
+      }
     };
 
     const scrollContainer = scrollContainerRef.current;
     if (scrollContainer) {
-      // Add passive: false to ensure the event listener works properly
       scrollContainer.addEventListener('scroll', handleScroll, { passive: false });
       // Call handleScroll once to set initial values
       handleScroll();
@@ -166,7 +171,8 @@ const ProductModal = ({ product, onClose }) => {
               style={{ 
                 height: isMobile ? `${imageHeight}px` : '250px',
                 opacity: isMobile ? imageOpacity : 1,
-                transition: 'height 0.3s ease-out, opacity 0.3s ease-out'
+                transition: 'height 0.2s ease-out, opacity 0.2s ease-out',
+                overflow: 'hidden'
               }}
             >
               <img 
