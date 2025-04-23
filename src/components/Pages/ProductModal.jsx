@@ -31,13 +31,21 @@ const ProductModal = ({ product, onClose }) => {
 
   // Handle scroll
   useEffect(() => {
-    const handleScroll = () => {
-      if (!scrollContainerRef.current || !isMobile) return;
+    if (!isMobile) return;
 
-      const scrollY = scrollContainerRef.current.scrollTop;
+    const handleScroll = () => {
+      const scrollContainer = scrollContainerRef.current;
+      if (!scrollContainer) return;
+
+      const scrollY = scrollContainer.scrollTop;
       const maxScroll = 50;
-      const newHeight = Math.max(0, 160 * (1 - scrollY / maxScroll));
-      const newOpacity = Math.max(0, 1 - scrollY / maxScroll);
+      
+      // Calculate progress from 0 to 1
+      const progress = Math.min(1, scrollY / maxScroll);
+      
+      // Calculate new height and opacity based on progress
+      const newHeight = Math.max(0, 160 * (1 - progress));
+      const newOpacity = Math.max(0, 1 - progress);
       
       setImageHeight(newHeight);
       setImageOpacity(newOpacity);
@@ -45,7 +53,10 @@ const ProductModal = ({ product, onClose }) => {
 
     const scrollContainer = scrollContainerRef.current;
     if (scrollContainer) {
-      scrollContainer.addEventListener('scroll', handleScroll);
+      // Add passive: false to ensure the event listener works properly
+      scrollContainer.addEventListener('scroll', handleScroll, { passive: false });
+      // Call handleScroll once to set initial values
+      handleScroll();
       return () => scrollContainer.removeEventListener('scroll', handleScroll);
     }
   }, [isMobile]);

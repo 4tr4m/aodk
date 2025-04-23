@@ -105,7 +105,14 @@ const CategoryPage = () => {
       navigate(categoryLink);
     } else {
       // If already on the category page, scroll to the title
-      document.getElementById('category-title')?.scrollIntoView({ behavior: 'smooth' });
+      const titleElement = document.getElementById('category-title');
+      if (titleElement) {
+        const titlePosition = titleElement.getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({
+          top: titlePosition,
+          behavior: 'smooth'
+        });
+      }
     }
   }, [navigate, location.pathname]);
 
@@ -114,7 +121,14 @@ const CategoryPage = () => {
     if (location.state?.scrollToTitle) {
       // Small delay to ensure the component is fully rendered
       setTimeout(() => {
-        document.getElementById('category-title')?.scrollIntoView({ behavior: 'smooth' });
+        const titleElement = document.getElementById('category-title');
+        if (titleElement) {
+          const titlePosition = titleElement.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({
+            top: titlePosition,
+            behavior: 'smooth'
+          });
+        }
         // Clean up state to prevent scrolling on future updates
         navigate(location.pathname, { replace: true, state: {} });
       }, 500);
