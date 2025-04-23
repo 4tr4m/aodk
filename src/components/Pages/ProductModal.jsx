@@ -35,7 +35,7 @@ const ProductModal = ({ product, onClose }) => {
       if (!scrollContainerRef.current || !isMobile) return;
 
       const scrollY = scrollContainerRef.current.scrollTop;
-      const maxScroll = 100;
+      const maxScroll = 50;
       const newHeight = Math.max(0, 160 * (1 - scrollY / maxScroll));
       const newOpacity = Math.max(0, 1 - scrollY / maxScroll);
       
