@@ -1,15 +1,32 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { FiX, FiClock, FiAward } from 'react-icons/fi';
 import { FaUtensils } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useTransform, useScroll } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
 import supabase from '../../lib/supabase-browser';
 
 const ProductModal = ({ product, onClose }) => {
   const modalRef = useRef();
+  const scrollContainerRef = useRef();
   const { dispatch } = useCart();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const { scrollY } = useScroll({
+    container: scrollContainerRef
+  });
+
+  const imageHeight = useTransform(
+    scrollY,
+    [0, 100],
+    ["160px", "0px"]
+  );
+
+  const imageOpacity = useTransform(
+    scrollY,
+    [0, 100],
+    [1, 0]
+  );
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -126,7 +143,13 @@ const ProductModal = ({ product, onClose }) => {
 
           <div className="flex flex-col h-full sm:max-h-[90vh]">
             {/* Image Section */}
-            <div className="relative w-full h-[160px] xs:h-[180px] sm:h-[200px] md:h-[220px] lg:h-[250px] bg-gray-100">
+            <motion.div 
+              className="relative w-full bg-gray-100 origin-top"
+              style={{ 
+                height: imageHeight,
+                opacity: imageOpacity
+              }}
+            >
               <img 
                 src={`/img/${recipe.image}`} 
                 alt={recipe.name}
@@ -138,10 +161,13 @@ const ProductModal = ({ product, onClose }) => {
                   TY {recipe.imageCredit} <span className="text-rose-400">♥</span>
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* Content Section */}
-            <div className="flex-1 overflow-y-auto px-3 xs:px-4 sm:px-6 md:px-8 py-4 sm:py-6 overscroll-contain">
+            <div 
+              ref={scrollContainerRef}
+              className="flex-1 overflow-y-auto px-3 xs:px-4 sm:px-6 md:px-8 py-4 sm:py-6 overscroll-contain"
+            >
               {/* Title and Metadata */}
               <div className="mb-4 sm:mb-6">
                 <h2 className="font-['Playfair_Display'] text-xl xs:text-2xl sm:text-3xl md:text-4xl text-[#2D3748] font-bold mb-2 sm:mb-3">
