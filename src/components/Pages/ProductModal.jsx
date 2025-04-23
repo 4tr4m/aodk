@@ -126,7 +126,7 @@ const ProductModal = ({ product, onClose }) => {
 
           <div className="flex flex-col h-full sm:max-h-[90vh]">
             {/* Image Section */}
-            <div className="relative w-full h-[250px] sm:h-[350px] bg-gray-100">
+            <div className="relative w-full h-[180px] sm:h-[220px] md:h-[250px] bg-gray-100">
               <img 
                 src={`/img/${recipe.image}`} 
                 alt={recipe.name}
@@ -238,23 +238,44 @@ const ProductModal = ({ product, onClose }) => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t border-gray-200 sticky bottom-0 bg-white pb-4 sm:pb-0">
-                <button
-                  onClick={handleAddToCart}
-                  className="bg-green-600 hover:bg-green-700 text-white py-2.5 px-6 rounded-lg 
-                    transition-colors duration-300 flex-1 flex items-center justify-center gap-2 font-medium text-sm sm:text-base"
-                >
-                  Dodaj do koszyka
-                </button>
-                <button
-                  onClick={handleAddToWishlist}
-                  className="border-2 border-green-600 text-green-600 hover:bg-green-50 
-                    py-2.5 px-6 rounded-lg transition-colors duration-300 flex-1 flex items-center 
-                    justify-center gap-2 font-medium text-sm sm:text-base"
-                >
-                  Zapisz na później
-                </button>
+              {/* Add Subscribe Section */}
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 relative overflow-hidden">
+                  {/* Decorative elements */}
+                  <div className="absolute -right-8 -top-8 w-24 h-24 bg-green-200 rounded-full opacity-50 blur-2xl"></div>
+                  <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-green-300 rounded-full opacity-30 blur-3xl"></div>
+                  
+                  <div className="relative">
+                    <h3 className="font-['Playfair_Display'] text-xl sm:text-2xl text-green-800 font-bold mb-3">
+                      Dołącz do naszej społeczności!
+                    </h3>
+                    <p className="text-sm sm:text-base text-green-700 mb-4 leading-relaxed">
+                      Odkryj więcej przepisów dostosowanych do potrzeb dzieci z autyzmem. 
+                      Otrzymuj powiadomienia o nowych przepisach i ekskluzywne porady prosto na swoją skrzynkę.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                      <input
+                        type="email"
+                        placeholder="Twój adres email"
+                        className="flex-1 px-4 py-2.5 rounded-lg border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 text-sm sm:text-base placeholder-green-400/70"
+                      />
+                      <button
+                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg 
+                          transition-all duration-300 font-medium text-sm sm:text-base shadow-lg hover:shadow-xl
+                          flex items-center justify-center gap-2 hover:-translate-y-0.5"
+                      >
+                        <span>Zapisz się</span>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                      </button>
+                    </div>
+                    <p className="mt-3 text-xs text-green-600/80 italic">
+                      Dołączając do newslettera, zgadzasz się na otrzymywanie od nas wiadomości email. 
+                      Możesz zrezygnować w każdej chwili.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Base Ingredients with adjusted spacing */}
