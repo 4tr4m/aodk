@@ -79,6 +79,14 @@ const CategoryPage = () => {
   // State for occasional toggle button attention animation
   const [highlightToggle, setHighlightToggle] = useState(false);
 
+  // Scroll to top when category changes
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, [categorySlug]);
+
   useEffect(() => {
     if (!state.isLoading) {
       setLoading(false);
@@ -95,10 +103,7 @@ const CategoryPage = () => {
   const handleCategoryClick = useCallback((categoryLink) => {
     if (location.pathname !== categoryLink) {
       scrollToTop();
-      
-      setTimeout(() => {
-        navigate(categoryLink, { state: { scrollToTitle: true } });
-      }, 300);
+      navigate(categoryLink);
     } else {
       // If already on the category page, scroll to the title
       document.getElementById('category-title')?.scrollIntoView({ behavior: 'smooth' });

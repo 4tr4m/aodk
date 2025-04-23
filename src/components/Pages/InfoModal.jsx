@@ -104,7 +104,11 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
             initial="hidden"
             animate="visible"
             exit="exit"
-            style={{ maxHeight: 'calc(100vh - 40px)' }}
+            style={{ 
+              maxHeight: 'calc(100vh - 40px)',
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch'
+            }}
           >
             {/* Decorative elements */}
             <motion.div 
@@ -137,7 +141,7 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
             
             {/* Content */}
             <motion.div 
-              className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700"
+              className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700 overflow-y-auto"
               variants={staggeredItems}
               initial="hidden"
               animate="visible"

@@ -86,6 +86,7 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
             aria-label="Scroll left"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
+            style={{ transform: 'translateY(-50%)' }}
           >
             <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -101,6 +102,7 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
             aria-label="Scroll right"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
+            style={{ transform: 'translateY(-50%)' }}
           >
             <svg className="w-8 h-8 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -110,11 +112,13 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
 
         <div 
           ref={scrollRef}
-          className="w-full overflow-x-auto py-4 hide-scrollbar scroll-smooth"
+          className="w-full overflow-x-auto py-4 hide-scrollbar scroll-smooth touch-pan-x"
           onScroll={updateArrows}
           style={{
             msOverflowStyle: 'none',
             scrollbarWidth: 'none',
+            WebkitOverflowScrolling: 'touch',
+            scrollSnapType: 'x mandatory'
           }}
         >
           <div className="flex flex-nowrap gap-4 min-w-min pb-2">
@@ -133,6 +137,7 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
               whileTap={{ scale: 0.98 }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
+              style={{ scrollSnapAlign: 'start' }}
             >
               Wszystkie
             </motion.button>
@@ -158,6 +163,7 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
                   whileTap={{ scale: 0.98 }}
                   initial={{ opacity: 0, y: 10, transition: { delay: index * 0.05 } }}
                   animate={{ opacity: 1, y: 0, transition: { duration: 0.3, delay: index * 0.05 } }}
+                  style={{ scrollSnapAlign: 'start' }}
                 >
                   {category.label}
                 </motion.button>
