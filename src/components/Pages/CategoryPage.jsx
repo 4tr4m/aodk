@@ -95,6 +95,11 @@ const CategoryPage = () => {
 
   const handleCategoryClick = useCallback((categoryLink) => {
     if (location.pathname !== categoryLink) {
+      // When navigating to a different category, scroll to top
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
       navigate(categoryLink);
     } else {
       // If already on the category page, scroll to the title
@@ -109,19 +114,15 @@ const CategoryPage = () => {
     }
   }, [navigate, location.pathname]);
 
-  // Effect to scroll to title if coming from another category
+  // Effect to scroll to top if coming from another category
   useEffect(() => {
     if (location.state?.scrollToTitle) {
       // Small delay to ensure the component is fully rendered
       setTimeout(() => {
-        const titleElement = document.getElementById('category-title');
-        if (titleElement) {
-          const titlePosition = titleElement.getBoundingClientRect().top + window.scrollY;
-          window.scrollTo({
-            top: titlePosition,
-            behavior: 'smooth'
-          });
-        }
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
         // Clean up state to prevent scrolling on future updates
         navigate(location.pathname, { replace: true, state: {} });
       }, 500);
