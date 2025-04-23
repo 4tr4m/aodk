@@ -126,7 +126,7 @@ const ProductModal = ({ product, onClose }) => {
 
           <div className="flex flex-col h-full sm:max-h-[90vh]">
             {/* Image Section */}
-            <div className="relative w-full h-[180px] sm:h-[220px] md:h-[250px] bg-gray-100">
+            <div className="relative w-full h-[160px] xs:h-[180px] sm:h-[200px] md:h-[220px] lg:h-[250px] bg-gray-100">
               <img 
                 src={`/img/${recipe.image}`} 
                 alt={recipe.name}
@@ -141,16 +141,16 @@ const ProductModal = ({ product, onClose }) => {
             </div>
 
             {/* Content Section */}
-            <div className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-8 py-6 overscroll-contain">
+            <div className="flex-1 overflow-y-auto px-3 xs:px-4 sm:px-6 md:px-8 py-4 sm:py-6 overscroll-contain">
               {/* Title and Metadata */}
-              <div className="mb-6">
-                <h2 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl text-[#2D3748] font-bold mb-3 sm:mb-4">
+              <div className="mb-4 sm:mb-6">
+                <h2 className="font-['Playfair_Display'] text-xl xs:text-2xl sm:text-3xl md:text-4xl text-[#2D3748] font-bold mb-2 sm:mb-3">
                   {recipe.name}
                 </h2>
-                <div className="italic text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base">
+                <div className="italic text-gray-600 mb-2 sm:mb-3 text-sm sm:text-base">
                   {recipe.shortdesc}
                 </div>
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm">
+                <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
                   {recipe.time && (
                     <div className="flex items-center gap-1.5 text-gray-600">
                       <FiClock className="text-green-600" />
