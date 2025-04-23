@@ -1,32 +1,36 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { FiX, FiClock, FiAward } from 'react-icons/fi';
 import { FaUtensils } from 'react-icons/fa';
-import { motion, AnimatePresence, useTransform, useScroll } from 'framer-motion';
-import { useCart } from '../../context/CartContext';
+import { motion, AnimatePresence } from 'framer-motion';
 import supabase from '../../lib/supabase-browser';
 
 const ProductModal = ({ product, onClose }) => {
   const modalRef = useRef();
   const scrollContainerRef = useRef();
-  const { dispatch } = useCart();
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [imageHeight, setImageHeight] = useState(160);
+  const [imageOpacity, setImageOpacity] = useState(1);
 
-  const { scrollY } = useScroll({
-    container: scrollContainerRef
-  });
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollContainerRef.current) {
+        const scrollY = scrollContainerRef.current.scrollTop;
+        const maxScroll = 100;
+        const newHeight = Math.max(0, 160 * (1 - scrollY / maxScroll));
+        const newOpacity = Math.max(0, 1 - scrollY / maxScroll);
+        
+        setImageHeight(newHeight);
+        setImageOpacity(newOpacity);
+      }
+    };
 
-  const imageHeight = useTransform(
-    scrollY,
-    [0, 100],
-    ["160px", "0px"]
-  );
-
-  const imageOpacity = useTransform(
-    scrollY,
-    [0, 100],
-    [1, 0]
-  );
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('scroll', handleScroll);
+      return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -50,21 +54,6 @@ const ProductModal = ({ product, onClose }) => {
       fetchRecipe();
     }
   }, [product?.id]);
-
-  // Add to cart functionality
-  const handleAddToCart = () => {
-    if (recipe) {
-      dispatch({ type: 'ADD_TO_CART', payload: recipe });
-      onClose();
-    }
-  };
-
-  // Add to wishlist functionality
-  const handleAddToWishlist = () => {
-    if (recipe) {
-      dispatch({ type: 'ADD_TO_WISHLIST', payload: recipe });
-    }
-  };
 
   // Close on outside click
   useEffect(() => {
@@ -146,8 +135,9 @@ const ProductModal = ({ product, onClose }) => {
             <motion.div 
               className="relative w-full bg-gray-100 origin-top"
               style={{ 
-                height: imageHeight,
-                opacity: imageOpacity
+                height: `${imageHeight}px`,
+                opacity: imageOpacity,
+                transition: 'height 0.3s ease-out, opacity 0.3s ease-out'
               }}
             >
               <img 
@@ -156,17 +146,20 @@ const ProductModal = ({ product, onClose }) => {
                 className="w-full h-full object-cover"
               />
               {recipe.imageCredit && (
-                <div className="absolute bottom-2 right-2 text-xs text-white/90 
-                  font-['Lato'] italic bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full">
+                <motion.div 
+                  className="absolute bottom-2 right-2 text-xs text-white/90 
+                    font-['Lato'] italic bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full"
+                  style={{ opacity: imageOpacity }}
+                >
                   TY {recipe.imageCredit} <span className="text-rose-400">♥</span>
-                </div>
+                </motion.div>
               )}
             </motion.div>
 
             {/* Content Section */}
             <div 
               ref={scrollContainerRef}
-              className="flex-1 overflow-y-auto px-3 xs:px-4 sm:px-6 md:px-8 py-4 sm:py-6 overscroll-contain"
+              className="flex-1 overflow-y-auto px-3 xs:px-4 sm:px-6 md:px-8 py-4 sm:py-6 overscroll-contain scroll-smooth"
             >
               {/* Title and Metadata */}
               <div className="mb-4 sm:mb-6">
