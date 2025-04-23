@@ -93,13 +93,6 @@ const CategoryPage = () => {
     }
   }, [state.isLoading]);
 
-  const scrollToTop = useCallback(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }, []);
-
   const handleCategoryClick = useCallback((categoryLink) => {
     if (location.pathname !== categoryLink) {
       navigate(categoryLink);
