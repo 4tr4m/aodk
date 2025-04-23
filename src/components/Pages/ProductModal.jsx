@@ -11,18 +11,36 @@ const ProductModal = ({ product, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [imageHeight, setImageHeight] = useState(160);
   const [imageOpacity, setImageOpacity] = useState(1);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
 
+  // Handle window resize
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 640;
+      setIsMobile(mobile);
+      if (!mobile) {
+        // Reset image dimensions on desktop
+        setImageHeight(160);
+        setImageOpacity(1);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Handle scroll
   useEffect(() => {
     const handleScroll = () => {
-      if (scrollContainerRef.current) {
-        const scrollY = scrollContainerRef.current.scrollTop;
-        const maxScroll = 100;
-        const newHeight = Math.max(0, 160 * (1 - scrollY / maxScroll));
-        const newOpacity = Math.max(0, 1 - scrollY / maxScroll);
-        
-        setImageHeight(newHeight);
-        setImageOpacity(newOpacity);
-      }
+      if (!scrollContainerRef.current || !isMobile) return;
+
+      const scrollY = scrollContainerRef.current.scrollTop;
+      const maxScroll = 100;
+      const newHeight = Math.max(0, 160 * (1 - scrollY / maxScroll));
+      const newOpacity = Math.max(0, 1 - scrollY / maxScroll);
+      
+      setImageHeight(newHeight);
+      setImageOpacity(newOpacity);
     };
 
     const scrollContainer = scrollContainerRef.current;
@@ -30,7 +48,7 @@ const ProductModal = ({ product, onClose }) => {
       scrollContainer.addEventListener('scroll', handleScroll);
       return () => scrollContainer.removeEventListener('scroll', handleScroll);
     }
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -135,8 +153,8 @@ const ProductModal = ({ product, onClose }) => {
             <motion.div 
               className="relative w-full bg-gray-100 origin-top"
               style={{ 
-                height: `${imageHeight}px`,
-                opacity: imageOpacity,
+                height: isMobile ? `${imageHeight}px` : '250px',
+                opacity: isMobile ? imageOpacity : 1,
                 transition: 'height 0.3s ease-out, opacity 0.3s ease-out'
               }}
             >
@@ -149,7 +167,7 @@ const ProductModal = ({ product, onClose }) => {
                 <motion.div 
                   className="absolute bottom-2 right-2 text-xs text-white/90 
                     font-['Lato'] italic bg-black/30 backdrop-blur-sm px-2 py-1 rounded-full"
-                  style={{ opacity: imageOpacity }}
+                  style={{ opacity: isMobile ? imageOpacity : 1 }}
                 >
                   TY {recipe.imageCredit} <span className="text-rose-400">♥</span>
                 </motion.div>
