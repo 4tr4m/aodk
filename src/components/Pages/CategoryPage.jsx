@@ -102,17 +102,12 @@ const CategoryPage = () => {
 
   const handleCategoryClick = useCallback((categoryLink) => {
     if (location.pathname !== categoryLink) {
-      scrollToTop();
       navigate(categoryLink);
     } else {
       // If already on the category page, scroll to the title
       document.getElementById('category-title')?.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [navigate, location.pathname, scrollToTop]);
-
-  useEffect(() => {
-    scrollToTop();
-  }, [categorySlug, scrollToTop]);
+  }, [navigate, location.pathname]);
 
   // Effect to scroll to title if coming from another category
   useEffect(() => {
@@ -125,10 +120,6 @@ const CategoryPage = () => {
       }, 500);
     }
   }, [location.state, navigate, location.pathname]);
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [categorySlug]);
 
   const getCurrentCategory = () => {
     if (!categorySlug) return null;

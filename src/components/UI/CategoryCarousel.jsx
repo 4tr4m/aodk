@@ -164,8 +164,10 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
 
   const handleItemClick = useCallback((item) => {
     if (item.link) {
-      // Navigate to the page with scrollToTitle state parameter
-      navigate(item.link, { state: { scrollToTitle: true } });
+      // First scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Then navigate to the page
+      navigate(item.link);
     }
   }, [navigate]);
 
