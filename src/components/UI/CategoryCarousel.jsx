@@ -164,10 +164,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
 
   const handleItemClick = useCallback((item) => {
     if (item.link) {
-      // First scroll to top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      // Then navigate to the page
-      navigate(item.link);
+      navigate(item.link, { state: { scrollToTitle: true } });
     }
   }, [navigate]);
 
@@ -243,6 +240,8 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
       }
     }, 5000);
   };
+
+  useEffect(() => { window.scrollTo(0, 0); }, []);
 
   if (!isMounted) return <div className="min-h-[200px] bg-gray-100/50"></div>;
 
