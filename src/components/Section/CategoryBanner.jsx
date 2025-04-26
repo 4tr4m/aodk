@@ -119,6 +119,7 @@ const SearchIcon = memo(({ toggleSearch }) => {
             delay: 0
           }
         }}
+        style={{ top: '-10px', position: 'relative', left: '0', ...(window.innerWidth < 640 ? { left: '-15px' } : {}) }}
       >
         <div className="relative flex items-center justify-center">
           {/* Multiple pulse rings for enhanced visibility */}
@@ -139,23 +140,30 @@ const SearchIcon = memo(({ toggleSearch }) => {
           ></div>
           {/* Attention ring */}
           <div className="absolute -inset-1 rounded-full bg-green-400/20 animate-pulse"></div>
-          
-          <FaSearch className="text-[2.6rem] sm:text-[2.85rem] md:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" />
+          <FaSearch 
+            className="text-[2.86rem] sm:text-[2.85rem] md:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" 
+            style={window.innerWidth < 640 ? { fontSize: '2.86rem' } : {}} // 10% larger than 2.6rem
+          />
         </div>
-      </motion.div>
-      
-      {/* Tutorial tooltip */}
-      {showTutorial && (
-        <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full -top-4 w-[240px] sm:w-[280px] search-tooltip">
-          <div className="bg-white px-4 py-3 rounded-lg shadow-lg border-2 border-green-300 relative">
-            <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-green-300 transform rotate-45 z-0"></div>
-            <div className="relative z-10 bg-white">
-              <p className="text-gray-700 text-sm font-medium mb-1">Szukaj przepisów dopasowanych do diety</p>
-              <p className="text-green-600 text-xs font-bold">Kliknij, aby znaleźć idealne przepisy!</p>
+        {/* Tutorial tooltip - only on desktop */}
+        {showTutorial && (
+          <div
+            className="hidden xl:block absolute left-full ml-4 top-1/2 z-20 w-[240px] xl:w-[280px] search-tooltip"
+            style={{ minWidth: 200, maxWidth: 320, transform: 'translateY(-55%)' }}
+          >
+            <div className="bg-white px-4 py-3 rounded-lg shadow-lg border-2 border-green-300 relative">
+              {/* Arrow */}
+              <div
+                className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-green-300 transform rotate-45 z-0"
+              ></div>
+              <div className="relative z-10 bg-white">
+                <p className="text-gray-700 text-sm font-medium mb-1">Szukaj przepisów dopasowanych do diety</p>
+                <p className="text-green-600 text-xs font-bold">Kliknij, aby znaleźć idealne przepisy!</p>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </motion.div>
     </div>
   );
 });
