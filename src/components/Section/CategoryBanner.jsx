@@ -74,28 +74,22 @@ TitleWithSearch.displayName = 'TitleWithSearch';
 // Search icon component (memoized)
 const SearchIcon = memo(({ toggleSearch }) => {
   const [showTutorial, setShowTutorial] = useState(() => {
-    // Check if this is the first visit
     try {
       const hasSeenTutorial = localStorage.getItem('hasSeenSearchTutorial');
       return hasSeenTutorial !== 'true';
     } catch (e) {
-      // In case localStorage is not available
       return true;
     }
   });
 
-  // Hide tutorial after a few seconds and save to localStorage
   useEffect(() => {
     if (showTutorial) {
       const timer = setTimeout(() => {
         setShowTutorial(false);
         try {
           localStorage.setItem('hasSeenSearchTutorial', 'true');
-        } catch (e) {
-          // Handle localStorage error silently
-        }
-      }, 16000); // Show for 16 seconds (allows tooltip animation to run 3 times)
-      
+        } catch (e) {}
+      }, 16000);
       return () => clearTimeout(timer);
     }
   }, [showTutorial]);
@@ -122,7 +116,6 @@ const SearchIcon = memo(({ toggleSearch }) => {
         style={{ top: '-10px', position: 'relative', left: '0', ...(window.innerWidth < 640 ? { left: '-15px' } : {}) }}
       >
         <div className="relative flex items-center justify-center">
-          {/* Multiple pulse rings for enhanced visibility */}
           <div 
             className="absolute inset-0 rounded-full animate-ping opacity-30" 
             style={{
@@ -138,18 +131,21 @@ const SearchIcon = memo(({ toggleSearch }) => {
               transform: 'scale(1.5)',
             }}
           ></div>
-          {/* Attention ring */}
           <div className="absolute -inset-1 rounded-full bg-green-400/20 animate-pulse"></div>
           <FaSearch 
             className="text-[2.86rem] sm:text-[2.85rem] md:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" 
-            style={window.innerWidth < 640 ? { fontSize: '2.86rem' } : {}} // 10% larger than 2.6rem
+            style={window.innerWidth < 640 ? { fontSize: '2.86rem' } : {}}
           />
         </div>
         {/* Tutorial tooltip - only on desktop */}
         {showTutorial && (
           <div
-            className="hidden xl:block absolute left-full ml-4 top-1/2 z-20 w-[240px] xl:w-[280px] search-tooltip"
-            style={{ minWidth: 200, maxWidth: 320, transform: 'translateY(-55%)' }}
+            className="hidden xl:block absolute top-1/2 -translate-y-1/2 z-20 w-[240px] xl:w-[280px] search-tooltip"
+            style={{ 
+              left: 'calc(100% + 1rem)', // Position to the right with a 1rem gap
+              minWidth: 200, 
+              maxWidth: 320, 
+            }}
           >
             <div className="bg-white px-4 py-3 rounded-lg shadow-lg border-2 border-green-300 relative">
               {/* Arrow */}

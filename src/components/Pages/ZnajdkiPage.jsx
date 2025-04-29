@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import TopNavBar from '../Headers/TopNavBar';
 import CategoryHeader from './CategoryHeader';
@@ -6,119 +6,42 @@ import Footer from '../Footer/Footer';
 import { FiFilter, FiShoppingBag, FiX } from 'react-icons/fi';
 import { FaLeaf, FaRegHeart, FaHeart } from 'react-icons/fa';
 import SEO from '../SEO/SEO';
-
-// Mock data for znajdki products - in a real app, this would come from an API or dedicated data file
-const znajdkiProducts = [
-  {
-    id: 1,
-    name: "Jogurt kokosowy naturalny",
-    brand: "BioKoko",
-    category: "nabiał roślinny",
-    tags: ["bez glutenu", "bez laktozy", "bez dodatku cukru"],
-    description: "Kremowy jogurt kokosowy bez dodatku cukru. Doskonała alternatywa dla nabiału krowiego, zawiera probiotyki i ma delikatny kokosowy smak.",
-    where: ["Auchan", "Carrefour", "Sklepy ze zdrową żywnością"],
-    price: "9.99 zł",
-    image: "/img/placeholder-product.jpg",
-    rating: 4.8,
-  },
-  {
-    id: 2,
-    name: "Chleb bezglutenowy z ziarnami",
-    brand: "Bezgluten",
-    category: "pieczywo",
-    tags: ["bez glutenu", "bez dodatku cukru", "źródło błonnika"],
-    description: "Pyszny chleb bezglutenowy z dodatkiem ziaren słonecznika, lnu i sezamu. Nie kruszy się i ma przyjemny, lekko orzechowy smak.",
-    where: ["Biedronka", "Lidl", "E.Leclerc"],
-    price: "12.99 zł",
-    image: "/img/placeholder-product.jpg",
-    rating: 4.5,
-  },
-  {
-    id: 3,
-    name: "Daktyle Medjool",
-    brand: "BioVital",
-    category: "owoce suszone",
-    tags: ["bez dodatków", "100% naturalny", "wegańskie"],
-    description: "Naturalnie słodkie, soczyste daktyle Medjool bez dodatku konserwantów i cukru. Idealne jako zdrowa przekąska lub naturalny słodzik.",
-    where: ["Auchan", "Rossmann", "Sklepy ze zdrową żywnością"],
-    price: "19.99 zł",
-    image: "/img/placeholder-product.jpg",
-    rating: 4.9,
-  },
-  {
-    id: 4,
-    name: "Masło migdałowe",
-    brand: "NutNatural",
-    category: "zdrowe tłuszcze",
-    tags: ["bez dodatku cukru", "bez oleju palmowego", "bez konserwantów"],
-    description: "Kremowe masło migdałowe ze 100% migdałów, bez dodatku soli i cukru. Idealne do smarowania, do wypieków lub jako dodatek do smoothie.",
-    where: ["Auchan", "Carrefour", "Rossmann"],
-    price: "24.99 zł",
-    image: "/img/placeholder-product.jpg",
-    rating: 4.7,
-  },
-  {
-    id: 5,
-    name: "Mąka kokosowa ekologiczna",
-    brand: "BioCoconut",
-    category: "mąki",
-    tags: ["bez glutenu", "niskoglikemiczna", "bogate źródło błonnika"],
-    description: "Delikatna mąka kokosowa o subtelnym aromacie, idealna do wypieków bezglutenowych. Zawiera dużo błonnika i mało węglowodanów.",
-    where: ["Lidl", "Rossmann", "Sklepy ze zdrową żywnością"],
-    price: "14.99 zł",
-    image: "/img/placeholder-product.jpg",
-    rating: 4.6,
-  },
-  {
-    id: 6,
-    name: "Mleko owsiane",
-    brand: "OatGood",
-    category: "napoje roślinne",
-    tags: ["bez dodatku cukru", "wegańskie", "źródło błonnika"],
-    description: "Kremowe mleko owsiane bez dodatku cukru i konserwantów. Idealne do kawy, herbaty, płatków śniadaniowych i wypieków.",
-    where: ["Biedronka", "Lidl", "Auchan"],
-    price: "7.99 zł",
-    image: "/img/placeholder-product.jpg",
-    rating: 4.4,
-  },
-  {
-    id: 7,
-    name: "Kombucha malina-imbir",
-    brand: "FermenTea",
-    category: "napoje",
-    tags: ["probiotyk", "niskosłodzony", "fermentowany"],
-    description: "Orzeźwiający napój fermentowany z zielonej herbaty z dodatkiem soku malinowego i imbiru. Zawiera żywe kultury bakterii.",
-    where: ["Carrefour", "Rossmann", "Sklepy ze zdrową żywnością"],
-    price: "11.99 zł",
-    image: "/img/placeholder-product.jpg",
-    rating: 4.8,
-  },
-  {
-    id: 8,
-    name: "Batony daktylowe z orzechami",
-    brand: "RawBar",
-    category: "przekąski",
-    tags: ["bez dodatku cukru", "wegańskie", "surowe"],
-    description: "Zdrowe batony z daktyli i orzechów, bez dodatku cukru i konserwantów. Idealne jako przekąska w podróży lub przed treningiem.",
-    where: ["Biedronka", "Lidl", "Auchan", "Rossmann"],
-    price: "6.99 zł",
-    image: "/img/placeholder-product.jpg",
-    rating: 4.5,
-  },
-];
-
-// Get all unique categories from products
-const allCategories = [...new Set(znajdkiProducts.map(product => product.category))];
-
-// Get all unique tags
-const allTags = [...new Set(znajdkiProducts.flatMap(product => product.tags))];
+import supabase from '../../lib/supabase-browser';
 
 const ZnajdkiPage = () => {
+  const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('wszystkie');
   const [selectedTags, setSelectedTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [favorites, setFavorites] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      const { data, error } = await supabase.from('znajdki').select('*');
+      console.log('Fetched:', data, error);
+      setProducts(data || []);
+      setLoading(false);
+    };
+    fetchProducts();
+  }, []);
+
+  // Get all unique categories and tags from products
+  const allCategories = [
+    'wszystkie',
+    ...Array.from(new Set(products.map(product => product.category).filter(Boolean)))
+  ];
+  const allTags = Array.from(
+    new Set(
+      products.flatMap(product => [
+        ...(product.tags ? product.tags.split(',') : []),
+        ...(product.tags2 ? product.tags2.split(',') : []),
+        ...(product.tags3 ? product.tags3.split(',') : [])
+      ].map(tag => tag.trim()).filter(Boolean))
+    )
+  );
 
   const toggleFavorite = (productId) => {
     if (favorites.includes(productId)) {
@@ -136,13 +59,18 @@ const ZnajdkiPage = () => {
     }
   };
 
-  const filteredProducts = znajdkiProducts.filter(product => {
+  const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory === 'wszystkie' || product.category === selectedCategory;
-    const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => product.tags.includes(tag));
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.brand.toLowerCase().includes(searchQuery.toLowerCase());
-    
+    const productTags = [
+      ...(product.tags ? product.tags.split(',') : []),
+      ...(product.tags2 ? product.tags2.split(',') : []),
+      ...(product.tags3 ? product.tags3.split(',') : [])
+    ].map(tag => tag.trim()).filter(Boolean);
+    const matchesTags = selectedTags.length === 0 || selectedTags.every(tag => productTags.includes(tag));
+    const matchesSearch =
+      product.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.shortdesc?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.fulldesc?.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesTags && matchesSearch;
   });
 
@@ -154,14 +82,12 @@ const ZnajdkiPage = () => {
         keywords="zdrowa żywność, produkty bezglutenowe, bez nabiału, bez cukru, dieta eliminacyjna, autyzm, produkty polecane"
         canonical="https://autyzmkuchni.pl/znajdki"
       />
-      
       <div className="relative mb-8">
         <CategoryHeader />
         <div className="absolute top-0 left-0 w-full">
           <TopNavBar />
         </div>
       </div>
-
       <motion.div 
         className="max-w-7xl mx-auto px-4 md:px-8 mb-12 text-center"
         initial={{ opacity: 0, y: 20 }}
@@ -176,7 +102,6 @@ const ZnajdkiPage = () => {
           które pasują do diety eliminacyjnej i zdrowego stylu życia.
         </p>
       </motion.div>
-
       <div className="max-w-7xl mx-auto px-4 md:px-8 mb-16">
         {/* Search and Filters - Desktop */}
         <div className="hidden md:flex justify-between items-center mb-8">
@@ -189,19 +114,16 @@ const ZnajdkiPage = () => {
               className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
             />
           </div>
-          
           <div className="flex gap-4">
             <select 
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="px-4 py-2 bg-white rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 transition-all"
             >
-              <option value="wszystkie">Wszystkie kategorie</option>
               {allCategories.map((category, index) => (
                 <option key={index} value={category}>{category.charAt(0).toUpperCase() + category.slice(1)}</option>
               ))}
             </select>
-            
             <button 
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 transition-all"
@@ -216,7 +138,6 @@ const ZnajdkiPage = () => {
             </button>
           </div>
         </div>
-
         {/* Search and Filters - Mobile */}
         <div className="flex flex-col md:hidden gap-4 mb-6">
           <input
@@ -226,19 +147,16 @@ const ZnajdkiPage = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:outline-none transition-all"
           />
-          
           <div className="flex gap-2">
             <select 
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="flex-1 px-3 py-2 bg-white rounded-lg border border-gray-200 text-sm"
             >
-              <option value="wszystkie">Wszystkie kategorie</option>
               {allCategories.map((category, index) => (
                 <option key={index} value={category}>{category.charAt(0).toUpperCase() + category.slice(1)}</option>
               ))}
             </select>
-            
             <button 
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-1 px-3 py-2 bg-white rounded-lg border border-gray-200 text-sm"
@@ -253,7 +171,6 @@ const ZnajdkiPage = () => {
             </button>
           </div>
         </div>
-        
         {/* Filter Tags Popup */}
         {showFilters && (
           <motion.div 
@@ -271,7 +188,6 @@ const ZnajdkiPage = () => {
                 <FiX size={20} />
               </button>
             </div>
-            
             <div className="flex flex-wrap gap-2">
               {allTags.map((tag, index) => (
                 <button
@@ -287,7 +203,6 @@ const ZnajdkiPage = () => {
                 </button>
               ))}
             </div>
-            
             {selectedTags.length > 0 && (
               <div className="mt-4 flex justify-end">
                 <button 
@@ -300,95 +215,81 @@ const ZnajdkiPage = () => {
             )}
           </motion.div>
         )}
-
         {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((product) => (
-            <motion.div 
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
-            >
-              <div className="relative h-48 overflow-hidden bg-gray-100">
-                <img 
-                  src={product.image} 
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-                <button 
-                  onClick={() => toggleFavorite(product.id)}
-                  className="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-colors"
-                >
-                  {favorites.includes(product.id) ? (
-                    <FaHeart className="text-red-500" size={18} />
-                  ) : (
-                    <FaRegHeart className="text-gray-400 hover:text-gray-600" size={18} />
-                  )}
-                </button>
-                <div className="absolute top-3 left-3 bg-green-600 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                  <FaLeaf size={12} />
-                  <span>Polecane</span>
-                </div>
-              </div>
-              
-              <div className="p-5">
-                <div className="flex justify-between items-start mb-2">
-                  <div>
-                    <h3 className="font-['Patrick_Hand'] text-lg font-medium text-gray-800 mb-1">{product.name}</h3>
-                    <p className="text-sm text-gray-500">{product.brand}</p>
-                  </div>
-                  <div className="bg-green-50 text-green-700 px-2 py-1 rounded text-sm font-medium">
-                    {product.price}
+        {loading ? (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProducts.map((product) => (
+              <motion.div 
+                key={product.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <div className="relative h-48 overflow-hidden bg-gray-100">
+                  <img 
+                    src={product.image ? product.image : `/znajdki/${product.id}.jpg`} 
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <button 
+                    onClick={() => toggleFavorite(product.id)}
+                    className="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-colors"
+                  >
+                    {favorites.includes(product.id) ? (
+                      <FaHeart className="text-red-500" size={18} />
+                    ) : (
+                      <FaRegHeart className="text-gray-400 hover:text-gray-600" size={18} />
+                    )}
+                  </button>
+                  <div className="absolute top-3 left-3 bg-green-600 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                    <FaLeaf size={12} />
+                    <span>Polecane</span>
                   </div>
                 </div>
-                
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                  {product.description}
-                </p>
-                
-                <div className="flex flex-wrap gap-1 mb-4">
-                  {product.tags.map((tag, tagIndex) => (
-                    <span 
-                      key={tagIndex} 
-                      className="inline-block bg-gray-100 text-gray-600 rounded-full px-2 py-0.5 text-xs"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                
-                <div className="flex justify-between items-center mt-2">
-                  <div className="flex items-center">
-                    <FiShoppingBag className="text-gray-400 mr-1" size={14} />
-                    <span className="text-xs text-gray-500">
-                      {product.where.slice(0, 2).join(', ')}
-                      {product.where.length > 2 ? '...' : ''}
-                    </span>
+                <div className="p-5">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h3 className="font-['Patrick_Hand'] text-lg font-medium text-gray-800 mb-1">{product.name}</h3>
+                      <p className="text-sm text-gray-500">{product.category}</p>
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <svg 
-                        key={i}
-                        className={`w-3.5 h-3.5 ${i < Math.floor(product.rating) ? 'text-yellow-400' : 'text-gray-300'}`}
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                    {product.shortdesc}
+                  </p>
+                  <div className="flex flex-wrap gap-1 mb-4">
+                    {[
+                      ...(product.tags ? product.tags.split(',') : []),
+                      ...(product.tags2 ? product.tags2.split(',') : []),
+                      ...(product.tags3 ? product.tags3.split(',') : [])
+                    ].map((tag, tagIndex) => (
+                      <span 
+                        key={tagIndex} 
+                        className="inline-block bg-gray-100 text-gray-600 rounded-full px-2 py-0.5 text-xs"
                       >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
+                        {tag}
+                      </span>
                     ))}
-                    <span className="ml-1 text-xs text-gray-500">{product.rating}</span>
+                  </div>
+                  <div className="flex justify-between items-center mt-2">
+                    <div className="flex items-center">
+                      <FiShoppingBag className="text-gray-400 mr-1" size={14} />
+                      <span className="text-xs text-gray-500">
+                        {/* You can display where to buy or other info here if available in DB */}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-        
+              </motion.div>
+            ))}
+          </div>
+        )}
         {/* Empty State */}
-        {filteredProducts.length === 0 && (
+        {!loading && filteredProducts.length === 0 && (
           <div className="bg-white rounded-xl p-8 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
               <FiShoppingBag size={24} className="text-gray-400" />
@@ -410,14 +311,12 @@ const ZnajdkiPage = () => {
           </div>
         )}
       </div>
-
       {/* Featured Section */}
       <div className="bg-green-50 py-12 mb-16">
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <h2 className="font-['Playfair_Display'] text-3xl text-center text-gray-800 mb-8">
             Jak wybieramy produkty?
           </h2>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white p-6 rounded-xl shadow-sm">
               <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
@@ -432,7 +331,6 @@ const ZnajdkiPage = () => {
                 i szkodliwych dodatków.
               </p>
             </div>
-            
             <div className="bg-white p-6 rounded-xl shadow-sm">
               <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
                 <span className="text-green-600 text-xl font-bold">2</span>
@@ -446,7 +344,6 @@ const ZnajdkiPage = () => {
                 kupić lub trzeba ich długo szukać.
               </p>
             </div>
-            
             <div className="bg-white p-6 rounded-xl shadow-sm">
               <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
                 <span className="text-green-600 text-xl font-bold">3</span>
@@ -463,7 +360,6 @@ const ZnajdkiPage = () => {
           </div>
         </div>
       </div>
-
       <Footer />
     </div>
   );
