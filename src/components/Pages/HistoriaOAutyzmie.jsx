@@ -4,8 +4,8 @@ import TopNavBar from '../Headers/TopNavBar';
 import CategoryHeader from './CategoryHeader';
 import Footer from '../Footer/Footer';
 import SEO from '../SEO/SEO';
-import { FaQuoteLeft, FaQuoteRight, FaBreadSlice, FaAppleAlt, FaBacterium, FaVial, FaAllergies, FaRecycle, FaVitaminb, FaBook, FaPodcast, FaSpotify, FaHeadphones } from 'react-icons/fa';
-import { GiIntestines, GiMicrobe, GiMushrooms, GiFoodChain } from 'react-icons/gi';
+import { FaQuoteLeft, FaQuoteRight, FaBreadSlice, FaVial, FaAllergies, FaBook, FaPodcast, FaSpotify, FaHeadphones, FaTablets } from 'react-icons/fa';
+import { GiMushrooms, GiFoodChain, GiStomach } from 'react-icons/gi';
 import { MdOutlineCleaningServices } from 'react-icons/md';
 import { TbOmega } from 'react-icons/tb';
 
@@ -166,7 +166,7 @@ const HistoriaOAutyzmie = () => {
               >
                 <div className="flex items-center mb-4">
                   <div className="bg-green-100 p-3 rounded-full mr-4">
-                    <GiIntestines className="text-green-600 text-xl" />
+                    <GiStomach className="text-green-600 text-xl" />
                   </div>
                   <h3 className="text-xl font-['Playfair_Display'] text-gray-800">Zdrowie jelit i mikrobiom</h3>
                 </div>
@@ -277,7 +277,7 @@ const HistoriaOAutyzmie = () => {
                     <span><strong>Cynk i magnez:</strong> Wspierają funkcjonowanie układu nerwowego.</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="inline-block w-6 text-center mr-2"><FaVitaminb className="inline text-green-500" /></span>
+                    <span className="inline-block w-6 text-center mr-2"><FaTablets className="inline text-green-500" /></span>
                     <span><strong>Witaminy z grupy B:</strong> Szczególnie B6 i B12 są istotne dla procesów metabolicznych mózgu.</span>
                   </li>
                   <li className="flex items-start">
