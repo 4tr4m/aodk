@@ -12,12 +12,14 @@ const SearchBar = memo(function SearchBar({
   highlightedTerm = '',
   minCharsForSuggestions = 2,
   onChange,
-  showCloseButton = true
+  showCloseButton = true,
+  tooltipText = "Kliknij, aby znaleźć idealne przepisy!" // Default tooltip text
 }) {
   const [isOpen, setIsOpen] = useState(initialOpen);
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const [showTooltip, setShowTooltip] = useState(false); // State for controlling tooltip visibility
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
@@ -171,6 +173,21 @@ const SearchBar = memo(function SearchBar({
     };
   }, [isOpen, closeSearch, showSuggestions]);
 
+  // Hide tooltip after a few seconds
+  useEffect(() => {
+    if (showTooltip) {
+      const timer = setTimeout(() => {
+        setShowTooltip(false);
+      }, 3000); // Hide tooltip after 3 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [showTooltip]);
+
+  // Show tooltip on component mount
+  useEffect(() => {
+    setShowTooltip(true);
+  }, []);
+
   return (
     <div className="relative w-full">
       <form
@@ -196,20 +213,41 @@ const SearchBar = memo(function SearchBar({
             }
           `}
           aria-label="Search input"
+          onFocus={() => setShowTooltip(true)}
         />
 
-        {/* Search Icon (Submit button) */}
-        <button
-          type="submit"
-          aria-label="Submit search"
-          className={`
-            absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 transform cursor-pointer text-xl sm:text-2xl text-green-600
-            hover:text-green-700 hover:scale-110 transition-all duration-[800ms] ease-in-out
-            ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none'}
-          `}
-        >
-          <FaSearch />
-        </button>
+        {/* Search Icon (Submit button) with Tooltip */}
+        <div className="relative">
+          <button
+            type="submit"
+            aria-label="Submit search"
+            className={`
+              absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 transform cursor-pointer text-xl sm:text-2xl text-green-600
+              hover:text-green-700 hover:scale-110 transition-all duration-[800ms] ease-in-out
+              ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none'}
+            `}
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+          >
+            <FaSearch />
+          </button>
+          
+          {/* Custom Tooltip */}
+          <AnimatePresence>
+            {showTooltip && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+                className="absolute z-50 bottom-full mb-2 right-0 w-48 px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg shadow-lg pointer-events-none"
+              >
+                {tooltipText}
+                <div className="absolute w-3 h-3 bg-green-600 transform rotate-45 left-1/2 -ml-1.5 bottom-0 translate-y-1/2"></div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* Close Icon */}
         {showCloseButton !== false && (
