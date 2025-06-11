@@ -32,14 +32,14 @@ export const kuchniaCategories = {
      
       description: 'Smarowidła to dla mnie świetna okazja, aby przemycić mojej rodzinie trochę warzyw i roślin strączkowych. Zauważyłam, że jeśli do kanapek dodamy szynkę czy ser, można pod nimi ukryć naprawdę sporo wartościowych składników, które w przeciwnym razie mogłyby zostać pominięte. To idealny sposób na wzbogacenie diety o błonnik, witaminy i minerały. Słodkie opcje są również znacznie zdrowsze niż gotowe sklepowe kremy, które często zawierają sztuczne dodatki i dużo cukru. Domowe smarowidła pozwalają na pełną kontrolę nad tym, co trafia na talerz, a także dają możliwość eksperymentowania z nowymi smakami i składnikami, co czyni je nie tylko zdrowym, ale i smacznym rozwiązaniem do każdego posiłku.'
     },
-    {
-      link: '/kuchnia/desery',
-      label: 'DESERY',
-      shortDesc: 'Deser, a może drugie śniadanie',
-      image: 'desery.jpg',
+    // {
+    //   link: '/kuchnia/desery',
+    //   label: 'DESERY',
+    //   shortDesc: 'Deser, a może drugie śniadanie',
+    //   image: 'desery.jpg',
       
-      description: 'Desery to chwila przyjemności dla każdego. Słodkie, lekkie, a czasem zdrowe – stanowią doskonałe zakończenie każdego posiłku. Dzięki różnorodności składników, można przygotować desery, które nie tylko cieszą podniebienie, ale również dostarczają cennych wartości odżywczych. Od owocowych musów po wegańskie ciasta i bezglutenowe przysmaki – każda opcja to sposób na delektowanie się smakiem bez wyrzutów sumienia. Desery są idealnym wyborem, aby zakończyć posiłek w przyjemny sposób, dodając odrobinę radości do dnia.'
-    },
+    //   description: 'Desery to chwila przyjemności dla każdego. Słodkie, lekkie, a czasem zdrowe – stanowią doskonałe zakończenie każdego posiłku. Dzięki różnorodności składników, można przygotować desery, które nie tylko cieszą podniebienie, ale również dostarczają cennych wartości odżywczych. Od owocowych musów po wegańskie ciasta i bezglutenowe przysmaki – każda opcja to sposób na delektowanie się smakiem bez wyrzutów sumienia. Desery są idealnym wyborem, aby zakończyć posiłek w przyjemny sposób, dodając odrobinę radości do dnia.'
+    // },
     {
       link: '/kuchnia/babeczki-muffiny',
       label: 'BABECZKI i MUFFINY',
@@ -72,14 +72,14 @@ export const kuchniaCategories = {
       imageCredit: '',
       description: 'Smoothie to prawdziwa bomba witaminowa w szklance – coś, bez czego ciężko się obejść, zwłaszcza w zdrowej diecie. Dzięki tej pysznej, płynnej formie, możemy przemycić olbrzymią ilość zieleniny, surowego buraka, a także inne wartościowe składniki, które trudno byłoby wkomponować w tradycyjne posiłki. To doskonały sposób na wzbogacenie codziennego jadłospisu o warzywa i owoce, dostarczając organizmowi nie tylko witamin i minerałów, ale także błonnika, antyoksydantów oraz innych cennych substancji odżywczych. Smoothie to szybkie, zdrowe i pełne energii rozwiązanie, które skutecznie zaspokoi głód, jednocześnie wspierając naszą odporność i ogólne zdrowie.'
     },
-    {
-      link: '/kuchnia/inne',
-      label: 'INNE',
-      shortDesc: 'Pozostałe przepisy',
-      image: 'inne.jpg',
-      imageCredit: '',
-      description: 'Inne przepisy to kreatywne pomysły na dania, które nie mieszczą się w tradycyjnych kategoriach.'
-    },
+    // {
+    //   link: '/kuchnia/inne',
+    //   label: 'INNE',
+    //   shortDesc: 'Pozostałe przepisy',
+    //   image: 'inne.jpg',
+    //   imageCredit: '',
+    //   description: 'Inne przepisy to kreatywne pomysły na dania, które nie mieszczą się w tradycyjnych kategoriach.'
+    // },
     {
       link: '/kuchnia/swieta',
       label: 'ŚWIĘTA',
