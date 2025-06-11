@@ -3,6 +3,15 @@ import { FiX, FiClock, FiAward } from 'react-icons/fi';
 import { FaUtensils } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 import supabase from '../../lib/supabase-browser';
+import emailjs from '@emailjs/browser';
+
+// EmailJS credentials (same as ContactPage)
+const EMAILJS_PUBLIC_KEY = "0f8Jce-Gsw4GbjCQ_";
+const EMAILJS_SERVICE_ID = "service_m4uai4d";
+const EMAILJS_TEMPLATE_ID = "template_r7rcz39";
+
+// Initialize EmailJS
+emailjs.init(EMAILJS_PUBLIC_KEY);
 
 const ProductModal = ({ product, onClose }) => {
   const modalRef = useRef();
@@ -12,6 +21,10 @@ const ProductModal = ({ product, onClose }) => {
   const [imageHeight, setImageHeight] = useState(160);
   const [imageOpacity, setImageOpacity] = useState(1);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  const [newsletterName, setNewsletterName] = useState("");
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
 
   // Handle window resize
   useEffect(() => {
@@ -113,6 +126,33 @@ const ProductModal = ({ product, onClose }) => {
     // Split by numbered steps if they exist
     const steps = preparation.split(/\d+\.\s+/).filter(Boolean);
     return steps.length > 1 ? steps : [preparation];
+  };
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setNewsletterSubmitting(true);
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          title: "Newsletter Subscription",
+          name: newsletterName,
+          email: newsletterEmail,
+          message: `Nowy użytkownik zapisał się do newslettera. Email: ${newsletterEmail}`,
+          time: new Date().toLocaleString(),
+        }
+      );
+      setNewsletterSubmitted(true);
+      setNewsletterName("");
+      setNewsletterEmail("");
+      setTimeout(() => setNewsletterSubmitted(false), 3000);
+    } catch (error) {
+      alert("Wystąpił błąd podczas zapisu do newslettera. Spróbuj ponownie później.");
+      console.error("Newsletter subscription error:", error);
+    } finally {
+      setNewsletterSubmitting(false);
+    }
   };
 
   if (loading) {
@@ -307,23 +347,45 @@ const ProductModal = ({ product, onClose }) => {
                       Odkryj więcej przepisów dostosowanych do potrzeb dzieci z autyzmem. 
                       Otrzymuj powiadomienia o nowych przepisach i ekskluzywne porady prosto na swoją skrzynkę.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                      <input
-                        type="email"
-                        placeholder="Twój adres email"
-                        className="flex-1 px-4 py-2.5 rounded-lg border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 text-sm sm:text-base placeholder-green-400/70"
-                      />
-                      <button
-                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg 
-                          transition-all duration-300 font-medium text-sm sm:text-base shadow-lg hover:shadow-xl
-                          flex items-center justify-center gap-2 hover:-translate-y-0.5"
-                      >
-                        <span>Zapisz się</span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    {newsletterSubmitted ? (
+                      <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center mb-4">
+                        <svg className="w-10 h-10 text-green-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
-                      </button>
-                    </div>
+                        <div className="text-green-700 font-medium">Dziękujemy za zapis do newslettera!</div>
+                      </div>
+                    ) : (
+                      <form className="flex flex-col sm:flex-row gap-2 sm:gap-3" onSubmit={handleNewsletterSubmit}>
+                        <input
+                          type="text"
+                          placeholder="Twoje imię"
+                          value={newsletterName}
+                          onChange={e => setNewsletterName(e.target.value)}
+                          required
+                          className="flex-1 px-4 py-2.5 rounded-lg border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 text-sm sm:text-base placeholder-green-400/70"
+                        />
+                        <input
+                          type="email"
+                          placeholder="Twój adres email"
+                          value={newsletterEmail}
+                          onChange={e => setNewsletterEmail(e.target.value)}
+                          required
+                          className="flex-1 px-4 py-2.5 rounded-lg border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition-all duration-300 text-sm sm:text-base placeholder-green-400/70"
+                        />
+                        <button
+                          type="submit"
+                          disabled={newsletterSubmitting}
+                          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg 
+                            transition-all duration-300 font-medium text-sm sm:text-base shadow-lg hover:shadow-xl
+                            flex items-center justify-center gap-2 hover:-translate-y-0.5"
+                        >
+                          <span>{newsletterSubmitting ? "Zapisywanie..." : "Zapisz się"}</span>
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                          </svg>
+                        </button>
+                      </form>
+                    )}
                     <p className="mt-3 text-xs text-green-600/80 italic">
                       Dołączając do newslettera, zgadzasz się na otrzymywanie od nas wiadomości email. 
                       Możesz zrezygnować w każdej chwili.
