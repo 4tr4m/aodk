@@ -75,6 +75,10 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
     }
   }, []);
 
+  useEffect(() => {
+    updateArrows();
+  }, [categories]);
+
   return (
     <div ref={containerRef} className="relative w-full bg-gray-100">
       <div className="max-w-7xl mx-auto px-4 md:px-8 relative">

@@ -12,6 +12,7 @@ import SearchBar from '../UI/SearchBar';
 import { FaSearch } from 'react-icons/fa';
 import searchService from '../../services/searchService';
 import SEO from '../SEO/SEO';
+import categoryService from '../../services/categoryService';
 
 // SearchIcon component taken from CategoryBanner
 const SearchIcon = ({ toggleSearch }) => {
@@ -293,6 +294,16 @@ const CategoryPage = () => {
     }
   }, [isMobile, showDescription, currentCategory]);
 
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const cats = await categoryService.getCategories();
+      setCategories(cats);
+    };
+    fetchCategories();
+  }, []);
+
   return (
     <div ref={pageRef} className="min-h-screen bg-gray-100">
       <SEO 
@@ -456,7 +467,7 @@ const CategoryPage = () => {
 
       <div className="sticky top-0 z-40 mb-6 shadow-md bg-gray-100">
         <CategoryNav 
-          categories={kuchniaCategories.mainCategories.filter(cat => cat.image)}
+          categories={categories.filter(cat => cat.image)}
           currentSlug={categorySlug}
           onCategoryClick={handleCategoryClick}
         />

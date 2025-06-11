@@ -64,14 +64,14 @@ export const kuchniaCategories = {
     
       description: 'Ciastka to małe słodkości, które cieszą każdego. W wersji zdrowych alternatyw, pozbawione masła i margaryny, mogą być równie pyszne, a przy tym pełne wartości odżywczych. Dzięki odpowiednim składnikom, takie ciastka to doskonała opcja na szybką przekąskę, która nie tylko zaspokaja apetyt na coś słodkiego, ale również wspiera zdrowie. W pełni naturalne, bez sztucznych dodatków, zachwycają smakiem i konsystencją, stanowiąc idealną alternatywę dla tradycyjnych słodkości. Dodatkowo, są świetnym rozwiązaniem dla dzieci i dorosłych na diecie eliminacyjnej, pozwalając im cieszyć się smakiem "normalnych" ciastek, mimo ograniczeń dietetycznych.'
     },
-    {
-      link: '/kuchnia/smoothie',
-      label: 'SMOOTHIE',
-      shortDesc: 'Naturalne koktajle owocowe',
-      image: 'smoothie.jpg',
-      imageCredit: '',
-      description: 'Smoothie to prawdziwa bomba witaminowa w szklance – coś, bez czego ciężko się obejść, zwłaszcza w zdrowej diecie. Dzięki tej pysznej, płynnej formie, możemy przemycić olbrzymią ilość zieleniny, surowego buraka, a także inne wartościowe składniki, które trudno byłoby wkomponować w tradycyjne posiłki. To doskonały sposób na wzbogacenie codziennego jadłospisu o warzywa i owoce, dostarczając organizmowi nie tylko witamin i minerałów, ale także błonnika, antyoksydantów oraz innych cennych substancji odżywczych. Smoothie to szybkie, zdrowe i pełne energii rozwiązanie, które skutecznie zaspokoi głód, jednocześnie wspierając naszą odporność i ogólne zdrowie.'
-    },
+    // {
+    //   link: '/kuchnia/smoothie',
+    //   label: 'SMOOTHIE',
+    //   shortDesc: 'Naturalne koktajle owocowe',
+    //   image: 'smoothie.jpg',
+    //   imageCredit: '',
+    //   description: 'Smoothie to prawdziwa bomba witaminowa w szklance – coś, bez czego ciężko się obejść, zwłaszcza w zdrowej diecie. Dzięki tej pysznej, płynnej formie, możemy przemycić olbrzymią ilość zieleniny, surowego buraka, a także inne wartościowe składniki, które trudno byłoby wkomponować w tradycyjne posiłki. To doskonały sposób na wzbogacenie codziennego jadłospisu o warzywa i owoce, dostarczając organizmowi nie tylko witamin i minerałów, ale także błonnika, antyoksydantów oraz innych cennych substancji odżywczych. Smoothie to szybkie, zdrowe i pełne energii rozwiązanie, które skutecznie zaspokoi głód, jednocześnie wspierając naszą odporność i ogólne zdrowie.'
+    // },
     // {
     //   link: '/kuchnia/inne',
     //   label: 'INNE',
@@ -80,35 +80,35 @@ export const kuchniaCategories = {
     //   imageCredit: '',
     //   description: 'Inne przepisy to kreatywne pomysły na dania, które nie mieszczą się w tradycyjnych kategoriach.'
     // },
-    {
-      link: '/kuchnia/swieta',
-      label: 'ŚWIĘTA',
-      shortDesc: 'Dania na specjalne okazje',
-      image: 'swieta.jpg',
-      imageCredit: '',
-      description: 'Świąteczne dania to wyjątkowe smaki na szczególne chwile, które można przygotować w wersji bezglutenowej i beznabiałowej, a także bez potrzeby smażenia. Dzięki tym opcjom, możemy cieszyć się tradycyjnymi potrawami, dbając jednocześnie o zdrowie i lekkostrawność. Nowoczesne podejście do klasycznych świątecznych przepisów sprawia, że takie dania są równie smaczne, pełne aromatów i doskonałe na specjalne okazje. Z odrobiną kreatywności i odpowiednich składników możemy przygotować zdrowe, ale wciąż pyszne dania, które zaskoczą i zachwycą gości, sprawiając, że święta będą pełne smaku i radości.'
-    },
-    {
-      link: '/kuchnia/salatki-surowki',
-      label: 'SAŁATKI i SURÓWKI',
-      shortDesc: 'Zdrowe i kolorowe dodatki do dań',
-      image: 'salatki.jpg',
-      description: 'Sałatki i surówki to doskonały sposób na wzbogacenie każdego posiłku o świeże warzywa i owoce. Pełne witamin, minerałów i błonnika, stanowią nie tylko zdrowy dodatek do dań głównych, ale mogą być również samodzielnym, lekkim posiłkiem. Nasze przepisy łączą w sobie różnorodne składniki, zapewniając nie tylko wartości odżywcze, ale także bogactwo smaków i tekstur. To idealna propozycja dla osób dbających o zdrowe odżywianie i poszukujących świeżych, sezonowych inspiracji kulinarnych.'
-    },
-    {
-      link: '/kuchnia/snaki',
-      label: 'SNAKI',
-      shortDesc: 'Zdrowe przekąski na każdą porę',
-      image: 'snaki.jpg',
-      description: 'Snaki to idealne rozwiązanie, gdy potrzebujemy szybkiej, ale zdrowej przekąski między posiłkami. Nasze propozycje są nie tylko smaczne, ale przede wszystkim odżywcze i przygotowane z naturalnych składników. Bez zbędnych dodatków i sztucznych konserwantów, stanowią doskonałą alternatywę dla sklepowych przekąsek. Każdy przepis został opracowany tak, aby zaspokoić głód i dostarczyć energii, jednocześnie dbając o zdrowe odżywianie.'
-    },
-    {
-      link: '/kuchnia/lunch',
-      label: 'LUNCH',
-      shortDesc: 'Szybkie i pożywne posiłki do pracy',
-      image: 'lunch.jpg',
-      description: 'Lunch to ważny posiłek w ciągu dnia, szczególnie gdy jesteśmy w pracy lub poza domem. Nasze przepisy na lunch są nie tylko szybkie w przygotowaniu, ale również łatwe do spakowania i zabrania ze sobą. Każda propozycja jest zbilansowana pod względem odżywczym, zapewniając odpowiednią ilość energii na pozostałą część dnia. Stawiamy na różnorodność składników i smaków, aby lunch był nie tylko zdrowy, ale również przyjemny.'
-    },
+    // {
+    //   link: '/kuchnia/swieta',
+    //   label: 'ŚWIĘTA',
+    //   shortDesc: 'Dania na specjalne okazje',
+    //   image: 'swieta.jpg',
+    //   imageCredit: '',
+    //   description: 'Świąteczne dania to wyjątkowe smaki na szczególne chwile, które można przygotować w wersji bezglutenowej i beznabiałowej, a także bez potrzeby smażenia. Dzięki tym opcjom, możemy cieszyć się tradycyjnymi potrawami, dbając jednocześnie o zdrowie i lekkostrawność. Nowoczesne podejście do klasycznych świątecznych przepisów sprawia, że takie dania są równie smaczne, pełne aromatów i doskonałe na specjalne okazje. Z odrobiną kreatywności i odpowiednich składników możemy przygotować zdrowe, ale wciąż pyszne dania, które zaskoczą i zachwycą gości, sprawiając, że święta będą pełne smaku i radości.'
+    // },
+    // {
+    //   link: '/kuchnia/salatki-surowki',
+    //   label: 'SAŁATKI i SURÓWKI',
+    //   shortDesc: 'Zdrowe i kolorowe dodatki do dań',
+    //   image: 'salatki.jpg',
+    //   description: 'Sałatki i surówki to doskonały sposób na wzbogacenie każdego posiłku o świeże warzywa i owoce. Pełne witamin, minerałów i błonnika, stanowią nie tylko zdrowy dodatek do dań głównych, ale mogą być również samodzielnym, lekkim posiłkiem. Nasze przepisy łączą w sobie różnorodne składniki, zapewniając nie tylko wartości odżywcze, ale także bogactwo smaków i tekstur. To idealna propozycja dla osób dbających o zdrowe odżywianie i poszukujących świeżych, sezonowych inspiracji kulinarnych.'
+    // },
+    // {
+    //   link: '/kuchnia/snaki',
+    //   label: 'SNAKI',
+    //   shortDesc: 'Zdrowe przekąski na każdą porę',
+    //   image: 'snaki.jpg',
+    //   description: 'Snaki to idealne rozwiązanie, gdy potrzebujemy szybkiej, ale zdrowej przekąski między posiłkami. Nasze propozycje są nie tylko smaczne, ale przede wszystkim odżywcze i przygotowane z naturalnych składników. Bez zbędnych dodatków i sztucznych konserwantów, stanowią doskonałą alternatywę dla sklepowych przekąsek. Każdy przepis został opracowany tak, aby zaspokoić głód i dostarczyć energii, jednocześnie dbając o zdrowe odżywianie.'
+    // },
+    // {
+    //   link: '/kuchnia/lunch',
+    //   label: 'LUNCH',
+    //   shortDesc: 'Szybkie i pożywne posiłki do pracy',
+    //   image: 'lunch.jpg',
+    //   description: 'Lunch to ważny posiłek w ciągu dnia, szczególnie gdy jesteśmy w pracy lub poza domem. Nasze przepisy na lunch są nie tylko szybkie w przygotowaniu, ale również łatwe do spakowania i zabrania ze sobą. Każda propozycja jest zbilansowana pod względem odżywczym, zapewniając odpowiednią ilość energii na pozostałą część dnia. Stawiamy na różnorodność składników i smaków, aby lunch był nie tylko zdrowy, ale również przyjemny.'
+    // },
   ],
   displayGroups: {
     firstRow: ['OBIADY', 'ZUPY', 'CHLEBY', 'SMAROWIDŁA'],
