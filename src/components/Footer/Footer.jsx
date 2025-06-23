@@ -8,16 +8,8 @@ const Footer = () => {
   const navigate = useNavigate();
 
   const handleLinkClick = (link) => {
-    // Navigate first
-    navigate(link);
-    
-    // Then scroll to top after a small delay to ensure the new page has loaded
-    setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    }, 100);
+    // Navigate and pass scrollToTop state
+    navigate(link, { state: { scrollToTop: true } });
   };
 
   const toggleInfoModal = () => {

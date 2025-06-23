@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import TopNavBar from '../Headers/TopNavBar';
@@ -79,11 +79,6 @@ const CategoryPage = () => {
 
   // State for occasional toggle button attention animation
   const [highlightToggle, setHighlightToggle] = useState(false);
-
-  // Scroll to top when category changes
-  useLayoutEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'auto' });
-  }, [categorySlug]);
 
   useEffect(() => {
     if (!state.isLoading) {
@@ -303,6 +298,13 @@ const CategoryPage = () => {
     };
     fetchCategories();
   }, []);
+
+  // Scroll to top on every route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const root = document.getElementById('root');
+    if (root) root.scrollTop = 0;
+  }, [location.key]);
 
   return (
     <div ref={pageRef} className="min-h-screen bg-gray-100">

@@ -51,7 +51,7 @@ const titleVariant = {
 };
 
 // Title with search icon component (memoized)
-const TitleWithSearch = memo(({ title, toggleSearch, accentColor }) => {
+const TitleWithSearch = memo(({ title, toggleSearch, accentColor, showTooltip }) => {
   return (
     <div className="flex items-center justify-center flex-wrap gap-3 sm:gap-4">
       <h2 
@@ -63,7 +63,7 @@ const TitleWithSearch = memo(({ title, toggleSearch, accentColor }) => {
         {title}
       </h2>
       <div className="flex-shrink-0">
-        <SearchIcon toggleSearch={toggleSearch} />
+        <SearchIcon toggleSearch={toggleSearch} showTooltip={showTooltip} />
       </div>
     </div>
   );
@@ -72,7 +72,7 @@ const TitleWithSearch = memo(({ title, toggleSearch, accentColor }) => {
 TitleWithSearch.displayName = 'TitleWithSearch';
 
 // Search icon component (memoized)
-const SearchIcon = memo(({ toggleSearch }) => {
+const SearchIcon = memo(({ toggleSearch, showTooltip }) => {
   const [showTutorial, setShowTutorial] = useState(() => {
     try {
       const hasSeenTutorial = localStorage.getItem('hasSeenSearchTutorial');
@@ -137,28 +137,6 @@ const SearchIcon = memo(({ toggleSearch }) => {
             style={window.innerWidth < 640 ? { fontSize: '2.86rem' } : {}}
           />
         </div>
-        {/* Tutorial tooltip - only on desktop */}
-        {showTutorial && (
-          <div
-            className="hidden xl:block absolute top-1/2 -translate-y-1/2 z-20 w-[240px] xl:w-[280px] search-tooltip"
-            style={{ 
-              left: 'calc(100% + 1rem)', // Position to the right with a 1rem gap
-              minWidth: 200, 
-              maxWidth: 320, 
-            }}
-          >
-            <div className="bg-white px-4 py-3 rounded-lg shadow-lg border-2 border-green-300 relative">
-              {/* Arrow */}
-              <div
-                className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-b-2 border-r-2 border-green-300 transform rotate-45 z-0"
-              ></div>
-              <div className="relative z-10 bg-white">
-                <p className="text-gray-700 text-sm font-medium mb-1">Szukaj przepisów dopasowanych do diety</p>
-                <p className="text-green-600 text-xs font-bold">Kliknij, aby znaleźć idealne przepisy!</p>
-              </div>
-            </div>
-          </div>
-        )}
       </motion.div>
     </div>
   );
@@ -414,6 +392,7 @@ const CategoryBanner = () => {
                     title="ODŻYWCZE PRZEPISY" 
                     toggleSearch={toggleSearch} 
                     accentColor={ACCENT_COLOR}
+                    showTooltip={!isSearching}
                   />
                 </motion.div>
               ) : (

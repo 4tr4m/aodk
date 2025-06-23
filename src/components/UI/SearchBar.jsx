@@ -6,48 +6,50 @@ const SearchBar = memo(function SearchBar({
   placeholder = "Search...", 
   onSearchSubmit, 
   onClose, 
-  initialOpen = true,
+  initialOpen = false,
   suggestions = [],
   onSuggestionSelect,
   highlightedTerm = '',
   minCharsForSuggestions = 2,
   onChange,
   showCloseButton = true,
-  tooltipText = "Kliknij, aby znaleźć idealne przepisy!" // Default tooltip text
+  tooltipText = ""
 }) {
   const [isOpen, setIsOpen] = useState(initialOpen);
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
-  const [showTooltip, setShowTooltip] = useState(false); // State for controlling tooltip visibility
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
-  // Create closeSearch with useCallback to ensure stable reference
   const closeSearch = useCallback(() => {
     setIsOpen(false);
-    setSearchTerm(''); // Clear search on close
+    setSearchTerm('');
     setShowSuggestions(false);
     
-    // Call the onClose handler immediately
     if (onClose) {
-      onClose(); // Notify parent component
+      onClose();
     }
   }, [onClose]);
 
+  const handleSearchOpen = useCallback((e) => {
+    if (e) e.preventDefault();
+    setIsOpen(true);
+    setShowSuggestions(false);
+  }, []);
+
   const handleInputChange = useCallback((event) => {
+    if (!isOpen) return;
     const value = event.target.value;
     setSearchTerm(value);
     
-    // Notify parent component of change immediately
     if (onChange) {
       onChange(value);
     }
     
-    // Show suggestions only if we have more than minimum characters
     setShowSuggestions(value.length >= minCharsForSuggestions && suggestions.length > 0);
-    setSelectedSuggestionIndex(-1); // Reset selection when typing
-  }, [suggestions, minCharsForSuggestions, onChange]);
+    setSelectedSuggestionIndex(-1);
+  }, [suggestions, minCharsForSuggestions, onChange, isOpen]);
 
   const handleSuggestionClick = useCallback((suggestion, index) => {
     if (!suggestion || !suggestion.name) return;
@@ -58,7 +60,6 @@ const SearchBar = memo(function SearchBar({
       setSearchTerm(suggestion.name);
       setShowSuggestions(false);
       setSelectedSuggestionIndex(index);
-      // Submit the search
       if (onSearchSubmit) {
         onSearchSubmit(suggestion.name);
       }
@@ -66,24 +67,21 @@ const SearchBar = memo(function SearchBar({
   }, [onSuggestionSelect, onSearchSubmit]);
 
   const handleSubmit = useCallback((event) => {
-    event.preventDefault(); // Prevent page reload on form submit
+    event.preventDefault();
+    if (!isOpen) return;
     
-    // If a suggestion is selected, use that
     if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < suggestions.length) {
       handleSuggestionClick(suggestions[selectedSuggestionIndex], selectedSuggestionIndex);
       return;
     }
     
-    // Otherwise submit the current search term
     if (onSearchSubmit && searchTerm.trim()) {
       onSearchSubmit(searchTerm);
       setShowSuggestions(false);
     }
-  }, [onSearchSubmit, searchTerm, selectedSuggestionIndex, suggestions, handleSuggestionClick]);
+  }, [onSearchSubmit, searchTerm, selectedSuggestionIndex, suggestions, handleSuggestionClick, isOpen]);
 
-  // Handle keyboard navigation for suggestions
   const handleKeyDown = useCallback((e) => {
-    // Only process if suggestions are showing
     if (!showSuggestions) return;
     
     switch (e.key) {
@@ -105,17 +103,14 @@ const SearchBar = memo(function SearchBar({
         setSelectedSuggestionIndex(-1);
         break;
       case 'Enter':
-        // Let the form submit handler deal with this
         break;
       default:
         break;
     }
   }, [showSuggestions, suggestions.length]);
 
-  // Focus input when search opens
   useEffect(() => {
     if (isOpen && inputRef.current) {
-      // Timeout helps ensure the element is fully visible after transition
       const timer = setTimeout(() => {
         inputRef.current.focus();
       }, 100);
@@ -123,7 +118,6 @@ const SearchBar = memo(function SearchBar({
     }
   }, [isOpen]);
 
-  // Scroll selected suggestion into view
   useEffect(() => {
     if (selectedSuggestionIndex >= 0 && suggestionsRef.current) {
       const selectedElement = suggestionsRef.current.children[selectedSuggestionIndex];
@@ -136,7 +130,6 @@ const SearchBar = memo(function SearchBar({
     }
   }, [selectedSuggestionIndex]);
 
-  // Click outside to close suggestions
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -155,7 +148,6 @@ const SearchBar = memo(function SearchBar({
     };
   }, []);
 
-  // Handle ESC key press to close search
   useEffect(() => {
     const handleEscKey = (event) => {
       if (event.key === 'Escape') {
@@ -172,21 +164,6 @@ const SearchBar = memo(function SearchBar({
       document.removeEventListener('keydown', handleEscKey);
     };
   }, [isOpen, closeSearch, showSuggestions]);
-
-  // Hide tooltip after a few seconds
-  useEffect(() => {
-    if (showTooltip) {
-      const timer = setTimeout(() => {
-        setShowTooltip(false);
-      }, 3000); // Hide tooltip after 3 seconds
-      return () => clearTimeout(timer);
-    }
-  }, [showTooltip]);
-
-  // Show tooltip on component mount
-  useEffect(() => {
-    setShowTooltip(true);
-  }, []);
 
   return (
     <div className="relative w-full">
@@ -213,43 +190,25 @@ const SearchBar = memo(function SearchBar({
             }
           `}
           aria-label="Search input"
-          onFocus={() => setShowTooltip(true)}
+          tabIndex={isOpen ? 0 : -1}
+          readOnly={!isOpen}
         />
 
-        {/* Search Icon (Submit button) with Tooltip */}
         <div className="relative">
           <button
-            type="submit"
-            aria-label="Submit search"
+            type="button"
+            onClick={handleSearchOpen}
+            aria-label="Open search"
             className={`
               absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 transform cursor-pointer text-xl sm:text-2xl text-green-600
               hover:text-green-700 hover:scale-110 transition-all duration-[800ms] ease-in-out
-              ${isOpen ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10 pointer-events-none'}
+              opacity-100 translate-x-0
             `}
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
           >
             <FaSearch />
           </button>
-          
-          {/* Custom Tooltip */}
-          <AnimatePresence>
-            {showTooltip && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.2 }}
-                className="absolute z-50 bottom-full mb-2 right-0 w-48 px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg shadow-lg pointer-events-none"
-              >
-                {tooltipText}
-                <div className="absolute w-3 h-3 bg-green-600 transform rotate-45 left-1/2 -ml-1.5 bottom-0 translate-y-1/2"></div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
-        {/* Close Icon */}
         {showCloseButton !== false && (
           <button
             type="button"
@@ -266,7 +225,6 @@ const SearchBar = memo(function SearchBar({
         )}
       </form>
 
-      {/* Suggestions dropdown */}
       <AnimatePresence>
         {showSuggestions && suggestions && suggestions.length > 0 && (
           <motion.div
@@ -287,7 +245,6 @@ const SearchBar = memo(function SearchBar({
                   onClick={() => handleSuggestionClick(suggestion, index)}
                 >
                   <div className="flex items-start gap-3">
-                    {/* Icon based on suggestion type */}
                     <div className="mt-1">
                       {suggestion.type === 'recipe' ? (
                         <FaUtensils className="text-green-600" />
@@ -297,19 +254,16 @@ const SearchBar = memo(function SearchBar({
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      {/* Suggestion title */}
                       <div className="font-medium text-gray-800 text-sm sm:text-base">
                         {suggestion.name}
                       </div>
 
-                      {/* Short description */}
                       {suggestion.shortdesc && (
                         <div className="mt-1 text-xs text-gray-600 line-clamp-2">
                           {suggestion.shortdesc}
                         </div>
                       )}
 
-                      {/* Always show ingredients */}
                       {suggestion.ingredients && (
                         <div className="mt-1 flex flex-wrap gap-1 justify-center">
                           {suggestion.ingredients.split(',').map((ingredient, i) => (
