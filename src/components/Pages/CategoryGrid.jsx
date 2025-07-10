@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ProductModal from './ProductModal';
+import ProductModal from '../ProductModal/ProductModal';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Button } from '../UI/Button';
 

@@ -1,25 +1,41 @@
+/**
+ * RecipeGrid component
+ * 
+ * This component displays a responsive, animated grid of recipe cards.
+ * Each card shows a recipe's image, name, short description, category, time, and difficulty.
+ * When a card is clicked, the page scrolls to the top and a modal (ProductModal) opens,
+ * showing detailed information about the selected recipe.
+ * 
+ * Props:
+ * - recipes: Array of recipe objects to display.
+ * 
+ * Features:
+ * - Animated grid and card appearance using Framer Motion.
+ * - Card hover effects for interactivity.
+ * - Modal popup for recipe details.
+ * - Handles image credits and category display.
+ */
+
 import React, { useState } from 'react';
-import ProductModal from './ProductModal';
+import ProductModal from '../ProductModal/ProductModal';
 import { FiClock, FiArrowRight, FiAward } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
 const RecipeGrid = ({ recipes }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
+  // When a recipe card is clicked, scroll to top and open modal after a short delay
   const handleRecipeClick = (recipe) => {
-    // First scroll to the top of the page
     window.scrollTo({
       top: 0,
       behavior: 'smooth'
     });
-    
-    // Then set the selected recipe to show the modal
     setTimeout(() => {
       setSelectedRecipe(recipe);
-    }, 800); // Small delay to ensure smooth scrolling
+    }, 800);
   };
 
-  // Animation variants
+  // Animation variants for the grid and cards
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -76,30 +92,53 @@ const RecipeGrid = ({ recipes }) => {
           </div>
 
           <div className="p-5 flex flex-col h-[230px]">
-            <div className="flex-grow flex flex-col items-center">
+            {/* Title and description with fixed min-height for alignment */}
+            <div className="flex-grow flex flex-col items-center min-h-[80px] justify-start">
               <h2 className="font-['Playfair_Display'] text-xl text-center mb-3 text-gray-800 leading-tight 
                 group-hover:text-[#2D3748] transition-colors duration-300">
                 {recipe.name}
               </h2>
-
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2 text-center font-['Lato']">
+              <p className="text-gray-600 text-sm mb-0 line-clamp-2 text-center font-['Lato']">
                 {recipe.shortDesc}
               </p>
+            </div>
 
-              <div className="flex items-center justify-center gap-6 mb-auto w-full">
-                {recipe.time && (
-                  <div className="flex items-center gap-1.5 text-gray-600">
-                    <FiClock className="text-green-500" />
-                    <span className="text-sm">{recipe.time}</span>
-                  </div>
-                )}
-                {recipe.difficulty && (
-                  <div className="flex items-center gap-1.5 text-gray-600">
-                    <FiAward className="text-green-500" />
-                    <span className="text-sm">Poziom: {recipe.difficulty}</span>
-                  </div>
-                )}
+            {/* Tags from tags2, always in the same place */}
+            {recipe.tags2 && (
+              <div className="flex flex-wrap gap-1 mb-4 justify-center min-h-[28px] items-center">
+                {recipe.tags2
+                  .split(/[,\n]/) // Split by both comma and newline
+                  .map(tag => tag.trim())
+                  .filter(Boolean)
+                  .slice(0, 3)
+                  .map((tag, i) => (
+                    <span 
+                      key={i}
+                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        i % 3 === 0 ? 'bg-green-100 text-green-800' :
+                        i % 3 === 1 ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-blue-100 text-blue-800'
+                      }`}
+                    >
+                      {tag}
+                    </span>
+                  ))}
               </div>
+            )}
+
+            <div className="flex items-center justify-center gap-6 mb-auto w-full">
+              {recipe.time && (
+                <div className="flex items-center gap-1.5 text-gray-600">
+                  <FiClock className="text-green-500" />
+                  <span className="text-sm">{recipe.time}</span>
+                </div>
+              )}
+              {recipe.difficulty && (
+                <div className="flex items-center gap-1.5 text-gray-600">
+                  <FiAward className="text-green-500" />
+                  <span className="text-sm">Poziom: {recipe.difficulty}</span>
+                </div>
+              )}
             </div>
 
             <motion.button 
