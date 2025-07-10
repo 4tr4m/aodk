@@ -5,7 +5,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import { 
   kuchniaCategories,
   historiaCategories,
-  wiedzaCategories,
+  // wiedzaCategories,
   blogCategories,
 } from '../../Data/category-data';
 
@@ -77,12 +77,12 @@ const TopNavBar = () => {
       link: '/znajdki',
       type: 'znajdki'
     },
-    { 
-      label: 'WIEDZA', 
-      link: '/wiedza',
-      dropdown: wiedzaCategories,
-      type: 'wiedza'
-    },
+    // { 
+    //   label: 'WIEDZA', 
+    //   link: '/wiedza',
+    //   dropdown: wiedzaCategories,
+    //   type: 'wiedza'
+    // },
     { 
       label: 'BLOG', 
       link: '/blog',
@@ -93,8 +93,21 @@ const TopNavBar = () => {
   ];
 
   return (
-    <div className="relative top-0 left-0 w-full z-50 text-gray-50 py-4">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-[60px] flex flex-col md:flex-row justify-between items-center relative z-50">
+    <div className="relative top-0 left-0 w-full z-50 text-gray-50 py-2 bg-transparent">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-[60px] flex flex-row items-center justify-between relative z-50 min-h-[80px]">
+        {/* Logo on the far left */}
+        <Link 
+          to="/"
+          className="transform transition-all duration-300 hover:scale-105 hover:-rotate-2 relative group mr-6"
+          style={{ display: 'flex', alignItems: 'center', height: '72px' }}
+        >
+          <div className="absolute inset-0 bg-black/20 rounded-full blur-xl scale-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <img 
+            src="/img/logo.png" 
+            alt="Autyzm od kuchni" 
+            className="h-28 w-auto object-contain relative z-10"
+          />
+        </Link>
         {/* Mobile Menu Button */}
         <div className="flex w-full md:hidden justify-between items-center mb-4">
           <button

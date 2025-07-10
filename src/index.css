@@ -89,3 +89,8 @@ body {
 .scroll-smooth {
   scroll-behavior: smooth;
 }
+
+p {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}

@@ -9,7 +9,7 @@ const HistoriaStory = () => {
       transition={{ delay: 0.4, duration: 0.8 }}
       className="bg-white p-8 rounded-2xl shadow-lg max-w-none mb-16"
     >
-      <div className="prose prose-lg text-gray-600">
+      <div className="text-lg leading-relaxed text-gray-700 space-y-6 max-w-3xl mx-auto">
         <p>
           Hubert, bohater tej historii, początkowo przejawiał wszystkie charakterystyczne objawy ze spektrum autyzmu: nie nawiązywał kontaktu wzrokowego, wertował książki, układał zabawki w równych rzędach, nie potrafił naśladować innych, chodził na palcach, kręcił się w kółko, nie rozpoznawał rodziców, a jego ucieczki – bieganie na oślep przed siebie – były codziennością.
         </p>
