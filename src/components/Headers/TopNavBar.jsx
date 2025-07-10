@@ -5,7 +5,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import { 
   kuchniaCategories,
   historiaCategories,
-  // wiedzaCategories,
+  // wiedzaCategoriess,
   blogCategories,
 } from '../../Data/category-data';
 
