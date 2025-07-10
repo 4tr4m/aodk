@@ -138,11 +138,11 @@ const TopNavBar = () => {
 
         {/* Navigation */}
         <nav className={`w-full md:w-auto ${isMobileMenuOpen ? 'block' : 'hidden md:block'}`}>
-          <ul className={`flex flex-col md:flex-row md:gap-10 lg:gap-12 w-full ${isMobileMenuOpen ? 'bg-gray-800/95 backdrop-blur-md rounded-lg p-4 shadow-xl' : ''}`}>
+          <ul className={`flex flex-col md:flex-row md:gap-10 lg:gap-12 w-full ${isMobileMenuOpen ? 'bg-gray-800/95 backdrop-blur-md rounded-lg p-4 shadow-xl space-y-2' : ''}`}>
             {navItems.map((item, index) => (
               <li 
                 key={index} 
-                className="group relative transition-all duration-300 ease-in-out"
+                className={`group relative transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'w-full text-center py-2' : ''}`}
                 onMouseEnter={() => !isMobileMenuOpen && item.dropdown && handleMouseEnter(item.type)}
                 onMouseLeave={() => !isMobileMenuOpen && item.dropdown && setActiveDropdown(null)}
                 onClick={() => item.dropdown && isMobileMenuOpen ? setActiveDropdown(activeDropdown === item.type ? null : item.type) : null}
@@ -156,10 +156,7 @@ const TopNavBar = () => {
                       setIsMobileMenuOpen(false);
                     }
                   }}
-                  className={`no-underline text-[20px] font-['Patrick_Hand'] font-semibold uppercase tracking-wide transition-all duration-300 flex items-center gap-2 py-3 md:py-1.5 px-4 md:px-0 hover:text-yellow-400 hover:scale-110 
-                    ${isMobileMenuOpen 
-                      ? 'bg-black/80 backdrop-blur-sm rounded-lg mb-2 text-white mix-blend-normal hover:text-yellow-400' 
-                      : 'text-gray-50/90 mix-blend-overlay group-hover:text-yellow-400'}`}
+                  className={`no-underline text-[20px] font-['Patrick_Hand'] font-semibold uppercase tracking-wide transition-all duration-300 flex items-center gap-2 ${isMobileMenuOpen ? 'justify-center w-full py-3 px-2 bg-black/80 rounded-lg mb-2 text-white mix-blend-normal hover:text-yellow-400' : 'py-3 md:py-1.5 px-4 md:px-0 text-gray-50/90 mix-blend-overlay group-hover:text-yellow-400'}`}
                 >
                   {item.label}
                   {item.dropdown && isMobileMenuOpen && (
@@ -172,7 +169,20 @@ const TopNavBar = () => {
                     </span>
                   )}
                 </Link>
-                {item.dropdown && (isMobileMenuOpen ? activeDropdown === item.type && renderDropdownMenu(item.dropdown) : renderDropdownMenu(item.dropdown))}
+                {item.dropdown && isMobileMenuOpen && activeDropdown === item.type && (
+                  <div className="w-full bg-gray-900/95 rounded-lg mt-2 p-2 space-y-2">
+                    {item.dropdown.map((subitem, subindex) => (
+                      <Link
+                        key={subindex}
+                        to={subitem.link}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block w-full text-white py-2 px-4 rounded hover:bg-gray-700 text-[18px] font-['Patrick_Hand'] text-left"
+                      >
+                        {subitem.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </li>
             ))}
           </ul>
