@@ -35,69 +35,6 @@ const HistoriaOAutyzmie = () => {
         </div>
       </div>
       
-      {/* Video Hero Section */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        className="relative w-full h-[60vh] sm:h-[70vh] lg:h-[80vh] overflow-hidden bg-gray-900"
-      >
-        {/* Video Background */}
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ filter: 'brightness(0.7) contrast(1.1)' }}
-        >
-          <source src="/img/video/video1.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        
-        {/* Overlay with gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60"></div>
-        
-        {/* Content overlay */}
-        <div className="relative z-10 flex items-center justify-center h-full">
-          <div className="text-center text-white px-4 sm:px-6 lg:px-8">
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 1 }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-['Playfair_Display'] font-bold mb-6 leading-tight"
-            >
-              Historia o Autyzmie
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 1 }}
-              className="text-lg sm:text-xl lg:text-2xl font-['Lato'] max-w-3xl mx-auto leading-relaxed"
-            >
-              Poznaj naszą drogę z autyzmem i odkryj, jak dieta może wspierać rozwój dziecka
-            </motion.p>
-          </div>
-        </div>
-        
-        {/* Subtle scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 1 }}
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-        >
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1 h-3 bg-white/60 rounded-full mt-2"
-            ></motion.div>
-          </div>
-        </motion.div>
-      </motion.div>
-      
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <motion.div
