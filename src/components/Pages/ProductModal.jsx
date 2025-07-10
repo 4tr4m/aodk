@@ -403,7 +403,7 @@ const ProductModal = ({ product, onClose }) => {
                   </h3>
                   <div className="flex flex-wrap gap-2 sm:gap-3">
                     {recipe.base_ingredients
-                      .split('\n')
+                      .split(/[,\n]/) // Split by both comma and newline
                       .map(ing => ing.trim())
                       .filter(Boolean)
                       .map((ingredient, i) => (
