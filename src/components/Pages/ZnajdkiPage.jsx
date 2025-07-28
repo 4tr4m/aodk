@@ -232,7 +232,7 @@ const ZnajdkiPage = () => {
               >
                 <div className="relative h-48 overflow-hidden bg-gray-100">
                   <img 
-                    src={product.image ? product.image : `/znajdki/${product.id}.jpg`} 
+                    src={product.image ? product.image : `/img/znajdki/${product.id}.jpg`} 
                     alt={product.name}
                     className="w-full h-full object-cover"
                   />

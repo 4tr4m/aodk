@@ -69,7 +69,7 @@ const ZnajdkiProductPage = () => {
           transition={{ duration: 0.6 }}
         >
           <img 
-            src={product.image ? product.image : `/znajdki/${product.id}.jpg`} 
+            src={product.image ? product.image : `/img/znajdki/${product.id}.jpg`} 
             alt={product.name}
             className="w-full h-[220px] sm:h-[320px] md:h-[400px] object-cover object-center transition-all duration-500"
           />
