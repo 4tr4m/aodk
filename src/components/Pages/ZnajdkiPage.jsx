@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import TopNavBar from '../Headers/TopNavBar';
 import CategoryHeader from './CategoryHeader';
 import Footer from '../Footer/Footer';
+import ProductNewsletter from '../ProductModal/ProductNewsletter';
 import { FiFilter, FiShoppingBag, FiX } from 'react-icons/fi';
 import { FaLeaf, FaRegHeart, FaHeart } from 'react-icons/fa';
 import SEO from '../SEO/SEO';
@@ -16,6 +18,12 @@ const ZnajdkiPage = () => {
   const [favorites, setFavorites] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
+  
+  // Newsletter state
+  const [newsletterName, setNewsletterName] = useState('');
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -57,6 +65,19 @@ const ZnajdkiPage = () => {
     } else {
       setSelectedTags([...selectedTags, tag]);
     }
+  };
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setNewsletterSubmitting(true);
+    
+    // Simulate newsletter submission
+    setTimeout(() => {
+      setNewsletterSubmitted(true);
+      setNewsletterSubmitting(false);
+      setNewsletterName('');
+      setNewsletterEmail('');
+    }, 1000);
   };
 
   const filteredProducts = products.filter(product => {
@@ -222,23 +243,32 @@ const ZnajdkiPage = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
+            {filteredProducts.map((product, index) => (
               <motion.div 
                 key={product.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
               >
-                <div className="relative h-48 overflow-hidden bg-gray-100">
+                <Link to={`/znajdki/${product.id}`} className="block group">
+                <div className="relative h-64 overflow-hidden bg-gray-100">
                   <img 
-                    src={product.image ? product.image : `/img/znajdki/${product.id}.jpg`} 
+                    src={product.image ? `/img/${product.image}` : `/img/znajdki/${product.id}.jpg`} 
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => {
+                      e.target.src = '/img/znajdki/default.jpg';
+                    }}
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <button 
-                    onClick={() => toggleFavorite(product.id)}
-                    className="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleFavorite(product.id);
+                    }}
+                    className="absolute top-3 right-3 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-colors z-10"
                   >
                     {favorites.includes(product.id) ? (
                       <FaHeart className="text-red-500" size={18} />
@@ -251,17 +281,19 @@ const ZnajdkiPage = () => {
                     <span>Polecane</span>
                   </div>
                 </div>
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <h3 className="font-['Patrick_Hand'] text-lg font-medium text-gray-800 mb-1">{product.name}</h3>
-                      <p className="text-sm text-gray-500">{product.category}</p>
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex-1">
+                      <h3 className="font-['Patrick_Hand'] text-xl font-semibold text-gray-800 mb-2 leading-tight group-hover:text-green-600 transition-colors">
+                        {product.name}
+                      </h3>
+                      <p className="text-sm text-gray-500 font-medium">{product.category}</p>
                     </div>
                   </div>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
                     {product.shortdesc}
                   </p>
-                  <div className="flex flex-wrap gap-1 mb-4">
+                  <div className="flex flex-wrap gap-1.5 mb-4">
                     {[
                       ...(product.tags ? product.tags.split(',') : []),
                       ...(product.tags2 ? product.tags2.split(',') : []),
@@ -269,21 +301,22 @@ const ZnajdkiPage = () => {
                     ].map((tag, tagIndex) => (
                       <span 
                         key={tagIndex} 
-                        className="inline-block bg-gray-100 text-gray-600 rounded-full px-2 py-0.5 text-xs"
+                        className="inline-block bg-gray-100 text-gray-600 rounded-full px-2.5 py-1 text-xs font-medium"
                       >
-                        {tag}
+                        {tag.trim()}
                       </span>
                     ))}
                   </div>
-                  <div className="flex justify-between items-center mt-2">
-                    <div className="flex items-center">
-                      <FiShoppingBag className="text-gray-400 mr-1" size={14} />
-                      <span className="text-xs text-gray-500">
-                        {/* You can display where to buy or other info here if available in DB */}
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center text-gray-500">
+                      <FiShoppingBag className="mr-1.5" size={14} />
+                      <span className="text-xs">
+                        Dostępne w sklepach
                       </span>
                     </div>
                   </div>
                 </div>
+                </Link>
               </motion.div>
             ))}
           </div>
@@ -360,6 +393,22 @@ const ZnajdkiPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Newsletter Section */}
+      <div className="bg-gradient-to-br from-green-50 to-green-100 py-16 mb-16">
+        <div className="max-w-4xl mx-auto px-4 md:px-8">
+          <ProductNewsletter
+            newsletterName={newsletterName}
+            setNewsletterName={setNewsletterName}
+            newsletterEmail={newsletterEmail}
+            setNewsletterEmail={setNewsletterEmail}
+            newsletterSubmitting={newsletterSubmitting}
+            newsletterSubmitted={newsletterSubmitted}
+            handleNewsletterSubmit={handleNewsletterSubmit}
+          />
+        </div>
+      </div>
+      
       <Footer />
     </div>
   );
