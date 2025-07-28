@@ -29,7 +29,8 @@ const ZnajdkiProductPage = () => {
         .select('*')
         .eq('id', Number(id))
         .single();
-      console.log('Fetched:', data, error);
+      console.log('Fetched product:', data, error);
+      console.log('Product image path:', data?.image ? `/img/${data.image}` : `/img/znajdki/${data?.id}.jpg`);
       setProduct(data);
       setLoading(false);
     };
@@ -112,13 +113,17 @@ const ZnajdkiProductPage = () => {
         >
           {/* Product Image */}
           <div className="relative bg-white rounded-2xl overflow-hidden shadow-xl">
-            <div className="relative h-[300px] sm:h-[400px] overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+            <div className="relative h-[280px] sm:h-[320px] md:h-[360px] overflow-hidden bg-gray-50 flex items-center justify-center">
               <img 
                 src={product.image ? `/img/${product.image}` : `/img/znajdki/${product.id}.jpg`} 
                 alt={product.name}
-                className="w-full h-full object-contain object-center transition-all duration-500 hover:scale-105"
+                className="max-w-full max-h-full object-contain object-center"
                 onError={(e) => {
+                  console.log('Image failed to load:', e.target.src);
                   e.target.src = '/img/znajdki/default.jpg';
+                }}
+                onLoad={() => {
+                  console.log('Image loaded successfully:', product.image ? `/img/${product.image}` : `/img/znajdki/${product.id}.jpg`);
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
