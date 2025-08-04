@@ -14,6 +14,7 @@ const ZnajdkiProductPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   // Newsletter state
   const [newsletterName, setNewsletterName] = useState('');
@@ -36,6 +37,38 @@ const ZnajdkiProductPage = () => {
     };
     if (id) fetchProduct();
   }, [id]);
+
+  const getImageSrc = () => {
+    if (!product) return '';
+    
+    // Priority order for image sources
+    const imageSources = [
+      product.image ? `/img/${product.image}` : null,
+      `/img/znajdki/${product.id}.jpg`,
+      `/img/znajdki/1.jpg`,
+      '/img/znajdki/default.jpg'
+    ].filter(Boolean);
+    
+    return imageSources[0] || '/img/znajdki/1.jpg';
+  };
+
+  const handleImageError = (e) => {
+    console.log('Image failed to load:', e.target.src);
+    const currentSrc = e.target.src;
+    
+    // Try next fallback image
+    if (currentSrc.includes('/img/znajdki/')) {
+      if (currentSrc.includes('/img/znajdki/1.jpg')) {
+        // If even the default fails, show placeholder
+        setImageError(true);
+        e.target.style.display = 'none';
+      } else {
+        e.target.src = '/img/znajdki/1.jpg';
+      }
+    } else {
+      e.target.src = `/img/znajdki/${product.id}.jpg`;
+    }
+  };
 
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
@@ -114,18 +147,27 @@ const ZnajdkiProductPage = () => {
           {/* Product Image */}
           <div className="relative bg-white rounded-2xl overflow-hidden shadow-xl">
             <div className="relative h-[280px] sm:h-[320px] md:h-[360px] overflow-hidden bg-gray-50 flex items-center justify-center">
-              <img 
-                src={product.image ? `/img/${product.image}` : `/img/znajdki/${product.id}.jpg`} 
-                alt={product.name}
-                className="max-w-full max-h-full object-contain object-center"
-                onError={(e) => {
-                  console.log('Image failed to load:', e.target.src);
-                  e.target.src = '/img/znajdki/default.jpg';
-                }}
-                onLoad={() => {
-                  console.log('Image loaded successfully:', product.image ? `/img/${product.image}` : `/img/znajdki/${product.id}.jpg`);
-                }}
-              />
+              {imageError ? (
+                <div className="flex flex-col items-center justify-center text-center p-6">
+                  <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+                    <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <p className="text-gray-500 text-sm font-medium">{product?.name || 'Produkt'}</p>
+                  <p className="text-gray-400 text-xs mt-1">Brak zdjęcia</p>
+                </div>
+              ) : (
+                <img 
+                  src={getImageSrc()} 
+                  alt={product.name}
+                  className="max-w-full max-h-full object-contain object-center"
+                  onError={handleImageError}
+                  onLoad={() => {
+                    console.log('Image loaded successfully:', product.image ? `/img/${product.image}` : `/img/znajdki/${product.id}.jpg`);
+                  }}
+                />
+              )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
               
               {/* Action Buttons */}
