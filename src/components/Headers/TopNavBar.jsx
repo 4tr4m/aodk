@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebookF, FaInstagram, FaTiktok, FaYoutube, FaPinterestP } from 'react-icons/fa';
 import { FiMenu, FiX } from 'react-icons/fi';
@@ -8,16 +8,43 @@ import {
   // wiedzaCategories,
   blogCategories,
 } from '../../Data/category-data';
+import categoryService from '../../services/categoryService';
 
 const TopNavBar = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [kuchniaItems, setKuchniaItems] = useState([]);
+
+  // Fetch categories from Supabase
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categories = await categoryService.getCategories();
+        if (categories && categories.length > 0) {
+          // Transform Supabase categories to match the expected format
+          const transformedCategories = categories.map(category => ({
+            label: category.name,
+            link: `/kuchnia/${category.slug || category.id}`,
+            shortDesc: category.description || ''
+          }));
+          setKuchniaItems(transformedCategories);
+        } else {
+          // Fallback to hardcoded categories
+          setKuchniaItems(kuchniaCategories.mainCategories);
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        // Fallback to hardcoded categories
+        setKuchniaItems(kuchniaCategories.mainCategories);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleMouseEnter = (type) => {
     setActiveDropdown(type);
   };
-
-  const kuchniaItems = kuchniaCategories.mainCategories;
 
   const renderDropdownMenu = (items) => (
     <ul className={`

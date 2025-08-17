@@ -134,6 +134,7 @@ const recipeService = {
       const { data, error } = await supabase
         .from('categories')
         .select('*')
+        .eq('flag', true)  // Only fetch categories where flag is TRUE
         .order('display_name');
       
       if (error) {

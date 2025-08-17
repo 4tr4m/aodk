@@ -153,7 +153,7 @@ const SearchPage = () => {
   }, [searchTimeout]);
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
       <div className="relative mb-8">
         <CategoryHeader />
         <div className="absolute top-0 left-0 w-full">
@@ -199,7 +199,7 @@ const SearchPage = () => {
           transition={{ delay: 0.2 }}
         >
           <CategoryNav
-            categories={kuchniaCategories.mainCategories}
+            categories={categories}
             currentSlug={currentCategory}
             onCategoryClick={handleCategoryClick}
           />

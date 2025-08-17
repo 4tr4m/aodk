@@ -1,11 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { kuchniaCategories } from '../../Data/category-data';
 import InfoModal from '../Pages/InfoModal';
+import categoryService from '../../services/categoryService';
 
 const Footer = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [firstColumnCategories, setFirstColumnCategories] = useState([]);
+  const [secondColumnCategories, setSecondColumnCategories] = useState([]);
   const navigate = useNavigate();
+
+  // Fetch categories from Supabase
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categories = await categoryService.getCategories();
+        if (categories && categories.length > 0) {
+          // Transform Supabase categories to match the expected format
+          const transformedCategories = categories.map(category => ({
+            label: category.name,
+            link: `/kuchnia/${category.slug || category.id}`,
+            shortDesc: category.description || ''
+          }));
+          
+          // Split categories into two groups for the footer columns
+          setFirstColumnCategories(transformedCategories.slice(0, 5));
+          setSecondColumnCategories(transformedCategories.slice(5, 10));
+        } else {
+          // Fallback to hardcoded categories
+          setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
+          setSecondColumnCategories(kuchniaCategories.mainCategories.slice(5, 10));
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        // Fallback to hardcoded categories
+        setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
+        setSecondColumnCategories(kuchniaCategories.mainCategories.slice(5, 10));
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleLinkClick = (link) => {
     // Navigate and pass scrollToTop state
@@ -15,10 +50,6 @@ const Footer = () => {
   const toggleInfoModal = () => {
     setShowInfoModal(!showInfoModal);
   };
-
-  // Split categories into two groups for the footer columns
-  const firstColumnCategories = kuchniaCategories.mainCategories.slice(0, 5);
-  const secondColumnCategories = kuchniaCategories.mainCategories.slice(5, 10);
 
   return (
     <div className="relative w-full">

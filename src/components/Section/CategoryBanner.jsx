@@ -256,7 +256,8 @@ const CategoryBanner = () => {
       try {
         const { data, error } = await supabase
           .from('categories')
-          .select('*');
+          .select('*')
+          .eq('flag', true);  // Only fetch categories where flag is TRUE
 
         if (error) {
           console.error("Error fetching categories:", error);

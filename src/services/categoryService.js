@@ -6,6 +6,7 @@ const categoryService = {
       const { data, error } = await supabase
         .from('categories')
         .select('*')
+        .eq('flag', true)  // Only fetch categories where flag is TRUE
         .order('id');
       if (error) throw error;
       return data || [];
