@@ -86,12 +86,14 @@ const RecipeGrid = ({ recipes }) => {
           </div>
 
           <div className="p-5 flex flex-col h-[230px]">
-            {/* Title and short description (stacked, uniform height) */}
-            <div className="flex flex-col items-center w-full mb-2 min-h-[64px] justify-center">
-              <h2 className="font-['Playfair_Display'] text-xl text-center mb-1 text-gray-800 leading-tight 
-                group-hover:text-[#2D3748] transition-colors duration-300 truncate w-11/12">
-                {recipe.name}
-              </h2>
+            {/* Title and short description (stacked, aligned) */}
+            <div className="flex flex-col items-center w-full mb-2 justify-center">
+              <div className="w-11/12 min-h-[48px] md:min-h-[56px] grid place-items-center">
+                <h2 className="font-['Playfair_Display'] text-xl text-center text-gray-800 leading-tight 
+                  group-hover:text-[#2D3748] transition-colors duration-300 w-full">
+                  {recipe.name}
+                </h2>
+              </div>
               <p className="text-gray-600 text-sm text-center font-['Lato'] truncate w-11/12">
                 {recipe.shortdesc || recipe.shortDesc}
               </p>
