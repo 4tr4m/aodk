@@ -437,7 +437,7 @@ const CategoryPage = () => {
         canonical={`https://autyzmkuchni.pl/kuchnia${categorySlug ? `/${categorySlug}` : ''}`}
       />
       <div className="relative mb-8">
-        <CategoryHeader />
+        <CategoryHeader showLogo={false} />
         <div className="absolute top-0 left-0 w-full">
           <TopNavBar />
         </div>
@@ -633,7 +633,7 @@ const CategoryPage = () => {
         </div>
       </motion.div>
 
-      <div className="sticky top-0 z-40 mb-6 shadow-md bg-gray-100">
+      <div className="sticky top-0 z-40 mb-6 bg-gray-100">
         <CategoryNav 
           categories={categories}
           currentSlug={categorySlug}

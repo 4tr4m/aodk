@@ -10,7 +10,7 @@ const BlogPage = () => {
     <div>
       {/* Mini hero section with TopNavBar */}
       <div className="relative">
-        <CategoryHeader />
+        <CategoryHeader showLogo={false} />
         <div className="absolute top-0 left-0 w-full">
           <TopNavBar />
         </div>

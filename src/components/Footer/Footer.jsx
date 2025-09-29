@@ -17,11 +17,22 @@ const Footer = () => {
         const categories = await categoryService.getCategories();
         if (categories && categories.length > 0) {
           // Transform Supabase categories to match the expected format
-          const transformedCategories = categories.map(category => ({
-            label: category.label,
-            link: `/kuchnia/${category.slug || category.id}`,
-            shortDesc: category.short_desc || ''
-          }));
+          const transformedCategories = categories.map(category => {
+            const raw = category.slug || category.label || String(category.id || '');
+            const slug = raw
+              .toString()
+              .trim()
+              .toLowerCase()
+              .replace(/\s+/g, '-')
+              .replace(/[^a-z0-9-]/g, '')
+              .replace(/-+/g, '-')
+              .replace(/^-|-$/g, '');
+            return {
+              label: category.label,
+              link: `/kuchnia/${slug}`,
+              shortDesc: category.short_desc || ''
+            };
+          });
           
           // Split categories into two groups for the footer columns
           setFirstColumnCategories(transformedCategories.slice(0, 5));
@@ -34,8 +45,8 @@ const Footer = () => {
       } catch (error) {
         console.error('Error fetching categories:', error);
         // Fallback to hardcoded categories
-        setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
-        setSecondColumnCategories(kuchniaCategories.mainCategories.slice(5, 10));
+          setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
+          setSecondColumnCategories(kuchniaCategories.mainCategories.slice(5, 10));
       }
     };
 
@@ -105,6 +116,15 @@ const Footer = () => {
                         </button>
                       </li>
                     ))}
+                    {/* Link to all categories */}
+                    <li className="w-full text-center lg:text-left pt-2">
+                      <button
+                        onClick={() => handleLinkClick('/kuchnia')}
+                        className="text-white font-semibold inline-flex items-center justify-center lg:justify-start px-3 py-2 rounded-md bg-green-600 hover:bg-green-500 transition-colors duration-200"
+                      >
+                        Wszystkie kategorie
+                      </button>
+                    </li>
                   </ul>
                 </div>
 

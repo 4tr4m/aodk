@@ -49,7 +49,7 @@ const ArticlePage = () => {
       />
       {/* Mini hero section with TopNavBar */}
       <div className="relative">
-        <CategoryHeader />
+        <CategoryHeader showLogo={false} />
         <div className="absolute top-0 left-0 w-full">
           <TopNavBar />
         </div>
@@ -62,9 +62,10 @@ const ArticlePage = () => {
           <div className="mb-8">
             <Link 
               to="/blog" 
-              className="text-gray-600 hover:text-[#2D3748] transition-colors duration-300"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 rounded-lg transition-all duration-200 group"
             >
-              ← Wróć do bloga
+              <span className="text-lg group-hover:-translate-x-1 transition-transform duration-200">←</span>
+              <span className="font-medium">Wróć do bloga</span>
             </Link>
           </div>
 

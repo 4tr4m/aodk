@@ -16,7 +16,7 @@ const HistoriaOMnie = () => {
         canonical="https://autyzmkuchni.pl/o-mnie"
       />
       <div className="relative mb-8">
-        <CategoryHeader />
+        <CategoryHeader showLogo={false} />
         <div className="absolute top-0 left-0 w-full">
           <TopNavBar />
         </div>

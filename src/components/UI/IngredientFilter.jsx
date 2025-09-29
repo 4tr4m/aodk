@@ -38,7 +38,6 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         selectedIngredients.map(ing => recipeService.getRecipesByIngredient(ing.name))
       );
       const base = allRecipes[0] || [];
-      const baseIds = new Set(base.map(r => r.id));
       const common = base.filter(r =>
         Array.isArray(allRecipes) && allRecipes.every(list => Array.isArray(list) && list.some(x => x.id === r.id))
       );

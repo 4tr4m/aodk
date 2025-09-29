@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const CategoryHeader = () => {
+const CategoryHeader = ({ showLogo = true }) => {
   return (
     <div className="relative h-[110px] overflow-hidden">
       {/* Background */}
@@ -23,18 +23,20 @@ const CategoryHeader = () => {
       {/* Content container */}
       <div className="relative z-10 max-w-7xl mx-auto px-5 h-full">
         <div className="flex items-center justify-between h-full py-2">
-          {/* Logo Section */}
-          <Link 
-            to="/"
-            className="transform transition-all duration-300 hover:scale-105 hover:-rotate-2 relative group"
-          >
-            <div className="absolute inset-0 bg-black/20 rounded-full blur-xl scale-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <img 
-              src="/img/logo.png" 
-              alt="Autyzm od kuchni" 
-              className="h-14 w-auto object-contain relative z-10"
-            />
-          </Link>
+          {/* Logo Section (optional to avoid duplicate with TopNavBar) */}
+          {showLogo && (
+            <Link 
+              to="/"
+              className="transform transition-all duration-300 hover:scale-105 hover:-rotate-2 relative group"
+            >
+              <div className="absolute inset-0 bg-black/20 rounded-full blur-xl scale-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <img 
+                src="/img/logo.png" 
+                alt="Autyzm od kuchni" 
+                className="h-14 w-auto object-contain relative z-10"
+              />
+            </Link>
+          )}
 
           {/* Navigation icons on the right - optional */}
           <div className="flex items-center gap-6">

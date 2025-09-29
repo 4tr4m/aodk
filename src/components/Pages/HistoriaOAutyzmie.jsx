@@ -29,7 +29,7 @@ const HistoriaOAutyzmie = () => {
         canonical="https://autyzmkuchni.pl/o-autyzmie"
       />
       <div className="relative mb-8">
-        <CategoryHeader />
+        <CategoryHeader showLogo={false} />
         <div className="absolute top-0 left-0 w-full">
           <TopNavBar />
         </div>
