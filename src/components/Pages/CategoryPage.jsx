@@ -714,6 +714,7 @@ const CategoryPage = () => {
         selectedIngredient={selectedIngredient}
         position="left"
         compact={true}
+        onClear={handleIngredientFilterClose}
       />
 
       <Footer />

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiFilter, FiX, FiSearch } from 'react-icons/fi';
 import recipeService from '../../services/recipeService';
 
-const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngredient: initialSelectedIngredient, position = "right", excludeNames = [], compact = false }) => {
+const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngredient: initialSelectedIngredient, position = "right", excludeNames = [], compact = false, onClear }) => {
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -11,6 +11,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
   const [selectedIngredients, setSelectedIngredients] = useState([]);
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [isFiltering, setIsFiltering] = useState(false);
+  const suppressAutoSearchRef = React.useRef(false);
 
   // Set selected ingredient when passed as prop (run only when the value changes meaningfully)
   useEffect(() => {
@@ -123,6 +124,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
   // Auto-search when selected ingredient changes and ingredients are loaded (guard against loops)
   const hasAutoSearchedRef = React.useRef(false);
   useEffect(() => {
+    if (suppressAutoSearchRef.current) return;
     if (!initialSelectedIngredient || ingredients.length === 0) return;
     if (hasAutoSearchedRef.current && selectedIngredient && selectedIngredient.name?.toLowerCase() === initialSelectedIngredient.name?.toLowerCase()) {
       return;
@@ -142,11 +144,13 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
 
   // Clear filter
   const clearFilter = () => {
+    suppressAutoSearchRef.current = true; // prevent re-triggering auto-search from URL param
     setSelectedIngredient(null);
     setSelectedIngredients([]);
     setFilteredRecipes([]);
     setSearchTerm('');
     onRecipesFiltered(null, null);
+    if (typeof onClear === 'function') onClear();
   };
 
   // Animation variants
