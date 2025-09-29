@@ -13,6 +13,45 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
   const [isFiltering, setIsFiltering] = useState(false);
   const suppressAutoSearchRef = React.useRef(false);
 
+  // Apply search for currently selected ingredients and close filter
+  const handleApplySearch = useCallback(async () => {
+    try {
+      setIsFiltering(true);
+      if (selectedIngredients.length === 0) {
+        setFilteredRecipes([]);
+        onRecipesFiltered([], null);
+        if (typeof onClose === 'function') onClose();
+        return;
+      }
+
+      if (selectedIngredients.length === 1) {
+        const name = selectedIngredients[0].name;
+        const recipes = await recipeService.getRecipesByIngredient(name);
+        setFilteredRecipes(recipes);
+        onRecipesFiltered(recipes, name);
+        if (typeof onClose === 'function') onClose();
+        return;
+      }
+
+      // Multiple ingredients → intersection of recipe ids
+      const allRecipes = await Promise.all(
+        selectedIngredients.map(ing => recipeService.getRecipesByIngredient(ing.name))
+      );
+      const base = allRecipes[0] || [];
+      const baseIds = new Set(base.map(r => r.id));
+      const common = base.filter(r =>
+        Array.isArray(allRecipes) && allRecipes.every(list => Array.isArray(list) && list.some(x => x.id === r.id))
+      );
+      setFilteredRecipes(common);
+      onRecipesFiltered(common, selectedIngredients.map(i => i.name).join(', '));
+      if (typeof onClose === 'function') onClose();
+    } catch (err) {
+      console.error('Error applying ingredient filter:', err);
+    } finally {
+      setIsFiltering(false);
+    }
+  }, [selectedIngredients, onRecipesFiltered, onClose]);
+
   // Set selected ingredient when passed as prop (run only when the value changes meaningfully)
   useEffect(() => {
     if (!initialSelectedIngredient) return;
@@ -330,8 +369,8 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
           )}
         </div>
 
-        {/* Footer */}
-        <div className="p-3 sm:p-4 border-t border-gray-200 bg-gray-50">
+        {/* Footer (desktop) */}
+        <div className="hidden sm:block p-3 sm:p-4 border-t border-gray-200 bg-gray-50">
           <p className="text-xs text-gray-500 text-center">
             {selectedIngredients.length > 1 ? (
               <span>Znajdź przepisy zawierające <strong>wszystkie</strong> wybrane składniki</span>
@@ -341,6 +380,21 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
               <span>Kliknij na składnik, aby zobaczyć przepisy</span>
             )}
           </p>
+        </div>
+
+        {/* Sticky action (mobile) */}
+        <div className="sm:hidden sticky bottom-0 bg-white border-t border-gray-200 p-3">
+          <button
+            onClick={handleApplySearch}
+            disabled={selectedIngredients.length === 0 || isFiltering}
+            className={`w-full py-2.5 rounded-lg text-white text-sm font-semibold transition-colors ${
+              selectedIngredients.length === 0 || isFiltering
+                ? 'bg-green-300 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700'
+            }`}
+          >
+            {isFiltering ? 'Wyszukiwanie...' : `Wyszukaj (${selectedIngredients.length || 0})`}
+          </button>
         </div>
       </motion.div>
     </AnimatePresence>
