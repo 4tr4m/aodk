@@ -14,7 +14,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 const SearchPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const pageRef = useRef(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -199,7 +198,7 @@ const SearchPage = () => {
           transition={{ delay: 0.2 }}
         >
           <CategoryNav
-            categories={categories}
+            categories={kuchniaCategories.mainCategories}
             currentSlug={currentCategory}
             onCategoryClick={handleCategoryClick}
           />

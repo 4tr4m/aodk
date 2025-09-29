@@ -16,23 +16,17 @@
  * - Handles image credits and category display.
  */
 
-import React, { useState } from 'react';
-import ProductModal from '../ProductModal/ProductModal';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FiClock, FiArrowRight, FiAward } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 
 const RecipeGrid = ({ recipes }) => {
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const navigate = useNavigate();
 
-  // When a recipe card is clicked, scroll to top and open modal after a short delay
+  // When a recipe card is clicked, navigate to the recipe page
   const handleRecipeClick = (recipe) => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-    setTimeout(() => {
-      setSelectedRecipe(recipe);
-    }, 800);
+    navigate(`/przepis/${recipe.id}`);
   };
 
   // Animation variants for the grid and cards
@@ -155,12 +149,6 @@ const RecipeGrid = ({ recipes }) => {
         </motion.article>
       ))}
 
-      {selectedRecipe && (
-        <ProductModal 
-          product={selectedRecipe} 
-          onClose={() => setSelectedRecipe(null)} 
-        />
-      )}
     </motion.div>
   );
 };

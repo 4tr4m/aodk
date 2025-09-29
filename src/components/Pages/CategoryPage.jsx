@@ -13,6 +13,8 @@ import { FaSearch } from 'react-icons/fa';
 import searchService from '../../services/searchService';
 import SEO from '../SEO/SEO';
 import categoryService from '../../services/categoryService';
+import recipeService from '../../services/recipeService';
+import IngredientFilter from '../UI/IngredientFilter';
 
 // SearchIcon component taken from CategoryBanner
 const SearchIcon = ({ toggleSearch }) => {
@@ -77,6 +79,12 @@ const CategoryPage = () => {
   const searchTimeoutRef = useRef(null);
   const [showDescription, setShowDescription] = useState(false);
 
+  // Ingredient filter states
+  const [isIngredientFilterVisible, setIsIngredientFilterVisible] = useState(false);
+  const [filteredRecipes, setFilteredRecipes] = useState(null);
+  const [activeFilter, setActiveFilter] = useState(null);
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
+
   // State for occasional toggle button attention animation
   const [highlightToggle, setHighlightToggle] = useState(false);
 
@@ -85,6 +93,33 @@ const CategoryPage = () => {
       setLoading(false);
     }
   }, [state.isLoading]);
+
+  // Handle URL parameter for ingredient filtering
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const ingredientParam = urlParams.get('ingredient');
+    
+    if (ingredientParam) {
+      // Open the ingredient filter and automatically search for the ingredient
+      setIsIngredientFilterVisible(true);
+      
+      // Automatically search for recipes with this ingredient
+      const searchForIngredient = async () => {
+        try {
+          const recipes = await recipeService.getRecipesByIngredient(ingredientParam);
+          setFilteredRecipes(recipes);
+          setActiveFilter(ingredientParam);
+          
+          // Set the selected ingredient for the filter
+          setSelectedIngredient({ name: ingredientParam });
+        } catch (error) {
+          console.error('Error searching for ingredient from URL:', error);
+        }
+      };
+      
+      searchForIngredient();
+    }
+  }, [location.search]);
 
   const handleCategoryClick = useCallback((categoryLink) => {
     if (location.pathname !== categoryLink) {
@@ -124,9 +159,21 @@ const CategoryPage = () => {
 
   const getCurrentCategory = () => {
     if (!categorySlug) return null;
-    return kuchniaCategories.mainCategories.find(cat => 
+    
+    // First try to find in hardcoded categories
+    const hardcodedCategory = kuchniaCategories.mainCategories.find(cat => 
       cat.link.split('/').pop() === categorySlug
     );
+    
+    if (hardcodedCategory) return hardcodedCategory;
+    
+    // If not found in hardcoded, create a dynamic category based on the slug
+    // This handles cases where the category comes from Supabase
+    return {
+      label: categorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      link: `/kuchnia/${categorySlug}`,
+      shortDesc: ''
+    };
   };
 
   const currentCategory = getCurrentCategory();
@@ -136,10 +183,43 @@ const CategoryPage = () => {
       return Object.values(state.allRecipes).flat();
     }
     
-    if (!currentCategory) return [];
     
-    const categoryKey = currentCategory.label;
-    return state.allRecipes[categoryKey] || [];
+    // Create a mapping of slugs to category keys
+    const slugToKeyMap = {
+      'obiady': 'OBIADY',
+      'zupy': 'ZUPY', 
+      'chleby': 'CHLEBY',
+      'smarowidla': 'SMAROWIDŁA',
+      'desery': 'DESERY',
+      'babeczki-muffiny': 'BABECZKI i MUFFINY',
+      'babeczki-i-muffiny': 'BABECZKI i MUFFINY',
+      'ciasta': 'CIASTA',
+      'ciastka': 'CIASTKA',
+      'smoothie': 'SMOOTHIE',
+      'inne': 'INNE',
+      'swieta': 'ŚWIĘTA'
+    };
+    
+    // First try direct mapping
+    let categoryKey = slugToKeyMap[categorySlug];
+    
+    // If no direct mapping, try fuzzy matching
+    if (!categoryKey) {
+      categoryKey = Object.keys(state.allRecipes).find(key => {
+        // Convert both to lowercase and replace spaces/special chars for comparison
+        const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const normalizedSlug = categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return normalizedKey.includes(normalizedSlug) || normalizedSlug.includes(normalizedKey);
+      });
+    }
+    
+    if (categoryKey) {
+      const recipes = state.allRecipes[categoryKey] || [];
+      return recipes;
+    }
+    
+    // Fallback: return empty array if no match found
+    return [];
   };
 
   const categoryRecipes = getCategoryRecipes();
@@ -221,10 +301,52 @@ const CategoryPage = () => {
     if (suggestion && suggestion.original) {
       // Navigate to search page with the suggestion name as query
       navigate(`/search?q=${encodeURIComponent(suggestion.name)}`);
-      setIsSearching(false);
-      setSuggestions([]);
     }
   }, [navigate]);
+
+  // Ingredient filter functions
+  // Remove ?ingredient from URL
+  const removeIngredientQueryParam = useCallback(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.has('ingredient')) {
+      params.delete('ingredient');
+      navigate({ pathname: location.pathname, search: params.toString() }, { replace: true });
+    }
+  }, [location.pathname, location.search, navigate]);
+
+  const handleIngredientFilterClose = useCallback(() => {
+    setIsIngredientFilterVisible(false);
+    setFilteredRecipes(null);
+    setActiveFilter(null);
+    setSelectedIngredient(null);
+    removeIngredientQueryParam();
+  }, [removeIngredientQueryParam]);
+
+  const toggleIngredientFilter = useCallback(() => {
+    setIsIngredientFilterVisible(prev => !prev);
+    if (isIngredientFilterVisible) {
+      // Clear filter when closing
+      handleIngredientFilterClose();
+    }
+  }, [isIngredientFilterVisible, handleIngredientFilterClose]);
+
+  const handleRecipesFiltered = useCallback((recipes, ingredientName) => {
+    if (recipes) {
+      setFilteredRecipes(recipes);
+      setActiveFilter(ingredientName);
+    } else {
+      setFilteredRecipes(null);
+      setActiveFilter(null);
+    }
+  }, []);
+
+  // Get recipes to display (either filtered or category recipes)
+  const getDisplayRecipes = () => {
+    if (filteredRecipes) {
+      return filteredRecipes;
+    }
+    return categoryRecipes;
+  };
 
   // Handle search submission
   const handleSearchSubmit = useCallback((searchTerm) => {
@@ -333,17 +455,61 @@ const CategoryPage = () => {
           <AnimatePresence mode="wait" initial={false}>
             {!isSearching ? (
               <motion.div
-                key="title-container"
+                key="category-title"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="flex items-center justify-center gap-3 sm:gap-4 flex-nowrap w-full px-4"
+                className="flex items-center justify-center gap-4 sm:gap-6 flex-nowrap w-full px-4"
               >
+                {/* Ingredient Filter Button - Left of H1 */}
+                <motion.button
+                  onClick={toggleIngredientFilter}
+                  className="relative select-none px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 z-20 flex items-center gap-2 group"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ scale: 1 }}
+                  animate={isIngredientFilterVisible ? 
+                    { 
+                      scale: [1, 1.05, 1],
+                      transition: { 
+                        repeat: Infinity, 
+                        repeatType: "loop", 
+                        duration: 2,
+                        ease: "easeInOut"
+                      }
+                    } : {}
+                  }
+                >
+                  <div className="relative flex items-center justify-center">
+                    <div 
+                      className="absolute inset-0 rounded-xl animate-ping opacity-30" 
+                      style={{
+                        background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%)',
+                        transform: 'scale(1.2)',
+                        animationDuration: '3s',
+                      }}
+                    ></div>
+                    
+                    <svg 
+                      className="w-5 h-5 text-white transition-transform duration-300 group-hover:rotate-12" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                    <span className="font-medium text-sm sm:text-base hidden sm:inline-block ml-1">
+                      Filtruj składniki
+                    </span>
+                  </div>
+                </motion.button>
+
                 <h1 className="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#2D3748] font-bold tracking-wide text-center break-words flex-shrink">
                   {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
                 </h1>
-                <div className="flex-shrink-0">
+                
+                <div className="flex-shrink-0 flex items-center gap-3">
                   <SearchIcon toggleSearch={toggleSearch} />
                 </div>
               </motion.div>
@@ -469,7 +635,7 @@ const CategoryPage = () => {
 
       <div className="sticky top-0 z-40 mb-6 shadow-md bg-gray-100">
         <CategoryNav 
-          categories={categories.filter(cat => cat.image)}
+          categories={categories}
           currentSlug={categorySlug}
           onCategoryClick={handleCategoryClick}
         />
@@ -482,12 +648,38 @@ const CategoryPage = () => {
         transition={{ delay: 0.3, duration: 0.5 }}
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8">
+          {/* Active filter info */}
+          {activeFilter && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <span className="text-green-800 font-medium">
+                    Filtrowanie po składniku: {activeFilter}
+                  </span>
+                  <span className="text-green-600 text-sm">
+                    ({filteredRecipes?.length || 0} przepisów)
+                  </span>
+                </div>
+                <button
+                  onClick={handleIngredientFilterClose}
+                  className="px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Wyczyść filtr
+                </button>
+              </div>
+            </motion.div>
+          )}
+
           <div className="mb-8 text-center">
             <span className="font-['Lato'] text-lg text-gray-600">
               {loading ? (
                 "Ładowanie przepisów..."
               ) : (
-                <>Znalezione przepisy: <strong>{categoryRecipes.length}</strong></>
+                <>Znalezione przepisy: <strong>{getDisplayRecipes().length}</strong></>
               )}
             </span>
           </div>
@@ -498,18 +690,31 @@ const CategoryPage = () => {
                 <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600 mb-4"></div>
                 <p className="text-gray-600 text-lg">Ładowanie przepisów...</p>
               </div>
-            ) : categoryRecipes.length > 0 ? (
-              <RecipeGrid recipes={categoryRecipes} />
+            ) : getDisplayRecipes().length > 0 ? (
+              <RecipeGrid recipes={getDisplayRecipes()} />
             ) : (
               <div className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-xl shadow-sm">
                 <p className="text-gray-600 text-lg font-['Lato']">
-                  Nie znaleziono przepisów w tej kategorii.
+                  {activeFilter 
+                    ? `Nie znaleziono przepisów zawierających składnik "${activeFilter}".`
+                    : "Nie znaleziono przepisów w tej kategorii."
+                  }
                 </p>
               </div>
             )}
           </div>
         </div>
       </motion.main>
+
+      {/* Ingredient Filter Sidebar - Left Side */}
+      <IngredientFilter
+        isVisible={isIngredientFilterVisible}
+        onClose={handleIngredientFilterClose}
+        onRecipesFiltered={handleRecipesFiltered}
+        selectedIngredient={selectedIngredient}
+        position="left"
+        compact={true}
+      />
 
       <Footer />
     </div>

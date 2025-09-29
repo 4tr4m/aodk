@@ -11,6 +11,7 @@ import HistoriaOMnie from './components/Pages/HistoriaOMnie';
 import HistoriaOAutyzmie from './components/Pages/HistoriaOAutyzmie';
 import ZnajdkiPage from './components/Pages/ZnajdkiPage';
 import ZnajdkiProductPage from './components/Pages/ZnajdkiProductPage';
+import RecipePage from './components/Pages/RecipePage';
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -40,6 +41,7 @@ const App = () => {
           <Route path="/historia/o-autyzmie" element={<HistoriaOAutyzmie />} />
           <Route path="/znajdki" element={<ZnajdkiPage />} />
           <Route path="/znajdki/:id" element={<ZnajdkiProductPage />} />
+          <Route path="/przepis/:recipeId" element={<RecipePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

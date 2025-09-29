@@ -254,10 +254,10 @@ const CategoryBanner = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data, error } = await supabase
+        const { data: categories, error } = await supabase
           .from('categories')
           .select('*')
-          .eq('flag', true);  // Only fetch categories where flag is TRUE
+          .order('display_name');
 
         if (error) {
           console.error("Error fetching categories:", error);
@@ -267,7 +267,7 @@ const CategoryBanner = () => {
         }
 
         // Filter categories to only include those with images
-        const items = data
+        const items = categories
           .filter(category => category.image_path)
           .map(category => ({
             id: category.id,

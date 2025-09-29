@@ -18,9 +18,9 @@ const Footer = () => {
         if (categories && categories.length > 0) {
           // Transform Supabase categories to match the expected format
           const transformedCategories = categories.map(category => ({
-            label: category.name,
+            label: category.label,
             link: `/kuchnia/${category.slug || category.id}`,
-            shortDesc: category.description || ''
+            shortDesc: category.short_desc || ''
           }));
           
           // Split categories into two groups for the footer columns
@@ -94,8 +94,8 @@ const Footer = () => {
                     Przepisy
                   </h4>
                   <ul className="space-y-4 flex flex-col items-center lg:items-start">
-                    {firstColumnCategories.map((category) => (
-                      <li key={category.label} className="w-full text-center lg:text-left">
+                    {firstColumnCategories.map((category, index) => (
+                      <li key={`first-${category.label}-${index}`} className="w-full text-center lg:text-left">
                         <button 
                           onClick={() => handleLinkClick(category.link)}
                           className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group"
@@ -114,8 +114,8 @@ const Footer = () => {
                     Więcej przepisów
                   </h4>
                   <ul className="space-y-4 flex flex-col items-center lg:items-start">
-                    {secondColumnCategories.map((category) => (
-                      <li key={category.label} className="w-full text-center lg:text-left">
+                    {secondColumnCategories.map((category, index) => (
+                      <li key={`second-${category.label}-${index}`} className="w-full text-center lg:text-left">
                         <button 
                           onClick={() => handleLinkClick(category.link)}
                           className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group"

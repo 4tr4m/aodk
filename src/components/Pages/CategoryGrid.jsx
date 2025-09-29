@@ -175,6 +175,12 @@ const CategoryGrid = ({ items, isHomePage = false, isSecondRow = false, showView
                 >
                   {item.name}
                 </motion.h2>
+                {/* Short description under the title (replaces tags) */}
+                {(item.shortdesc || item.shortDesc) && (
+                  <p className="font-['Lato'] text-gray-600 text-sm md:text-base leading-relaxed mb-2 line-clamp-2">
+                    {item.shortdesc || item.shortDesc}
+                  </p>
+                )}
                 
                 {/* View Button for recipe page if needed */}
                 {showViewButton && (
