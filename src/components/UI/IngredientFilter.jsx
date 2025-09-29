@@ -195,7 +195,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
   const containerVariants = {
     hidden: { 
       opacity: 0, 
-      x: position === "left" ? '-100%' : '100%' 
+      x: position === "left" ? '-100%' : '100%'
     },
     visible: { 
       opacity: 1, 
@@ -226,7 +226,19 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
 
   return (
     <AnimatePresence>
+      {/* Backdrop to close on outside click */}
       <motion.div
+        key="backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/40 z-40"
+        onClick={onClose}
+      />
+
+      {/* Sidebar panel */}
+      <motion.div
+        key="panel"
         className={`fixed inset-y-0 w-full ${compact ? 'sm:w-64' : 'sm:w-80'} bg-white shadow-2xl z-50 overflow-hidden flex flex-col ${
           position === "left" ? "left-0" : "right-0"
         }`}
@@ -234,6 +246,8 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         initial="hidden"
         animate="visible"
         exit="exit"
+        // prevent backdrop click when interacting inside panel
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-3 sm:p-4">
@@ -369,8 +383,8 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         </div>
 
         {/* Footer (desktop) */}
-        <div className="hidden sm:block p-3 sm:p-4 border-t border-gray-200 bg-gray-50">
-          <p className="text-xs text-gray-500 text-center">
+        <div className="hidden sm:flex p-3 sm:p-4 border-t border-gray-200 bg-gray-50 items-center gap-3">
+          <p className="text-xs text-gray-500 flex-1">
             {selectedIngredients.length > 1 ? (
               <span>Znajdź przepisy zawierające <strong>wszystkie</strong> wybrane składniki</span>
             ) : selectedIngredients.length === 1 ? (
@@ -379,6 +393,17 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
               <span>Kliknij na składnik, aby zobaczyć przepisy</span>
             )}
           </p>
+          <button
+            onClick={handleApplySearch}
+            disabled={selectedIngredients.length === 0 || isFiltering}
+            className={`px-4 py-2 rounded-lg text-white text-sm font-semibold transition-colors ${
+              selectedIngredients.length === 0 || isFiltering
+                ? 'bg-green-300 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700'
+            }`}
+          >
+            {isFiltering ? 'Wyszukiwanie...' : `Wyszukaj (${selectedIngredients.length || 0})`}
+          </button>
         </div>
 
         {/* Sticky action (mobile) */}
