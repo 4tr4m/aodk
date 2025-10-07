@@ -4,60 +4,84 @@ import { kuchniaCategories } from '../../Data/category-data';
 import InfoModal from '../Pages/InfoModal';
 import categoryService from '../../services/categoryService';
 
+/*
+  Footer component
+  - Renders the site footer with two columns of recipe categories and a contact column
+  - Categories are fetched from Supabase with a safe fallback to static data
+  - Clicking the logo opens an informational modal
+  - All links navigate with state { scrollToTop: true }
+
+  Used by pages/components:
+  - src/pages/HomePage.jsx
+  - src/components/Pages/Blog.jsx
+  - src/components/Pages/CategoryPage.jsx
+  - src/components/Pages/ContactPage.jsx
+  - src/components/Pages/HistoriaOAutyzmie.jsx
+  - src/components/Pages/HistoriaOMnie.jsx
+  - src/components/Pages/SearchPage.jsx
+  - src/components/Pages/Wiedza.jsx
+  - src/components/Pages/ZnajdkiPage.jsx
+  - src/components/Pages/ZnajdkiProductPage.jsx
+  - src/components/Pages/RecipePage.jsx
+  - src/components/Pages/Wishlist.jsx (present but commented out)
+*/
+
+// Small helpers kept local to this file for clarity
+const slugify = (value) =>
+  value
+    .toString()
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+
+const transformCategory = (category) => {
+  const base = category.slug || category.label || String(category.id || '');
+  const slug = slugify(base);
+  return {
+    label: category.label || slug,
+    link: `/kuchnia/${slug}`,
+    shortDesc: category.short_desc || ''
+  };
+};
+
 const Footer = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [firstColumnCategories, setFirstColumnCategories] = useState([]);
-  const [secondColumnCategories, setSecondColumnCategories] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch categories from Supabase
+  // Fetch categories from Supabase; fallback to static categories if unavailable
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const categories = await categoryService.getCategories();
         if (categories && categories.length > 0) {
-          // Transform Supabase categories to match the expected format
-          const transformedCategories = categories.map(category => {
-            const raw = category.slug || category.label || String(category.id || '');
-            const slug = raw
-              .toString()
-              .trim()
-              .toLowerCase()
-              .replace(/\s+/g, '-')
-              .replace(/[^a-z0-9-]/g, '')
-              .replace(/-+/g, '-')
-              .replace(/^-|-$/g, '');
-            return {
-              label: category.label,
-              link: `/kuchnia/${slug}`,
-              shortDesc: category.short_desc || ''
-            };
-          });
-          
-          // Split categories into two groups for the footer columns
+          // Normalize Supabase categories to the footer's expected shape
+          const transformedCategories = categories.map(transformCategory);
+          // Only first 5 for the Przepisy column
           setFirstColumnCategories(transformedCategories.slice(0, 5));
-          setSecondColumnCategories(transformedCategories.slice(5, 10));
         } else {
           // Fallback to hardcoded categories
           setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
-          setSecondColumnCategories(kuchniaCategories.mainCategories.slice(5, 10));
         }
       } catch (error) {
         console.error('Error fetching categories:', error);
-        // Fallback to hardcoded categories
-          setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
-          setSecondColumnCategories(kuchniaCategories.mainCategories.slice(5, 10));
+        // Fallback to hardcoded categories on error
+        setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
       }
     };
 
     fetchCategories();
   }, []);
 
+  // Programmatic navigation helper; ensures top-of-page scroll on arrival
   const handleLinkClick = (link) => {
-    // Navigate and pass scrollToTop state
     navigate(link, { state: { scrollToTop: true } });
   };
 
+  // Toggle the info modal (opened via clicking the logo)
   const toggleInfoModal = () => {
     setShowInfoModal(!showInfoModal);
   };
@@ -65,6 +89,7 @@ const Footer = () => {
   return (
     <div className="relative w-full">
       <div className="relative pb-20">
+        {/* Background hero image with dark overlay behind the footer content */}
         <div 
           className="absolute inset-0 bg-cover bg-center"
           style={{
@@ -83,7 +108,10 @@ const Footer = () => {
               className="cursor-pointer group relative transform hover:scale-105 transition-all duration-300"
               role="button"
               tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && toggleInfoModal()}
+              onKeyDown={(e) => {
+                // Support keyboard activation (Enter + Space)
+                if (e.key === 'Enter' || e.key === ' ') toggleInfoModal();
+              }}
               aria-label="Open Info Modal"
             >
               <div className="absolute inset-0 bg-white/20 rounded-full blur-xl scale-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -98,7 +126,7 @@ const Footer = () => {
             </div>
 
             <nav className="flex-1 lg:ml-16 w-full">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 lg:gap-12">
                 {/* First Column - Main Categories */}
                 <div className="space-y-6">
                   <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left">
@@ -128,26 +156,6 @@ const Footer = () => {
                   </ul>
                 </div>
 
-                {/* Second Column - More Categories */}
-                <div className="space-y-6">
-                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left">
-                    Więcej przepisów
-                  </h4>
-                  <ul className="space-y-4 flex flex-col items-center lg:items-start">
-                    {secondColumnCategories.map((category, index) => (
-                      <li key={`second-${category.label}-${index}`} className="w-full text-center lg:text-left">
-                        <button 
-                          onClick={() => handleLinkClick(category.link)}
-                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group"
-                        >
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2">→</span>
-                          {category.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
                 {/* Third Column - Contact Links */}
                 <div className="space-y-6">
                   <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left">
@@ -169,6 +177,15 @@ const Footer = () => {
                         </button>
                       </li>
                     ))}
+                    {/* Duplicate "all categories" CTA under Contact per requirement */}
+                    <li className="w-full text-center lg:text-left pt-2">
+                      <button
+                        onClick={() => handleLinkClick('/kuchnia')}
+                        className="text-white font-semibold inline-flex items-center justify-center lg:justify-start px-3 py-2 rounded-md bg-green-600 hover:bg-green-500 transition-colors duration-200"
+                      >
+                        Wszystkie kategorie
+                      </button>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -177,6 +194,7 @@ const Footer = () => {
         </div>
       </div>
 
+      {/* Bottom mask to blend the footer into the rest of the page */}
       <div 
         className="absolute bottom-0 left-0 w-full h-48"
         style={{
@@ -188,6 +206,7 @@ const Footer = () => {
         }}
       />
 
+      {/* Info modal controlled by logo click */}
       <InfoModal isOpen={showInfoModal} togglePopup={toggleInfoModal} />
     </div>
   );
