@@ -144,13 +144,13 @@ const Footer = () => {
                   <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center tracking-wide">
                     Przepisy
                   </h4>
-                  <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
+                  <div className="mt-6 flex flex-col sm:flex-row items-start justify-center gap-6 sm:gap-8">
                     <ul className="space-y-3 flex flex-col items-center sm:items-start">
                       {firstColumnCategories.map((category, index) => (
-                        <li key={`first-${category.label}-${index}`} className="w-full text-center sm:text-left">
+                        <li key={`first-${category.label}-${index}`} className="text-center sm:text-left">
                           <button 
                             onClick={() => handleLinkClick(category.link)}
-                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start w-full group text-sm sm:text-base font-medium tracking-wide"
+                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start group text-sm sm:text-base font-medium tracking-wide"
                           >
                             <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                             {category.label}
@@ -160,10 +160,10 @@ const Footer = () => {
                     </ul>
                     <ul className="space-y-3 flex flex-col items-center sm:items-start mt-6 sm:mt-0">
                       {secondColumnCategories.map((category, index) => (
-                        <li key={`second-${category.label}-${index}`} className="w-full text-center sm:text-left">
+                        <li key={`second-${category.label}-${index}`} className="text-center sm:text-left">
                           <button 
                             onClick={() => handleLinkClick(category.link)}
-                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start w-full group text-sm sm:text-base font-medium tracking-wide"
+                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start group text-sm sm:text-base font-medium tracking-wide"
                           >
                             <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                             {category.label}
