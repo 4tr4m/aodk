@@ -9,6 +9,8 @@ import SEO from '../SEO/SEO';
 import TopNavBar from '../Headers/TopNavBar';
 import CategoryHeader from './CategoryHeader';
 import Footer from '../Footer/Footer';
+import ProductNewsletter from '../ProductModal/ProductNewsletter';
+import emailjs from '@emailjs/browser';
 
 const RecipePage = () => {
   const { recipeId } = useParams();
@@ -18,6 +20,10 @@ const RecipePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isInWishlist, setIsInWishlist] = useState(false);
+  const [newsletterName, setNewsletterName] = useState("");
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
+  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -90,6 +96,39 @@ const RecipePage = () => {
     } else {
       // Fallback to copying URL
       navigator.clipboard.writeText(window.location.href);
+    }
+  };
+
+  // EmailJS (same config as ProductModal)
+  const EMAILJS_PUBLIC_KEY = "0f8Jce-Gsw4GbjCQ_";
+  const EMAILJS_SERVICE_ID = "service_m4uai4d";
+  const EMAILJS_TEMPLATE_ID = "template_r7rcz39";
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    setNewsletterSubmitting(true);
+    try {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          title: "Newsletter Subscription",
+          name: newsletterName,
+          email: newsletterEmail,
+          message: `Nowy użytkownik zapisał się do newslettera. Email: ${newsletterEmail}`,
+          time: new Date().toLocaleString(),
+        }
+      );
+      setNewsletterSubmitted(true);
+      setNewsletterName("");
+      setNewsletterEmail("");
+      setTimeout(() => setNewsletterSubmitted(false), 3000);
+    } catch (error) {
+      alert("Wystąpił błąd podczas zapisu do newslettera. Spróbuj ponownie później.");
+      console.error("Newsletter subscription error:", error);
+    } finally {
+      setNewsletterSubmitting(false);
     }
   };
 
@@ -377,6 +416,57 @@ const RecipePage = () => {
 
               {/* Podstawowe składniki (interactive tags) moved to the bottom */}
               <ProductBaseIngredients recipe={recipe} />
+
+              {/* Bases & Spices (now under Podstawowe składniki) */}
+              {(() => {
+                const baseText = (recipe.base || recipe.bases || recipe.podstawa || '').toString();
+                const spicesText = (recipe.spices || recipe.przyprawy || '').toString();
+                const hasAny = baseText.trim().length > 0 || spicesText.trim().length > 0;
+                return hasAny;
+              })() && (
+                <div className="mt-8 pt-6 border-t border-gray-200">
+                  <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display']">Podstawa i Przyprawy</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Podstawa</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {(recipe.base || recipe.bases || recipe.podstawa || '')
+                          .toString()
+                          .split(',')
+                          .map(i => i.trim())
+                          .filter(Boolean)
+                          .map((i, idx) => (
+                          <span key={idx} className="px-3 py-1 rounded-full text-sm bg-white text-gray-700 border border-gray-200">{i}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Przyprawy</h3>
+                      <div className="flex flex-wrap gap-2">
+                        {(recipe.spices || recipe.przyprawy || '')
+                          .toString()
+                          .split(',')
+                          .map(i => i.trim())
+                          .filter(Boolean)
+                          .map((i, idx) => (
+                          <span key={idx} className="px-3 py-1 rounded-full text-sm bg-white text-gray-700 border border-gray-200">{i}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Newsletter at the very bottom */}
+              <ProductNewsletter
+                newsletterName={newsletterName}
+                setNewsletterName={setNewsletterName}
+                newsletterEmail={newsletterEmail}
+                setNewsletterEmail={setNewsletterEmail}
+                newsletterSubmitting={newsletterSubmitting}
+                newsletterSubmitted={newsletterSubmitted}
+                handleNewsletterSubmit={handleNewsletterSubmit}
+              />
             </div>
           </motion.div>
         </div>
