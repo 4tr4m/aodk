@@ -37,11 +37,17 @@ const slugify = (value) =>
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
 
+const sentenceCase = (value) => {
+  if (!value) return '';
+  const lower = value.toString().toLowerCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+};
+
 const transformCategory = (category) => {
   const base = category.slug || category.label || String(category.id || '');
   const slug = slugify(base);
   return {
-    label: category.label || slug,
+    label: sentenceCase(category.label || slug),
     link: `/kuchnia/${slug}`,
     shortDesc: category.short_desc || ''
   };
@@ -61,19 +67,21 @@ const Footer = () => {
         if (categories && categories.length > 0) {
           // Normalize Supabase categories to the footer's expected shape
           const transformedCategories = categories.map(transformCategory);
-          // Split into two columns (max 5 each)
-          setFirstColumnCategories(transformedCategories.slice(0, 5));
-          setSecondColumnCategories(transformedCategories.slice(5, 10));
+          // Split into two columns (max 4 each, total 8)
+          setFirstColumnCategories(transformedCategories.slice(0, 4));
+          setSecondColumnCategories(transformedCategories.slice(4, 8));
         } else {
           // Fallback to hardcoded categories
-          setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
-          setSecondColumnCategories(kuchniaCategories.mainCategories.slice(5, 10));
+          const fallback = kuchniaCategories.mainCategories.map(transformCategory);
+          setFirstColumnCategories(fallback.slice(0, 4));
+          setSecondColumnCategories(fallback.slice(4, 8));
         }
       } catch (error) {
         console.error('Error fetching categories:', error);
         // Fallback to hardcoded categories on error
-        setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
-        setSecondColumnCategories(kuchniaCategories.mainCategories.slice(5, 10));
+        const fallback = kuchniaCategories.mainCategories.map(transformCategory);
+        setFirstColumnCategories(fallback.slice(0, 4));
+        setSecondColumnCategories(fallback.slice(4, 8));
       }
     };
 
