@@ -50,6 +50,7 @@ const transformCategory = (category) => {
 const Footer = () => {
   const [showInfoModal, setShowInfoModal] = useState(false);
   const [firstColumnCategories, setFirstColumnCategories] = useState([]);
+  const [secondColumnCategories, setSecondColumnCategories] = useState([]);
   const navigate = useNavigate();
 
   // Fetch categories from Supabase; fallback to static categories if unavailable
@@ -60,16 +61,19 @@ const Footer = () => {
         if (categories && categories.length > 0) {
           // Normalize Supabase categories to the footer's expected shape
           const transformedCategories = categories.map(transformCategory);
-          // Only first 5 for the Przepisy column
+          // Split into two columns (max 5 each)
           setFirstColumnCategories(transformedCategories.slice(0, 5));
+          setSecondColumnCategories(transformedCategories.slice(5, 10));
         } else {
           // Fallback to hardcoded categories
           setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
+          setSecondColumnCategories(kuchniaCategories.mainCategories.slice(5, 10));
         }
       } catch (error) {
         console.error('Error fetching categories:', error);
         // Fallback to hardcoded categories on error
         setFirstColumnCategories(kuchniaCategories.mainCategories.slice(0, 5));
+        setSecondColumnCategories(kuchniaCategories.mainCategories.slice(5, 10));
       }
     };
 
@@ -126,42 +130,53 @@ const Footer = () => {
             </div>
 
             <nav className="flex-1 lg:ml-16 w-full">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8 lg:gap-12">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
                 {/* First Column - Main Categories */}
                 <div className="space-y-6">
-                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left">
+                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide">
                     Przepisy
                   </h4>
-                  <ul className="space-y-4 flex flex-col items-center lg:items-start">
+                  <ul className="space-y-3 flex flex-col items-center lg:items-start">
                     {firstColumnCategories.map((category, index) => (
                       <li key={`first-${category.label}-${index}`} className="w-full text-center lg:text-left">
                         <button 
                           onClick={() => handleLinkClick(category.link)}
-                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group"
+                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group text-sm sm:text-base font-medium tracking-wide"
                         >
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2">→</span>
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                           {category.label}
                         </button>
                       </li>
                     ))}
-                    {/* Link to all categories */}
-                    <li className="w-full text-center lg:text-left pt-2">
-                      <button
-                        onClick={() => handleLinkClick('/kuchnia')}
-                        className="text-white font-semibold inline-flex items-center justify-center lg:justify-start px-3 py-2 rounded-md bg-green-600 hover:bg-green-500 transition-colors duration-200"
-                      >
-                        Wszystkie kategorie
-                      </button>
-                    </li>
+                  </ul>
+                </div>
+
+                {/* Second Column - More Categories */}
+                <div className="space-y-6">
+                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide">
+                    Więcej przepisów
+                  </h4>
+                  <ul className="space-y-3 flex flex-col items-center lg:items-start">
+                    {secondColumnCategories.map((category, index) => (
+                      <li key={`second-${category.label}-${index}`} className="w-full text-center lg:text-left">
+                        <button 
+                          onClick={() => handleLinkClick(category.link)}
+                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group text-sm sm:text-base font-medium tracking-wide"
+                        >
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
+                          {category.label}
+                        </button>
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
                 {/* Third Column - Contact Links */}
                 <div className="space-y-6">
-                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left">
+                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide">
                     Kontakt
                   </h4>
-                  <ul className="space-y-4 flex flex-col items-center lg:items-start">
+                  <ul className="space-y-3 flex flex-col items-center lg:items-start">
                     {[
                       { label: 'Pomoc', link: '/pomoc' },
                       { label: 'O nas', link: '/o-nas' },
@@ -170,22 +185,13 @@ const Footer = () => {
                       <li key={item.label} className="w-full text-center lg:text-left">
                         <button 
                           onClick={() => handleLinkClick(item.link)}
-                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group"
+                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group text-sm sm:text-base font-medium tracking-wide"
                         >
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2">→</span>
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                           {item.label}
                         </button>
                       </li>
                     ))}
-                    {/* Duplicate "all categories" CTA under Contact per requirement */}
-                    <li className="w-full text-center lg:text-left pt-2">
-                      <button
-                        onClick={() => handleLinkClick('/kuchnia')}
-                        className="text-white font-semibold inline-flex items-center justify-center lg:justify-start px-3 py-2 rounded-md bg-green-600 hover:bg-green-500 transition-colors duration-200"
-                      >
-                        Wszystkie kategorie
-                      </button>
-                    </li>
                   </ul>
                 </div>
               </div>
