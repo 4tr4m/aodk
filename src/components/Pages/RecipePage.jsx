@@ -306,45 +306,7 @@ const RecipePage = () => {
                 );
               })()}
 
-              {/* Bases & Spices (if present on recipe) */}
-              {(() => {
-                const baseText = (recipe.base || recipe.bases || recipe.podstawa || '').toString();
-                const spicesText = (recipe.spices || recipe.przyprawy || '').toString();
-                const hasAny = baseText.trim().length > 0 || spicesText.trim().length > 0;
-                return hasAny;
-              })() && (
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display']">Podstawa i Przyprawy</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Podstawa</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {(recipe.base || recipe.bases || recipe.podstawa || '')
-                          .toString()
-                          .split(',')
-                          .map(i => i.trim())
-                          .filter(Boolean)
-                          .map((i, idx) => (
-                          <span key={idx} className="px-3 py-1 rounded-full text-sm bg-white text-gray-700 border border-gray-200">{i}</span>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Przyprawy</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {(recipe.spices || recipe.przyprawy || '')
-                          .toString()
-                          .split(',')
-                          .map(i => i.trim())
-                          .filter(Boolean)
-                          .map((i, idx) => (
-                          <span key={idx} className="px-3 py-1 rounded-full text-sm bg-white text-gray-700 border border-gray-200">{i}</span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+              {/* Bases & Spices moved below interactive base ingredients */}
 
               {/* Recipe Description */}
               {recipe.description && (
