@@ -138,48 +138,43 @@ const Footer = () => {
             </div>
 
             <nav className="flex-1 lg:ml-16 w-full">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-                {/* First Column - Main Categories */}
-                <div className="space-y-6">
-                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide">
+              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-8 lg:gap-12">
+                {/* Przepisy - single centered header spanning two category columns */}
+                <div className="sm:col-span-2 lg:col-span-2">
+                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center tracking-wide">
                     Przepisy
                   </h4>
-                  <ul className="space-y-3 flex flex-col items-center lg:items-start">
-                    {firstColumnCategories.map((category, index) => (
-                      <li key={`first-${category.label}-${index}`} className="w-full text-center lg:text-left">
-                        <button 
-                          onClick={() => handleLinkClick(category.link)}
-                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group text-sm sm:text-base font-medium tracking-wide"
-                        >
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
-                          {category.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    <ul className="space-y-3 flex flex-col items-center sm:items-start">
+                      {firstColumnCategories.map((category, index) => (
+                        <li key={`first-${category.label}-${index}`} className="w-full text-center sm:text-left">
+                          <button 
+                            onClick={() => handleLinkClick(category.link)}
+                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start w-full group text-sm sm:text-base font-medium tracking-wide"
+                          >
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
+                            {category.label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    <ul className="space-y-3 flex flex-col items-center sm:items-start mt-6 sm:mt-0">
+                      {secondColumnCategories.map((category, index) => (
+                        <li key={`second-${category.label}-${index}`} className="w-full text-center sm:text-left">
+                          <button 
+                            onClick={() => handleLinkClick(category.link)}
+                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start w-full group text-sm sm:text-base font-medium tracking-wide"
+                          >
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
+                            {category.label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
-                {/* Second Column - More Categories */}
-                <div className="space-y-6">
-                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide">
-                    Więcej przepisów
-                  </h4>
-                  <ul className="space-y-3 flex flex-col items-center lg:items-start">
-                    {secondColumnCategories.map((category, index) => (
-                      <li key={`second-${category.label}-${index}`} className="w-full text-center lg:text-left">
-                        <button 
-                          onClick={() => handleLinkClick(category.link)}
-                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group text-sm sm:text-base font-medium tracking-wide"
-                        >
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
-                          {category.label}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {/* Third Column - Contact Links */}
+                {/* Kontakt */}
                 <div className="space-y-6">
                   <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide">
                     Kontakt
