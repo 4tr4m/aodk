@@ -242,8 +242,30 @@ const RecipePage = () => {
             {/* Recipe Details */
             }
             <div className="p-6 sm:p-8">
-              {/* Ingredients Section moved directly below picture */}
-              <ProductBaseIngredients recipe={recipe} />
+              {/* Składniki (from Supabase) - main section under the image */}
+              {(() => {
+                const raw = recipe.ingredients;
+                let items = [];
+                if (Array.isArray(raw)) items = raw;
+                else if (typeof raw === 'string') {
+                  items = raw.includes('\n') ? raw.split(/\r?\n/) : raw.split(',');
+                }
+                const normalized = items.map(i => i.trim()).filter(Boolean);
+                if (normalized.length === 0) return null;
+                return (
+                  <div className="mb-8">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display'] flex items-center gap-2">
+                      <FaUtensils className="text-green-600" />
+                      Składniki
+                    </h2>
+                    <ul className="list-disc pl-6 space-y-1 text-gray-800">
+                      {normalized.map((ing, i) => (
+                        <li key={i}>{ing}</li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })()}
 
               {/* Bases & Spices (if present on recipe) */}
               {(() => {
@@ -352,6 +374,9 @@ const RecipePage = () => {
                   </div>
                 </div>
               )}
+
+              {/* Podstawowe składniki (interactive tags) moved to the bottom */}
+              <ProductBaseIngredients recipe={recipe} />
             </div>
           </motion.div>
         </div>
