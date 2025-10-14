@@ -18,10 +18,14 @@ const ScrollToTop = () => {
   const { pathname, state } = useLocation();
 
   useEffect(() => {
+    console.log('ScrollToTop: pathname changed to', pathname, 'state:', state);
     // Only scroll to top if there's no scrollToTitle state
     // This allows CategoryPage to handle its own scrolling logic
     if (!state?.scrollToTitle) {
+      console.log('ScrollToTop: Scrolling to top (no scrollToTitle state)');
       window.scrollTo(0, 0);
+    } else {
+      console.log('ScrollToTop: Skipping scroll (scrollToTitle state detected)');
     }
   }, [pathname, state]);
 

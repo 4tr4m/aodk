@@ -146,15 +146,29 @@ const CategoryPage = () => {
   useEffect(() => {
     if (location.state?.scrollToTitle) {
       console.log('CategoryPage: Scrolling to top due to scrollToTitle state');
-      // Use requestAnimationFrame for better timing
-      requestAnimationFrame(() => {
+      console.log('Current scroll position before:', window.scrollY);
+      
+      // Force immediate scroll to top first
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      
+      // Then try smooth scroll after a delay
+      setTimeout(() => {
         window.scrollTo({
           top: 0,
           behavior: 'smooth'
         });
+        console.log('Current scroll position after smooth scroll:', window.scrollY);
+      }, 50);
+      
+      // Final backup scroll
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        console.log('Final scroll position:', window.scrollY);
         // Clean up state to prevent scrolling on future updates
         navigate(location.pathname, { replace: true, state: {} });
-      });
+      }, 200);
     }
   }, [location.state, navigate, location.pathname]);
 

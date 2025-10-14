@@ -24,6 +24,7 @@ import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from
 import { motion } from 'framer-motion';
 import { Button } from './Button';
 import { useNavigate } from 'react-router-dom';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const CategoryCarousel = ({ items, showViewButton = true }) => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -154,7 +155,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
   useEffect(() => {
     items.forEach(item => {
       const img = new Image();
-      img.src = `/img/${item.image}`;
+      img.src = getImageUrl(item.image);
     });
   }, [items]);
   
@@ -186,6 +187,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
 
   const handleItemClick = useCallback((item) => {
     if (item.link) {
+      console.log('CategoryCarousel: Navigating to', item.link, 'with scrollToTitle state');
       navigate(item.link, { state: { scrollToTitle: true } });
     }
   }, [navigate]);
@@ -346,7 +348,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
                       transition={{ duration: 0.5 }}
                     />
                     <motion.img
-                      src={`/img/${item.image}`}
+                      src={getImageUrl(item.image)}
                       alt={item.label || item.name}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
