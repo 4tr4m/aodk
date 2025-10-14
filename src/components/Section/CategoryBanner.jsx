@@ -81,14 +81,42 @@ const titleVariant = {
 const TitleWithSearch = memo(({ title, toggleSearch, accentColor, showTooltip }) => {
   return (
     <div className="flex items-center justify-center flex-wrap gap-3 sm:gap-4">
-      <h2 
-        className={`inline-block font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-[#1A202C] 
-          relative pb-3 sm:pb-4 after:content-[''] after:absolute after:bottom-0 after:left-1/2 
-          after:-translate-x-1/2 after:w-24 sm:after:w-28 md:after:w-32 after:h-[3px] after:${accentColor} 
-          tracking-wide font-semibold max-w-[80%] sm:max-w-none break-words`}
+      <motion.div
+        className="relative group cursor-pointer"
+        onClick={toggleSearch}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        title="Kliknij, aby wyszukać przepisy"
       >
-        {title}
-      </h2>
+        {/* Subtle background effect on hover */}
+        <motion.div 
+          className="absolute inset-0 -m-2 rounded-lg bg-green-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          initial={{ opacity: 0 }}
+          whileHover={{ opacity: 1 }}
+        />
+        
+        <h2 
+          className={`relative font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-[#1A202C] 
+            pb-3 sm:pb-4 after:content-[''] after:absolute after:bottom-0 after:left-1/2 
+            after:-translate-x-1/2 after:w-24 sm:after:w-28 md:after:w-32 after:h-[3px] after:${accentColor} 
+            tracking-wide font-semibold max-w-[80%] sm:max-w-none break-words
+            group-hover:text-green-600 transition-colors duration-300`}
+        >
+          {title}
+        </h2>
+        
+        {/* Small search icon hint that appears on hover */}
+        <motion.span 
+          className="absolute -right-8 sm:-right-10 md:-right-12 top-1/2 -translate-y-1/2 text-green-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileHover={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.2 }}
+        >
+          <FaSearch className="text-lg sm:text-xl md:text-2xl" />
+        </motion.span>
+      </motion.div>
+      
       <div className="flex-shrink-0">
         <SearchIcon toggleSearch={toggleSearch} showTooltip={showTooltip} />
       </div>
