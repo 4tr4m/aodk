@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { getRecipeImageUrl } from '../../utils/imageUtils';
 
 const ProductImage = ({ recipe, isMobile, imageHeight, imageOpacity }) => (
   <motion.div 
@@ -12,7 +13,7 @@ const ProductImage = ({ recipe, isMobile, imageHeight, imageOpacity }) => (
     }}
   >
     <img 
-      src={`/img/${recipe.image}`} 
+      src={getRecipeImageUrl(recipe)} 
       alt={recipe.name}
       className="w-full h-full object-cover"
     />

@@ -20,6 +20,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiClock, FiArrowRight, FiAward } from 'react-icons/fi';
 import { motion } from 'framer-motion';
+import { getRecipeImageUrl } from '../../utils/imageUtils';
 
 const RecipeGrid = ({ recipes }) => {
   const navigate = useNavigate();
@@ -68,7 +69,7 @@ const RecipeGrid = ({ recipes }) => {
         >
           <div className="relative h-48 overflow-hidden">
             <img 
-              src={`/img/${recipe.image}`}
+              src={getRecipeImageUrl(recipe)}
               alt={recipe.name}
               className="w-full h-full object-cover transition-transform duration-700 
                 group-hover:scale-110 group-hover:rotate-1"

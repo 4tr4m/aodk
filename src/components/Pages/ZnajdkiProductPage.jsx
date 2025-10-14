@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { FiArrowLeft, FiShoppingBag, FiShare2 } from 'react-icons/fi';
 import { FaLeaf, FaRegHeart, FaHeart } from 'react-icons/fa';
 import supabase from '../../lib/supabase-browser';
+import { getZnajdkiImageUrl, getBaseUrl } from '../../utils/imageUtils';
 
 const ZnajdkiProductPage = () => {
   const { id } = useParams();
@@ -31,7 +32,7 @@ const ZnajdkiProductPage = () => {
         .eq('id', Number(id))
         .single();
       console.log('Fetched product:', data, error);
-      console.log('Product image path:', data?.image ? `/img/${data.image}` : `/img/znajdki/${data?.id}.jpg`);
+      console.log('Product image path:', getZnajdkiImageUrl(data));
       setProduct(data);
       setLoading(false);
     };
@@ -39,24 +40,13 @@ const ZnajdkiProductPage = () => {
   }, [id]);
 
   const getImageSrc = () => {
-    if (!product) return '';
-    
-    const baseUrl = process.env.PUBLIC_URL || '';
-    
-    // Priority order for image sources
-    const imageSources = [
-      product.image ? `${baseUrl}/img/${product.image}` : null,
-      `${baseUrl}/img/znajdki/${product.id}.jpg`,
-      `${baseUrl}/img/znajdki/1.jpg`,
-      `${baseUrl}/img/znajdki/default.jpg`
-    ].filter(Boolean);
-    
-    return imageSources[0] || `${baseUrl}/img/znajdki/1.jpg`;
+    return getZnajdkiImageUrl(product);
   };
 
   const handleImageError = (e) => {
     console.log('Image failed to load:', e.target.src);
     const currentSrc = e.target.src;
+    const baseUrl = getBaseUrl();
     
     // Try next fallback image
     if (currentSrc.includes('/img/znajdki/')) {
@@ -65,10 +55,10 @@ const ZnajdkiProductPage = () => {
         setImageError(true);
         e.target.style.display = 'none';
       } else {
-        e.target.src = '/img/znajdki/1.jpg';
+        e.target.src = `${baseUrl}/img/znajdki/1.jpg`;
       }
     } else {
-      e.target.src = `/img/znajdki/${product.id}.jpg`;
+      e.target.src = `${baseUrl}/img/znajdki/${product.id}.jpg`;
     }
   };
 
@@ -166,7 +156,7 @@ const ZnajdkiProductPage = () => {
                   className="max-w-full max-h-full object-contain object-center"
                   onError={handleImageError}
                   onLoad={() => {
-                    console.log('Image loaded successfully:', product.image ? `/img/${product.image}` : `/img/znajdki/${product.id}.jpg`);
+                    console.log('Image loaded successfully:', getZnajdkiImageUrl(product));
                   }}
                 />
               )}

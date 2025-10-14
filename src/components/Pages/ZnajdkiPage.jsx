@@ -9,6 +9,7 @@ import { FiFilter, FiShoppingBag, FiX } from 'react-icons/fi';
 import { FaLeaf, FaRegHeart, FaHeart } from 'react-icons/fa';
 import SEO from '../SEO/SEO';
 import supabase from '../../lib/supabase-browser';
+import { getZnajdkiImageUrl, getBaseUrl } from '../../utils/imageUtils';
 
 const ZnajdkiPage = () => {
   const [products, setProducts] = useState([]);
@@ -254,11 +255,11 @@ const ZnajdkiPage = () => {
                 <Link to={`/znajdki/${product.id}`} className="block group">
                 <div className="relative h-64 overflow-hidden bg-gray-100">
                   <img 
-                    src={product.image ? `${process.env.PUBLIC_URL || ''}/img/${product.image}` : `${process.env.PUBLIC_URL || ''}/img/znajdki/${product.id}.jpg`} 
+                    src={getZnajdkiImageUrl(product)} 
                     alt={product.name}
                     className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
-                      e.target.src = `${process.env.PUBLIC_URL || ''}/img/znajdki/default.jpg`;
+                      e.target.src = `${getBaseUrl()}/img/znajdki/default.jpg`;
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
