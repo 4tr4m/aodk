@@ -254,11 +254,11 @@ const ZnajdkiPage = () => {
                 <Link to={`/znajdki/${product.id}`} className="block group">
                 <div className="relative h-64 overflow-hidden bg-gray-100">
                   <img 
-                    src={product.image ? `/img/${product.image}` : `/img/znajdki/${product.id}.jpg`} 
+                    src={product.image ? `${process.env.PUBLIC_URL || ''}/img/${product.image}` : `${process.env.PUBLIC_URL || ''}/img/znajdki/${product.id}.jpg`} 
                     alt={product.name}
                     className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
-                      e.target.src = '/img/znajdki/default.jpg';
+                      e.target.src = `${process.env.PUBLIC_URL || ''}/img/znajdki/default.jpg`;
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

@@ -41,15 +41,17 @@ const ZnajdkiProductPage = () => {
   const getImageSrc = () => {
     if (!product) return '';
     
+    const baseUrl = process.env.PUBLIC_URL || '';
+    
     // Priority order for image sources
     const imageSources = [
-      product.image ? `/img/${product.image}` : null,
-      `/img/znajdki/${product.id}.jpg`,
-      `/img/znajdki/1.jpg`,
-      '/img/znajdki/default.jpg'
+      product.image ? `${baseUrl}/img/${product.image}` : null,
+      `${baseUrl}/img/znajdki/${product.id}.jpg`,
+      `${baseUrl}/img/znajdki/1.jpg`,
+      `${baseUrl}/img/znajdki/default.jpg`
     ].filter(Boolean);
     
-    return imageSources[0] || '/img/znajdki/1.jpg';
+    return imageSources[0] || `${baseUrl}/img/znajdki/1.jpg`;
   };
 
   const handleImageError = (e) => {
