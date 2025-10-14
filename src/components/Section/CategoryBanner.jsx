@@ -1,3 +1,30 @@
+// CategoryBanner Component - Main categories showcase section for the homepage
+// This component displays the main categories in an interactive carousel format with
+// search functionality, animated elements, and responsive design. It serves as the
+// primary way for users to discover and navigate to different recipe categories.
+//
+// USAGE LOCATIONS:
+// - src/pages/HomePage.jsx (main homepage categories section)
+//
+// FEATURES:
+// - Dynamic category loading from Supabase with fallback to static data
+// - Interactive search functionality with suggestions
+// - Animated search icon with pulsing effects
+// - Responsive carousel using CategoryCarousel component
+// - Wave dividers for visual appeal
+// - Intersection Observer for scroll-triggered animations
+// - Search tutorial tooltip for first-time users
+// - Smooth transitions between search and title states
+//
+// DATA SOURCES:
+// - Primary: Supabase 'categories' table
+// - Fallback: Static kuchniaCategories from category-data.js
+//
+// SEARCH INTEGRATION:
+// - Uses SearchBar component for search functionality
+// - Integrates with searchService for suggestions
+// - Navigates to search results page
+
 import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import CategoryCarousel from '../UI/CategoryCarousel';

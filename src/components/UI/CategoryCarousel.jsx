@@ -1,3 +1,25 @@
+// CategoryCarousel Component - Interactive carousel for displaying category items
+// This component creates a seamless, infinite-scrolling carousel with touch/swipe support,
+// auto-advance functionality, and responsive design. It's used to showcase categories
+// in an engaging, interactive way.
+//
+// USAGE LOCATIONS:
+// - src/components/Section/CategoryBanner.jsx (main categories display on homepage)
+// - Can be reused anywhere categories or items need to be displayed in carousel format
+//
+// FEATURES:
+// - Infinite seamless scrolling (no visible loop points)
+// - Touch/swipe support for mobile devices
+// - Auto-advance with pause on interaction
+// - Responsive design (1-4 items per view based on screen size)
+// - Smooth animations and hover effects
+// - Navigation buttons with hover states
+// - Image preloading for better performance
+//
+// PROPS:
+// - items: Array of category/item objects with {id, label, image, shortDesc, link}
+// - showViewButton: Boolean to show/hide the "Zobacz" button (default: true)
+
 import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from './Button';

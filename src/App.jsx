@@ -13,13 +13,17 @@ import ZnajdkiPage from './components/Pages/ZnajdkiPage';
 import ZnajdkiProductPage from './components/Pages/ZnajdkiProductPage';
 import RecipePage from './components/Pages/RecipePage';
 
-// Scroll to top on route change
+// Scroll to top on route change (but respect scrollToTitle state)
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    // Only scroll to top if there's no scrollToTitle state
+    // This allows CategoryPage to handle its own scrolling logic
+    if (!state?.scrollToTitle) {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, state]);
 
   return null;
 };

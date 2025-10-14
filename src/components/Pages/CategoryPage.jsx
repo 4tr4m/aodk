@@ -142,18 +142,19 @@ const CategoryPage = () => {
     }
   }, [navigate, location.pathname]);
 
-  // Effect to scroll to top if coming from another category
+  // Effect to scroll to top if coming from carousel click
   useEffect(() => {
     if (location.state?.scrollToTitle) {
-      // Small delay to ensure the component is fully rendered
-      setTimeout(() => {
+      console.log('CategoryPage: Scrolling to top due to scrollToTitle state');
+      // Use requestAnimationFrame for better timing
+      requestAnimationFrame(() => {
         window.scrollTo({
           top: 0,
           behavior: 'smooth'
         });
         // Clean up state to prevent scrolling on future updates
         navigate(location.pathname, { replace: true, state: {} });
-      }, 500);
+      });
     }
   }, [location.state, navigate, location.pathname]);
 
@@ -421,12 +422,8 @@ const CategoryPage = () => {
     fetchCategories();
   }, []);
 
-  // Scroll to top on every route change
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    const root = document.getElementById('root');
-    if (root) root.scrollTop = 0;
-  }, [location.key]);
+  // Note: Scroll to top is handled by App.jsx ScrollToTop component
+  // This effect is removed to prevent conflicts with scrollToTitle state
 
   return (
     <div ref={pageRef} className="min-h-screen bg-gray-100">
