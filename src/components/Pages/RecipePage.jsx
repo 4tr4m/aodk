@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaBookOpen, FaSparkles } from 'react-icons/fa';
+import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaBookOpen, FaStar, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
 import recipeService from '../../services/recipeService';
 import ProductBaseIngredients from '../ProductModal/ProductBaseIngredients';
@@ -356,7 +356,7 @@ const RecipePage = () => {
                       }}
                     >
                       <FaBookOpen className="w-5 h-5 text-purple-600" />
-                      <FaSparkles className="w-3 h-3 text-yellow-500" />
+                      <FaStar className="w-3 h-3 text-yellow-500" />
                     </motion.div>
                     <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                       Pełny opis przepisu
