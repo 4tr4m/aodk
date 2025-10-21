@@ -139,7 +139,16 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick, onSearchToggle 
           <div className="flex flex-nowrap gap-2 sm:gap-3 min-w-min pb-2 px-2">
             <motion.button
               data-active={!currentSlug}
-              onClick={() => onSearchToggle ? onSearchToggle() : handleCategoryClick('/kuchnia')}
+              onClick={() => {
+                console.log('Wszystkie button clicked, onSearchToggle available:', !!onSearchToggle);
+                if (onSearchToggle) {
+                  console.log('Calling onSearchToggle function');
+                  onSearchToggle();
+                } else {
+                  console.log('Calling handleCategoryClick fallback');
+                  handleCategoryClick('/kuchnia');
+                }
+              }}
               className={`
                 whitespace-nowrap px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 rounded-full 
                 font-['Lato'] text-sm sm:text-base

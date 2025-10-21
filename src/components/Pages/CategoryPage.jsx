@@ -270,7 +270,11 @@ const CategoryPage = () => {
 
   // Search functions
   const toggleSearch = useCallback(() => {
-    setIsSearching(prev => !prev);
+    setIsSearching(prev => {
+      const newValue = !prev;
+      console.log('toggleSearch: changing isSearching from', prev, 'to', newValue);
+      return newValue;
+    });
     setSuggestions([]);
   }, []);
   
