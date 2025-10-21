@@ -140,12 +140,9 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick, onSearchToggle 
             <motion.button
               data-active={!currentSlug}
               onClick={() => {
-                console.log('Wszystkie button clicked, onSearchToggle available:', !!onSearchToggle);
                 if (onSearchToggle) {
-                  console.log('Calling onSearchToggle function');
                   onSearchToggle();
                 } else {
-                  console.log('Calling handleCategoryClick fallback');
                   handleCategoryClick('/kuchnia');
                 }
               }}

@@ -292,11 +292,7 @@ const CategoryPage = () => {
 
   // Search functions
   const toggleSearch = useCallback(() => {
-    setIsSearching(prev => {
-      const newValue = !prev;
-      console.log('toggleSearch: changing isSearching from', prev, 'to', newValue);
-      return newValue;
-    });
+    setIsSearching(prev => !prev);
     setSuggestions([]);
   }, []);
   
@@ -542,9 +538,25 @@ const CategoryPage = () => {
                   </div>
                 </motion.button>
 
-                <h1 className="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#2D3748] font-bold tracking-wide text-center break-words flex-shrink">
-                  {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
-                </h1>
+                <motion.div
+                  className="relative group cursor-pointer"
+                  onClick={toggleSearch}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  title="Kliknij, aby wyszukać przepisy"
+                >
+                  {/* Subtle background effect on hover */}
+                  <motion.div 
+                    className="absolute inset-0 -m-2 rounded-lg bg-green-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                  />
+                  
+                  <h1 className="relative font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-[#2D3748] font-bold tracking-wide text-center break-words flex-shrink group-hover:text-green-600 transition-colors duration-300">
+                    {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
+                  </h1>
+                </motion.div>
                 
                 <div className="flex-shrink-0 flex items-center gap-3">
                   <SearchIcon toggleSearch={toggleSearch} />
