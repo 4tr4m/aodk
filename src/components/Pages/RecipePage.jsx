@@ -335,7 +335,7 @@ const RecipePage = () => {
               )}
 
               {/* Full Description (fulldesc) - enhanced display */}
-              {recipe.fulldesc && (
+              {(recipe.fulldesc || recipe.fulldesc === '') && (
                 <motion.div 
                   className="mb-8"
                   initial={{ opacity: 0, y: 20 }}
@@ -363,7 +363,7 @@ const RecipePage = () => {
                     </span>
                   </h2>
                   <motion.div 
-                    className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200/50 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
+                    className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 sm:p-6 border border-purple-200/50 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
                     whileHover={{ scale: 1.02, y: -2 }}
                     transition={{ duration: 0.2 }}
                   >
@@ -372,9 +372,15 @@ const RecipePage = () => {
                     <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-pink-100 to-purple-100 rounded-full translate-y-8 -translate-x-8 opacity-50"></div>
                     
                     <div className="prose max-w-none relative z-10">
-                      <p className="text-gray-700 leading-relaxed text-base sm:text-lg whitespace-pre-wrap">
-                        {recipe.fulldesc}
-                      </p>
+                      {recipe.fulldesc ? (
+                        <p className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg whitespace-pre-wrap break-words">
+                          {recipe.fulldesc}
+                        </p>
+                      ) : (
+                        <p className="text-gray-500 italic text-sm sm:text-base">
+                          Brak dodatkowego opisu dla tego przepisu.
+                        </p>
+                      )}
                     </div>
                   </motion.div>
                 </motion.div>
