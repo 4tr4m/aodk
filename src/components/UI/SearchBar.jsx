@@ -22,6 +22,17 @@ const SearchBar = memo(function SearchBar({
   const inputRef = useRef(null);
   const suggestionsRef = useRef(null);
 
+  // Sync internal state with external initialOpen prop
+  useEffect(() => {
+    setIsOpen(initialOpen);
+    if (initialOpen && inputRef.current) {
+      // Focus the input when opened externally
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [initialOpen]);
+
   const closeSearch = useCallback(() => {
     setIsOpen(false);
     setSearchTerm('');

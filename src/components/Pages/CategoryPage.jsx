@@ -8,7 +8,8 @@ import Footer from '../Footer/Footer';
 import RecipeGrid from './RecipeGrid';
 import { kuchniaCategories } from '../../Data/category-data';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaSearch, FaTimes, FaUtensils } from 'react-icons/fa';
+import SearchBar from '../UI/SearchBar';
+import { FaSearch } from 'react-icons/fa';
 import searchService from '../../services/searchService';
 import SEO from '../SEO/SEO';
 import categoryService from '../../services/categoryService';
@@ -388,6 +389,13 @@ const CategoryPage = () => {
     return categoryRecipes;
   };
 
+  // Handle search submission
+  const handleSearchSubmit = useCallback((searchTerm) => {
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+      setIsSearching(false);
+    }
+  }, [navigate]);
 
   // Escape key handler
   useEffect(() => {
@@ -551,53 +559,17 @@ const CategoryPage = () => {
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="w-full max-w-4xl md:max-w-5xl mx-auto"
               >
-                <div className="w-full max-w-2xl mx-auto px-4">
-                  <div className="relative">
-                    <div className="flex items-center bg-white rounded-full shadow-lg border-2 border-gray-200 focus-within:border-green-500 transition-colors duration-300">
-                      <div className="pl-4 pr-2">
-                        <FaSearch className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Szukaj przepisów..."
-                        value={searchTerm}
-                        onChange={(e) => handleSearchInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && searchTerm.trim()) {
-                            navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
-                            setIsSearching(false);
-                          }
-                        }}
-                        className="flex-1 py-3 sm:py-4 px-2 text-gray-700 placeholder-gray-400 bg-transparent border-none outline-none text-base sm:text-lg"
-                        autoFocus
-                      />
-                      <button
-                        onClick={handleSearchClose}
-                        className="p-2 mr-2 text-gray-400 hover:text-gray-600 transition-colors duration-200 touch-manipulation"
-                      >
-                        <FaTimes className="w-4 h-4 sm:w-5 sm:h-5" />
-                      </button>
-                    </div>
-                    
-                    {/* Suggestions dropdown */}
-                    {suggestions.length > 0 && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 z-50 max-h-60 overflow-y-auto">
-                        {suggestions.map((suggestion, index) => (
-                          <button
-                            key={index}
-                            onClick={() => handleSuggestionSelect(suggestion)}
-                            className="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-200 border-b border-gray-100 last:border-b-0 touch-manipulation"
-                          >
-                            <div className="flex items-center gap-3">
-                              <FaUtensils className="w-4 h-4 text-green-500 flex-shrink-0" />
-                              <span className="text-gray-700 text-sm sm:text-base truncate">{suggestion.name}</span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <SearchBar 
+                  placeholder="Szukaj przepisów..." 
+                  onSearchSubmit={handleSearchSubmit}
+                  onClose={handleSearchClose}
+                  onChange={handleSearchInput}
+                  initialOpen={isSearching}
+                  suggestions={suggestions}
+                  onSuggestionSelect={handleSuggestionSelect}
+                  highlightedTerm={searchTerm}
+                  minCharsForSuggestions={3}
+                />
               </motion.div>
             )}
           </AnimatePresence>
