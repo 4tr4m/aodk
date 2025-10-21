@@ -23,6 +23,24 @@ const SEO = ({
   // Current URL for canonical link if not provided
   const metaCanonical = canonical || typeof window !== 'undefined' ? window.location.href : '';
 
+  // Structured data for organization and logo
+  const organizationStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Autyzm od Kuchni",
+    "url": "https://www.autyzmodkuchni.pl",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://www.autyzmodkuchni.pl/img/logo.png",
+      "width": 200,
+      "height": 200
+    },
+    "description": "Przepisy i porady żywieniowe dla osób z autyzmem. Zdrowa dieta, bezglutenowe przepisy, bezmleczne dania i wiele więcej.",
+    "sameAs": [
+      "https://www.autyzmodkuchni.pl"
+    ]
+  };
+
   return (
     <Helmet>
       <title>{metaTitle}</title>
@@ -45,6 +63,11 @@ const SEO = ({
       
       {/* Canonical Link */}
       {metaCanonical && <link rel="canonical" href={metaCanonical} />}
+      
+      {/* Structured Data for Logo */}
+      <script type="application/ld+json">
+        {JSON.stringify(organizationStructuredData)}
+      </script>
     </Helmet>
   );
 };
