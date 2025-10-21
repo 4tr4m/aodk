@@ -184,8 +184,30 @@ const CategoryPage = () => {
     
     // If not found in hardcoded, create a dynamic category based on the slug
     // This handles cases where the category comes from Supabase
+    const smartCapitalize = (str) => {
+      // Words that should remain lowercase (Polish prepositions and conjunctions)
+      const lowercaseWords = ['i', 'a', 'w', 'z', 'na', 'do', 'od', 'po', 'przy', 'bez', 'dla', 'o', 'u', 'ze', 'we', 'ku', 'przeciw', 'między', 'nad', 'pod', 'przed', 'za', 'obok', 'wśród', 'dzięki', 'wobec', 'względem'];
+      
+      return str
+        .replace(/-/g, ' ')
+        .split(' ')
+        .map((word, index) => {
+          // Always capitalize the first word
+          if (index === 0) {
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+          }
+          // For other words, check if they should be lowercase
+          if (lowercaseWords.includes(word.toLowerCase())) {
+            return word.toLowerCase();
+          }
+          // Capitalize other words
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        })
+        .join(' ');
+    };
+    
     return {
-      label: categorySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      label: smartCapitalize(categorySlug),
       link: `/kuchnia/${categorySlug}`,
       shortDesc: ''
     };
