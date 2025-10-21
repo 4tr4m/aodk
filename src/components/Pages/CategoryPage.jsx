@@ -649,6 +649,7 @@ const CategoryPage = () => {
           categories={categories}
           currentSlug={categorySlug}
           onCategoryClick={handleCategoryClick}
+          onSearchToggle={toggleSearch}
         />
       </div>
 

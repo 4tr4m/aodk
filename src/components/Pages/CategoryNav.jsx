@@ -1,7 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { FaSearch } from 'react-icons/fa';
 
-const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
+const CategoryNav = ({ categories, currentSlug, onCategoryClick, onSearchToggle }) => {
   const scrollRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -138,15 +139,15 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
           <div className="flex flex-nowrap gap-2 sm:gap-3 min-w-min pb-2 px-2">
             <motion.button
               data-active={!currentSlug}
-              onClick={() => handleCategoryClick('/kuchnia')}
+              onClick={() => onSearchToggle ? onSearchToggle() : handleCategoryClick('/kuchnia')}
               className={`
                 whitespace-nowrap px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 rounded-full 
                 font-['Lato'] text-sm sm:text-base
                 transition-all duration-300 border-2 shadow-md hover:shadow-lg
-                min-w-[80px] sm:min-w-[100px]
+                min-w-[100px] sm:min-w-[120px] flex items-center gap-2 justify-center
                 ${!currentSlug 
-                  ? 'bg-green-600 text-white border-green-600 scale-105' 
-                  : 'bg-white text-gray-700 border-gray-200 hover:border-green-200'
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white border-green-600 scale-105 shadow-lg' 
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-green-200 hover:bg-green-50'
                 }
               `}
               whileHover={{ scale: 1.05 }}
@@ -155,7 +156,13 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick }) => {
               animate={{ opacity: 1, y: 0, transition: { duration: 0.3 } }}
               style={{ scrollSnapAlign: 'center' }}
             >
-              Wszystkie
+              <motion.div
+                whileHover={{ rotate: 15, scale: 1.1 }}
+                transition={{ duration: 0.2 }}
+              >
+                <FaSearch className="w-3 h-3 sm:w-4 sm:h-4" />
+              </motion.div>
+              <span>Wszystkie</span>
             </motion.button>
             
             {categories.map((category, index) => {

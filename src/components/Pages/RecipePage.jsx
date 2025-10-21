@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
 import recipeService from '../../services/recipeService';
 import ProductBaseIngredients from '../ProductModal/ProductBaseIngredients';
@@ -24,6 +24,7 @@ const RecipePage = () => {
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -281,7 +282,59 @@ const RecipePage = () => {
             {/* Recipe Details */
             }
             <div className="p-6 sm:p-8">
-              {/* Składniki (from Supabase) - main section under the image */}
+              {/* Recipe Description - moved to top, right after image */}
+              {recipe.description && (
+                <motion.div 
+                  className="mb-8"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display'] flex items-center gap-2">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Opis przepisu
+                  </h2>
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div className="prose max-w-none">
+                      <p className={`text-gray-700 leading-relaxed text-base sm:text-lg whitespace-pre-wrap transition-all duration-300 ${
+                        !isDescriptionExpanded && recipe.description.length > 300 
+                          ? 'overflow-hidden' 
+                          : ''
+                      }`} style={{
+                        display: !isDescriptionExpanded && recipe.description.length > 300 ? '-webkit-box' : 'block',
+                        WebkitLineClamp: !isDescriptionExpanded && recipe.description.length > 300 ? 4 : 'unset',
+                        WebkitBoxOrient: 'vertical'
+                      }}>
+                        {recipe.description}
+                      </p>
+                      {recipe.description.length > 300 && (
+                        <motion.button
+                          onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                          className="mt-4 flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors duration-200 group"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          {isDescriptionExpanded ? (
+                            <>
+                              <span>Pokaż mniej</span>
+                              <FaChevronUp className="w-3 h-3 group-hover:translate-y-0.5 transition-transform duration-200" />
+                            </>
+                          ) : (
+                            <>
+                              <span>Czytaj więcej</span>
+                              <FaChevronDown className="w-3 h-3 group-hover:translate-y-0.5 transition-transform duration-200" />
+                            </>
+                          )}
+                        </motion.button>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Składniki (from Supabase) - main section under the description */}
               {(() => {
                 const raw = recipe.ingredients;
                 let items = [];
@@ -307,20 +360,6 @@ const RecipePage = () => {
               })()}
 
               {/* Bases & Spices moved below interactive base ingredients */}
-
-              {/* Recipe Description */}
-              {recipe.description && (
-                <div className="mt-8">
-                  <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display']">
-                    Opis przepisu
-                  </h2>
-                  <div className="prose max-w-none">
-                    <p className="text-gray-700 leading-relaxed">
-                      {recipe.description}
-                    </p>
-                  </div>
-                </div>
-              )}
 
               {/* Preparation Steps */}
               {recipe.preparation && (
