@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaBookOpen, FaSparkles } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
 import recipeService from '../../services/recipeService';
 import ProductBaseIngredients from '../ProductModal/ProductBaseIngredients';
@@ -25,7 +25,6 @@ const RecipePage = () => {
   const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [isFulldescExpanded, setIsFulldescExpanded] = useState(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -344,21 +343,28 @@ const RecipePage = () => {
                   transition={{ duration: 0.6, delay: 0.3 }}
                 >
                   <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display'] flex items-center gap-2">
-                    <motion.svg 
-                      className="w-5 h-5 text-purple-600" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                      animate={{ rotate: [0, 5, -5, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                    <motion.div
+                      className="flex items-center gap-1"
+                      animate={{ 
+                        scale: [1, 1.1, 1],
+                        rotate: [0, 5, -5, 0]
+                      }}
+                      transition={{ 
+                        duration: 3, 
+                        repeat: Infinity, 
+                        ease: "easeInOut" 
+                      }}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </motion.svg>
-                    Szczegółowy opis
+                      <FaBookOpen className="w-5 h-5 text-purple-600" />
+                      <FaSparkles className="w-3 h-3 text-yellow-500" />
+                    </motion.div>
+                    <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                      Pełny opis przepisu
+                    </span>
                   </h2>
                   <motion.div 
                     className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-200/50 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
-                    whileHover={{ scale: 1.01 }}
+                    whileHover={{ scale: 1.02, y: -2 }}
                     transition={{ duration: 0.2 }}
                   >
                     {/* Decorative elements */}
@@ -366,37 +372,9 @@ const RecipePage = () => {
                     <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-pink-100 to-purple-100 rounded-full translate-y-8 -translate-x-8 opacity-50"></div>
                     
                     <div className="prose max-w-none relative z-10">
-                      <p className={`text-gray-700 leading-relaxed text-base sm:text-lg whitespace-pre-wrap transition-all duration-300 ${
-                        !isFulldescExpanded && recipe.fulldesc.length > 500 
-                          ? 'overflow-hidden' 
-                          : ''
-                      }`} style={{
-                        display: !isFulldescExpanded && recipe.fulldesc.length > 500 ? '-webkit-box' : 'block',
-                        WebkitLineClamp: !isFulldescExpanded && recipe.fulldesc.length > 500 ? 6 : 'unset',
-                        WebkitBoxOrient: 'vertical'
-                      }}>
+                      <p className="text-gray-700 leading-relaxed text-base sm:text-lg whitespace-pre-wrap">
                         {recipe.fulldesc}
                       </p>
-                      {recipe.fulldesc.length > 500 && (
-                        <motion.button
-                          onClick={() => setIsFulldescExpanded(!isFulldescExpanded)}
-                          className="mt-4 flex items-center gap-2 text-purple-600 hover:text-purple-700 font-medium transition-colors duration-200 group bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-purple-200/50"
-                          whileHover={{ scale: 1.02, y: -1 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          {isFulldescExpanded ? (
-                            <>
-                              <span>Pokaż mniej</span>
-                              <FaChevronUp className="w-3 h-3 group-hover:translate-y-0.5 transition-transform duration-200" />
-                            </>
-                          ) : (
-                            <>
-                              <span>Czytaj więcej</span>
-                              <FaChevronDown className="w-3 h-3 group-hover:translate-y-0.5 transition-transform duration-200" />
-                            </>
-                          )}
-                        </motion.button>
-                      )}
                     </div>
                   </motion.div>
                 </motion.div>

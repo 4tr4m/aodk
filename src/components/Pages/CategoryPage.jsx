@@ -489,7 +489,7 @@ const CategoryPage = () => {
         {/* Header with H1 and Search */}
         <div id="category-title" className="flex flex-col items-center justify-center relative">
           {/* Title and SearchBar with transitions */}
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence>
             {!isSearching ? (
               <motion.div
                 key="category-title"
