@@ -275,8 +275,8 @@ const TopNavBar = () => {
           />
           
           {/* Menu Container - Centered modal with navigation items */}
-          <div className="relative h-full flex items-center justify-center p-6">
-            <div className="bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700/50 w-full max-w-sm max-h-[80vh] overflow-y-auto">
+          <div className="relative h-full flex items-center justify-center p-4 sm:p-6">
+            <div className="bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-700/50 w-full max-w-sm max-h-[85vh] overflow-y-auto">
               {/* Header - Menu title and close button */}
               <div className="flex items-center justify-between p-6 border-b border-gray-700/50">
                 <h2 className="text-2xl font-['Patrick_Hand'] text-white font-bold">Menu</h2>
@@ -322,13 +322,13 @@ const TopNavBar = () => {
                       
                       {/* Dropdown Items - Sub-navigation items that appear when parent is expanded */}
                       {item.dropdown && activeDropdown === item.type && (
-                        <div className="mt-2 ml-4 bg-gray-800/50 rounded-lg p-3 space-y-2 animate-in slide-in-from-top-2 duration-300">
+                        <div className="mt-2 ml-2 mr-2 bg-gray-800/50 rounded-lg p-3 space-y-2 animate-in slide-in-from-top-2 duration-300">
                           {item.dropdown.map((subitem, subindex) => (
                             <Link
                               key={subindex}
                               to={subitem.link}
                               onClick={() => setIsMobileMenuOpen(false)} // Close menu when sub-item is clicked
-                              className="block w-full text-gray-300 hover:text-yellow-400 py-2 px-3 rounded hover:bg-gray-700/50 text-lg font-['Patrick_Hand'] transition-all duration-300"
+                              className="block w-full text-gray-300 hover:text-yellow-400 py-2 px-3 rounded hover:bg-gray-700/50 text-base sm:text-lg font-['Patrick_Hand'] transition-all duration-300 break-words"
                             >
                               {subitem.label}
                             </Link>

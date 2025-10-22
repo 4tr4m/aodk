@@ -140,11 +140,8 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick, onSearchToggle 
             <motion.button
               data-active={!currentSlug}
               onClick={() => {
-                if (onSearchToggle) {
-                  onSearchToggle();
-                } else {
-                  handleCategoryClick('/kuchnia');
-                }
+                // Always navigate to all recipes, don't open search
+                handleCategoryClick('/kuchnia');
               }}
               className={`
                 whitespace-nowrap px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 rounded-full 

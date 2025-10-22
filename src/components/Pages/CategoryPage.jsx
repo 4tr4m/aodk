@@ -493,12 +493,12 @@ const CategoryPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="relative flex items-center justify-center w-full px-4"
+                className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 w-full px-2 sm:px-4"
               >
-                {/* Ingredient Filter Button - Fixed position on the left */}
+                {/* Ingredient Filter Button - In line with title and spyglass */}
                 <motion.button
                   onClick={toggleIngredientFilter}
-                  className="absolute left-[40px] sm:left-[60px] md:left-[80px] top-1/2 -translate-y-1/2 select-none px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 md:py-4 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 z-20 flex items-center gap-2 group border-2 border-blue-400/30"
+                  className="select-none px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 z-20 flex items-center gap-2 group border-2 border-blue-400/30 flex-shrink-0"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ scale: 1 }}
@@ -526,7 +526,7 @@ const CategoryPage = () => {
                     ></div>
                     
                     <svg 
-                      className="w-5 h-5 text-white transition-transform duration-300 group-hover:rotate-12" 
+                      className="w-4 h-4 sm:w-5 sm:h-5 text-white transition-transform duration-300 group-hover:rotate-12" 
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
@@ -535,34 +535,35 @@ const CategoryPage = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
                     </svg>
                     {/* Mobile label (short) */}
-                    <span className="ml-1 inline sm:hidden text-sm font-bold">Filtruj</span>
+                    <span className="ml-1 inline sm:hidden text-xs font-bold">Filtruj</span>
                     {/* Desktop/tablet label (full) */}
-                    <span className="ml-1 hidden sm:inline text-base font-bold">Filtruj składniki</span>
+                    <span className="ml-1 hidden sm:inline text-sm font-bold">Filtruj składniki</span>
                   </div>
                 </motion.button>
 
-                {/* Centered title and search icon */}
-                <div className="flex items-center justify-center gap-6 sm:gap-7 md:gap-8 ml-20 sm:ml-28 md:ml-32 mr-5">
-                  <motion.div
-                    className="relative group cursor-pointer"
-                    onClick={toggleSearch}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                    title="Kliknij, aby wyszukać przepisy"
-                  >
-                    {/* Subtle background effect on hover */}
-                    <motion.div 
-                      className="absolute inset-0 -m-2 rounded-lg bg-green-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      initial={{ opacity: 0 }}
-                      whileHover={{ opacity: 1 }}
-                    />
-                    
-                    <h1 className="relative font-['Playfair_Display'] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-[#2D3748] font-bold tracking-wide text-center break-words group-hover:text-green-600 transition-colors duration-300">
-                      {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
-                    </h1>
-                  </motion.div>
+                {/* Centered title */}
+                <motion.div
+                  className="relative group cursor-pointer flex-shrink-0"
+                  onClick={toggleSearch}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                  title="Kliknij, aby wyszukać przepisy"
+                >
+                  {/* Subtle background effect on hover */}
+                  <motion.div 
+                    className="absolute inset-0 -m-2 rounded-lg bg-green-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                  />
                   
+                  <h1 className="relative font-['Playfair_Display'] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-[#2D3748] font-bold tracking-wide text-center break-words group-hover:text-green-600 transition-colors duration-300">
+                    {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
+                  </h1>
+                </motion.div>
+                
+                {/* Search icon */}
+                <div className="flex-shrink-0">
                   <SearchIcon toggleSearch={toggleSearch} />
                 </div>
               </motion.div>
@@ -575,17 +576,66 @@ const CategoryPage = () => {
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="w-full max-w-4xl md:max-w-5xl mx-auto"
               >
-                <SearchBar 
-                  placeholder="Szukaj przepisów..." 
-                  onSearchSubmit={handleSearchSubmit}
-                  onClose={handleSearchClose}
-                  onChange={handleSearchInput}
-                  initialOpen={isSearching}
-                  suggestions={suggestions}
-                  onSuggestionSelect={handleSuggestionSelect}
-                  highlightedTerm={searchTerm}
-                  minCharsForSuggestions={3}
-                />
+                <div className="flex items-center gap-4 sm:gap-6 w-full px-4">
+                  {/* Keep filter button visible during search */}
+                  <motion.button
+                    onClick={toggleIngredientFilter}
+                    className="select-none px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 z-20 flex items-center gap-2 group border-2 border-blue-400/30 flex-shrink-0"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ scale: 1 }}
+                    animate={isIngredientFilterVisible ? 
+                      { 
+                        scale: [1, 1.05, 1],
+                        transition: { 
+                          repeat: Infinity, 
+                          repeatType: "loop", 
+                          duration: 2,
+                          ease: "easeInOut"
+                        }
+                      } : {}
+                    }
+                    aria-label="Filtruj składniki"
+                  >
+                    <div className="relative flex items-center justify-center">
+                      <div 
+                        className="absolute inset-0 rounded-xl animate-ping opacity-30" 
+                        style={{
+                          background: 'radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%)',
+                          transform: 'scale(1.2)',
+                          animationDuration: '3s',
+                        }}
+                      ></div>
+                      
+                      <svg 
+                        className="w-4 h-4 sm:w-5 sm:h-5 text-white transition-transform duration-300 group-hover:rotate-12" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                      </svg>
+                      <span className="ml-1 inline sm:hidden text-xs font-bold">Filtruj</span>
+                      <span className="ml-1 hidden sm:inline text-sm font-bold">Filtruj składniki</span>
+                    </div>
+                  </motion.button>
+
+                  {/* Search bar */}
+                  <div className="flex-1">
+                    <SearchBar 
+                      placeholder="Szukaj przepisów..." 
+                      onSearchSubmit={handleSearchSubmit}
+                      onClose={handleSearchClose}
+                      onChange={handleSearchInput}
+                      initialOpen={isSearching}
+                      suggestions={suggestions}
+                      onSuggestionSelect={handleSuggestionSelect}
+                      highlightedTerm={searchTerm}
+                      minCharsForSuggestions={3}
+                    />
+                  </div>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
