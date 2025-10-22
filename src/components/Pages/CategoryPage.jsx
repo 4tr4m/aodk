@@ -493,12 +493,12 @@ const CategoryPage = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 w-full px-2 sm:px-4"
+                className="relative flex items-center justify-center w-full px-2 sm:px-4"
               >
-                {/* Ingredient Filter Button - In line with title and spyglass */}
+                {/* Ingredient Filter Button - Sticky on desktop, positioned on mobile */}
                 <motion.button
                   onClick={toggleIngredientFilter}
-                  className="select-none px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 z-20 flex items-center gap-2 group border-2 border-blue-400/30 flex-shrink-0"
+                  className="select-none px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 z-20 flex items-center gap-2 group border-2 border-blue-400/30 flex-shrink-0 absolute left-[10px] md:left-[100px] top-1/2 -translate-y-1/2"
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ scale: 1 }}
@@ -541,30 +541,53 @@ const CategoryPage = () => {
                   </div>
                 </motion.button>
 
-                {/* Centered title */}
-                <motion.div
-                  className="relative group cursor-pointer flex-shrink-0"
-                  onClick={toggleSearch}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                  title="Kliknij, aby wyszukać przepisy"
-                >
-                  {/* Subtle background effect on hover */}
-                  <motion.div 
-                    className="absolute inset-0 -m-2 rounded-lg bg-green-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                    initial={{ opacity: 0 }}
-                    whileHover={{ opacity: 1 }}
-                  />
+                {/* Centered title and search icon container */}
+                <div className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 ml-16 sm:ml-20 md:ml-24 mr-4">
+                  {/* Centered title */}
+                  <motion.div
+                    className="relative group cursor-pointer flex-shrink-0"
+                    onClick={toggleSearch}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                    title="Kliknij, aby wyszukać przepisy"
+                  >
+                    {/* Subtle background effect on hover */}
+                    <motion.div 
+                      className="absolute inset-0 -m-2 rounded-lg bg-green-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      initial={{ opacity: 0 }}
+                      whileHover={{ opacity: 1 }}
+                    />
+                    
+                    <h1 className="relative font-['Playfair_Display'] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-[#2D3748] font-bold tracking-wide text-center break-words group-hover:text-green-600 transition-colors duration-300">
+                      {/* Mobile: Split multi-word titles into two lines */}
+                      <span className="block sm:hidden">
+                        {(() => {
+                          const title = currentCategory ? currentCategory.label : 'Wszystkie Przepisy';
+                          const words = title.split(' ');
+                          if (words.length > 1) {
+                            return (
+                              <>
+                                {words[0]}
+                                <br />
+                                {words.slice(1).join(' ')}
+                              </>
+                            );
+                          }
+                          return title;
+                        })()}
+                      </span>
+                      {/* Desktop: Single line */}
+                      <span className="hidden sm:block">
+                        {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
+                      </span>
+                    </h1>
+                  </motion.div>
                   
-                  <h1 className="relative font-['Playfair_Display'] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-[#2D3748] font-bold tracking-wide text-center break-words group-hover:text-green-600 transition-colors duration-300">
-                    {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
-                  </h1>
-                </motion.div>
-                
-                {/* Search icon */}
-                <div className="flex-shrink-0">
-                  <SearchIcon toggleSearch={toggleSearch} />
+                  {/* Search icon */}
+                  <div className="flex-shrink-0">
+                    <SearchIcon toggleSearch={toggleSearch} />
+                  </div>
                 </div>
               </motion.div>
             ) : (
@@ -576,11 +599,11 @@ const CategoryPage = () => {
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="w-full max-w-4xl md:max-w-5xl mx-auto"
               >
-                <div className="flex items-center gap-4 sm:gap-6 w-full px-4">
-                  {/* Keep filter button visible during search */}
+                <div className="relative flex items-center w-full px-2 sm:px-4">
+                  {/* Keep filter button visible during search - same positioning as normal state */}
                   <motion.button
                     onClick={toggleIngredientFilter}
-                    className="select-none px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 z-20 flex items-center gap-2 group border-2 border-blue-400/30 flex-shrink-0"
+                    className="select-none px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 z-20 flex items-center gap-2 group border-2 border-blue-400/30 flex-shrink-0 absolute left-[10px] md:left-[100px] top-1/2 -translate-y-1/2"
                     whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     initial={{ scale: 1 }}
@@ -622,7 +645,7 @@ const CategoryPage = () => {
                   </motion.button>
 
                   {/* Search bar */}
-                  <div className="flex-1">
+                  <div className="flex-1 ml-16 sm:ml-20 md:ml-24">
                     <SearchBar 
                       placeholder="Szukaj przepisów..." 
                       onSearchSubmit={handleSearchSubmit}
