@@ -59,10 +59,10 @@ const ZnajdkiProductPage = () => {
     }
     
     // Try next fallback image
-    if (currentSrc.includes('/img/znajdki/')) {
+    if (currentSrc.includes('/img/Znajdki/')) {
       // If we're already at 1.jpg or default.jpg, try default.jpg before giving up
-      if (currentSrc.includes('/img/znajdki/1.jpg') && !currentSrc.includes('default.jpg')) {
-        e.target.src = `${baseUrl}/img/znajdki/default.jpg`;
+      if (currentSrc.includes('/img/Znajdki/1.jpg') && !currentSrc.includes('default.jpg')) {
+        e.target.src = `${baseUrl}/img/Znajdki/default.jpg`;
         e.target.dataset.triedDefault = 'true';
       } else if (currentSrc.includes('default.jpg')) {
         // Even default.jpg failed, show placeholder
@@ -70,15 +70,15 @@ const ZnajdkiProductPage = () => {
         e.target.style.display = 'none';
       } else {
         // Try 1.jpg as fallback
-        e.target.src = `${baseUrl}/img/znajdki/1.jpg`;
+        e.target.src = `${baseUrl}/img/Znajdki/1.jpg`;
       }
     } else {
       // If the custom image path failed, try product ID image
       if (product?.id) {
-        e.target.src = `${baseUrl}/img/znajdki/${product.id}.jpg`;
+        e.target.src = `${baseUrl}/img/Znajdki/${product.id}.jpg`;
       } else {
         // If no product ID, try default
-        e.target.src = `${baseUrl}/img/znajdki/default.jpg`;
+        e.target.src = `${baseUrl}/img/Znajdki/default.jpg`;
         e.target.dataset.triedDefault = 'true';
       }
     }
@@ -173,7 +173,7 @@ const ZnajdkiProductPage = () => {
                 </div>
               ) : (
                 <img 
-                  src={getImageSrc() || `${getBaseUrl()}/img/znajdki/default.jpg`} 
+                  src={getImageSrc() || `${getBaseUrl()}/img/Znajdki/default.jpg`} 
                   alt={product.name}
                   className="max-w-full max-h-full object-contain object-center"
                   onError={handleImageError}

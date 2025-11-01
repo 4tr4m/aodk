@@ -363,7 +363,11 @@ const RecipePage = () => {
                       </div>
                     </motion.button>
                   ) : (
-                    <div>
+                    <motion.div
+                      initial={false}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       <div className="flex items-center justify-between mb-4">
                         <h2 className="text-xl font-bold text-gray-800 mb-0 font-['Playfair_Display'] flex items-center gap-2">
                           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100">
@@ -382,18 +386,30 @@ const RecipePage = () => {
                         </motion.button>
                       </div>
                       <motion.div 
-                        className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 shadow-sm transition-all duration-300"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
+                        className="bg-gray-50 rounded-xl border border-gray-200 shadow-sm overflow-hidden"
+                        initial={{ maxHeight: 0, opacity: 0 }}
+                        animate={{ 
+                          maxHeight: isFullDescExpanded ? 5000 : 0,
+                          opacity: isFullDescExpanded ? 1 : 0
+                        }}
+                        transition={{ 
+                          maxHeight: {
+                            duration: 0.5,
+                            ease: [0.04, 0.62, 0.23, 0.98]
+                          },
+                          opacity: {
+                            duration: 0.3,
+                            delay: isFullDescExpanded ? 0.1 : 0
+                          }
+                        }}
                       >
-                        <div className="prose max-w-none">
+                        <div className="p-4 sm:p-6 prose max-w-none">
                           <p className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg whitespace-pre-wrap break-words">
                             {recipe.fulldesc}
                           </p>
                         </div>
                       </motion.div>
-                    </div>
+                    </motion.div>
                   )}
                   {/* Hidden content for SEO - always in DOM but visually hidden when collapsed */}
                   {!isFullDescExpanded && (

@@ -46,26 +46,26 @@ export const getZnajdkiImageUrl = (product) => {
   }
   
   // 2. Product-specific image (id-based)
-  const productImagePath = `${baseUrl}/img/znajdki/${product.id}.jpg`;
+  const productImagePath = `${baseUrl}/img/Znajdki/${product.id}.jpg`;
   if (!imageSources.includes(productImagePath)) {
     imageSources.push(productImagePath);
   }
   
   // 3. Default fallback (only if product.id !== 1 to avoid duplicate)
   if (product.id !== 1) {
-    const defaultOnePath = `${baseUrl}/img/znajdki/1.jpg`;
+    const defaultOnePath = `${baseUrl}/img/Znajdki/1.jpg`;
     if (!imageSources.includes(defaultOnePath)) {
       imageSources.push(defaultOnePath);
     }
   }
   
   // 4. Ultimate fallback
-  const ultimateFallback = `${baseUrl}/img/znajdki/default.jpg`;
+  const ultimateFallback = `${baseUrl}/img/Znajdki/default.jpg`;
   if (!imageSources.includes(ultimateFallback)) {
     imageSources.push(ultimateFallback);
   }
   
-  return imageSources[0] || `${baseUrl}/img/znajdki/default.jpg`;
+  return imageSources[0] || `${baseUrl}/img/Znajdki/default.jpg`;
 };
 
 /**

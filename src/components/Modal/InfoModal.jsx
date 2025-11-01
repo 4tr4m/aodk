@@ -137,7 +137,7 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
     <AnimatePresence>
       {isOpen && (
         <motion.div 
-          className="fixed inset-0 flex items-center justify-center bg-black/80 z-50 p-4 backdrop-blur-sm"
+          className="fixed inset-0 flex items-center justify-center bg-black/80 z-50 p-2 sm:p-4 backdrop-blur-sm"
           onClick={togglePopup}
           variants={backdropVariants}
           initial="hidden"
@@ -145,16 +145,14 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
           exit="exit"
         >
           <motion.div 
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-auto relative overflow-hidden"
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl mx-auto relative overflow-hidden flex flex-col"
             onClick={e => e.stopPropagation()}
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
             style={{ 
-              maxHeight: 'calc(100vh - 40px)',
-              overflowY: 'auto',
-              WebkitOverflowScrolling: 'touch'
+              maxHeight: 'calc(100vh - 16px)',
             }}
           >
             {/* Decorative elements */}
@@ -170,17 +168,17 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
             />
             
             {/* Header */}
-            <div className="relative bg-gradient-to-r from-green-700 to-green-600 p-6 text-white">
-              <div className="flex items-center gap-4">
+            <div className="relative bg-gradient-to-r from-green-700 to-green-600 p-4 sm:p-5 md:p-6 text-white flex-shrink-0 rounded-t-3xl">
+              <div className="flex items-center gap-3 sm:gap-4 pr-10 sm:pr-12">
                 <motion.div
                   initial={{ rotate: -30, opacity: 0 }}
                   animate={{ rotate: 0, opacity: 1 }}
                   transition={{ delay: 0.2, duration: 0.3, type: 'spring' }}
-                  className="p-3 bg-white/10 rounded-full"
+                  className="p-2 sm:p-3 bg-white/10 rounded-full flex-shrink-0"
                 >
-                  <IoLeaf className="text-2xl text-green-100" />
+                  <IoLeaf className="text-xl sm:text-2xl text-green-100" />
                 </motion.div>
-                <h3 className="font-['Caveat'] text-3xl mb-0 relative">
+                <h3 className="font-['Caveat'] text-xl sm:text-2xl md:text-3xl mb-0 relative leading-tight">
                   Zasady, które stosuję w Autyzm od Kuchni
                 </h3>
               </div>
@@ -188,103 +186,120 @@ const InfoModal = memo(({ isOpen, togglePopup }) => {
             
             {/* Content */}
             <motion.div 
-              className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700 overflow-y-auto"
+              className="flex-1 overflow-y-auto overflow-x-hidden md:overflow-y-visible p-4 sm:p-5 md:p-6"
               variants={staggeredItems}
               initial="hidden"
               animate="visible"
             >
-              <div>
-                <motion.p 
-                  className="mb-4 text-base md:text-lg modal-item"
-                  variants={itemVariants}
-                >
-                  Na „Autyzm od Kuchni" dzielę się przepisami, które przez ponad 10 lat zbierałam i dostosowywałam do potrzeb mojego syna z autyzmem.
-                </motion.p>
-                <motion.p 
-                  className="mb-4 text-base md:text-lg modal-item"
-                  variants={itemVariants}
-                >
-                  Miały one ogromny wpływ na jego rozwój i wciąż wspierają jego codzienne funkcjonowanie.
-                </motion.p>
-                
-                <motion.div 
-                  className="mt-4 p-4 border-l-4 border-green-600 bg-green-50 rounded-r-lg flex items-start gap-3"
-                  variants={itemVariants}
-                >
-                  <IoInformationCircle className="text-green-700 text-xl flex-shrink-0 mt-1" />
-                  <div>
-                    <p className="mb-2 text-sm md:text-base">
-                      Aby poznać naszą drogę, zapraszam do sekcji{' '}
-                      <Link 
-                        to="/historia/o-mnie" 
-                        className="text-green-700 font-semibold hover:text-green-800 transition-colors inline-flex items-center group"
-                      >
-                        HISTORIA
-                        <motion.span 
-                          className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          initial={{ x: -10 }}
-                          animate={{ x: 0 }}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 md:gap-6 text-gray-700">
+                <div>
+                  <motion.p 
+                    className="mb-3 sm:mb-4 text-sm sm:text-base md:text-lg leading-relaxed"
+                    variants={itemVariants}
+                  >
+                    Na „Autyzm od Kuchni" dzielę się przepisami, które przez ponad 10 lat zbierałam i dostosowywałam do potrzeb mojego syna z autyzmem.
+                  </motion.p>
+                  <motion.p 
+                    className="mb-3 sm:mb-4 text-sm sm:text-base md:text-lg leading-relaxed"
+                    variants={itemVariants}
+                  >
+                    Miały one ogromny wpływ na jego rozwój i wciąż wspierają jego codzienne funkcjonowanie.
+                  </motion.p>
+                  
+                  <motion.div 
+                    className="mt-3 sm:mt-4 p-3 sm:p-4 border-l-4 border-green-600 bg-green-50 rounded-r-lg flex items-start gap-2 sm:gap-3"
+                    variants={itemVariants}
+                  >
+                    <IoInformationCircle className="text-green-700 text-lg sm:text-xl flex-shrink-0 mt-0.5 sm:mt-1" />
+                    <div>
+                      <p className="mb-2 text-xs sm:text-sm md:text-base leading-relaxed">
+                        Aby poznać naszą drogę, zapraszam do sekcji{' '}
+                        <Link 
+                          to="/historia/o-mnie" 
+                          className="text-green-700 font-semibold hover:text-green-800 transition-colors inline-flex items-center group"
                         >
-                          →
-                        </motion.span>
-                      </Link>
-                    </p>
-                    <p className="text-sm md:text-base">
-                      Po alternatywne przepisy z glutenem, zapraszam na{' '}
-                      <span className="text-green-700 font-semibold">ZDROWE JEMY</span>.
-                    </p>
-                  </div>
-                </motion.div>
+                          HISTORIA
+                          <motion.span 
+                            className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            initial={{ x: -10 }}
+                            animate={{ x: 0 }}
+                          >
+                            →
+                          </motion.span>
+                        </Link>
+                      </p>
+                      <p className="text-xs sm:text-sm md:text-base leading-relaxed">
+                        Po alternatywne przepisy z glutenem, zapraszam na{' '}
+                        <span className="text-green-700 font-semibold">ZDROWE JEMY</span>.
+                      </p>
+                    </div>
+                  </motion.div>
+                </div>
+                
+                <div>
+                  <motion.div 
+                    className="mb-3 sm:mb-4 flex items-center gap-2 text-green-800"
+                    variants={itemVariants}
+                  >
+                    <IoNutrition className="text-lg sm:text-xl" />
+                    <h4 className="text-base sm:text-lg font-semibold">W mojej kuchni:</h4>
+                  </motion.div>
+                  
+                  <ul className="space-y-1.5 sm:space-y-2">
+                    {[
+                      'nie stosuję glutenu',
+                      'nie używam nabiału krowiego',
+                      'nie dodaję cukru (używam ksylitolu)',
+                      'nigdy nie smażę',
+                      'nie stosuję margaryny',
+                      'używam jaj (wiejskie ze sprawdzonego źródła)'
+                    ].map((item, index) => (
+                      <motion.li 
+                        key={index}
+                        className="flex items-center gap-2 pl-2 py-1 sm:py-1.5 text-xs sm:text-sm md:text-base rounded-lg bg-green-50/50 hover:bg-green-50 transition-colors duration-200"
+                        variants={itemVariants}
+                        style={{ transitionDelay: `${index * 0.05}s` }}
+                      >
+                        <IoHeart className="text-green-600 text-xs sm:text-sm flex-shrink-0" />
+                        <span className="leading-relaxed">{item}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                  
+                  <motion.p 
+                    className="mt-3 sm:mt-4 text-sm sm:text-base md:text-lg leading-relaxed"
+                    variants={itemVariants}
+                  >
+                    Chcę, by moje doświadczenia stały się inspiracją dla innych, pokazując, jak świadome wybory żywieniowe mogą wspierać zdrowie.
+                  </motion.p>
+                </div>
               </div>
               
-              <div>
-                <motion.div 
-                  className="mb-4 flex items-center gap-2 text-green-800"
-                  variants={itemVariants}
+              {/* Mobile bottom close button - appears at bottom of scrollable content */}
+              <div className="md:hidden pt-4 pb-2 flex justify-center">
+                <motion.button
+                  className="w-14 h-14 flex items-center justify-center rounded-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white transition-colors shadow-xl touch-manipulation"
+                  onClick={togglePopup}
+                  whileTap={{ scale: 0.95 }}
+                  aria-label="Zamknij modal"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
                 >
-                  <IoNutrition className="text-xl" />
-                  <h4 className="text-lg font-semibold">W mojej kuchni:</h4>
-                </motion.div>
-                
-                <ul className="space-y-2">
-                  {[
-                    'nie stosuję glutenu',
-                    'nie używam nabiału krowiego',
-                    'nie dodaję cukru (używam ksylitolu)',
-                    'nigdy nie smażę',
-                    'nie stosuję margaryny',
-                    'używam jaj (wiejskie ze sprawdzonego źródła)'
-                  ].map((item, index) => (
-                    <motion.li 
-                      key={index}
-                      className="flex items-center gap-2 pl-2 py-1.5 text-sm md:text-base rounded-lg bg-green-50/50 hover:bg-green-50 transition-colors duration-200"
-                      variants={itemVariants}
-                      style={{ transitionDelay: `${index * 0.05}s` }}
-                    >
-                      <IoHeart className="text-green-600 text-sm" />
-                      {item}
-                    </motion.li>
-                  ))}
-                </ul>
-                
-                <motion.p 
-                  className="mt-4 text-base md:text-lg modal-item"
-                  variants={itemVariants}
-                >
-                  Chcę, by moje doświadczenia stały się inspiracją dla innych, pokazując, jak świadome wybory żywieniowe mogą wspierać zdrowie.
-                </motion.p>
+                  <IoClose className="text-2xl" />
+                </motion.button>
               </div>
             </motion.div>
             
-            {/* Close button */}
+            {/* Close button - Top right (larger on mobile for easy tapping) */}
             <motion.button
-              className="absolute right-4 top-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors shadow-lg z-10"
+              className="absolute right-3 top-3 sm:right-4 sm:top-4 w-12 h-12 sm:w-10 sm:h-10 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 active:bg-white/40 text-white transition-colors shadow-lg z-20 touch-manipulation"
               onClick={togglePopup}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               aria-label="Zamknij"
             >
-              <IoClose className="text-xl" />
+              <IoClose className="text-2xl sm:text-xl" />
             </motion.button>
           </motion.div>
         </motion.div>
