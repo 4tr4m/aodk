@@ -5,6 +5,7 @@ import TopNavBar from '../Headers/TopNavBar';
 import CategoryHeader from './CategoryHeader';
 import Footer from '../Footer/Footer';
 import ProductNewsletter from '../ProductModal/ProductNewsletter';
+import FeedbackButton from '../Feedback/FeedbackButton';
 import { FiFilter, FiShoppingBag, FiX } from 'react-icons/fi';
 import { FaLeaf, FaRegHeart, FaHeart } from 'react-icons/fa';
 import SEO from '../SEO/SEO';
@@ -410,6 +411,7 @@ const ZnajdkiPage = () => {
         </div>
       </div>
       
+      <FeedbackButton />
       <Footer />
     </div>
   );

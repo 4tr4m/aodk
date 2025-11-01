@@ -6,6 +6,7 @@ import Footer from '../Footer/Footer';
 import { blogPosts } from '../../Data/blog-data';
 import SEO from '../SEO/SEO';
 import { motion } from 'framer-motion';
+import FeedbackButton from '../Feedback/FeedbackButton';
 
 const BlogPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -176,6 +177,7 @@ const BlogPage = () => {
           </div>
         </div>
       </div>
+      <FeedbackButton />
       <Footer />
     </div>
   );

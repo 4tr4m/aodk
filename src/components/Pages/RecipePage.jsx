@@ -11,6 +11,7 @@ import CategoryHeader from './CategoryHeader';
 import Footer from '../Footer/Footer';
 import ProductNewsletter from '../ProductModal/ProductNewsletter';
 import emailjs from '@emailjs/browser';
+import FeedbackButton from '../Feedback/FeedbackButton';
 
 const RecipePage = () => {
   const { recipeId } = useParams();
@@ -541,6 +542,7 @@ const RecipePage = () => {
           </motion.div>
         </div>
         
+        <FeedbackButton />
         <Footer />
       </div>
     </>
