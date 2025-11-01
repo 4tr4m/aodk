@@ -67,6 +67,29 @@ const SearchIcon = ({ toggleSearch }) => {
   );
 };
 
+// Helper function to format category names - capitalize first letter, rest lowercase
+const formatCategoryName = (name) => {
+  if (!name) return '';
+  // Words that should remain lowercase (Polish prepositions and conjunctions)
+  const lowercaseWords = ['i', 'a', 'w', 'z', 'na', 'do', 'od', 'po', 'przy', 'bez', 'dla', 'o', 'u', 'ze', 'we', 'ku', 'przeciw', 'między', 'nad', 'pod', 'przed', 'za', 'obok', 'wśród', 'dzięki', 'wobec', 'względem'];
+  
+  return name
+    .split(' ')
+    .map((word, index) => {
+      // Always capitalize the first word
+      if (index === 0) {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      }
+      // For other words, check if they should be lowercase
+      if (lowercaseWords.includes(word.toLowerCase())) {
+        return word.toLowerCase();
+      }
+      // Capitalize other words
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(' ');
+};
+
 const CategoryPage = () => {
   const { categorySlug } = useParams();
   const navigate = useNavigate();
@@ -489,8 +512,8 @@ const CategoryPage = () => {
         <div id="category-title" className="flex flex-col items-center justify-center relative" style={{ overflow: 'visible' }}>
           {/* Fixed container for filter button, title/search, and magnifying glass */}
           <motion.div 
-            className="relative w-full flex items-center justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 px-2 sm:px-3 md:px-4"
-            style={{ overflow: 'visible', zIndex: 40, paddingTop: '0.5rem', paddingBottom: '0.5rem' }}
+            className="relative w-full flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 px-2 sm:px-3 md:px-4"
+            style={{ overflow: 'visible', zIndex: 40, paddingTop: '0.5rem', paddingBottom: '0.5rem', display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center' }}
             animate={{
               paddingTop: isScrolled ? '0.25rem' : '0.5rem',
               paddingBottom: isScrolled ? '0.25rem' : '0.5rem',
@@ -633,8 +656,8 @@ const CategoryPage = () => {
               )}
             </motion.button>
 
-            {/* Title and SearchBar with transitions */}
-            <div className="flex-1 flex items-center justify-center min-w-0">
+            {/* Title and SearchBar with transitions - centered layout using grid column */}
+            <div className="flex items-center justify-center min-w-0" style={{ gridColumn: '2', justifySelf: 'center', width: '100%' }}>
               <AnimatePresence mode="wait">
                 {!isSearching ? (
                   <motion.div
@@ -649,8 +672,8 @@ const CategoryPage = () => {
                     }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 w-full"
-                    style={{ overflow: 'visible' }}
+                    className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-6"
+                    style={{ overflow: 'visible', width: '100%', justifyContent: 'center' }}
                   >
                     {/* Centered title */}
                     <motion.div
@@ -672,7 +695,7 @@ const CategoryPage = () => {
                         {/* Mobile: Split multi-word titles into two lines */}
                         <span className="block sm:hidden">
                           {(() => {
-                            const title = currentCategory ? currentCategory.label : 'Wszystkie Przepisy';
+                            const title = currentCategory ? formatCategoryName(currentCategory.label) : 'Wszystkie Przepisy';
                             const words = title.split(' ');
                             if (words.length > 1) {
                               return (
@@ -688,7 +711,7 @@ const CategoryPage = () => {
                         </span>
                         {/* Desktop: Single line */}
                         <span className="hidden sm:block">
-                          {currentCategory ? currentCategory.label : 'Wszystkie Przepisy'}
+                          {currentCategory ? formatCategoryName(currentCategory.label) : 'Wszystkie Przepisy'}
                         </span>
                       </h1>
                     </motion.div>
@@ -714,6 +737,7 @@ const CategoryPage = () => {
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
                     className="w-full flex items-center justify-center"
+                    style={{ gridColumn: '2', width: '100%' }}
                   >
                     {/* Search bar - always visible when open */}
                     <div className="flex-1 w-full max-w-full">
@@ -733,6 +757,9 @@ const CategoryPage = () => {
                 )}
               </AnimatePresence>
             </div>
+            
+            {/* Right spacer for symmetry - same width as filter button */}
+            <div style={{ gridColumn: '3', minWidth: '120px' }} className="hidden sm:block"></div>
           </motion.div>
         </div>
         </motion.div>

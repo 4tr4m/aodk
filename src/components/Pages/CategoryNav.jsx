@@ -172,6 +172,25 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick, onSearchToggle 
               const categorySlug = category.link.split('/').pop();
               const isActive = categorySlug === currentSlug;
               
+              // Format category name - capitalize first letter, rest lowercase
+              const formatCategoryName = (name) => {
+                if (!name) return '';
+                const lowercaseWords = ['i', 'a', 'w', 'z', 'na', 'do', 'od', 'po', 'przy', 'bez', 'dla', 'o', 'u', 'ze', 'we', 'ku', 'przeciw', 'między', 'nad', 'pod', 'przed', 'za', 'obok', 'wśród', 'dzięki', 'wobec', 'względem'];
+                
+                return name
+                  .split(' ')
+                  .map((word, idx) => {
+                    if (idx === 0) {
+                      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                    }
+                    if (lowercaseWords.includes(word.toLowerCase())) {
+                      return word.toLowerCase();
+                    }
+                    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                  })
+                  .join(' ');
+              };
+              
               return (
                 <motion.button
                   key={index}
@@ -193,7 +212,7 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick, onSearchToggle 
                   animate={{ opacity: 1, y: 0, transition: { duration: 0.3, delay: index * 0.05 } }}
                   style={{ scrollSnapAlign: 'center' }}
                 >
-                  {category.label}
+                  {formatCategoryName(category.label)}
                 </motion.button>
               );
             })}
