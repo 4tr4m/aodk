@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaBookOpen, FaStar, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaChevronDown, FaChevronUp, FaInfoCircle } from 'react-icons/fa';
 import { useCart } from '../../context/CartContext';
 import recipeService from '../../services/recipeService';
 import ProductBaseIngredients from '../ProductModal/ProductBaseIngredients';
@@ -25,6 +25,7 @@ const RecipePage = () => {
   const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isFullDescExpanded, setIsFullDescExpanded] = useState(false);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -279,8 +280,7 @@ const RecipePage = () => {
               </div>
             </div>
 
-            {/* Recipe Details */
-            }
+            {/* Recipe Details */}
             <div className="p-6 sm:p-8">
               {/* Recipe Description - moved to top, right after image */}
               {recipe.description && (
@@ -334,55 +334,72 @@ const RecipePage = () => {
                 </motion.div>
               )}
 
-              {/* Full Description (fulldesc) - enhanced display */}
-              {(recipe.fulldesc || recipe.fulldesc === '') && (
+              {/* Full Description (fulldesc) - collapsible section */}
+              {recipe.fulldesc && recipe.fulldesc.trim() && (
                 <motion.div 
                   className="mb-8"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
                 >
-                  <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display'] flex items-center gap-2">
-                    <motion.div
-                      className="flex items-center gap-1"
-                      animate={{ 
-                        scale: [1, 1.1, 1],
-                        rotate: [0, 5, -5, 0]
-                      }}
-                      transition={{ 
-                        duration: 3, 
-                        repeat: Infinity, 
-                        ease: "easeInOut" 
-                      }}
+                  {!isFullDescExpanded ? (
+                    <motion.button
+                      onClick={() => setIsFullDescExpanded(true)}
+                      className="w-full text-left bg-gray-50 hover:bg-gray-100 rounded-xl p-4 sm:p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 group"
+                      whileHover={{ scale: 1.01 }}
+                      whileTap={{ scale: 0.99 }}
                     >
-                      <FaBookOpen className="w-5 h-5 text-purple-600" />
-                      <FaStar className="w-3 h-3 text-yellow-500" />
-                    </motion.div>
-                    <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                      Pełny opis przepisu
-                    </span>
-                  </h2>
-                  <motion.div 
-                    className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 sm:p-6 border border-purple-200/50 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
-                    whileHover={{ scale: 1.02, y: -2 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full -translate-y-10 translate-x-10 opacity-50"></div>
-                    <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-pink-100 to-purple-100 rounded-full translate-y-8 -translate-x-8 opacity-50"></div>
-                    
-                    <div className="prose max-w-none relative z-10">
-                      {recipe.fulldesc ? (
-                        <p className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg whitespace-pre-wrap break-words">
-                          {recipe.fulldesc}
-                        </p>
-                      ) : (
-                        <p className="text-gray-500 italic text-sm sm:text-base">
-                          Brak dodatkowego opisu dla tego przepisu.
-                        </p>
-                      )}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 group-hover:bg-green-200 transition-colors duration-200">
+                            <FaInfoCircle className="w-5 h-5 text-green-600" />
+                          </div>
+                          <h2 className="text-xl font-bold text-gray-800 font-['Playfair_Display']">
+                            Dowiedz się więcej o potrawie
+                          </h2>
+                        </div>
+                        <FaChevronDown className="w-4 h-4 text-gray-600 group-hover:text-green-600 group-hover:translate-y-1 transition-all duration-200" />
+                      </div>
+                    </motion.button>
+                  ) : (
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-xl font-bold text-gray-800 mb-0 font-['Playfair_Display'] flex items-center gap-2">
+                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100">
+                            <FaInfoCircle className="w-5 h-5 text-green-600" />
+                          </div>
+                          <span>Więcej o potrawie</span>
+                        </h2>
+                        <motion.button
+                          onClick={() => setIsFullDescExpanded(false)}
+                          className="flex items-center gap-2 text-gray-600 hover:text-green-600 font-medium transition-colors duration-200 group"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <span>Zwiń</span>
+                          <FaChevronUp className="w-3 h-3 group-hover:translate-y-0.5 transition-transform duration-200" />
+                        </motion.button>
+                      </div>
+                      <motion.div 
+                        className="bg-gray-50 rounded-xl p-4 sm:p-6 border border-gray-200 shadow-sm transition-all duration-300"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                      >
+                        <div className="prose max-w-none">
+                          <p className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg whitespace-pre-wrap break-words">
+                            {recipe.fulldesc}
+                          </p>
+                        </div>
+                      </motion.div>
                     </div>
-                  </motion.div>
+                  )}
+                  {/* Hidden content for SEO - always in DOM but visually hidden when collapsed */}
+                  {!isFullDescExpanded && (
+                    <div className="sr-only">
+                      <p>{recipe.fulldesc}</p>
+                    </div>
+                  )}
                 </motion.div>
               )}
 
