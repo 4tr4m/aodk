@@ -37,15 +37,35 @@ export const getZnajdkiImageUrl = (product) => {
   
   const baseUrl = getBaseUrl();
   
-  // Priority order for image sources
-  const imageSources = [
-    product.image ? `${baseUrl}/img/${product.image}` : null,
-    `${baseUrl}/img/znajdki/${product.id}.jpg`,
-    `${baseUrl}/img/znajdki/1.jpg`,
-    `${baseUrl}/img/znajdki/default.jpg`
-  ].filter(Boolean);
+  // Priority order for image sources (avoid duplicates)
+  const imageSources = [];
   
-  return imageSources[0] || `${baseUrl}/img/znajdki/1.jpg`;
+  // 1. Custom image path if exists
+  if (product.image) {
+    imageSources.push(`${baseUrl}/img/${product.image}`);
+  }
+  
+  // 2. Product-specific image (id-based)
+  const productImagePath = `${baseUrl}/img/znajdki/${product.id}.jpg`;
+  if (!imageSources.includes(productImagePath)) {
+    imageSources.push(productImagePath);
+  }
+  
+  // 3. Default fallback (only if product.id !== 1 to avoid duplicate)
+  if (product.id !== 1) {
+    const defaultOnePath = `${baseUrl}/img/znajdki/1.jpg`;
+    if (!imageSources.includes(defaultOnePath)) {
+      imageSources.push(defaultOnePath);
+    }
+  }
+  
+  // 4. Ultimate fallback
+  const ultimateFallback = `${baseUrl}/img/znajdki/default.jpg`;
+  if (!imageSources.includes(ultimateFallback)) {
+    imageSources.push(ultimateFallback);
+  }
+  
+  return imageSources[0] || `${baseUrl}/img/znajdki/default.jpg`;
 };
 
 /**

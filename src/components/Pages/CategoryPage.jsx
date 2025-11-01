@@ -19,9 +19,10 @@ import IngredientFilter from '../UI/IngredientFilter';
 // SearchIcon component taken from CategoryBanner
 const SearchIcon = ({ toggleSearch }) => {
   return (
-    <div className="relative">
+    <div className="relative" style={{ overflow: 'visible', padding: '0.5rem', margin: '-0.5rem' }}>
       <motion.div 
         className="cursor-pointer relative select-none search-icon-container"
+        style={{ overflow: 'visible', position: 'relative', zIndex: 50 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={toggleSearch}
@@ -38,13 +39,14 @@ const SearchIcon = ({ toggleSearch }) => {
           }
         }}
       >
-        <div className="relative flex items-center justify-center overflow-visible">
+        <div className="relative flex items-center justify-center" style={{ overflow: 'visible', position: 'relative' }}>
           <div 
             className="absolute inset-0 rounded-full animate-ping opacity-30" 
             style={{
               background: 'radial-gradient(circle, rgba(34,197,94,0.5) 0%, rgba(34,197,94,0) 70%)',
               transform: 'scale(1.8)',
               animationDuration: '3s',
+              margin: '-20%',
             }}
           ></div>
           <div 
@@ -52,12 +54,13 @@ const SearchIcon = ({ toggleSearch }) => {
             style={{
               background: 'radial-gradient(circle, rgba(34,197,94,0.3) 0%, rgba(34,197,94,0) 70%)',
               transform: 'scale(1.5)',
+              margin: '-15%',
             }}
           ></div>
           {/* Attention ring */}
-          <div className="absolute -inset-1 rounded-full bg-green-400/20 animate-pulse"></div>
+          <div className="absolute -inset-1 rounded-full bg-green-400/20 animate-pulse" style={{ margin: '-4px' }}></div>
           
-          <FaSearch className="text-[2.6rem] sm:text-[2.85rem] md:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" style={{ position: 'relative', zIndex: 50 }} />
+          <FaSearch className="text-[2rem] sm:text-[2.5rem] md:text-[2.8rem] lg:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" style={{ position: 'relative', zIndex: 50, display: 'block' }} />
         </div>
       </motion.div>
     </div>
@@ -84,6 +87,7 @@ const CategoryPage = () => {
   const [filteredRecipes, setFilteredRecipes] = useState(null);
   const [activeFilter, setActiveFilter] = useState(null);
   const [selectedIngredient, setSelectedIngredient] = useState(null);
+  const [selectedIngredientsCount, setSelectedIngredientsCount] = useState(0);
 
   // Scroll detection for hiding/showing header elements
   const [isScrolled, setIsScrolled] = useState(false);
@@ -124,11 +128,12 @@ const CategoryPage = () => {
       const searchForIngredient = async () => {
         try {
           const recipes = await recipeService.getRecipesByIngredient(ingredientParam);
-          setFilteredRecipes(recipes);
-          setActiveFilter(ingredientParam);
-          
-          // Set the selected ingredient for the filter
-          setSelectedIngredient({ name: ingredientParam });
+              setFilteredRecipes(recipes);
+              setActiveFilter(ingredientParam);
+              setSelectedIngredientsCount(1); // Single ingredient from URL
+              
+              // Set the selected ingredient for the filter
+              setSelectedIngredient({ name: ingredientParam });
         } catch (error) {
           console.error('Error searching for ingredient from URL:', error);
         }
@@ -373,6 +378,7 @@ const CategoryPage = () => {
     setFilteredRecipes(null);
     setActiveFilter(null);
     setSelectedIngredient(null);
+    setSelectedIngredientsCount(0);
     removeIngredientQueryParam();
   }, [removeIngredientQueryParam]);
 
@@ -385,12 +391,18 @@ const CategoryPage = () => {
   }, [isIngredientFilterVisible, handleIngredientFilterClose]);
 
   const handleRecipesFiltered = useCallback((recipes, ingredientName) => {
-    if (recipes) {
+    if (recipes && ingredientName) {
       setFilteredRecipes(recipes);
       setActiveFilter(ingredientName);
+      // Count ingredients - if comma-separated, count after splitting and trimming
+      const count = ingredientName.includes(',') 
+        ? ingredientName.split(',').map(s => s.trim()).filter(s => s.length > 0).length
+        : 1;
+      setSelectedIngredientsCount(count);
     } else {
       setFilteredRecipes(null);
       setActiveFilter(null);
+      setSelectedIngredientsCount(0);
     }
   }, []);
 
@@ -465,22 +477,23 @@ const CategoryPage = () => {
       </div>
       
       {/* Sticky header with filter button, title/search, and magnifying glass */}
-      <div className="sticky top-0 z-30 bg-gray-100 mb-6 md:mb-8 overflow-visible">
+      <div className="sticky top-0 z-30 bg-gray-100 mb-6 md:mb-8" style={{ overflow: 'visible', paddingTop: '1rem', paddingBottom: '1rem' }}>
         <motion.div 
           className="max-w-7xl mx-auto px-4 md:px-8 text-center"
           initial="hidden"
           animate="visible"
           variants={fadeIn}
+          style={{ overflow: 'visible' }}
         >
         {/* Header with H1 and Search */}
-        <div id="category-title" className="flex flex-col items-center justify-center relative overflow-visible">
+        <div id="category-title" className="flex flex-col items-center justify-center relative" style={{ overflow: 'visible' }}>
           {/* Fixed container for filter button, title/search, and magnifying glass */}
           <motion.div 
-            className="relative w-full flex items-center justify-center gap-3 sm:gap-4 md:gap-6 px-2 sm:px-4 overflow-visible"
-            style={{ overflow: 'visible', zIndex: 40 }}
+            className="relative w-full flex items-center justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 px-2 sm:px-3 md:px-4"
+            style={{ overflow: 'visible', zIndex: 40, paddingTop: '0.5rem', paddingBottom: '0.5rem' }}
             animate={{
-              paddingTop: isScrolled ? '0.5rem' : '1.5rem',
-              paddingBottom: isScrolled ? '0.5rem' : '1.5rem',
+              paddingTop: isScrolled ? '0.25rem' : '0.5rem',
+              paddingBottom: isScrolled ? '0.25rem' : '0.5rem',
             }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
@@ -488,14 +501,14 @@ const CategoryPage = () => {
             <motion.button
               onClick={toggleIngredientFilter}
               className={`select-none px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 md:py-3 rounded-xl text-white shadow-xl hover:shadow-2xl transition-all duration-300 z-20 flex items-center gap-2 group border-2 flex-shrink-0 relative overflow-hidden
-                ${activeFilter 
+                ${selectedIngredientsCount > 0 
                   ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-blue-400/50' 
                   : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-blue-400/30'
                 }`}
               whileHover={{ scale: 1.08, y: -3 }}
               whileTap={{ scale: 0.92 }}
               initial={{ scale: 1 }}
-              animate={activeFilter ? 
+              animate={selectedIngredientsCount > 0 ? 
                 { 
                   boxShadow: [
                     "0 20px 25px -5px rgba(59, 130, 246, 0.3), 0 10px 10px -5px rgba(59, 130, 246, 0.2)",
@@ -526,7 +539,7 @@ const CategoryPage = () => {
               />
               
               {/* Glowing pulse effect when active */}
-              {activeFilter && (
+              {selectedIngredientsCount > 0 && (
                 <>
                   <motion.div
                     className="absolute inset-0 rounded-xl bg-blue-400/30"
@@ -568,26 +581,26 @@ const CategoryPage = () => {
               />
 
               <div className="relative flex items-center justify-center z-10">
-                {/* Active filter indicator badge */}
-                {activeFilter && (
+                {/* Active filter indicator badge with count */}
+                {selectedIngredientsCount > 0 && (
                   <motion.div
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
-                    className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg border-2 border-white"
+                    className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full min-w-[22px] h-[22px] flex items-center justify-center shadow-lg border-2 border-white px-1"
                   >
-                    !
+                    {selectedIngredientsCount}
                   </motion.div>
                 )}
                 
                 {/* Filter icon with enhanced animation */}
                 <motion.div
-                  animate={activeFilter ? {
+                  animate={selectedIngredientsCount > 0 ? {
                     rotate: [0, 10, -10, 10, 0],
                     scale: [1, 1.1, 1],
                   } : {}}
                   transition={{
                     duration: 0.6,
-                    repeat: activeFilter ? Infinity : 0,
+                    repeat: selectedIngredientsCount > 0 ? Infinity : 0,
                     repeatDelay: 1.5
                   }}
                 >
@@ -615,7 +628,7 @@ const CategoryPage = () => {
                   className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900/95 backdrop-blur-sm text-white text-xs rounded-lg shadow-xl whitespace-nowrap pointer-events-none z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 >
                   <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900/95"></div>
-                  <span className="font-semibold">Aktywny filtr:</span> {activeFilter.length > 25 ? activeFilter.substring(0, 25) + '...' : activeFilter}
+                  <span className="font-semibold">Aktywny filtr ({selectedIngredientsCount}):</span> {activeFilter.length > 20 ? activeFilter.substring(0, 20) + '...' : activeFilter}
                 </motion.div>
               )}
             </motion.button>
@@ -636,7 +649,8 @@ const CategoryPage = () => {
                     }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6 w-full overflow-hidden"
+                    className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 w-full"
+                    style={{ overflow: 'visible' }}
                   >
                     {/* Centered title */}
                     <motion.div
@@ -654,7 +668,7 @@ const CategoryPage = () => {
                         whileHover={{ opacity: 1 }}
                       />
                       
-                      <h1 className="relative font-['Playfair_Display'] text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-[#2D3748] font-bold tracking-wide text-center break-words group-hover:text-green-600 transition-colors duration-300">
+                      <h1 className="relative font-['Playfair_Display'] text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl text-[#2D3748] font-bold tracking-wide text-center break-words group-hover:text-green-600 transition-colors duration-300 px-2 sm:px-3">
                         {/* Mobile: Split multi-word titles into two lines */}
                         <span className="block sm:hidden">
                           {(() => {
@@ -679,10 +693,10 @@ const CategoryPage = () => {
                       </h1>
                     </motion.div>
                     
-                    {/* Search icon */}
+                    {/* Search icon - with proper spacing to prevent clipping */}
                     <motion.div 
-                      className="flex-shrink-0 overflow-visible"
-                      style={{ overflow: 'visible', zIndex: 50, position: 'relative' }}
+                      className="flex-shrink-0"
+                      style={{ overflow: 'visible', zIndex: 50, position: 'relative', padding: '0.5rem', margin: '-0.5rem' }}
                       animate={{
                         opacity: isScrolled ? 0 : 1,
                         scale: isScrolled ? 0.8 : 1,
@@ -792,7 +806,7 @@ const CategoryPage = () => {
       <motion.div 
         className="sticky z-20 mb-6 bg-gray-100 shadow-sm"
         style={{
-          top: isScrolled ? '60px' : isSearching ? '60px' : 'auto',
+          top: isScrolled ? '70px' : isSearching ? '70px' : 'auto',
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >
