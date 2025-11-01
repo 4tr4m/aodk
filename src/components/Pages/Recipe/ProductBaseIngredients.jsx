@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaUtensils } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import recipeService from '../../services/recipeService';
+import recipeService from '../../../services/recipeService';
 
 const ProductBaseIngredients = ({ recipe }) => {
   const navigate = useNavigate();

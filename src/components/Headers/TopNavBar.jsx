@@ -2,6 +2,12 @@
 // This component provides both desktop and mobile navigation with dropdown menus
 // and social media links. It fetches dynamic categories from Supabase for the KUCHNIA section.
 //
+// PURPOSE:
+// Main site-wide navigation bar that appears at the top of all pages.
+// Contains the website logo, main navigation links (START, KUCHNIA, HISTORIA, ZNAJDKI, BLOG, KONTAKT),
+// dropdown menus with subcategories, and social media icons.
+// Provides essential navigation functionality for the entire website.
+//
 // USAGE LOCATIONS:
 // - src/pages/HomePage.jsx (main landing page)
 // - src/components/Pages/CategoryPage.jsx (recipe category pages)
@@ -17,6 +23,34 @@
 // - src/components/Pages/Wiedza.jsx (knowledge page - currently disabled)
 //
 // The component appears on every major page of the website and is essential for navigation.
+//
+// HOW IT WORKS:
+// 1. Fetches recipe categories from Supabase on mount and displays them in KUCHNIA dropdown
+// 2. Shows logo that links to home page (/)
+// 3. Renders main navigation links: START, KUCHNIA, HISTORIA, ZNAJDKI, BLOG, KONTAKT
+// 4. Some links have dropdown menus that appear on hover (desktop) or click (mobile)
+// 5. KUCHNIA dropdown shows dynamic recipe categories fetched from Supabase
+// 6. HISTORIA and BLOG dropdowns use static category data from category-data.js
+// 7. Displays social media icons (Facebook, Instagram, TikTok, YouTube, Pinterest)
+// 8. On mobile, shows hamburger menu that opens full-screen overlay with navigation
+// 9. Mobile menu includes all navigation items with expandable dropdowns
+//
+// FEATURES:
+//   - Responsive design: different layouts for desktop and mobile
+//   - Dropdown menus on hover (desktop) and click (mobile)
+//   - Mobile hamburger menu with full-screen overlay
+//   - Dynamic category fetching from Supabase for KUCHNIA section
+//   - Social media links in header (desktop) and mobile menu footer
+//   - Smooth animations for dropdown appearance
+//   - Transparent background that works on all page backgrounds
+//
+// NAVIGATION ITEMS:
+//   - START: Links to home page (/)
+//   - KUCHNIA: Links to /kuchnia, dropdown shows recipe categories from Supabase
+//   - HISTORIA: Links to /historia/o-mnie, dropdown shows history subpages
+//   - ZNAJDKI: Links to /znajdki, no dropdown
+//   - BLOG: Links to /blog, dropdown shows blog categories
+//   - KONTAKT: Links to /kontakt, no dropdown
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';

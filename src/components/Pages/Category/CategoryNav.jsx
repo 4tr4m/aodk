@@ -1,3 +1,50 @@
+// CategoryNav Component - Horizontal scrollable category navigation bar
+// This component displays recipe categories in a horizontal scrollable carousel format
+// with smooth scrolling, arrow navigation, and automatic active category centering.
+//
+// PURPOSE:
+// Displays recipe category buttons (Zupy, Ciasta, Chleby, etc.) in a horizontal scrollable bar.
+// Allows users to quickly navigate between different recipe categories on the category page.
+// Includes a special "Wszystkie" (All) button that navigates to all recipes.
+//
+// USAGE LOCATION:
+// - src/components/Pages/CategoryPage.jsx (recipe category pages)
+//
+// PROPS:
+//   - categories: Array of category objects with {label, link, shortDesc}
+//     Example: [{label: "Zupy", link: "/kuchnia/zupy", shortDesc: "..."}, ...]
+//   - currentSlug: String - Current active category slug (from URL)
+//     Example: "zupy" when on /kuchnia/zupy page, null when on /kuchnia
+//   - onCategoryClick: Function - Callback when category button is clicked
+//     Called with the category link (e.g., "/kuchnia/zupy")
+//   - onSearchToggle: Function - Callback for search toggle (currently unused)
+//
+// FEATURES:
+//   - Smooth horizontal scrolling with snap-to-center behavior
+//   - Left/right arrow buttons that show/hide based on scroll position
+//   - Active category is automatically centered when page loads or category changes
+//   - Category names are automatically formatted (first letter uppercase, rest lowercase)
+//     Example: "ZUPY" becomes "Zupy", "BABECZKI I MUFFINY" becomes "Babeczki i Muffiny"
+//   - Responsive design with mobile and desktop layouts
+//   - Framer Motion animations for smooth button interactions
+//   - Touch-friendly horizontal scrolling on mobile devices
+//
+// HOW IT WORKS:
+// 1. Renders a horizontal scrollable container with category buttons
+// 2. Shows "Wszystkie" button first (with search icon) - navigates to /kuchnia
+// 3. Maps through categories array and renders each as a button
+// 4. Highlights active category with green background based on currentSlug
+// 5. Automatically scrolls active category to center when page loads or changes
+// 6. Shows/hides left/right arrows based on scroll position
+// 7. Formats category names according to Polish capitalization rules
+//
+// TECHNICAL DETAILS:
+//   - Uses React refs (scrollRef, containerRef) for DOM manipulation
+//   - Implements scroll event listeners to detect scroll position
+//   - Uses useEffect to center active category on mount/category change
+//   - Sticky positioning controlled by parent CategoryPage component
+//   - Uses Framer Motion for button hover/tap animations
+//
 import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaSearch } from 'react-icons/fa';

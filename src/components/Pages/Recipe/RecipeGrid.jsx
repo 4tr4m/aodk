@@ -20,7 +20,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiClock, FiArrowRight, FiAward } from 'react-icons/fi';
 import { motion } from 'framer-motion';
-import { getRecipeImageUrl } from '../../utils/imageUtils';
+import { getRecipeImageUrl } from '../../../utils/imageUtils';
 
 const RecipeGrid = ({ recipes }) => {
   const navigate = useNavigate();

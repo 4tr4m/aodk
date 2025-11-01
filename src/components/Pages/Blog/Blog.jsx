@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import CategoryHeader from './CategoryHeader';
-import TopNavBar from '../Headers/TopNavBar';
-import Footer from '../Footer/Footer';
-import { blogPosts } from '../../Data/blog-data';
-import SEO from '../SEO/SEO';
+import CategoryHeader from '../Category/CategoryHeader';
+import TopNavBar from '../../Headers/TopNavBar';
+import Footer from '../../Footer/Footer';
+import { blogPosts } from '../../../Data/blog-data';
+import SEO from '../../SEO/SEO';
 import { motion } from 'framer-motion';
-import FeedbackButton from '../Feedback/FeedbackButton';
+import FeedbackButton from '../../Feedback/FeedbackButton';
 
 const BlogPage = () => {
   const [searchQuery, setSearchQuery] = useState('');

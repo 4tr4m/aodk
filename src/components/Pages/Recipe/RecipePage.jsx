@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaChevronDown, FaChevronUp, FaInfoCircle } from 'react-icons/fa';
-import { useCart } from '../../context/CartContext';
-import recipeService from '../../services/recipeService';
-import ProductBaseIngredients from '../ProductModal/ProductBaseIngredients';
-import SEO from '../SEO/SEO';
-import TopNavBar from '../Headers/TopNavBar';
-import CategoryHeader from './CategoryHeader';
-import Footer from '../Footer/Footer';
-import ProductNewsletter from '../ProductModal/ProductNewsletter';
+import { useCart } from '../../../context/CartContext';
+import recipeService from '../../../services/recipeService';
+import ProductBaseIngredients from './ProductBaseIngredients';
+import SEO from '../../SEO/SEO';
+import TopNavBar from '../../Headers/TopNavBar';
+import CategoryHeader from '../Category/CategoryHeader';
+import Footer from '../../Footer/Footer';
+import ProductNewsletter from '../../Section/ProductNewsletter';
 import emailjs from '@emailjs/browser';
-import FeedbackButton from '../Feedback/FeedbackButton';
+import FeedbackButton from '../../Feedback/FeedbackButton';
 
 const RecipePage = () => {
   const { recipeId } = useParams();

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import TopNavBar from '../Headers/TopNavBar';
-import CategoryHeader from './CategoryHeader';
-import Footer from '../Footer/Footer';
-import ProductNewsletter from '../ProductModal/ProductNewsletter';
-import FeedbackButton from '../Feedback/FeedbackButton';
+import TopNavBar from '../../Headers/TopNavBar';
+import CategoryHeader from '../Category/CategoryHeader';
+import Footer from '../../Footer/Footer';
+import ProductNewsletter from '../../Section/ProductNewsletter';
+import FeedbackButton from '../../Feedback/FeedbackButton';
 import { motion } from 'framer-motion';
 import { FiArrowLeft, FiShoppingBag, FiShare2 } from 'react-icons/fi';
 import { FaLeaf, FaRegHeart, FaHeart } from 'react-icons/fa';
-import supabase from '../../lib/supabase-browser';
-import { getZnajdkiImageUrl, getBaseUrl } from '../../utils/imageUtils';
+import supabase from '../../../lib/supabase-browser';
+import { getZnajdkiImageUrl, getBaseUrl } from '../../../utils/imageUtils';
 
 const ZnajdkiProductPage = () => {
   const { id } = useParams();

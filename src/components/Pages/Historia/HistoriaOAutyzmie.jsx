@@ -1,14 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import TopNavBar from '../Headers/TopNavBar';
-import CategoryHeader from './CategoryHeader';
-import Footer from '../Footer/Footer';
-import SEO from '../SEO/SEO';
-import HistoriaHero from '../Sections/HistoriaHero';
-import HistoriaStory from '../Sections/HistoriaStory';
-import HistoriaWhatIs from '../Sections/HistoriaWhatIs';
-import HistoriaNutrition from '../Sections/HistoriaNutrition';
-import HistoriaLiterature from '../Sections/HistoriaLiterature';
+import TopNavBar from '../../Headers/TopNavBar';
+import CategoryHeader from '../Category/CategoryHeader';
+import Footer from '../../Footer/Footer';
+import SEO from '../../SEO/SEO';
+import HistoriaHero from '../../Sections/HistoriaHero';
+import HistoriaStory from '../../Sections/HistoriaStory';
+import HistoriaWhatIs from '../../Sections/HistoriaWhatIs';
+import HistoriaNutrition from '../../Sections/HistoriaNutrition';
+import HistoriaLiterature from '../../Sections/HistoriaLiterature';
 import { FaPodcast, FaSpotify, FaHeadphones } from 'react-icons/fa';
 
 const HistoriaOAutyzmie = () => {

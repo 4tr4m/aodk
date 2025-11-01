@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { InfoActionButton } from '../UI/Button';
-import InfoModal from '../Pages/InfoModal';
+import InfoModal from '../Modal/InfoModal';
 
 const InfoSection = () => {
   const prefersReducedMotion = useReducedMotion();

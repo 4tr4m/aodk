@@ -1,3 +1,50 @@
+/**
+ * InfoModal Component - Informational modal about website principles and approach
+ * 
+ * PURPOSE:
+ * This modal displays comprehensive information about the website's cooking principles,
+ * dietary approach, and methodology. It appears when users click the logo in the Footer
+ * component, providing context about the "Autyzm od Kuchni" philosophy and practices.
+ * 
+ * USAGE LOCATIONS:
+ * - src/components/Footer/Footer.jsx (opened via logo click)
+ * 
+ * HOW IT WORKS:
+ * 1. Opens/closes via props: isOpen (boolean) and togglePopup (function)
+ * 2. Displays information about:
+ *    - The website's 10+ years of recipe collection and adaptation
+ *    - Dietary principles: no gluten, no dairy, no sugar (uses xylitol), no frying
+ *    - Cooking philosophy and approach to supporting autism through nutrition
+ * 3. Provides links to the "Historia" (History) section
+ * 4. Blocks body scroll when modal is open for better UX
+ * 
+ * FEATURES:
+ *   - Smooth animations using framer-motion (spring animations, staggered content)
+ *   - Responsive design (mobile and desktop layouts)
+ *   - Decorative animated background elements
+ *   - Scrollable content area for smaller screens
+ *   - Click outside to close functionality
+ *   - Keyboard accessible close button
+ *   - Links to related pages (Historia section)
+ * 
+ * CONTENT DISPLAYED:
+ *   - Introduction about recipe collection for autism support
+ *   - Dietary principles list (6 key principles with icons)
+ *   - Link to "Historia" section for more information
+ *   - Reference to alternative recipes website "ZDROWE JEMY"
+ * 
+ * PROPS:
+ *   - isOpen: boolean - Controls modal visibility
+ *   - togglePopup: function - Function to open/close the modal
+ * 
+ * ANIMATIONS:
+ *   - Backdrop fade in/out
+ *   - Modal spring animation (scale, translate)
+ *   - Staggered content items appearance
+ *   - Decorative background elements pulse animation
+ *   - Hover effects on interactive elements
+ */
+
 import { memo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { IoClose, IoLeaf, IoInformationCircle, IoHeart, IoNutrition } from 'react-icons/io5';

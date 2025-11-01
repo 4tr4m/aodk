@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import TopNavBar from '../Headers/TopNavBar';
-import Footer from '../Footer/Footer';
-import RecipeGrid from './RecipeGrid';
-import SearchBar from '../UI/SearchBar';
-import Spinner from '../UI/Spinner';
-import searchService from '../../services/searchService';
-import CategoryHeader from './CategoryHeader';
-import CategoryNav from './CategoryNav';
-import { kuchniaCategories } from '../../Data/category-data';
+import TopNavBar from '../../Headers/TopNavBar';
+import Footer from '../../Footer/Footer';
+import RecipeGrid from '../Recipe/RecipeGrid';
+import SearchBar from '../../UI/SearchBar';
+import Spinner from '../../UI/Spinner';
+import searchService from '../../../services/searchService';
+import CategoryHeader from '../Category/CategoryHeader';
+import CategoryNav from '../Category/CategoryNav';
+import { kuchniaCategories } from '../../../Data/category-data';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SearchPage = () => {

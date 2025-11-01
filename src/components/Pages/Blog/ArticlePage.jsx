@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import CategoryHeader from './CategoryHeader';
-import TopNavBar from '../Headers/TopNavBar';
-import { blogPosts } from '../../Data/blog-data';
-import { articleDetails } from '../../Data/article-data';
-import SEO from '../SEO/SEO';
-import FeedbackButton from '../Feedback/FeedbackButton';
+import CategoryHeader from '../Category/CategoryHeader';
+import TopNavBar from '../../Headers/TopNavBar';
+import { blogPosts } from '../../../Data/blog-data';
+import { articleDetails } from '../../../Data/article-data';
+import SEO from '../../SEO/SEO';
+import FeedbackButton from '../../Feedback/FeedbackButton';
 
 const ArticlePage = () => {
   const { slug } = useParams();

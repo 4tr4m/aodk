@@ -78,7 +78,7 @@ const FeedbackButton = () => {
       <AnimatePresence>
         {shouldShow && (
           <motion.button
-            className="group fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[60] w-14 h-14 sm:w-16 sm:h-16 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-2xl flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300"
+            className="group fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[60] bg-green-600 hover:bg-green-700 text-white shadow-2xl flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 rounded-full sm:rounded-full sm:px-4 sm:pr-5 pl-3 sm:pl-4 py-3 sm:py-4 h-14 sm:h-auto"
             onClick={toggleModal}
             variants={buttonVariants}
             initial="hidden"
@@ -88,22 +88,34 @@ const FeedbackButton = () => {
             whileTap="tap"
             aria-label="Podziel się opinią"
             aria-expanded={isOpen}
-            title="Podziel się opinią o treści"
           >
             {/* Pulsing ring effect */}
             <motion.div
-              className="absolute inset-0 rounded-full bg-green-600"
+              className="absolute inset-0 rounded-full bg-green-600 opacity-50"
               variants={pulseVariants}
               animate="animate"
             />
             
             {/* Icon */}
-            <FaCommentAlt className="relative z-10 text-xl sm:text-2xl" />
+            <FaCommentAlt className="relative z-10 text-xl sm:text-2xl flex-shrink-0" />
             
-            {/* Tooltip on hover */}
-            <span className="absolute right-full mr-4 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            {/* Text label - visible on desktop, hidden on mobile */}
+            <span className="relative z-10 hidden sm:inline-block font-['Patrick_Hand'] text-base sm:text-lg font-semibold whitespace-nowrap">
               Podziel się opinią
-              <span className="absolute right-0 top-1/2 translate-y-[-50%] translate-x-full border-4 border-transparent border-l-gray-900"></span>
+            </span>
+
+            {/* Enhanced tooltip for mobile - appears above on hover */}
+            <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg whitespace-nowrap shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 transform scale-95 group-hover:scale-100 translate-y-1 group-hover:translate-y-0 sm:hidden pointer-events-none z-20">
+              Podziel się opinią
+              {/* Arrow pointing down */}
+              <span className="absolute left-1/2 -translate-x-1/2 top-full border-4 border-transparent border-t-gray-900"></span>
+            </span>
+
+            {/* Desktop tooltip - appears on hover with helpful message */}
+            <span className="absolute right-full mr-3 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-200 transform scale-95 group-hover:scale-100 translate-x-2 group-hover:translate-x-0 hidden sm:block pointer-events-none z-20">
+              Twoja opinia pomaga nam ulepszać treści
+              {/* Arrow pointing right */}
+              <span className="absolute left-full top-1/2 -translate-y-1/2 border-4 border-transparent border-l-gray-900"></span>
             </span>
           </motion.button>
         )}

@@ -13,7 +13,7 @@
 // - Responsive design for mobile, tablet, and desktop
 
 import { useState, useCallback, memo } from 'react';
-import InfoModal from '../Pages/InfoModal';
+import InfoModal from '../Modal/InfoModal';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { HeroActionButton } from '../UI/Button';
 

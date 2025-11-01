@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import emailjs from '@emailjs/browser';
-import TopNavBar from '../Headers/TopNavBar';
-import CategoryHeader from './CategoryHeader';
-import Footer from '../Footer/Footer';
+import TopNavBar from '../../Headers/TopNavBar';
+import CategoryHeader from '../Category/CategoryHeader';
+import Footer from '../../Footer/Footer';
 import { FaFacebookF, FaInstagram, FaTiktok } from 'react-icons/fa';
 
 // Replace these values with your EmailJS credentials

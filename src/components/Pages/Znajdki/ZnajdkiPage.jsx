@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import TopNavBar from '../Headers/TopNavBar';
-import CategoryHeader from './CategoryHeader';
-import Footer from '../Footer/Footer';
-import ProductNewsletter from '../ProductModal/ProductNewsletter';
-import FeedbackButton from '../Feedback/FeedbackButton';
+import TopNavBar from '../../Headers/TopNavBar';
+import CategoryHeader from '../Category/CategoryHeader';
+import Footer from '../../Footer/Footer';
+import ProductNewsletter from '../../Section/ProductNewsletter';
+import FeedbackButton from '../../Feedback/FeedbackButton';
 import { FiFilter, FiShoppingBag, FiX } from 'react-icons/fi';
 import { FaLeaf, FaRegHeart, FaHeart } from 'react-icons/fa';
-import SEO from '../SEO/SEO';
-import supabase from '../../lib/supabase-browser';
-import { getZnajdkiImageUrl, getBaseUrl } from '../../utils/imageUtils';
+import SEO from '../../SEO/SEO';
+import supabase from '../../../lib/supabase-browser';
+import { getZnajdkiImageUrl, getBaseUrl } from '../../../utils/imageUtils';
 
 const ZnajdkiPage = () => {
   const [products, setProducts] = useState([]);

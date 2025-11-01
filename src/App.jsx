@@ -2,16 +2,16 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import HomePage from './pages/HomePage';
-import ContactPage from './components/Pages/ContactPage';
-import CategoryPage from './components/Pages/CategoryPage';
-import BlogPage from './components/Pages/Blog';
-import ArticlePage from './components/Pages/ArticlePage';
-import SearchPage from './components/Pages/SearchPage';
-import HistoriaOMnie from './components/Pages/HistoriaOMnie';
-import HistoriaOAutyzmie from './components/Pages/HistoriaOAutyzmie';
-import ZnajdkiPage from './components/Pages/ZnajdkiPage';
-import ZnajdkiProductPage from './components/Pages/ZnajdkiProductPage';
-import RecipePage from './components/Pages/RecipePage';
+import ContactPage from './components/Pages/Contact/ContactPage';
+import CategoryPage from './components/Pages/Category/CategoryPage';
+import BlogPage from './components/Pages/Blog/Blog';
+import ArticlePage from './components/Pages/Blog/ArticlePage';
+import SearchPage from './components/Pages/Search/SearchPage';
+import HistoriaOMnie from './components/Pages/Historia/HistoriaOMnie';
+import HistoriaOAutyzmie from './components/Pages/Historia/HistoriaOAutyzmie';
+import ZnajdkiPage from './components/Pages/Znajdki/ZnajdkiPage';
+import ZnajdkiProductPage from './components/Pages/Znajdki/ZnajdkiProductPage';
+import RecipePage from './components/Pages/Recipe/RecipePage';
 
 // Scroll to top on route change (but respect scrollToTitle state)
 const ScrollToTop = () => {

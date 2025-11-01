@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import CategoryHeader from './CategoryHeader';
-import TopNavBar from '../Headers/TopNavBar';
-import Footer from '../Footer/Footer';
-import SEO from '../SEO/SEO';
+import CategoryHeader from '../Category/CategoryHeader';
+import TopNavBar from '../../Headers/TopNavBar';
+import Footer from '../../Footer/Footer';
+import SEO from '../../SEO/SEO';
 import { FaLeaf, FaHeart, FaAppleAlt } from 'react-icons/fa';
 
 const HistoriaOMnie = () => {

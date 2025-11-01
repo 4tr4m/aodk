@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { kuchniaCategories } from '../../Data/category-data';
-import InfoModal from '../Pages/InfoModal';
+import InfoModal from '../Modal/InfoModal';
 import categoryService from '../../services/categoryService';
 
 /*

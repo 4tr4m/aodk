@@ -1,20 +1,20 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { useCart } from '../../context/CartContext';
-import TopNavBar from '../Headers/TopNavBar';
+import { useCart } from '../../../context/CartContext';
+import TopNavBar from '../../Headers/TopNavBar';
 import CategoryHeader from './CategoryHeader';
 import CategoryNav from './CategoryNav';
-import Footer from '../Footer/Footer';
-import RecipeGrid from './RecipeGrid';
-import { kuchniaCategories } from '../../Data/category-data';
+import Footer from '../../Footer/Footer';
+import RecipeGrid from '../Recipe/RecipeGrid';
+import { kuchniaCategories } from '../../../Data/category-data';
 import { motion, AnimatePresence } from 'framer-motion';
-import SearchBar from '../UI/SearchBar';
+import SearchBar from '../../UI/SearchBar';
 import { FaSearch, FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import searchService from '../../services/searchService';
-import SEO from '../SEO/SEO';
-import categoryService from '../../services/categoryService';
-import recipeService from '../../services/recipeService';
-import IngredientFilter from '../UI/IngredientFilter';
+import searchService from '../../../services/searchService';
+import SEO from '../../SEO/SEO';
+import categoryService from '../../../services/categoryService';
+import recipeService from '../../../services/recipeService';
+import IngredientFilter from '../../UI/IngredientFilter';
 
 // SearchIcon component taken from CategoryBanner
 const SearchIcon = ({ toggleSearch }) => {
