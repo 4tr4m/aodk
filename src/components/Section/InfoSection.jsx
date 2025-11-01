@@ -136,7 +136,7 @@ const InfoSection = () => {
 
             {/* Features Section */}
             <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 py-4 sm:py-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 py-4 sm:py-6"
               variants={staggerContainer}
             >
               <motion.div 
@@ -174,7 +174,7 @@ const InfoSection = () => {
               </motion.div>
 
               <motion.div 
-                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group sm:col-span-2 md:col-span-1"
+                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
                 variants={fadeInUp}
                 whileHover={{ y: -5 }}
               >
@@ -187,6 +187,23 @@ const InfoSection = () => {
                 <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
                   <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Smażenia</h3>
                   <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Zdrowe metody przygotowania potraw</p>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
+                variants={fadeInUp}
+                whileHover={{ y: -5 }}
+              >
+                <div className="absolute inset-0 overflow-hidden">
+                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
+                  <div className="h-full w-full bg-gray-200">
+                    <img src="/img/noSugar.jpg" alt="Bez cukru" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
+                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Cukru</h3>
+                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Słodzimy ksylitolem, który działa w jelitach przeciwgrzybicznie, często owocami</p>
                 </div>
               </motion.div>
             </motion.div>
