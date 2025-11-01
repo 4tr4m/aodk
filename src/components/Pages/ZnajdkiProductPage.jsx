@@ -173,13 +173,14 @@ const ZnajdkiProductPage = () => {
                 </div>
               ) : (
                 <img 
-                  src={getImageSrc()} 
+                  src={getImageSrc() || `${getBaseUrl()}/img/znajdki/default.jpg`} 
                   alt={product.name}
                   className="max-w-full max-h-full object-contain object-center"
                   onError={handleImageError}
                   onLoad={() => {
                     console.log('Image loaded successfully:', getZnajdkiImageUrl(product));
                   }}
+                  key={`img-${product.id}-${product.image || ''}`}
                 />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
