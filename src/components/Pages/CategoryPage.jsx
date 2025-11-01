@@ -87,7 +87,7 @@ const CategoryPage = () => {
 
   // Scroll detection for hiding/showing header elements
   const [isScrolled, setIsScrolled] = useState(false);
-  const scrollThreshold = 100; // Hide elements after scrolling 100px
+  const scrollThreshold = 50; // Hide elements after scrolling 50px for faster response
 
 
   useEffect(() => {
@@ -718,73 +718,79 @@ const CategoryPage = () => {
               </AnimatePresence>
             </div>
           </motion.div>
-          
-          {/* Description - shown only when not searching - hidden when scrolled */}
-          {currentCategory?.description && !isSearching && (
-            <motion.div 
-              className="w-full mt-4 md:mt-6 mb-4 md:mb-0 overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ 
-                opacity: isScrolled ? 0 : 1, 
-                y: isScrolled ? -20 : 0,
-                height: isScrolled ? 0 : 'auto',
-                marginTop: isScrolled ? 0 : undefined,
-                marginBottom: isScrolled ? 0 : undefined,
-              }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-            >
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200/50 shadow-sm hover:shadow-md transition-shadow duration-300 max-w-4xl mx-auto">
-                <div className="prose max-w-none">
-                  <p 
-                    className={`font-['Lato'] text-base md:text-lg lg:text-xl text-gray-700 text-center max-w-3xl mx-auto leading-relaxed transition-all duration-300 ${
-                      !isDescriptionExpanded && currentCategory.description.length > 200 
-                        ? 'overflow-hidden' 
-                        : ''
-                    }`}
-                    style={{
-                      display: !isDescriptionExpanded && currentCategory.description.length > 200 ? '-webkit-box' : 'block',
-                      WebkitLineClamp: !isDescriptionExpanded && currentCategory.description.length > 200 ? 4 : 'unset',
-                      WebkitBoxOrient: 'vertical'
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html: currentCategory.description.replace(
-                        /{LINK}/g,
-                        '<span class="inline-block relative group"><a href="/kuchnia/ciastka/mieszanka-1" class="relative z-10 text-green-600 font-medium transition-colors duration-300 group-hover:text-green-700">optymalną domową mieszankę na mąkę bezglutenową</a><span class="absolute bottom-0 left-0 w-full h-[30%] bg-green-100 transform transition-all duration-300 -z-0 group-hover:h-[90%] group-hover:bg-green-50"></span></span>'
-                      )
-                    }}
-                  />
-                  {currentCategory.description.length > 200 && (
-                    <motion.button
-                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                      className="mt-4 flex items-center justify-center gap-2 text-green-600 hover:text-green-700 font-medium transition-colors duration-200 group mx-auto"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      {isDescriptionExpanded ? (
-                        <>
-                          <span>Pokaż mniej</span>
-                          <FaChevronUp className="w-3 h-3 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                        </>
-                      ) : (
-                        <>
-                          <span>Czytaj więcej</span>
-                          <FaChevronDown className="w-3 h-3 group-hover:translate-y-0.5 transition-transform duration-200" />
-                        </>
-                      )}
-                    </motion.button>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          )}
         </div>
         </motion.div>
       </div>
 
+      {/* Description - moved outside sticky container to prevent overlap, hidden when scrolled */}
+      <AnimatePresence>
+        {currentCategory?.description && !isSearching && !isScrolled && (
+          <motion.div 
+            className="w-full max-w-7xl mx-auto px-4 md:px-8 mb-6 md:mb-8"
+            initial={{ opacity: 0, y: 20, height: 0 }}
+            animate={{ 
+              opacity: 1, 
+              y: 0,
+              height: 'auto',
+            }}
+            exit={{ 
+              opacity: 0, 
+              y: -20,
+              height: 0,
+              marginBottom: 0,
+            }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <div className="bg-gradient-to-r from-green-50 via-emerald-50 to-green-50 rounded-2xl p-6 md:p-8 border border-green-200/60 shadow-md hover:shadow-lg transition-all duration-300 max-w-4xl mx-auto">
+              <div className="prose max-w-none">
+                <motion.p 
+                  className={`font-['Lato'] text-base md:text-lg lg:text-xl text-gray-700 text-center max-w-3xl mx-auto leading-relaxed transition-all duration-300 ${
+                    !isDescriptionExpanded && currentCategory.description.length > 200 
+                      ? 'overflow-hidden' 
+                      : ''
+                  }`}
+                  style={{
+                    display: !isDescriptionExpanded && currentCategory.description.length > 200 ? '-webkit-box' : 'block',
+                    WebkitLineClamp: !isDescriptionExpanded && currentCategory.description.length > 200 ? 4 : 'unset',
+                    WebkitBoxOrient: 'vertical'
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: currentCategory.description.replace(
+                      /{LINK}/g,
+                      '<span class="inline-block relative group"><a href="/kuchnia/ciastka/mieszanka-1" class="relative z-10 text-green-600 font-semibold transition-colors duration-300 group-hover:text-green-700 underline decoration-2 underline-offset-2">optymalną domową mieszankę na mąkę bezglutenową</a><span class="absolute bottom-0 left-0 w-full h-[30%] bg-green-100/50 transform transition-all duration-300 -z-0 group-hover:h-[90%] group-hover:bg-green-50/30"></span></span>'
+                    )
+                  }}
+                />
+                {currentCategory.description.length > 200 && (
+                  <motion.button
+                    onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                    className="mt-6 flex items-center justify-center gap-2 text-green-600 hover:text-green-700 font-semibold transition-all duration-200 group mx-auto px-4 py-2 rounded-lg hover:bg-green-50"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {isDescriptionExpanded ? (
+                      <>
+                        <span>Pokaż mniej</span>
+                        <FaChevronUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Czytaj więcej</span>
+                        <FaChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform duration-200" />
+                      </>
+                    )}
+                  </motion.button>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div 
         className="sticky z-20 mb-6 bg-gray-100 shadow-sm"
         style={{
-          top: isScrolled ? '60px' : '100px',
+          top: isScrolled ? '60px' : isSearching ? '60px' : 'auto',
         }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
       >

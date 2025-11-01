@@ -114,10 +114,11 @@ const Footer = () => {
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-8 lg:gap-12 pt-8 lg:pt-12">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-8 lg:gap-12 pt-8 lg:pt-12 pb-8">
+            {/* Logo - centered on mobile, left-aligned on desktop */}
             <div 
               onClick={toggleInfoModal}
-              className="cursor-pointer group relative transform hover:scale-105 transition-all duration-300 mb-6 lg:mb-0"
+              className="cursor-pointer group relative transform hover:scale-105 transition-all duration-300 flex-shrink-0"
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
@@ -137,20 +138,21 @@ const Footer = () => {
               </div>
             </div>
 
-            <nav className="flex-1 lg:ml-16 w-full">
-              <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-8 lg:gap-12 justify-items-center sm:justify-items-center lg:justify-items-start items-start">
-                {/* Przepisy - single centered header spanning two category columns */}
-                <div className="sm:col-span-2 lg:col-span-2 w-full">
-                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center tracking-wide">
+            {/* Navigation content - centered on mobile, properly aligned on desktop */}
+            <nav className="flex-1 w-full lg:ml-16">
+              <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 lg:gap-12 items-center lg:items-start">
+                {/* Przepisy - spans 2 columns on desktop, full width on mobile */}
+                <div className="w-full lg:col-span-2 flex flex-col items-center lg:items-start">
+                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide mb-6">
                     Przepisy
                   </h4>
-                  <div className="mt-6 flex flex-col sm:flex-row items-start justify-center gap-4 sm:gap-8">
-                    <ul className="space-y-3 flex flex-col items-center sm:items-start">
+                  <div className="flex flex-col sm:flex-row items-center sm:items-start lg:items-start justify-center lg:justify-start gap-6 sm:gap-8 w-full">
+                    <ul className="space-y-3 flex flex-col items-center sm:items-start lg:items-start w-full sm:w-auto">
                       {firstColumnCategories.map((category, index) => (
-                        <li key={`first-${category.label}-${index}`} className="text-center sm:text-left">
+                        <li key={`first-${category.label}-${index}`} className="w-full sm:w-auto">
                           <button 
                             onClick={() => handleLinkClick(category.link)}
-                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start group text-sm sm:text-base font-medium tracking-wide"
+                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start lg:justify-start group text-sm sm:text-base font-medium tracking-wide w-full sm:w-auto"
                           >
                             <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                             {category.label}
@@ -158,12 +160,12 @@ const Footer = () => {
                         </li>
                       ))}
                     </ul>
-                    <ul className="space-y-3 flex flex-col items-center sm:items-start mt-6 sm:mt-0">
+                    <ul className="space-y-3 flex flex-col items-center sm:items-start lg:items-start w-full sm:w-auto">
                       {secondColumnCategories.map((category, index) => (
-                        <li key={`second-${category.label}-${index}`} className="text-center sm:text-left">
+                        <li key={`second-${category.label}-${index}`} className="w-full sm:w-auto">
                           <button 
                             onClick={() => handleLinkClick(category.link)}
-                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start group text-sm sm:text-base font-medium tracking-wide"
+                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start lg:justify-start group text-sm sm:text-base font-medium tracking-wide w-full sm:w-auto"
                           >
                             <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                             {category.label}
@@ -174,21 +176,21 @@ const Footer = () => {
                   </div>
                 </div>
 
-                {/* Kontakt */}
-                <div className="space-y-6 sm:justify-self-center lg:justify-self-start w-full">
+                {/* Kontakt - full width on mobile, right column on desktop */}
+                <div className="w-full lg:w-auto flex flex-col items-center lg:items-start space-y-6">
                   <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide">
                     Kontakt
                   </h4>
-                  <ul className="space-y-3 flex flex-col items-center lg:items-start">
+                  <ul className="space-y-3 flex flex-col items-center lg:items-start w-full sm:w-auto">
                     {[
                       { label: 'Pomoc', link: '/pomoc' },
                       { label: 'O nas', link: '/o-nas' },
                       { label: 'Kontakt', link: '/kontakt' }
                     ].map((item) => (
-                      <li key={item.label} className="w-full text-center lg:text-left">
+                      <li key={item.label} className="w-full sm:w-auto">
                         <button 
                           onClick={() => handleLinkClick(item.link)}
-                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start w-full group text-sm sm:text-base font-medium tracking-wide"
+                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start group text-sm sm:text-base font-medium tracking-wide w-full sm:w-auto"
                         >
                           <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                           {item.label}
