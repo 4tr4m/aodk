@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaChevronDown, FaChevronUp, FaInfoCircle, FaTimes } from 'react-icons/fa';
@@ -28,6 +28,9 @@ const RecipePage = () => {
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isFullDescExpanded, setIsFullDescExpanded] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [isStickyIngredientsVisible, setIsStickyIngredientsVisible] = useState(false);
+  const [isStickyIngredientsOpen, setIsStickyIngredientsOpen] = useState(true);
+  const ingredientsRef = useRef(null);
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -46,6 +49,40 @@ const RecipePage = () => {
       document.body.style.overflow = 'unset';
     };
   }, [isImageModalOpen]);
+
+  // Scroll detection for sticky ingredients
+  useEffect(() => {
+    if (!ingredientsRef.current || !recipe?.ingredients) return;
+
+    const handleScroll = () => {
+      const ingredientsElement = ingredientsRef.current;
+      if (!ingredientsElement) return;
+
+      const rect = ingredientsElement.getBoundingClientRect();
+      const isPastIngredients = rect.bottom < 100; // Show when ingredients section is 100px above viewport
+      const isOnDesktop = window.innerWidth >= 1024;
+      
+      // Show sticky ingredients only when past ingredients section and on desktop
+      if (isPastIngredients && isOnDesktop) {
+        setIsStickyIngredientsVisible(true);
+      } else {
+        setIsStickyIngredientsVisible(false);
+        // Reset open state when scrolling back up
+        if (rect.bottom > 200) {
+          setIsStickyIngredientsOpen(true);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
+    handleScroll(); // Check initial position
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, [recipe?.ingredients]);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -193,6 +230,47 @@ const RecipePage = () => {
       return recipe.image;
     }
     return `/img/${recipe.image}`;
+  };
+
+  // Helper function to process ingredients for sticky sidebar
+  const processIngredients = () => {
+    if (!recipe?.ingredients) return { groups: [], hasGroups: false };
+    
+    const raw = recipe.ingredients;
+    let items = [];
+    if (Array.isArray(raw)) items = raw;
+    else if (typeof raw === 'string') {
+      items = raw.includes('\n') ? raw.split(/\r?\n/) : raw.split(',');
+    }
+    const normalized = items.map(i => i.trim()).filter(Boolean);
+    if (normalized.length === 0) return { groups: [], hasGroups: false };
+
+    // Group ingredients by "Na" headers
+    const groups = [];
+    let currentGroup = { title: null, items: [] };
+    let hasGroups = false;
+
+    normalized.forEach((item) => {
+      const trimmed = item.replace(/^\*\*|\*\*$/g, '').trim();
+      if (trimmed.match(/^Na\s+[^:]+:/i)) {
+        hasGroups = true;
+        if (currentGroup.title || currentGroup.items.length > 0) {
+          groups.push(currentGroup);
+        }
+        currentGroup = {
+          title: trimmed.replace(/:/g, '').trim(),
+          items: []
+        };
+      } else {
+        currentGroup.items.push(item);
+      }
+    });
+
+    if (currentGroup.title || currentGroup.items.length > 0) {
+      groups.push(currentGroup);
+    }
+
+    return { groups, hasGroups, normalized };
   };
 
   return (
@@ -444,52 +522,11 @@ const RecipePage = () => {
 
               {/* Składniki (from Supabase) - main section under the description */}
               {(() => {
-                const raw = recipe.ingredients;
-                let items = [];
-                if (Array.isArray(raw)) items = raw;
-                else if (typeof raw === 'string') {
-                  items = raw.includes('\n') ? raw.split(/\r?\n/) : raw.split(',');
-                }
-                const normalized = items.map(i => i.trim()).filter(Boolean);
-                if (normalized.length === 0) return null;
-
-                // Group ingredients by "Na" headers
-                const groupIngredients = () => {
-                  const groups = [];
-                  let currentGroup = { title: null, items: [] };
-                  let hasGroups = false;
-
-                  normalized.forEach((item) => {
-                    // Check if item starts with "Na" (case-insensitive, with optional bold markers)
-                    const trimmed = item.replace(/^\*\*|\*\*$/g, '').trim();
-                    if (trimmed.match(/^Na\s+[^:]+:/i)) {
-                      hasGroups = true;
-                      // Save previous group if it has items
-                      if (currentGroup.title || currentGroup.items.length > 0) {
-                        groups.push(currentGroup);
-                      }
-                      // Start new group
-                      currentGroup = {
-                        title: trimmed.replace(/:/g, '').trim(),
-                        items: []
-                      };
-                    } else {
-                      currentGroup.items.push(item);
-                    }
-                  });
-
-                  // Push last group
-                  if (currentGroup.title || currentGroup.items.length > 0) {
-                    groups.push(currentGroup);
-                  }
-
-                  return { groups, hasGroups };
-                };
-
-                const { groups, hasGroups } = groupIngredients();
+                const { groups, hasGroups, normalized } = processIngredients();
+                if (!normalized || normalized.length === 0) return null;
 
                 return (
-                  <div className="mb-8">
+                  <div className="mb-8" ref={ingredientsRef}>
                     <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display'] flex items-center gap-2">
                       <FaUtensils className="text-green-600" />
                       Składniki
@@ -640,6 +677,96 @@ const RecipePage = () => {
         <FeedbackButton />
         <Footer />
       </div>
+
+      {/* Sticky Ingredients Sidebar */}
+      <AnimatePresence>
+        {isStickyIngredientsVisible && !isStickyIngredientsOpen && recipe?.ingredients && (
+          <motion.button
+            onClick={() => setIsStickyIngredientsOpen(true)}
+            className="hidden lg:flex fixed right-4 top-32 z-40 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 100 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="Pokaż składniki"
+          >
+            <FaUtensils className="w-4 h-4" />
+            <span className="font-medium">Składniki</span>
+          </motion.button>
+        )}
+        
+        {isStickyIngredientsVisible && isStickyIngredientsOpen && recipe?.ingredients && (
+          <motion.div
+            className="hidden lg:block fixed right-4 top-32 z-40"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 100 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            <motion.div
+              className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-80 max-h-[calc(100vh-10rem)] overflow-hidden flex flex-col backdrop-blur-sm"
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              {/* Header with close button */}
+              <div className="bg-gradient-to-r from-green-50 to-green-100 px-4 py-3 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
+                <div className="flex items-center gap-2">
+                  <FaUtensils className="text-green-600 flex-shrink-0" />
+                  <h3 className="font-bold text-gray-800 font-['Playfair_Display'] text-base">Składniki</h3>
+                </div>
+                <motion.button
+                  onClick={() => setIsStickyIngredientsOpen(false)}
+                  className="p-1.5 rounded-full hover:bg-white/80 transition-colors text-gray-600 hover:text-gray-800 flex-shrink-0"
+                  aria-label="Zamknij"
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <FaTimes className="w-4 h-4" />
+                </motion.button>
+              </div>
+
+              {/* Ingredients Content */}
+              <div className="overflow-y-auto flex-1 p-4">
+                {(() => {
+                  const { groups, hasGroups, normalized } = processIngredients();
+                  
+                  if (hasGroups) {
+                    return (
+                      <div className="space-y-4">
+                        {groups.map((group, groupIdx) => (
+                          <div key={groupIdx} className="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-lg p-3 border border-gray-200">
+                            {group.title && (
+                              <h4 className="text-sm font-bold text-gray-800 mb-2 font-['Playfair_Display'] flex items-center gap-1.5 pb-1.5 border-b border-gray-300">
+                                <span className="w-1 h-1 rounded-full bg-green-600"></span>
+                                {group.title}
+                              </h4>
+                            )}
+                            <ul className="list-disc pl-4 space-y-1.5 text-gray-800 text-sm">
+                              {group.items.map((ing, i) => (
+                                <li key={i} className="leading-relaxed">{ing}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <ul className="list-disc pl-5 space-y-1.5 text-gray-800 text-sm">
+                        {normalized.map((ing, i) => (
+                          <li key={i}>{ing}</li>
+                        ))}
+                      </ul>
+                    );
+                  }
+                })()}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Image Modal */}
       <AnimatePresence>
