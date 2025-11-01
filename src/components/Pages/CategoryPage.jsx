@@ -38,7 +38,7 @@ const SearchIcon = ({ toggleSearch }) => {
           }
         }}
       >
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center overflow-visible">
           <div 
             className="absolute inset-0 rounded-full animate-ping opacity-30" 
             style={{
@@ -57,7 +57,7 @@ const SearchIcon = ({ toggleSearch }) => {
           {/* Attention ring */}
           <div className="absolute -inset-1 rounded-full bg-green-400/20 animate-pulse"></div>
           
-          <FaSearch className="text-[2.6rem] sm:text-[2.85rem] md:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" />
+          <FaSearch className="text-[2.6rem] sm:text-[2.85rem] md:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" style={{ position: 'relative', zIndex: 50 }} />
         </div>
       </motion.div>
     </div>
@@ -87,7 +87,7 @@ const CategoryPage = () => {
 
   // Scroll detection for hiding/showing header elements
   const [isScrolled, setIsScrolled] = useState(false);
-  const scrollThreshold = 50; // Hide elements after scrolling 50px for faster response
+  const scrollThreshold = 30; // Hide elements after scrolling 30px for faster response
 
 
   useEffect(() => {
@@ -465,7 +465,7 @@ const CategoryPage = () => {
       </div>
       
       {/* Sticky header with filter button, title/search, and magnifying glass */}
-      <div className="sticky top-0 z-30 bg-gray-100 mb-6 md:mb-8">
+      <div className="sticky top-0 z-30 bg-gray-100 mb-6 md:mb-8 overflow-visible">
         <motion.div 
           className="max-w-7xl mx-auto px-4 md:px-8 text-center"
           initial="hidden"
@@ -473,10 +473,11 @@ const CategoryPage = () => {
           variants={fadeIn}
         >
         {/* Header with H1 and Search */}
-        <div id="category-title" className="flex flex-col items-center justify-center relative">
+        <div id="category-title" className="flex flex-col items-center justify-center relative overflow-visible">
           {/* Fixed container for filter button, title/search, and magnifying glass */}
           <motion.div 
-            className="relative w-full flex items-center justify-center gap-3 sm:gap-4 md:gap-6 px-2 sm:px-4"
+            className="relative w-full flex items-center justify-center gap-3 sm:gap-4 md:gap-6 px-2 sm:px-4 overflow-visible"
+            style={{ overflow: 'visible', zIndex: 40 }}
             animate={{
               paddingTop: isScrolled ? '0.5rem' : '1.5rem',
               paddingBottom: isScrolled ? '0.5rem' : '1.5rem',
@@ -680,7 +681,8 @@ const CategoryPage = () => {
                     
                     {/* Search icon */}
                     <motion.div 
-                      className="flex-shrink-0"
+                      className="flex-shrink-0 overflow-visible"
+                      style={{ overflow: 'visible', zIndex: 50, position: 'relative' }}
                       animate={{
                         opacity: isScrolled ? 0 : 1,
                         scale: isScrolled ? 0.8 : 1,
@@ -722,12 +724,12 @@ const CategoryPage = () => {
         </motion.div>
       </div>
 
-      {/* Description - moved outside sticky container to prevent overlap, hidden when scrolled */}
+      {/* Description - compact design, hidden when scrolled */}
       <AnimatePresence>
         {currentCategory?.description && !isSearching && !isScrolled && (
           <motion.div 
-            className="w-full max-w-7xl mx-auto px-4 md:px-8 mb-6 md:mb-8"
-            initial={{ opacity: 0, y: 20, height: 0 }}
+            className="w-full max-w-7xl mx-auto px-4 md:px-8 mb-4 md:mb-6"
+            initial={{ opacity: 0, y: 10, height: 0 }}
             animate={{ 
               opacity: 1, 
               y: 0,
@@ -735,48 +737,48 @@ const CategoryPage = () => {
             }}
             exit={{ 
               opacity: 0, 
-              y: -20,
+              y: -10,
               height: 0,
               marginBottom: 0,
             }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
           >
-            <div className="bg-gradient-to-r from-green-50 via-emerald-50 to-green-50 rounded-2xl p-6 md:p-8 border border-green-200/60 shadow-md hover:shadow-lg transition-all duration-300 max-w-4xl mx-auto">
-              <div className="prose max-w-none">
-                <motion.p 
-                  className={`font-['Lato'] text-base md:text-lg lg:text-xl text-gray-700 text-center max-w-3xl mx-auto leading-relaxed transition-all duration-300 ${
-                    !isDescriptionExpanded && currentCategory.description.length > 200 
+            <div className="bg-white rounded-lg p-4 md:p-5 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 max-w-3xl mx-auto">
+              <div className="prose prose-sm max-w-none">
+                <p 
+                  className={`font-['Lato'] text-sm md:text-base text-gray-600 text-center max-w-2xl mx-auto leading-relaxed transition-all duration-200 ${
+                    !isDescriptionExpanded && currentCategory.description.length > 150 
                       ? 'overflow-hidden' 
                       : ''
                   }`}
                   style={{
-                    display: !isDescriptionExpanded && currentCategory.description.length > 200 ? '-webkit-box' : 'block',
-                    WebkitLineClamp: !isDescriptionExpanded && currentCategory.description.length > 200 ? 4 : 'unset',
+                    display: !isDescriptionExpanded && currentCategory.description.length > 150 ? '-webkit-box' : 'block',
+                    WebkitLineClamp: !isDescriptionExpanded && currentCategory.description.length > 150 ? 3 : 'unset',
                     WebkitBoxOrient: 'vertical'
                   }}
                   dangerouslySetInnerHTML={{
                     __html: currentCategory.description.replace(
                       /{LINK}/g,
-                      '<span class="inline-block relative group"><a href="/kuchnia/ciastka/mieszanka-1" class="relative z-10 text-green-600 font-semibold transition-colors duration-300 group-hover:text-green-700 underline decoration-2 underline-offset-2">optymalną domową mieszankę na mąkę bezglutenową</a><span class="absolute bottom-0 left-0 w-full h-[30%] bg-green-100/50 transform transition-all duration-300 -z-0 group-hover:h-[90%] group-hover:bg-green-50/30"></span></span>'
+                      '<span class="inline-block relative group"><a href="/kuchnia/ciastka/mieszanka-1" class="relative z-10 text-green-600 font-medium transition-colors duration-200 group-hover:text-green-700 underline decoration-1 underline-offset-2">optymalną domową mieszankę na mąkę bezglutenową</a><span class="absolute bottom-0 left-0 w-full h-[25%] bg-green-100/40 transform transition-all duration-200 -z-0 group-hover:h-[80%] group-hover:bg-green-50/20"></span></span>'
                     )
                   }}
                 />
-                {currentCategory.description.length > 200 && (
+                {currentCategory.description.length > 150 && (
                   <motion.button
                     onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                    className="mt-6 flex items-center justify-center gap-2 text-green-600 hover:text-green-700 font-semibold transition-all duration-200 group mx-auto px-4 py-2 rounded-lg hover:bg-green-50"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    className="mt-3 flex items-center justify-center gap-1.5 text-green-600 hover:text-green-700 font-medium text-sm transition-all duration-200 group mx-auto px-3 py-1.5 rounded-md hover:bg-green-50/50"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
                     {isDescriptionExpanded ? (
                       <>
                         <span>Pokaż mniej</span>
-                        <FaChevronUp className="w-4 h-4 group-hover:-translate-y-0.5 transition-transform duration-200" />
+                        <FaChevronUp className="w-3 h-3 group-hover:-translate-y-0.5 transition-transform duration-200" />
                       </>
                     ) : (
                       <>
                         <span>Czytaj więcej</span>
-                        <FaChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform duration-200" />
+                        <FaChevronDown className="w-3 h-3 group-hover:translate-y-0.5 transition-transform duration-200" />
                       </>
                     )}
                   </motion.button>

@@ -27,6 +27,7 @@ const ZnajdkiProductPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
+      setImageError(false); // Reset image error when fetching new product
       const { data, error } = await supabase
         .from('znajdki')
         .select('*')
@@ -49,17 +50,37 @@ const ZnajdkiProductPage = () => {
     const currentSrc = e.target.src;
     const baseUrl = getBaseUrl();
     
+    // Prevent infinite loop by tracking if we've already tried default.jpg
+    if (e.target.dataset.triedDefault === 'true') {
+      // All fallbacks failed, show placeholder
+      setImageError(true);
+      e.target.style.display = 'none';
+      return;
+    }
+    
     // Try next fallback image
     if (currentSrc.includes('/img/znajdki/')) {
-      if (currentSrc.includes('/img/znajdki/1.jpg')) {
-        // If even the default fails, show placeholder
+      // If we're already at 1.jpg or default.jpg, try default.jpg before giving up
+      if (currentSrc.includes('/img/znajdki/1.jpg') && !currentSrc.includes('default.jpg')) {
+        e.target.src = `${baseUrl}/img/znajdki/default.jpg`;
+        e.target.dataset.triedDefault = 'true';
+      } else if (currentSrc.includes('default.jpg')) {
+        // Even default.jpg failed, show placeholder
         setImageError(true);
         e.target.style.display = 'none';
       } else {
+        // Try 1.jpg as fallback
         e.target.src = `${baseUrl}/img/znajdki/1.jpg`;
       }
     } else {
-      e.target.src = `${baseUrl}/img/znajdki/${product.id}.jpg`;
+      // If the custom image path failed, try product ID image
+      if (product?.id) {
+        e.target.src = `${baseUrl}/img/znajdki/${product.id}.jpg`;
+      } else {
+        // If no product ID, try default
+        e.target.src = `${baseUrl}/img/znajdki/default.jpg`;
+        e.target.dataset.triedDefault = 'true';
+      }
     }
   };
 
