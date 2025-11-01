@@ -353,6 +353,13 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.05 }}
                       transition={{ duration: 1, ease: "easeOut" }}
+                      onError={(e) => {
+                        // Fallback to ciasta.jpg if image fails to load
+                        const currentSrc = e.target.src;
+                        if (!currentSrc.includes('ciasta.jpg')) {
+                          e.target.src = getImageUrl('ciasta.jpg');
+                        }
+                      }}
                     />
                   </div>
 

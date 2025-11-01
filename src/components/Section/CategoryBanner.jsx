@@ -324,13 +324,27 @@ const CategoryBanner = () => {
         // Filter categories to only include those with images
         const items = categories
           .filter(category => category.image_path)
-          .map(category => ({
-            id: category.id,
-            label: category.name,
-            image: category.image_path,
-            shortDesc: category.description || 'Odkryj nasze pyszne przepisy!',
-            link: `/kuchnia/${category.slug || category.id}`
-          }));
+          .map(category => {
+            // Normalize image path - handle cases where path might be wrong
+            let imagePath = category.image_path;
+            
+            // Fix common path issues
+            if (imagePath === 'categories/ciasta.webp') {
+              imagePath = 'ciasta.jpg';
+            } else if (imagePath && imagePath.includes('categories/') && imagePath.includes('.webp')) {
+              // Convert other categories/*.webp to *.jpg if exists
+              const categoryName = imagePath.replace('categories/', '').replace('.webp', '');
+              imagePath = `${categoryName}.jpg`;
+            }
+            
+            return {
+              id: category.id,
+              label: category.name,
+              image: imagePath,
+              shortDesc: category.description || 'Odkryj nasze pyszne przepisy!',
+              link: `/kuchnia/${category.slug || category.id}`
+            };
+          });
         
         if (items.length === 0) {
           // If no categories found in Supabase, use fallback

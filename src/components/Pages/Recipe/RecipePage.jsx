@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaChevronDown, FaChevronUp, FaInfoCircle } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaArrowLeft, FaClock, FaUtensils, FaUser, FaHeart, FaShareAlt, FaChevronDown, FaChevronUp, FaInfoCircle, FaTimes } from 'react-icons/fa';
 import { useCart } from '../../../context/CartContext';
 import recipeService from '../../../services/recipeService';
 import ProductBaseIngredients from './ProductBaseIngredients';
@@ -27,6 +27,25 @@ const RecipePage = () => {
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isFullDescExpanded, setIsFullDescExpanded] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isImageModalOpen) {
+        setIsImageModalOpen(false);
+      }
+    };
+    
+    if (isImageModalOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isImageModalOpen]);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -239,11 +258,11 @@ const RecipePage = () => {
             className="bg-white rounded-2xl shadow-lg overflow-hidden"
           >
             {/* Recipe Image */}
-            <div className="relative h-64 sm:h-80 lg:h-96">
+            <div className="relative h-48 sm:h-64 lg:h-72 cursor-pointer" onClick={() => setIsImageModalOpen(true)}>
               <img
                 src={getRecipeImageSrc()}
                 alt={recipe.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 onError={(e) => { e.currentTarget.src = '/img/ciasta.jpg'; }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
@@ -369,7 +388,10 @@ const RecipePage = () => {
                       transition={{ duration: 0.2 }}
                     >
                       <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-xl font-bold text-gray-800 mb-0 font-['Playfair_Display'] flex items-center gap-2">
+                        <h2 
+                          className="text-xl font-bold text-gray-800 mb-0 font-['Playfair_Display'] flex items-center gap-2 cursor-pointer hover:text-green-600 transition-colors"
+                          onClick={() => setIsFullDescExpanded(false)}
+                        >
                           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100">
                             <FaInfoCircle className="w-5 h-5 text-green-600" />
                           </div>
@@ -561,6 +583,61 @@ const RecipePage = () => {
         <FeedbackButton />
         <Footer />
       </div>
+
+      {/* Image Modal */}
+      <AnimatePresence>
+        {isImageModalOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setIsImageModalOpen(false);
+              }
+            }}
+          >
+            <motion.div
+              className="relative bg-white rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh] flex flex-col"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setIsImageModalOpen(false)}
+                className="absolute -top-12 right-0 text-white hover:text-gray-300 transition-colors z-10"
+                aria-label="Zamknij"
+              >
+                <FaTimes size={32} className="bg-black/50 rounded-full p-2 hover:bg-black/70" />
+              </button>
+              
+              {/* Image Container */}
+              <div className="relative flex-1 overflow-hidden rounded-t-2xl bg-gray-100 min-h-[400px]">
+                <img
+                  src={getRecipeImageSrc()}
+                  alt={recipe.name}
+                  className="w-full h-full object-contain p-4 sm:p-8"
+                  onError={(e) => { e.currentTarget.src = '/img/ciasta.jpg'; }}
+                />
+              </div>
+              
+              {/* Image Footer */}
+              <div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 rounded-b-2xl border-t border-gray-200">
+                <h3 className="text-xl font-bold text-gray-800 font-['Playfair_Display'] mb-1">
+                  {recipe.name}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {recipe.shortdesc}
+                </p>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
