@@ -254,14 +254,40 @@ const ZnajdkiPage = () => {
                 className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
               >
                 <Link to={`/znajdki/${product.id}`} className="block group">
-                <div className="relative h-64 overflow-hidden bg-gray-100">
+                <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden bg-gray-50 flex items-center justify-center">
                   <img 
                     src={getZnajdkiImageUrl(product)} 
                     alt={product.name}
-                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                    className="w-full h-full object-contain object-center p-2 transition-transform duration-500 group-hover:scale-105"
                     onError={(e) => {
-                      e.target.src = `${getBaseUrl()}/img/Znajdki/default.jpg`;
+                      const currentSrc = e.target.src;
+                      const baseUrl = getBaseUrl();
+                      
+                      // Prevent infinite loop
+                      if (e.target.dataset.triedDefault === 'true') {
+                        e.target.style.display = 'none';
+                        return;
+                      }
+                      
+                      // Try fallback images
+                      if (currentSrc.includes('/img/Znajdki/')) {
+                        if (currentSrc.includes(`/img/Znajdki/${product.id}.jpg`)) {
+                          // Try 1.jpg
+                          e.target.src = `${baseUrl}/img/Znajdki/1.jpg`;
+                        } else if (currentSrc.includes('/img/Znajdki/1.jpg')) {
+                          // Try default.jpg
+                          e.target.src = `${baseUrl}/img/Znajdki/default.jpg`;
+                          e.target.dataset.triedDefault = 'true';
+                        } else {
+                          // Already tried default, hide image
+                          e.target.style.display = 'none';
+                        }
+                      } else {
+                        // Try product ID image first
+                        e.target.src = `${baseUrl}/img/Znajdki/${product.id}.jpg`;
+                      }
                     }}
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <button 

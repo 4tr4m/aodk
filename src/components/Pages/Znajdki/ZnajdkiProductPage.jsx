@@ -160,7 +160,7 @@ const ZnajdkiProductPage = () => {
         >
           {/* Product Image */}
           <div className="relative bg-white rounded-2xl overflow-hidden shadow-xl">
-            <div className="relative h-[280px] sm:h-[320px] md:h-[360px] overflow-hidden bg-gray-50 flex items-center justify-center">
+            <div className="relative h-[280px] sm:h-[380px] md:h-[420px] lg:h-[480px] overflow-hidden bg-gray-50 flex items-center justify-center">
               {imageError ? (
                 <div className="flex flex-col items-center justify-center text-center p-6">
                   <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
@@ -175,12 +175,13 @@ const ZnajdkiProductPage = () => {
                 <img 
                   src={getImageSrc() || `${getBaseUrl()}/img/Znajdki/default.jpg`} 
                   alt={product.name}
-                  className="max-w-full max-h-full object-contain object-center"
+                  className="w-full h-full object-contain object-center p-4 sm:p-6 md:p-8"
                   onError={handleImageError}
                   onLoad={() => {
                     console.log('Image loaded successfully:', getZnajdkiImageUrl(product));
                   }}
                   key={`img-${product.id}-${product.image || ''}`}
+                  loading="eager"
                 />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
