@@ -5,17 +5,6 @@ import FeedbackModal from './FeedbackModal';
 
 const FeedbackButton = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
-
-  // Track scroll position to optionally hide button at top of page
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
@@ -72,15 +61,24 @@ const FeedbackButton = () => {
     }
   };
 
-  // Show button only if scrolled down a bit (hide when modal is open)
-  const shouldShow = !isOpen && scrollY > 100;
+  // Show button always (hide when modal is open)
+  // Small delay on initial render for better UX
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    // Small delay to ensure page is rendered (reduced for faster appearance)
+    const timer = setTimeout(() => setMounted(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+  
+  const shouldShow = !isOpen && mounted;
 
   return (
     <>
       <AnimatePresence>
         {shouldShow && (
           <motion.button
-            className="group fixed bottom-6 right-6 z-50 w-16 h-16 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-2xl flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300"
+            className="group fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[60] w-14 h-14 sm:w-16 sm:h-16 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-2xl flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300"
             onClick={toggleModal}
             variants={buttonVariants}
             initial="hidden"
@@ -100,7 +98,7 @@ const FeedbackButton = () => {
             />
             
             {/* Icon */}
-            <FaCommentAlt className="relative z-10 text-2xl" />
+            <FaCommentAlt className="relative z-10 text-xl sm:text-2xl" />
             
             {/* Tooltip on hover */}
             <span className="absolute right-full mr-4 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
