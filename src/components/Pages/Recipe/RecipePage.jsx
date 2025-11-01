@@ -452,17 +452,74 @@ const RecipePage = () => {
                 }
                 const normalized = items.map(i => i.trim()).filter(Boolean);
                 if (normalized.length === 0) return null;
+
+                // Group ingredients by "Na" headers
+                const groupIngredients = () => {
+                  const groups = [];
+                  let currentGroup = { title: null, items: [] };
+                  let hasGroups = false;
+
+                  normalized.forEach((item) => {
+                    // Check if item starts with "Na" (case-insensitive, with optional bold markers)
+                    const trimmed = item.replace(/^\*\*|\*\*$/g, '').trim();
+                    if (trimmed.match(/^Na\s+[^:]+:/i)) {
+                      hasGroups = true;
+                      // Save previous group if it has items
+                      if (currentGroup.title || currentGroup.items.length > 0) {
+                        groups.push(currentGroup);
+                      }
+                      // Start new group
+                      currentGroup = {
+                        title: trimmed.replace(/:/g, '').trim(),
+                        items: []
+                      };
+                    } else {
+                      currentGroup.items.push(item);
+                    }
+                  });
+
+                  // Push last group
+                  if (currentGroup.title || currentGroup.items.length > 0) {
+                    groups.push(currentGroup);
+                  }
+
+                  return { groups, hasGroups };
+                };
+
+                const { groups, hasGroups } = groupIngredients();
+
                 return (
                   <div className="mb-8">
                     <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display'] flex items-center gap-2">
                       <FaUtensils className="text-green-600" />
                       Składniki
                     </h2>
-                    <ul className="list-disc pl-6 space-y-1 text-gray-800">
-                      {normalized.map((ing, i) => (
-                        <li key={i}>{ing}</li>
-                      ))}
-                    </ul>
+                    
+                    {hasGroups ? (
+                      <div className="space-y-6">
+                        {groups.map((group, groupIdx) => (
+                          <div key={groupIdx} className="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl p-4 sm:p-5 border border-gray-200">
+                            {group.title && (
+                              <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 font-['Playfair_Display'] flex items-center gap-2 pb-2 border-b border-gray-300">
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+                                {group.title}
+                              </h3>
+                            )}
+                            <ul className="list-disc pl-5 sm:pl-6 space-y-2 text-gray-800">
+                              {group.items.map((ing, i) => (
+                                <li key={i} className="leading-relaxed">{ing}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <ul className="list-disc pl-6 space-y-1 text-gray-800">
+                        {normalized.map((ing, i) => (
+                          <li key={i}>{ing}</li>
+                        ))}
+                      </ul>
+                    )}
                   </div>
                 );
               })()}

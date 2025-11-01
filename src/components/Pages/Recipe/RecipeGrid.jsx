@@ -95,7 +95,7 @@ const RecipeGrid = ({ recipes }) => {
                   {recipe.name}
                 </h2>
               </div>
-              <p className="text-gray-600 text-sm text-center font-['Lato'] truncate w-11/12">
+              <p className="text-gray-600 text-sm text-center font-['Lato'] w-11/12 line-clamp-2 leading-relaxed">
                 {recipe.shortdesc || recipe.shortDesc}
               </p>
             </div>
