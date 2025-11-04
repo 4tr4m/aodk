@@ -37,10 +37,11 @@
   100% { opacity: 1; transform: translateY(0); }
 }
 
-.search-icon {
+/* Search icon animation removed - no longer needed */
+/* .search-icon {
   animation: pulse 2.5s infinite ease-in-out;
   filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.4));
-}
+} */
 
 .search-tooltip {
   animation: tooltipFade 5s ease-in-out;
