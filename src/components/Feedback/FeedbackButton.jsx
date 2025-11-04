@@ -78,7 +78,7 @@ const FeedbackButton = () => {
       <AnimatePresence>
         {shouldShow && (
           <motion.button
-            className="group fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[60] bg-green-600 hover:bg-green-700 text-white shadow-2xl flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 rounded-full sm:rounded-full sm:px-4 sm:pr-5 pl-3 sm:pl-4 py-3 sm:py-4 h-14 sm:h-auto"
+            className="group fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[60] bg-green-600 hover:bg-green-700 text-white shadow-2xl flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 rounded-full sm:px-4 sm:pr-5 sm:py-4 w-14 h-14 sm:w-auto sm:h-auto"
             onClick={toggleModal}
             variants={buttonVariants}
             initial="hidden"
