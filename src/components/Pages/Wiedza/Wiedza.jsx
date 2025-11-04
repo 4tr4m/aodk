@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import CategoryHeader from './Category/CategoryHeader';
-import TopNavBar from '../Headers/TopNavBar';
-import Footer from '../Footer/Footer';
-import { blogPosts } from '../../Data/wiedza-data';
+import CategoryHeader from '../Category/CategoryHeader';
+import TopNavBar from '../../Headers/TopNavBar';
+import Footer from '../../Footer/Footer';
+import { blogPosts } from '../../../Data/wiedza-data';
 
 const BlogPage = () => {
   return (

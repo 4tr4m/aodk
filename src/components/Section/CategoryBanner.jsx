@@ -137,6 +137,13 @@ const SearchIcon = memo(({ toggleSearch, showTooltip }) => {
     }
   });
 
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 640;
+    }
+    return false;
+  });
+
   useEffect(() => {
     if (showTutorial) {
       const timer = setTimeout(() => {
@@ -149,47 +156,29 @@ const SearchIcon = memo(({ toggleSearch, showTooltip }) => {
     }
   }, [showTutorial]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div className="relative inline-block">
       <motion.div 
-        className="cursor-pointer relative select-none search-icon-container"
+        className="cursor-pointer relative select-none search-icon-container group"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={toggleSearch}
         initial={{ scale: 1 }}
-        animate={{ 
-          scale: [1, 1.15, 1],
-          transition: { 
-            repeat: Infinity, 
-            repeatType: "loop", 
-            duration: 2.5,
-            ease: "easeInOut",
-            times: [0, 0.5, 1],
-            delay: 0
-          }
-        }}
-        style={{ top: '-10px', position: 'relative', left: '0', ...(window.innerWidth < 640 ? { left: '-15px' } : {}) }}
+        style={{ top: '-10px', position: 'relative', left: '0', ...(isMobile ? { left: '-15px' } : {}) }}
       >
         <div className="relative flex items-center justify-center">
-          <div 
-            className="absolute inset-0 rounded-full animate-ping opacity-30" 
-            style={{
-              background: 'radial-gradient(circle, rgba(34,197,94,0.5) 0%, rgba(34,197,94,0) 70%)',
-              transform: 'scale(1.8)',
-              animationDuration: '3s',
-            }}
-          ></div>
-          <div 
-            className="absolute inset-0 rounded-full animate-pulse" 
-            style={{
-              background: 'radial-gradient(circle, rgba(34,197,94,0.3) 0%, rgba(34,197,94,0) 70%)',
-              transform: 'scale(1.5)',
-            }}
-          ></div>
-          <div className="absolute -inset-1 rounded-full bg-green-400/20 animate-pulse"></div>
           <FaSearch 
             className="text-[2.86rem] sm:text-[2.85rem] md:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" 
-            style={window.innerWidth < 640 ? { fontSize: '2.86rem' } : {}}
+            style={isMobile ? { fontSize: '2.86rem' } : {}}
           />
         </div>
       </motion.div>
@@ -243,13 +232,15 @@ const CategoryBanner = () => {
   // Handlers
   const toggleSearch = useCallback(() => {
     setIsSearching(prev => !prev);
-    // Reset suggestions when opening search
+    // Reset suggestions and search term when toggling search
     setSuggestions([]);
+    setSearchTerm('');
   }, []);
   
   const handleSearchClose = useCallback(() => {
     setIsSearching(false);
     setSuggestions([]);
+    setSearchTerm('');
   }, []);
 
   // Search function with debounce
@@ -286,22 +277,22 @@ const CategoryBanner = () => {
 
   // Handle selecting a suggestion
   const handleSuggestionSelect = useCallback((suggestion) => {
-    if (suggestion && suggestion.original) {
+    if (suggestion && suggestion.name) {
       // Navigate to search page with the suggestion name as query
       navigate(`/search?q=${encodeURIComponent(suggestion.name)}`);
       setIsSearching(false);
       setSuggestions([]);
+      setSearchTerm('');
     }
   }, [navigate]);
 
   // Handle search submission
-  const handleSearchSubmit = useCallback((searchTerm) => {
-    console.log("Search submitted in banner:", searchTerm);
-    
-    // Example: Navigate to search results page
-    if (searchTerm.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+  const handleSearchSubmit = useCallback((term) => {
+    if (term.trim()) {
+      navigate(`/search?q=${encodeURIComponent(term)}`);
       setIsSearching(false);
+      setSuggestions([]);
+      setSearchTerm('');
     }
   }, [navigate]);
 
@@ -385,23 +376,18 @@ const CategoryBanner = () => {
   useEffect(() => {
     if (inView) {
       controls.start('visible');
-      // Make sure search icon animation starts immediately
-      document.querySelectorAll('.search-icon-container').forEach(el => {
-        const icon = el.querySelector('.search-icon');
-        if (icon) {
-          icon.style.animation = 'pulse 2.5s infinite ease-in-out';
-        }
-      });
     }
   }, [controls, inView]);
 
-  // Escape key handler
+  // Escape key handler - only when search is open
+  // SearchBar also handles Escape but only for suggestions, this handles closing the search
   useEffect(() => {
     if (!isSearching) return;
     
     const handleEscKey = (event) => {
-      if (event.key === 'Escape') {
-        setIsSearching(false);
+      // Only handle if suggestions are not showing (let SearchBar handle Escape for suggestions)
+      if (event.key === 'Escape' && suggestions.length === 0) {
+        handleSearchClose();
       }
     };
     
@@ -409,7 +395,7 @@ const CategoryBanner = () => {
     return () => {
       document.removeEventListener('keydown', handleEscKey);
     };
-  }, [isSearching]);
+  }, [isSearching, suggestions.length, handleSearchClose]);
 
   // Cleanup timeout on unmount
   useEffect(() => {

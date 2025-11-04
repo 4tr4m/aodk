@@ -27,9 +27,10 @@ const SearchBar = memo(function SearchBar({
     setIsOpen(initialOpen);
     if (initialOpen && inputRef.current) {
       // Focus the input when opened externally
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
+      return () => clearTimeout(timer);
     }
   }, [initialOpen]);
 
@@ -58,9 +59,13 @@ const SearchBar = memo(function SearchBar({
       onChange(value);
     }
     
-    setShowSuggestions(value.length >= minCharsForSuggestions && suggestions.length > 0);
-    setSelectedSuggestionIndex(-1);
-  }, [suggestions, minCharsForSuggestions, onChange, isOpen]);
+    // Only show suggestions if we have suggestions available and min chars met
+    const shouldShow = value.length >= minCharsForSuggestions && suggestions.length > 0;
+    setShowSuggestions(shouldShow);
+    if (!shouldShow) {
+      setSelectedSuggestionIndex(-1);
+    }
+  }, [suggestions.length, minCharsForSuggestions, onChange, isOpen]);
 
   const handleSuggestionClick = useCallback((suggestion, index) => {
     if (!suggestion || !suggestion.name) return;
@@ -159,14 +164,16 @@ const SearchBar = memo(function SearchBar({
     };
   }, []);
 
+  // Escape key handler - only handles suggestions, parent controls search close
+  // When suggestions are shown, Escape closes them. Otherwise, parent (CategoryBanner) handles closing search
   useEffect(() => {
+    if (!isOpen) return;
+    
     const handleEscKey = (event) => {
-      if (event.key === 'Escape') {
-        if (showSuggestions) {
-          setShowSuggestions(false);
-        } else if (isOpen) {
-          closeSearch();
-        }
+      if (event.key === 'Escape' && showSuggestions) {
+        event.stopPropagation(); // Prevent parent from handling this
+        setShowSuggestions(false);
+        setSelectedSuggestionIndex(-1);
       }
     };
     
@@ -174,7 +181,7 @@ const SearchBar = memo(function SearchBar({
     return () => {
       document.removeEventListener('keydown', handleEscKey);
     };
-  }, [isOpen, closeSearch, showSuggestions]);
+  }, [isOpen, showSuggestions]);
 
   return (
     <div className="relative w-full">
