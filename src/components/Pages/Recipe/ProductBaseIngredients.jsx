@@ -93,24 +93,17 @@ const ProductBaseIngredients = ({ recipe }) => {
         Podstawowe składniki
       </h3>
       
-      {/* Enhanced instruction with modern design */}
+      {/* Subtle instruction hint */}
       <motion.div 
-        className="mb-6 p-4 bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-2xl border border-indigo-200/50 shadow-sm"
-        initial={{ opacity: 0, y: 8 }}
+        className="mb-4 sm:mb-5"
+        initial={{ opacity: 0, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
       >
-        <div className="flex items-center justify-center gap-2">
-          <div className="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
-          <p className="text-sm sm:text-base text-indigo-800 text-center font-medium">
-            <span className="font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Kliknij składnik
-            </span>
-            <span className="mx-2">—</span>
-            <span>pokażę Ci inne przepisy z tym składnikiem</span>
-          </p>
-          <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
-        </div>
+        <p className="text-xs sm:text-sm text-gray-400 text-center">
+          <span className="inline-block mr-1.5">💡</span>
+          <span className="italic">Kliknij składnik, aby zobaczyć inne przepisy</span>
+        </p>
       </motion.div>
       
       <div className="flex flex-wrap gap-2 sm:gap-3">
@@ -146,17 +139,10 @@ const ProductBaseIngredients = ({ recipe }) => {
             <div className="absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 active:opacity-100 transition-opacity duration-150 bg-white/20"></div>
             
             {/* Content */}
-            <div className="relative flex items-center justify-center gap-1.5 sm:gap-2 min-w-0">
-              <span className="truncate max-w-[120px] sm:max-w-[160px] md:max-w-[200px] group-hover:scale-105 transition-transform duration-200 text-center sm:text-left">
+            <div className="relative flex items-center justify-center min-w-0 w-full">
+              <span className="truncate max-w-full group-hover:scale-105 transition-transform duration-200 text-center">
                 {ingredient.name}
               </span>
-              <motion.span 
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden sm:inline-block flex-shrink-0"
-                initial={{ x: -5 }}
-                whileHover={{ x: 0 }}
-              >
-                →
-              </motion.span>
             </div>
           </motion.button>
         ))}

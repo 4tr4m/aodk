@@ -448,26 +448,23 @@ const RecipePage = () => {
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <div className="flex items-center justify-between mb-2.5 sm:mb-3">
-                        <h2 
-                          className="text-sm sm:text-base font-semibold text-gray-800 mb-0 font-['Playfair_Display'] flex items-center gap-2 cursor-pointer hover:text-green-600 transition-colors"
-                          onClick={() => setIsFullDescExpanded(false)}
-                        >
-                          <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-100 flex-shrink-0">
+                      <motion.button
+                        onClick={() => setIsFullDescExpanded(false)}
+                        className="w-full flex items-center justify-between gap-3 p-2.5 sm:p-3 mb-2.5 sm:mb-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 group"
+                        whileHover={{ scale: 1.005 }}
+                        whileTap={{ scale: 0.995 }}
+                      >
+                        <h2 className="text-sm sm:text-base font-semibold text-gray-800 mb-0 font-['Playfair_Display'] flex items-center gap-2 group-hover:text-green-600 transition-colors">
+                          <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-100 group-hover:bg-green-200 transition-colors duration-200 flex-shrink-0">
                             <FaInfoCircle className="w-4 h-4 text-green-600" />
                           </div>
                           <span>Więcej o potrawie</span>
                         </h2>
-                        <motion.button
-                          onClick={() => setIsFullDescExpanded(false)}
-                          className="flex items-center gap-1.5 text-gray-600 hover:text-green-600 font-medium text-sm transition-colors duration-200 group flex-shrink-0"
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
+                        <div className="flex items-center gap-1.5 text-gray-600 group-hover:text-green-600 font-medium text-sm transition-colors duration-200 flex-shrink-0">
                           <span>Zwiń</span>
                           <FaChevronUp className="w-3 h-3 group-hover:-translate-y-0.5 transition-transform duration-200" />
-                        </motion.button>
-                      </div>
+                        </div>
+                      </motion.button>
                       <motion.div 
                         className="bg-gray-50 rounded-lg border border-gray-200 shadow-sm overflow-hidden"
                         initial={{ maxHeight: 0, opacity: 0 }}
