@@ -47,7 +47,7 @@ const RecipePage = () => {
     };
   }, [isImageModalOpen]);
 
-  // Scroll detection for sticky ingredients
+  // Scroll detection for sticky ingredients - show earlier for better UX
   useEffect(() => {
     if (!ingredientsRef.current || !recipe?.ingredients) return;
 
@@ -56,16 +56,17 @@ const RecipePage = () => {
       if (!ingredientsElement) return;
 
       const rect = ingredientsElement.getBoundingClientRect();
-      const isPastIngredients = rect.bottom < 100; // Show when ingredients section is 100px above viewport
+      // Show sticky sidebar when ingredients section starts to leave viewport (earlier trigger)
+      const isPastIngredients = rect.bottom < 200; // Show when ingredients section is 200px above viewport
       const isOnDesktop = window.innerWidth >= 1024;
       
-      // Show sticky ingredients only when past ingredients section and on desktop
+      // Show sticky ingredients when past ingredients section and on desktop
       if (isPastIngredients && isOnDesktop) {
         setIsStickyIngredientsVisible(true);
       } else {
         setIsStickyIngredientsVisible(false);
         // Reset open state when scrolling back up
-        if (rect.bottom > 200) {
+        if (rect.bottom > 300) {
           setIsStickyIngredientsOpen(true);
         }
       }
@@ -122,7 +123,31 @@ const RecipePage = () => {
     }
   }, [recipeId, state.allRecipes, state.wishlist]);
 
+  // Check if user has already subscribed and show modal if not
+  useEffect(() => {
+    if (!loading && recipe) {
+      // Check localStorage for newsletter subscription
+      const hasSubscribed = localStorage.getItem('newsletter_subscribed') === 'true';
+      
+      // Only show modal if user hasn't subscribed yet
+      if (!hasSubscribed) {
+        // Small delay to ensure page is loaded
+        const timer = setTimeout(() => {
+          setIsNewsletterModalOpen(true);
+        }, 500);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [loading, recipe]);
+
   // Removed add to cart on recipe page
+
+  const handleNewsletterSuccess = () => {
+    // Save to localStorage that user has subscribed
+    localStorage.setItem('newsletter_subscribed', 'true');
+    setIsNewsletterModalOpen(false);
+  };
 
   const handleToggleWishlist = () => {
     if (recipe) {
@@ -712,37 +737,47 @@ const RecipePage = () => {
         <Footer />
       </div>
 
-      {/* Sticky Ingredients Sidebar */}
+      {/* Sticky Ingredients Sidebar - Enhanced UX */}
       <AnimatePresence>
         {isStickyIngredientsVisible && !isStickyIngredientsOpen && recipe?.ingredients && (
           <motion.button
             onClick={() => setIsStickyIngredientsOpen(true)}
-            className="hidden lg:flex fixed right-4 top-32 z-40 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            whileHover={{ scale: 1.05 }}
+            className="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-40 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 group"
+            initial={{ opacity: 0, x: 100, scale: 0.9 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 100, scale: 0.9 }}
+            whileHover={{ scale: 1.08, x: -4 }}
             whileTap={{ scale: 0.95 }}
             aria-label="Pokaż składniki"
           >
-            <FaUtensils className="w-4 h-4" />
-            <span className="font-medium">Składniki</span>
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            >
+              <FaUtensils className="w-5 h-5" />
+            </motion.div>
+            <span className="font-semibold">Składniki</span>
+            <motion.div
+              className="absolute -right-1 -top-1 w-3 h-3 bg-green-400 rounded-full"
+              animate={{ scale: [1, 1.3, 1], opacity: [0.7, 0, 0.7] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            />
           </motion.button>
         )}
         
         {isStickyIngredientsVisible && isStickyIngredientsOpen && recipe?.ingredients && (
           <motion.div
-            className="hidden lg:block fixed right-4 top-32 z-40"
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 100 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="hidden lg:block fixed right-4 top-1/2 -translate-y-1/2 z-40"
+            initial={{ opacity: 0, x: 100, scale: 0.9 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 100, scale: 0.9 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           >
             <motion.div
-              className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-80 max-h-[calc(100vh-10rem)] overflow-hidden flex flex-col backdrop-blur-sm"
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.2 }}
+              className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-80 max-h-[calc(100vh-8rem)] overflow-hidden flex flex-col backdrop-blur-sm"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
             >
               {/* Header with close button */}
               <div className="bg-gradient-to-r from-green-50 to-green-100 px-4 py-3 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
@@ -754,15 +789,15 @@ const RecipePage = () => {
                   onClick={() => setIsStickyIngredientsOpen(false)}
                   className="p-1.5 rounded-full hover:bg-white/80 transition-colors text-gray-600 hover:text-gray-800 flex-shrink-0"
                   aria-label="Zamknij"
-                  whileHover={{ scale: 1.1, rotate: 90 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.15, rotate: 90 }}
+                  whileTap={{ scale: 0.85 }}
                 >
                   <FaTimes className="w-4 h-4" />
                 </motion.button>
               </div>
 
               {/* Ingredients Content */}
-              <div className="overflow-y-auto flex-1 p-4">
+              <div className="overflow-y-auto flex-1 p-4 scrollbar-thin scrollbar-thumb-green-200 scrollbar-track-gray-100">
                 {(() => {
                   const { groups, hasGroups, normalized } = processIngredients();
                   
@@ -770,10 +805,16 @@ const RecipePage = () => {
                     return (
                       <div className="space-y-4">
                         {groups.map((group, groupIdx) => (
-                          <div key={groupIdx} className="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-lg p-3 border border-gray-200">
+                          <motion.div
+                            key={groupIdx}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: groupIdx * 0.1 }}
+                            className="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-lg p-3 border border-gray-200"
+                          >
                             {group.title && (
                               <h4 className="text-sm font-bold text-gray-800 mb-2 font-['Playfair_Display'] flex items-center gap-1.5 pb-1.5 border-b border-gray-300">
-                                <span className="w-1 h-1 rounded-full bg-green-600"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>
                                 {group.title}
                               </h4>
                             )}
@@ -782,7 +823,7 @@ const RecipePage = () => {
                                 <li key={i} className="leading-relaxed" dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }} />
                               ))}
                             </ul>
-                          </div>
+                          </motion.div>
                         ))}
                       </div>
                     );
@@ -790,7 +831,13 @@ const RecipePage = () => {
                     return (
                       <ul className="list-disc pl-5 space-y-1.5 text-gray-800 text-sm">
                         {normalized.map((ing, i) => (
-                          <li key={i} dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }} />
+                          <motion.li
+                            key={i}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.05 }}
+                            dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }}
+                          />
                         ))}
                       </ul>
                     );
@@ -861,6 +908,7 @@ const RecipePage = () => {
       <NewsletterModal
         isOpen={isNewsletterModalOpen}
         onClose={() => setIsNewsletterModalOpen(false)}
+        onSuccess={handleNewsletterSuccess}
       />
     </>
   );
