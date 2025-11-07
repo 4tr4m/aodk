@@ -637,10 +637,14 @@ const CategoryPage = () => {
                   <motion.div
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
-                    className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] sm:text-xs font-bold rounded-full min-w-[20px] sm:min-w-[22px] h-[20px] sm:h-[22px] flex items-center justify-center shadow-lg border-2 border-white px-1.5 whitespace-nowrap overflow-hidden"
-                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                    className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[11px] sm:text-xs font-bold rounded-full min-w-[24px] sm:min-w-[26px] h-[24px] sm:h-[26px] flex items-center justify-center shadow-lg border-2 border-white px-2 whitespace-nowrap"
+                    style={{ 
+                      fontVariantNumeric: 'tabular-nums',
+                      fontFamily: 'system-ui, -apple-system, sans-serif',
+                      lineHeight: '1'
+                    }}
                   >
-                    {String(selectedIngredientsCount)}
+                    {Math.max(1, Math.min(selectedIngredientsCount, 99))}
                   </motion.div>
                 )}
                 
