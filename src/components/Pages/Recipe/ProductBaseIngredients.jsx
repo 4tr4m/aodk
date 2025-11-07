@@ -106,7 +106,7 @@ const ProductBaseIngredients = ({ recipe }) => {
         </p>
       </motion.div>
       
-      <div className="flex flex-wrap gap-2 sm:gap-3">
+      <div className={`flex flex-wrap gap-2 sm:gap-3 ${ingredients.length > 3 ? 'justify-center' : 'justify-start'}`}>
         {ingredients.map((ingredient, i) => (
           <motion.button
             key={ingredient.ingredient_id || i}
