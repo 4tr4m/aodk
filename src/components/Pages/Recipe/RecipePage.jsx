@@ -48,9 +48,9 @@ const RecipePage = () => {
     };
   }, [isImageModalOpen]);
 
-  // Scroll detection for sticky ingredients - show earlier for better UX
+  // Scroll detection for sticky ingredients - optimized
   useEffect(() => {
-    if (!recipe?.ingredients) {
+    if (!recipe?.ingredients || loading) {
       setIsStickyIngredientsVisible(false);
       return;
     }
@@ -63,9 +63,8 @@ const RecipePage = () => {
         return;
       }
 
-      // Check if ingredientsRef is available
+      // Wait for ingredientsRef to be available
       if (!ingredientsRef.current) {
-        // Wait a bit for DOM to be ready, then show sidebar
         return;
       }
 
@@ -73,36 +72,24 @@ const RecipePage = () => {
       const rect = ingredientsElement.getBoundingClientRect();
       
       // Show sticky sidebar when ingredients section bottom is above 400px from top of viewport
-      // This means user has scrolled past the ingredients section
       const isPastIngredients = rect.bottom < 400;
       
-      if (isPastIngredients) {
-        setIsStickyIngredientsVisible(true);
-      } else {
-        setIsStickyIngredientsVisible(false);
-        // Reset open state when scrolling back up to ingredients section
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          setIsStickyIngredientsOpen(true);
-        }
+      setIsStickyIngredientsVisible(isPastIngredients);
+      
+      // Reset open state when scrolling back up to ingredients section
+      if (!isPastIngredients && rect.top < window.innerHeight && rect.bottom > 0) {
+        setIsStickyIngredientsOpen(true);
       }
     };
 
     // Initial check with delay to ensure DOM is ready
-    const timeoutId = setTimeout(() => {
-      handleScroll();
-    }, 300);
-
-    // Also check after a longer delay in case DOM takes time
-    const timeoutId2 = setTimeout(() => {
-      handleScroll();
-    }, 1000);
+    const timeoutId = setTimeout(handleScroll, 200);
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
 
     return () => {
       clearTimeout(timeoutId);
-      clearTimeout(timeoutId2);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
@@ -791,28 +778,12 @@ const RecipePage = () => {
         <StickyIngredientsSidebar
           isVisible={isStickyIngredientsVisible}
           isOpen={isStickyIngredientsOpen}
-          onOpen={() => {
-            console.log('Opening sticky sidebar');
-            setIsStickyIngredientsOpen(true);
-          }}
-          onClose={() => {
-            console.log('Closing sticky sidebar');
-            setIsStickyIngredientsOpen(false);
-          }}
+          onOpen={() => setIsStickyIngredientsOpen(true)}
+          onClose={() => setIsStickyIngredientsOpen(false)}
           ingredients={recipe.ingredients}
           processIngredients={processIngredients}
           replaceLinkPlaceholder={replaceLinkPlaceholder}
         />
-      )}
-      
-      {/* Debug info - remove after testing */}
-      {process.env.NODE_ENV === 'development' && recipe?.ingredients && (
-        <div className="fixed bottom-4 left-4 bg-black/80 text-white p-2 rounded text-xs z-50">
-          <div>isVisible: {isStickyIngredientsVisible ? 'true' : 'false'}</div>
-          <div>isOpen: {isStickyIngredientsOpen ? 'true' : 'false'}</div>
-          <div>hasIngredients: {recipe.ingredients ? 'true' : 'false'}</div>
-          <div>isDesktop: {window.innerWidth >= 1024 ? 'true' : 'false'}</div>
-        </div>
       )}
 
       {/* Image Modal */}

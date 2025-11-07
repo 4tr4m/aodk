@@ -35,7 +35,7 @@ const StickyIngredientsSidebar = ({
       {isVisible && !isOpen && (
         <motion.button
           onClick={onOpen}
-          className="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-40 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 group"
+          className="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-[45] items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 group"
           initial={{ opacity: 0, x: 100, scale: 0.9 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 100, scale: 0.9 }}
@@ -60,7 +60,7 @@ const StickyIngredientsSidebar = ({
       
       {isVisible && isOpen && (
         <motion.div
-          className="hidden lg:block fixed right-4 top-1/2 -translate-y-1/2 z-40"
+          className="hidden lg:block fixed right-4 top-1/2 -translate-y-1/2 z-[45]"
           initial={{ opacity: 0, x: 100, scale: 0.9 }}
           animate={{ opacity: 1, x: 0, scale: 1 }}
           exit={{ opacity: 0, x: 100, scale: 0.9 }}
