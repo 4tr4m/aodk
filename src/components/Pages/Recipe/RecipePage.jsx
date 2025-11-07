@@ -26,6 +26,7 @@ const RecipePage = () => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isStickyIngredientsVisible, setIsStickyIngredientsVisible] = useState(false);
   const [isStickyIngredientsOpen, setIsStickyIngredientsOpen] = useState(true);
+  const [isBaseSpicesExpanded, setIsBaseSpicesExpanded] = useState(false);
   const ingredientsRef = useRef(null);
 
   useEffect(() => {
@@ -417,7 +418,7 @@ const RecipePage = () => {
               {/* Full Description (fulldesc) - collapsible section */}
               {recipe.fulldesc && recipe.fulldesc.trim() && (
                 <motion.div 
-                  className="mb-8"
+                  className="mb-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.3 }}
@@ -425,20 +426,20 @@ const RecipePage = () => {
                   {!isFullDescExpanded ? (
                     <motion.button
                       onClick={() => setIsFullDescExpanded(true)}
-                      className="w-full text-left bg-gray-50 hover:bg-gray-100 rounded-xl p-4 sm:p-6 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 group"
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
+                      className="w-full text-left bg-gray-50 hover:bg-gray-100 rounded-lg p-2.5 sm:p-3 border border-gray-200 shadow-sm hover:shadow transition-all duration-300 group"
+                      whileHover={{ scale: 1.005 }}
+                      whileTap={{ scale: 0.995 }}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-green-100 group-hover:bg-green-200 transition-colors duration-200">
-                            <FaInfoCircle className="w-5 h-5 text-green-600" />
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 sm:gap-2.5">
+                          <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-100 group-hover:bg-green-200 transition-colors duration-200 flex-shrink-0">
+                            <FaInfoCircle className="w-4 h-4 text-green-600" />
                           </div>
-                          <h2 className="text-xl font-bold text-gray-800 font-['Playfair_Display']">
+                          <h2 className="text-sm sm:text-base font-semibold text-gray-800 font-['Playfair_Display']">
                             Dowiedz się więcej o potrawie
                           </h2>
                         </div>
-                        <FaChevronDown className="w-4 h-4 text-gray-600 group-hover:text-green-600 group-hover:translate-y-1 transition-all duration-200" />
+                        <FaChevronDown className="w-3.5 h-3.5 text-gray-500 group-hover:text-green-600 group-hover:translate-y-0.5 transition-all duration-200 flex-shrink-0" />
                       </div>
                     </motion.button>
                   ) : (
@@ -447,28 +448,28 @@ const RecipePage = () => {
                       animate={{ opacity: 1 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center justify-between mb-2.5 sm:mb-3">
                         <h2 
-                          className="text-xl font-bold text-gray-800 mb-0 font-['Playfair_Display'] flex items-center gap-2 cursor-pointer hover:text-green-600 transition-colors"
+                          className="text-sm sm:text-base font-semibold text-gray-800 mb-0 font-['Playfair_Display'] flex items-center gap-2 cursor-pointer hover:text-green-600 transition-colors"
                           onClick={() => setIsFullDescExpanded(false)}
                         >
-                          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100">
-                            <FaInfoCircle className="w-5 h-5 text-green-600" />
+                          <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-green-100 flex-shrink-0">
+                            <FaInfoCircle className="w-4 h-4 text-green-600" />
                           </div>
                           <span>Więcej o potrawie</span>
                         </h2>
                         <motion.button
                           onClick={() => setIsFullDescExpanded(false)}
-                          className="flex items-center gap-2 text-gray-600 hover:text-green-600 font-medium transition-colors duration-200 group"
+                          className="flex items-center gap-1.5 text-gray-600 hover:text-green-600 font-medium text-sm transition-colors duration-200 group flex-shrink-0"
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
                           <span>Zwiń</span>
-                          <FaChevronUp className="w-3 h-3 group-hover:translate-y-0.5 transition-transform duration-200" />
+                          <FaChevronUp className="w-3 h-3 group-hover:-translate-y-0.5 transition-transform duration-200" />
                         </motion.button>
                       </div>
                       <motion.div 
-                        className="bg-gray-50 rounded-xl border border-gray-200 shadow-sm overflow-hidden"
+                        className="bg-gray-50 rounded-lg border border-gray-200 shadow-sm overflow-hidden"
                         initial={{ maxHeight: 0, opacity: 0 }}
                         animate={{ 
                           maxHeight: isFullDescExpanded ? 5000 : 0,
@@ -476,17 +477,17 @@ const RecipePage = () => {
                         }}
                         transition={{ 
                           maxHeight: {
-                            duration: 0.5,
+                            duration: 0.4,
                             ease: [0.04, 0.62, 0.23, 0.98]
                           },
                           opacity: {
-                            duration: 0.3,
-                            delay: isFullDescExpanded ? 0.1 : 0
+                            duration: 0.25,
+                            delay: isFullDescExpanded ? 0.08 : 0
                           }
                         }}
                       >
-                        <div className="p-4 sm:p-6 prose max-w-none">
-                          <p className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg whitespace-pre-wrap break-words">
+                        <div className="p-3 sm:p-4 prose max-w-none">
+                          <p className="text-gray-700 leading-relaxed text-sm sm:text-base whitespace-pre-wrap break-words">
                             {recipe.fulldesc}
                           </p>
                         </div>
@@ -602,49 +603,82 @@ const RecipePage = () => {
               {/* Podstawowe składniki (interactive tags) moved to the bottom */}
               <ProductBaseIngredients recipe={recipe} />
 
-              {/* Bases & Spices (now under Podstawowe składniki) */}
+              {/* Bases & Spices (now under Podstawowe składniki) - collapsible */}
               {(() => {
                 const baseText = (recipe.base || recipe.bases || recipe.podstawa || '').toString();
                 const spicesText = (recipe.spices || recipe.przyprawy || '').toString();
                 const hasAny = baseText.trim().length > 0 || spicesText.trim().length > 0;
-                return hasAny;
-              })() && (
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display'] text-center">Podstawa i Przyprawy</h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-2 text-center">Podstawa</h3>
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        {(recipe.base || recipe.bases || recipe.podstawa || '')
-                          .toString()
-                          .split(',')
-                          .map(i => i.trim())
-                          .filter(Boolean)
-                          .map((i, idx) => (
-                          <span key={idx} className="px-3 py-1 rounded-full text-sm bg-white text-gray-700 border border-gray-200 whitespace-nowrap">
-                            {capitalizeFirstLetter(i)}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-2 text-center">Przyprawy</h3>
-                      <div className="flex flex-wrap gap-2 justify-center">
-                        {(recipe.spices || recipe.przyprawy || '')
-                          .toString()
-                          .split(',')
-                          .map(i => i.trim())
-                          .filter(Boolean)
-                          .map((i, idx) => (
-                          <span key={idx} className="px-3 py-1 rounded-full text-sm bg-white text-gray-700 border border-gray-200 whitespace-nowrap">
-                            {capitalizeFirstLetter(i)}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                
+                if (!hasAny) return null;
+                
+                // Combine all tags into one array
+                const baseItems = (baseText || '')
+                  .split(',')
+                  .map(i => i.trim())
+                  .filter(Boolean)
+                  .map(i => capitalizeFirstLetter(i));
+                
+                const spicesItems = (spicesText || '')
+                  .split(',')
+                  .map(i => i.trim())
+                  .filter(Boolean)
+                  .map(i => capitalizeFirstLetter(i));
+                
+                const allItems = [...baseItems, ...spicesItems];
+                
+                return (
+                  <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
+                    <motion.button
+                      onClick={() => setIsBaseSpicesExpanded(!isBaseSpicesExpanded)}
+                      className="w-full flex items-center justify-between gap-3 p-2.5 sm:p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200 group"
+                      whileHover={{ scale: 1.005 }}
+                      whileTap={{ scale: 0.995 }}
+                    >
+                      <h2 className="text-base sm:text-lg font-semibold text-gray-800 font-['Playfair_Display'] flex items-center gap-2">
+                        <FaUtensils className="text-green-600 text-sm sm:text-base" />
+                        Podstawa i Przyprawy
+                      </h2>
+                      <motion.div
+                        animate={{ rotate: isBaseSpicesExpanded ? 180 : 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <FaChevronDown className="w-3.5 h-3.5 text-gray-500 group-hover:text-green-600 transition-colors duration-200 flex-shrink-0" />
+                      </motion.div>
+                    </motion.button>
+                    
+                    <AnimatePresence>
+                      {isBaseSpicesExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ 
+                            height: { duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] },
+                            opacity: { duration: 0.2, delay: 0.05 }
+                          }}
+                          className="overflow-hidden"
+                        >
+                          <div className="pt-3 sm:pt-4 pb-2">
+                            <div className="flex flex-wrap gap-2 sm:gap-3 justify-center sm:justify-start">
+                              {allItems.map((item, idx) => (
+                                <motion.span
+                                  key={idx}
+                                  initial={{ opacity: 0, scale: 0.9 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  transition={{ delay: idx * 0.03, duration: 0.2 }}
+                                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm bg-white text-gray-700 border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-all duration-200 whitespace-nowrap cursor-default"
+                                >
+                                  {item}
+                                </motion.span>
+                              ))}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Newsletter CTA at the very bottom */}
               <div className="mt-8 pt-6 border-t border-gray-200">

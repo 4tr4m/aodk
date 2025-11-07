@@ -15,7 +15,13 @@ const ProductBaseIngredients = ({ recipe }) => {
         try {
           setLoading(true);
           const recipeIngredients = await recipeService.getIngredientsForRecipe(recipe.id);
-          setIngredients(recipeIngredients);
+          // Sort ingredients alphabetically by name
+          const sortedIngredients = [...recipeIngredients].sort((a, b) => {
+            const nameA = (a.name || '').toLowerCase().trim();
+            const nameB = (b.name || '').toLowerCase().trim();
+            return nameA.localeCompare(nameB, 'pl', { sensitivity: 'base' });
+          });
+          setIngredients(sortedIngredients);
         } catch (error) {
           console.error('Error fetching ingredients:', error);
           setIngredients([]);
@@ -114,35 +120,38 @@ const ProductBaseIngredients = ({ recipe }) => {
             onClick={() => handleIngredientClick(ingredient.name)}
             initial={{ opacity: 0, scale: 0.9, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: i * 0.1, type: "spring", stiffness: 100 }}
+            transition={{ delay: i * 0.05, type: "spring", stiffness: 100 }}
             whileHover={{ 
               scale: 1.08, 
               y: -2,
               boxShadow: "0 8px 25px rgba(0,0,0,0.15)"
             }}
-            whileTap={{ scale: 0.95 }}
-            className={`group relative px-4 sm:px-5 py-2.5 sm:py-3 rounded-2xl text-sm sm:text-base font-semibold cursor-pointer transition-all duration-300 touch-manipulation overflow-hidden
-              ${i % 6 === 0 ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600' :
-                i % 6 === 1 ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600' :
-                i % 6 === 2 ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:from-blue-600 hover:to-indigo-600' :
-                i % 6 === 3 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600' :
-                i % 6 === 4 ? 'bg-gradient-to-r from-rose-500 to-red-500 text-white hover:from-rose-600 hover:to-red-600' :
-                'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-600 hover:to-blue-600'
+            whileTap={{ scale: 0.92 }}
+            className={`group relative px-3.5 sm:px-4 md:px-5 py-2.5 sm:py-3 min-h-[44px] sm:min-h-[48px] rounded-xl sm:rounded-2xl text-xs sm:text-sm md:text-base font-semibold cursor-pointer transition-all duration-300 touch-manipulation overflow-hidden active:scale-95 select-none
+              ${i % 6 === 0 ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-600 hover:to-teal-600 active:from-emerald-700 active:to-teal-700' :
+                i % 6 === 1 ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 active:from-amber-700 active:to-orange-700' :
+                i % 6 === 2 ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white hover:from-blue-600 hover:to-indigo-600 active:from-blue-700 active:to-indigo-700' :
+                i % 6 === 3 ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 active:from-purple-700 active:to-pink-700' :
+                i % 6 === 4 ? 'bg-gradient-to-r from-rose-500 to-red-500 text-white hover:from-rose-600 hover:to-red-600 active:from-rose-700 active:to-red-700' :
+                'bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-600 hover:to-blue-600 active:from-cyan-700 active:to-blue-700'
               }`}
           >
             {/* Shimmer effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
             
             {/* Subtle glow effect */}
-            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-white/10 to-transparent"></div>
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-white/10 to-transparent"></div>
+            
+            {/* Active state overlay for mobile */}
+            <div className="absolute inset-0 rounded-xl sm:rounded-2xl opacity-0 active:opacity-100 transition-opacity duration-150 bg-white/20"></div>
             
             {/* Content */}
-            <div className="relative flex items-center gap-2">
-              <span className="truncate max-w-[140px] sm:max-w-[180px] group-hover:scale-105 transition-transform duration-200">
+            <div className="relative flex items-center justify-center gap-1.5 sm:gap-2 min-w-0">
+              <span className="truncate max-w-[120px] sm:max-w-[160px] md:max-w-[200px] group-hover:scale-105 transition-transform duration-200 text-center sm:text-left">
                 {ingredient.name}
               </span>
               <motion.span 
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 hidden sm:inline-block flex-shrink-0"
                 initial={{ x: -5 }}
                 whileHover={{ x: 0 }}
               >
