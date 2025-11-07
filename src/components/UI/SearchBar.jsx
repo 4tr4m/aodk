@@ -1,3 +1,61 @@
+/**
+ * SearchBar Component - Search Input with Suggestions
+ * 
+ * A reusable search input component that displays an animated search bar with
+ * live suggestions dropdown, keyboard navigation, and form submission handling.
+ * 
+ * USAGE LOCATIONS:
+ *   - src/components/Pages/Search/SearchPage.jsx (main search page)
+ *   - src/components/Section/CategoryBanner.jsx (homepage search)
+ *   - src/components/Pages/Category/CategoryPage.jsx (category page search)
+ * 
+ * FEATURES:
+ *   - Animated expand/collapse with smooth transitions
+ *   - Live suggestions dropdown with keyboard navigation (Arrow keys, Enter, Escape)
+ *   - Click outside to close suggestions
+ *   - Controlled by parent component (can be opened/closed externally)
+ *   - Accessible with proper ARIA labels
+ *   - Responsive design for mobile and desktop
+ *   - Icon indicators for recipe vs ingredient suggestions
+ * 
+ * DATA FLOW:
+ *   1. User types → handleInputChange → calls onChange(value) → parent fetches suggestions
+ *   2. Parent passes suggestions as prop → SearchBar displays dropdown
+ *   3. User selects/clicks → handleSuggestionClick → calls onSuggestionSelect(suggestion)
+ *   4. User submits form → handleSubmit → calls onSearchSubmit(searchTerm)
+ * 
+ * RELATED COMPONENTS:
+ *   - SearchPage: Main search page that uses SearchBar
+ *   - CategoryBanner: Homepage banner with search functionality
+ *   - CategoryPage: Category page with search integration
+ *   - searchService: Service that provides getSuggestions() and searchRecipes()
+ *   - RecipeGrid: Displays search results (used in SearchPage)
+ *   - Spinner: Loading indicator (used in SearchPage)
+ * 
+ * PROPS:
+ *   @param {string} placeholder - Placeholder text for input (default: "Search...")
+ *   @param {Function} onSearchSubmit - Callback when form is submitted (Enter key or button click)
+ *   @param {Function} onClose - Callback when search is closed
+ *   @param {boolean} initialOpen - Whether search bar should be open initially (default: false)
+ *   @param {Array} suggestions - Array of suggestion objects to display in dropdown
+ *   @param {Function} onSuggestionSelect - Callback when a suggestion is clicked/selected
+ *   @param {string} highlightedTerm - Term to highlight in suggestions (currently not used in rendering)
+ *   @param {number} minCharsForSuggestions - Minimum characters before showing suggestions (default: 2)
+ *   @param {Function} onChange - Callback for every input change (for live suggestions)
+ *   @param {boolean} showCloseButton - Whether to show close button (default: true)
+ *   @param {string} tooltipText - Tooltip text (currently not used)
+ * 
+ * SUGGESTION OBJECT FORMAT:
+ *   {
+ *     id: string | number,
+ *     name: string,              // Display name
+ *     shortdesc?: string,         // Optional description
+ *     ingredients?: string,       // Comma-separated ingredients
+ *     type?: 'recipe' | 'ingredient',
+ *     original?: object          // Full recipe object
+ *   }
+ */
+
 import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { FaSearch, FaTimes, FaUtensils, FaList } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,14 +73,16 @@ const SearchBar = memo(function SearchBar({
   showCloseButton = true,
   tooltipText = ""
 }) {
-  const [isOpen, setIsOpen] = useState(initialOpen);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
-  const inputRef = useRef(null);
-  const suggestionsRef = useRef(null);
+  // Internal state management
+  const [isOpen, setIsOpen] = useState(initialOpen);              // Whether search bar is open/visible
+  const [searchTerm, setSearchTerm] = useState('');              // Current input value
+  const [showSuggestions, setShowSuggestions] = useState(false); // Whether to show suggestions dropdown
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1); // Keyboard navigation index
+  const inputRef = useRef(null);                                  // Reference to input element
+  const suggestionsRef = useRef(null);                            // Reference to suggestions dropdown
 
   // Sync internal state with external initialOpen prop
+  // This allows parent component to control search bar visibility
   useEffect(() => {
     setIsOpen(initialOpen);
     if (initialOpen && inputRef.current) {
@@ -50,16 +110,23 @@ const SearchBar = memo(function SearchBar({
     setShowSuggestions(false);
   }, []);
 
+  /**
+   * Handle input change - called on every keystroke
+   * Updates internal state and notifies parent via onChange callback
+   * Parent is responsible for fetching suggestions and passing them back as prop
+   */
   const handleInputChange = useCallback((event) => {
     if (!isOpen) return;
     const value = event.target.value;
     setSearchTerm(value);
     
+    // Notify parent component of input change (parent will fetch suggestions)
     if (onChange) {
       onChange(value);
     }
     
     // Only show suggestions if we have suggestions available and min chars met
+    // Note: suggestions are fetched by parent, not here
     const shouldShow = value.length >= minCharsForSuggestions && suggestions.length > 0;
     setShowSuggestions(shouldShow);
     if (!shouldShow) {
@@ -67,12 +134,19 @@ const SearchBar = memo(function SearchBar({
     }
   }, [suggestions.length, minCharsForSuggestions, onChange, isOpen]);
 
+  /**
+   * Handle suggestion click/selection
+   * If onSuggestionSelect is provided, calls it (parent handles search)
+   * Otherwise, sets search term and calls onSearchSubmit directly
+   */
   const handleSuggestionClick = useCallback((suggestion, index) => {
     if (!suggestion || !suggestion.name) return;
     
     if (onSuggestionSelect) {
+      // Parent component handles the search (e.g., SearchPage)
       onSuggestionSelect(suggestion);
     } else {
+      // Fallback: handle search directly if no callback provided
       setSearchTerm(suggestion.name);
       setShowSuggestions(false);
       setSelectedSuggestionIndex(index);
@@ -82,43 +156,60 @@ const SearchBar = memo(function SearchBar({
     }
   }, [onSuggestionSelect, onSearchSubmit]);
 
+  /**
+   * Handle form submission (Enter key or submit button)
+   * If a suggestion is selected via keyboard, uses that
+   * Otherwise, submits the current search term
+   */
   const handleSubmit = useCallback((event) => {
     event.preventDefault();
     if (!isOpen) return;
     
+    // If user navigated to a suggestion with keyboard, use that
     if (selectedSuggestionIndex >= 0 && selectedSuggestionIndex < suggestions.length) {
       handleSuggestionClick(suggestions[selectedSuggestionIndex], selectedSuggestionIndex);
       return;
     }
     
+    // Otherwise, submit the current search term
     if (onSearchSubmit && searchTerm.trim()) {
       onSearchSubmit(searchTerm);
       setShowSuggestions(false);
     }
   }, [onSearchSubmit, searchTerm, selectedSuggestionIndex, suggestions, handleSuggestionClick, isOpen]);
 
+  /**
+   * Handle keyboard navigation in suggestions dropdown
+   * ArrowDown/ArrowUp: Navigate through suggestions
+   * Escape: Close suggestions dropdown
+   * Enter: Handled by handleSubmit
+   */
   const handleKeyDown = useCallback((e) => {
     if (!showSuggestions) return;
     
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
+        // Move to next suggestion, or stay at last one
         setSelectedSuggestionIndex(prev => 
           prev < suggestions.length - 1 ? prev + 1 : prev
         );
         break;
       case 'ArrowUp':
         e.preventDefault();
+        // Move to previous suggestion, or deselect if at first
         setSelectedSuggestionIndex(prev => 
           prev > 0 ? prev - 1 : -1
         );
         break;
       case 'Escape':
         e.preventDefault();
+        // Close suggestions dropdown
         setShowSuggestions(false);
         setSelectedSuggestionIndex(-1);
         break;
       case 'Enter':
+        // Handled by handleSubmit
         break;
       default:
         break;
@@ -164,8 +255,12 @@ const SearchBar = memo(function SearchBar({
     };
   }, []);
 
-  // Escape key handler - only handles suggestions, parent controls search close
-  // When suggestions are shown, Escape closes them. Otherwise, parent (CategoryBanner) handles closing search
+  /**
+   * Escape key handler - only handles suggestions dropdown
+   * When suggestions are shown, Escape closes them
+   * Otherwise, parent component (e.g., CategoryBanner) handles closing the search bar
+   * Uses stopPropagation to prevent parent from handling Escape when suggestions are open
+   */
   useEffect(() => {
     if (!isOpen) return;
     
@@ -243,6 +338,7 @@ const SearchBar = memo(function SearchBar({
         )}
       </form>
 
+      {/* Suggestions Dropdown - Animated with Framer Motion */}
       <AnimatePresence>
         {showSuggestions && suggestions && suggestions.length > 0 && (
           <motion.div
@@ -263,6 +359,7 @@ const SearchBar = memo(function SearchBar({
                   onClick={() => handleSuggestionClick(suggestion, index)}
                 >
                   <div className="flex items-start gap-3">
+                    {/* Icon indicator: recipe (utensils) or ingredient (list) */}
                     <div className="mt-1">
                       {suggestion.type === 'recipe' ? (
                         <FaUtensils className="text-green-600" />
@@ -272,16 +369,19 @@ const SearchBar = memo(function SearchBar({
                     </div>
 
                     <div className="flex-1 min-w-0">
+                      {/* Suggestion name */}
                       <div className="font-medium text-gray-800 text-sm sm:text-base">
                         {suggestion.name}
                       </div>
 
+                      {/* Optional description */}
                       {suggestion.shortdesc && (
                         <div className="mt-1 text-xs text-gray-600 line-clamp-2">
                           {suggestion.shortdesc}
                         </div>
                       )}
 
+                      {/* Ingredients as tags */}
                       {suggestion.ingredients && (
                         <div className="mt-1 flex flex-wrap gap-1 justify-center">
                           {suggestion.ingredients.split(',').map((ingredient, i) => (

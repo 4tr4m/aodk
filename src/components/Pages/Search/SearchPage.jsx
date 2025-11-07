@@ -1,3 +1,53 @@
+/**
+ * SearchPage Component - Main Search Results Page
+ * 
+ * The main search page that displays search results for recipes. Users can search
+ * by recipe name, ingredients, or category. The page integrates SearchBar component
+ * for input and displays results using RecipeGrid.
+ * 
+ * USAGE LOCATIONS:
+ *   - Route: /search?q=query (handled by App.jsx routing)
+ *   - Navigated to from: CategoryBanner, CategoryPage, Footer links, etc.
+ * 
+ * FEATURES:
+ *   - Live search suggestions as user types (debounced 150ms)
+ *   - Full search results display with RecipeGrid
+ *   - URL query parameter support (?q=term)
+ *   - Category navigation integration
+ *   - Loading states with Spinner component
+ *   - Error handling and empty states
+ *   - Smooth animations with Framer Motion
+ * 
+ * DATA FLOW:
+ *   1. User types in SearchBar → handleSearchInput → searchService.getSuggestions()
+ *   2. Suggestions passed to SearchBar → displayed in dropdown
+ *   3. User submits/selects → handleSearchSubmit/handleSuggestionSelect
+ *   4. performSearch() → searchService.searchRecipes() → setRecipes()
+ *   5. RecipeGrid displays results
+ * 
+ * RELATED COMPONENTS:
+ *   - SearchBar: Input component with suggestions dropdown
+ *   - RecipeGrid: Displays search results as a grid
+ *   - Spinner: Loading indicator during search
+ *   - CategoryNav: Category navigation bar
+ *   - CategoryHeader: Page header with logo
+ *   - TopNavBar: Top navigation bar
+ *   - Footer: Site footer
+ * 
+ * RELATED SERVICES:
+ *   - searchService: Provides getSuggestions() and searchRecipes() methods
+ *     - getSuggestions(term): Returns top 5 matching suggestions
+ *     - searchRecipes(term): Returns all matching recipes with scoring
+ * 
+ * STATE MANAGEMENT:
+ *   - searchTerm: Current search query
+ *   - recipes: Array of recipe objects from search results
+ *   - loading: Boolean indicating if search is in progress
+ *   - suggestions: Array of suggestion objects for dropdown
+ *   - errorMessage: Error message if search fails
+ *   - currentCategory: Current category filter (if any)
+ */
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TopNavBar from '../../Headers/TopNavBar';
@@ -25,13 +75,19 @@ const SearchPage = () => {
   const suggestionsRef = useRef(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
 
-  // Get current category from URL
+  // Get current category from URL path
   useEffect(() => {
     const path = location.pathname.split('/').pop();
     setCurrentCategory(path === 'search' ? null : path);
   }, [location]);
 
-  // Define performSearch BEFORE the useEffect that uses it
+  /**
+   * Perform full search for recipes
+   * Called when user submits search or selects a suggestion
+   * Uses searchService.searchRecipes() to get all matching recipes
+   * 
+   * @param {string} term - Search query term
+   */
   const performSearch = useCallback(async (term) => {
     if (!term || term.trim() === '') return;
     
@@ -57,7 +113,11 @@ const SearchPage = () => {
     navigate(categoryPath);
   }, [navigate]);
 
-  // THEN use it in the useEffect
+  /**
+   * Initialize search from URL query parameter
+   * If page is loaded with ?q=term, automatically perform search
+   * This allows direct links to search results and browser back/forward
+   */
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const query = searchParams.get('q');
@@ -68,7 +128,14 @@ const SearchPage = () => {
     }
   }, [location.search, performSearch]);
 
-  // Handle search input and live suggestions with reduced debounce
+  /**
+   * Handle search input changes - fetches live suggestions
+   * Called on every keystroke via SearchBar's onChange callback
+   * Uses debounce (150ms) to reduce API calls
+   * Fetches suggestions using searchService.getSuggestions()
+   * 
+   * @param {string} value - Current input value
+   */
   const handleSearchInput = useCallback(async (value) => {
     setSearchTerm(value);
     
@@ -95,24 +162,36 @@ const SearchPage = () => {
     }
   }, [searchTimeout]);
 
-  // Handle selecting a suggestion
+  /**
+   * Handle suggestion selection from dropdown
+   * Called when user clicks a suggestion in SearchBar
+   * Performs full search and updates URL
+   * 
+   * @param {Object} suggestion - Selected suggestion object with name, id, etc.
+   */
   const handleSuggestionSelect = useCallback((suggestion) => {
     setSearchTerm(suggestion.name);
     setSuggestions([]);
     performSearch(suggestion.name);
     
-    // Update URL with the search query
+    // Update URL with the search query (allows sharing/bookmarking)
     const searchParams = new URLSearchParams();
     searchParams.set('q', suggestion.name);
     navigate(`/search?${searchParams.toString()}`);
   }, [navigate, performSearch]);
 
-  // Handle form submission
+  /**
+   * Handle form submission (Enter key or submit button)
+   * Called from SearchBar when user submits the form
+   * Performs full search and updates URL
+   * 
+   * @param {string} term - Search query term
+   */
   const handleSearchSubmit = useCallback((term) => {
     performSearch(term);
     setSuggestions([]);
     
-    // Update URL with the search query
+    // Update URL with the search query (allows sharing/bookmarking)
     const searchParams = new URLSearchParams();
     searchParams.set('q', term);
     navigate(`/search?${searchParams.toString()}`);
@@ -252,27 +331,33 @@ const SearchPage = () => {
           )}
         </AnimatePresence>
 
-        {/* Results Section */}
+        {/* Results Section - Conditionally renders based on state */}
         <div className="mt-8 px-2 sm:px-4">
+          {/* Error message display */}
           {errorMessage && (
             <div className="text-red-600 text-center p-4 bg-red-50 rounded-md shadow mb-6">
               {errorMessage}
             </div>
           )}
           
+          {/* Conditional rendering based on loading and results state */}
           {loading ? (
+            // Loading state: Show spinner
             <div className="flex justify-center my-12">
               <Spinner size="lg" color="green" />
             </div>
           ) : recipes.length > 0 ? (
+            // Results found: Display RecipeGrid with results
             <div>
               <h2 className="text-xl font-semibold mb-4 text-green-700">
                 Wyniki wyszukiwania dla: <span className="font-bold">"{searchTerm}"</span>
                 {currentCategory && <span className="ml-2 text-gray-600">w kategorii: {currentCategory}</span>}
               </h2>
+              {/* RecipeGrid component displays recipes in a responsive grid */}
               <RecipeGrid recipes={recipes} />
             </div>
           ) : searchTerm ? (
+            // No results: Show empty state message
             <div className="text-center my-12">
               <h2 className="text-xl font-semibold mb-2">Brak wyników dla "{searchTerm}"</h2>
               <p className="text-gray-600">
@@ -280,6 +365,7 @@ const SearchPage = () => {
               </p>
             </div>
           ) : (
+            // Initial state: Prompt user to search
             <div className="text-center my-12">
               <h2 className="text-xl font-semibold mb-2">Wpisz szukaną frazę</h2>
               <p className="text-gray-600">

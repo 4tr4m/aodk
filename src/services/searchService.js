@@ -162,10 +162,18 @@ export async function getSuggestions(searchTerm) {
             .sort((a, b) => b.score - a.score)
             .slice(0, 5);
 
-        // Format suggestions
+        // Format suggestions and remove duplicates by recipe ID
+        const seenIds = new Set();
         const suggestions = scoredRecipes
             .map(item => formatRecipeAsSuggestion(item.recipe, searchTerm))
-            .filter(Boolean);
+            .filter(Boolean)
+            .filter(suggestion => {
+              if (seenIds.has(suggestion.id)) {
+                return false; // Duplicate
+              }
+              seenIds.add(suggestion.id);
+              return true;
+            });
 
         return suggestions;
 
@@ -194,7 +202,20 @@ export async function searchRecipes(searchTerm) {
             .sort((a, b) => b.score - a.score);
 
         console.log('Found matches:', scoredRecipes.length);
-        return scoredRecipes.map(item => item.recipe);
+        
+        // Remove duplicates by recipe ID
+        const uniqueRecipes = [];
+        const seenIds = new Set();
+        
+        for (const item of scoredRecipes) {
+          if (!seenIds.has(item.recipe.id)) {
+            seenIds.add(item.recipe.id);
+            uniqueRecipes.push(item.recipe);
+          }
+        }
+        
+        console.log('Unique recipes after deduplication:', uniqueRecipes.length);
+        return uniqueRecipes;
 
     } catch (error) {
         console.error('Error searching recipes:', error);
