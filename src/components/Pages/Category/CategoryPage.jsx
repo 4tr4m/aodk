@@ -637,9 +637,10 @@ const CategoryPage = () => {
                   <motion.div
                     initial={{ scale: 0, rotate: -180 }}
                     animate={{ scale: 1, rotate: 0 }}
-                    className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full min-w-[22px] h-[22px] flex items-center justify-center shadow-lg border-2 border-white px-1"
+                    className="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] sm:text-xs font-bold rounded-full min-w-[20px] sm:min-w-[22px] h-[20px] sm:h-[22px] flex items-center justify-center shadow-lg border-2 border-white px-1.5 whitespace-nowrap overflow-hidden"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
                   >
-                    {selectedIngredientsCount}
+                    {String(selectedIngredientsCount)}
                   </motion.div>
                 )}
                 
