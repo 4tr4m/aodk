@@ -19,11 +19,44 @@ const ScrollToTop = () => {
 
   useEffect(() => {
     console.log('ScrollToTop: pathname changed to', pathname, 'state:', state);
+    // Handle scrollToTop state from Footer or other components
+    if (state?.scrollToTop) {
+      console.log('ScrollToTop: Scrolling to top due to scrollToTop state');
+      
+      // Immediate scroll for mobile compatibility
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      
+      // Use requestAnimationFrame for better mobile support
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      });
+      
+      // Additional scroll attempts for mobile browsers
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      }, 0);
+      
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      }, 100);
+      
+      return;
+    }
     // Only scroll to top if there's no scrollToTitle state
     // This allows CategoryPage to handle its own scrolling logic
     if (!state?.scrollToTitle) {
       console.log('ScrollToTop: Scrolling to top (no scrollToTitle state)');
       window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
     } else {
       console.log('ScrollToTop: Skipping scroll (scrollToTitle state detected)');
     }

@@ -90,9 +90,8 @@ const Footer = () => {
 
   // Programmatic navigation helper; ensures top-of-page scroll on arrival
   const handleLinkClick = (link) => {
-    // Scroll to top immediately
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Navigate to the link
+    // Navigate to the link with scrollToTop state
+    // Don't scroll here - let the destination page handle it for better mobile support
     navigate(link, { state: { scrollToTop: true } });
   };
 

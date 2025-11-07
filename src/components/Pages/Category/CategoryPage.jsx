@@ -187,16 +187,37 @@ const CategoryPage = () => {
     }
   }, [navigate, location.pathname]);
 
-  // Effect to scroll to top if coming from carousel click
+  // Effect to scroll to top if coming from carousel click or footer
   useEffect(() => {
-    if (location.state?.scrollToTitle) {
-      console.log('CategoryPage: Scrolling to top due to scrollToTitle state');
+    if (location.state?.scrollToTitle || location.state?.scrollToTop) {
+      const reason = location.state?.scrollToTitle ? 'scrollToTitle' : 'scrollToTop';
+      console.log(`CategoryPage: Scrolling to top due to ${reason} state`);
       console.log('Current scroll position before:', window.scrollY);
       
-      // Force immediate scroll to top first
+      // Force immediate scroll to top first (critical for mobile)
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
+      
+      // Use requestAnimationFrame for better mobile support
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      });
+      
+      // Multiple scroll attempts for mobile browsers
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      }, 0);
+      
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      }, 50);
       
       // Then try smooth scroll after a delay
       setTimeout(() => {
@@ -205,15 +226,17 @@ const CategoryPage = () => {
           behavior: 'smooth'
         });
         console.log('Current scroll position after smooth scroll:', window.scrollY);
-      }, 50);
+      }, 100);
       
-      // Final backup scroll
+      // Final backup scroll (important for mobile)
       setTimeout(() => {
         window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
         console.log('Final scroll position:', window.scrollY);
         // Clean up state to prevent scrolling on future updates
         navigate(location.pathname, { replace: true, state: {} });
-      }, 200);
+      }, 300);
     }
   }, [location.state, navigate, location.pathname]);
 
