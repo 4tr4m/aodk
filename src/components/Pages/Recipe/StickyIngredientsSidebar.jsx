@@ -13,7 +13,22 @@ const StickyIngredientsSidebar = ({
 }) => {
   if (!ingredients) return null;
 
-  const { groups, hasGroups, normalized } = processIngredients(ingredients);
+  let groups, hasGroups, normalized;
+  try {
+    const result = processIngredients(ingredients);
+    groups = result.groups;
+    hasGroups = result.hasGroups;
+    normalized = result.normalized;
+  } catch (error) {
+    console.error('Error processing ingredients:', error);
+    return null;
+  }
+
+  // Don't render if no ingredients to show
+  if ((!hasGroups && (!normalized || normalized.length === 0)) || 
+      (hasGroups && (!groups || groups.length === 0))) {
+    return null;
+  }
 
   return (
     <AnimatePresence>
