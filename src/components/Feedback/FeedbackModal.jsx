@@ -6,7 +6,7 @@ import emailjs from '@emailjs/browser';
 // EmailJS configuration (same as ContactPage and Newsletter)
 const EMAILJS_PUBLIC_KEY = "0f8Jce-Gsw4GbjCQ_";
 const EMAILJS_SERVICE_ID = "service_m4uai4d";
-const EMAILJS_TEMPLATE_ID = "template_r7rcz39";
+const EMAILJS_TEMPLATE_ID = "template_km1j8qq";
 
 // Initialize EmailJS
 emailjs.init(EMAILJS_PUBLIC_KEY);

@@ -15,6 +15,7 @@ import SEO from '../../SEO/SEO';
 import categoryService from '../../../services/categoryService';
 import recipeService from '../../../services/recipeService';
 import IngredientFilter from '../../UI/IngredientFilter';
+import NewsletterModal from '../../Modal/NewsletterModal';
 
 // SearchIcon component taken from CategoryBanner
 const SearchIcon = ({ toggleSearch }) => {
@@ -115,6 +116,10 @@ const CategoryPage = () => {
   // Scroll detection for hiding/showing header elements
   const [isScrolled, setIsScrolled] = useState(false);
   const scrollThreshold = 30; // Hide elements after scrolling 30px for faster response
+
+  // Newsletter modal state
+  const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
+  const [pendingNavigation, setPendingNavigation] = useState(null);
 
 
   useEffect(() => {
@@ -820,10 +825,19 @@ const CategoryPage = () => {
                     WebkitLineClamp: !isDescriptionExpanded && currentCategory.description.length > 150 ? 3 : 'unset',
                     WebkitBoxOrient: 'vertical'
                   }}
+                  onClick={(e) => {
+                    // Handle click on the link to mieszanka-2
+                    const target = e.target.closest('a[data-newsletter-trigger]');
+                    if (target) {
+                      e.preventDefault();
+                      setPendingNavigation('/przepis/mieszanka-2');
+                      setIsNewsletterModalOpen(true);
+                    }
+                  }}
                   dangerouslySetInnerHTML={{
                     __html: currentCategory.description.replace(
                       /{LINK}/g,
-                      '<span class="inline-block relative group"><a href="/kuchnia/ciastka/mieszanka-1" class="relative z-10 text-green-600 font-medium transition-colors duration-200 group-hover:text-green-700 underline decoration-1 underline-offset-2">optymalną domową mieszankę na mąkę bezglutenową</a><span class="absolute bottom-0 left-0 w-full h-[25%] bg-green-100/40 transform transition-all duration-200 -z-0 group-hover:h-[80%] group-hover:bg-green-50/20"></span></span>'
+                      '<span class="inline-block relative group"><a href="/przepis/mieszanka-2" data-newsletter-trigger class="relative z-10 text-green-600 font-medium transition-colors duration-200 group-hover:text-green-700 underline decoration-1 underline-offset-2 cursor-pointer">optymalną domową mieszankę na mąkę bezglutenową</a><span class="absolute bottom-0 left-0 w-full h-[25%] bg-green-100/40 transform transition-all duration-200 -z-0 group-hover:h-[80%] group-hover:bg-green-50/20"></span></span>'
                     )
                   }}
                 />
@@ -945,6 +959,30 @@ const CategoryPage = () => {
       />
 
       <Footer />
+
+      {/* Newsletter Modal */}
+      <NewsletterModal
+        isOpen={isNewsletterModalOpen}
+        onClose={() => {
+          setIsNewsletterModalOpen(false);
+          // Navigate after modal closes (whether user subscribed or just closed)
+          if (pendingNavigation) {
+            setTimeout(() => {
+              navigate(pendingNavigation);
+              setPendingNavigation(null);
+            }, 300);
+          }
+        }}
+        onSuccess={() => {
+          // Navigate after successful subscription
+          if (pendingNavigation) {
+            setTimeout(() => {
+              navigate(pendingNavigation);
+              setPendingNavigation(null);
+            }, 2000);
+          }
+        }}
+      />
     </div>
   );
 };

@@ -9,8 +9,7 @@ import SEO from '../../SEO/SEO';
 import TopNavBar from '../../Headers/TopNavBar';
 import CategoryHeader from '../Category/CategoryHeader';
 import Footer from '../../Footer/Footer';
-import ProductNewsletter from '../../Section/ProductNewsletter';
-import emailjs from '@emailjs/browser';
+import NewsletterModal from '../../Modal/NewsletterModal';
 import FeedbackButton from '../../Feedback/FeedbackButton';
 
 const RecipePage = () => {
@@ -21,10 +20,7 @@ const RecipePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isInWishlist, setIsInWishlist] = useState(false);
-  const [newsletterName, setNewsletterName] = useState("");
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [newsletterSubmitting, setNewsletterSubmitting] = useState(false);
-  const [newsletterSubmitted, setNewsletterSubmitted] = useState(false);
+  const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [isFullDescExpanded, setIsFullDescExpanded] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
@@ -158,38 +154,6 @@ const RecipePage = () => {
     }
   };
 
-  // EmailJS (same config as ProductModal)
-  const EMAILJS_PUBLIC_KEY = "0f8Jce-Gsw4GbjCQ_";
-  const EMAILJS_SERVICE_ID = "service_m4uai4d";
-  const EMAILJS_TEMPLATE_ID = "template_r7rcz39";
-
-  const handleNewsletterSubmit = async (e) => {
-    e.preventDefault();
-    setNewsletterSubmitting(true);
-    try {
-      emailjs.init(EMAILJS_PUBLIC_KEY);
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        {
-          title: "Newsletter Subscription",
-          name: newsletterName,
-          email: newsletterEmail,
-          message: `Nowy użytkownik zapisał się do newslettera. Email: ${newsletterEmail}`,
-          time: new Date().toLocaleString(),
-        }
-      );
-      setNewsletterSubmitted(true);
-      setNewsletterName("");
-      setNewsletterEmail("");
-      setTimeout(() => setNewsletterSubmitted(false), 3000);
-    } catch (error) {
-      alert("Wystąpił błąd podczas zapisu do newslettera. Spróbuj ponownie później.");
-      console.error("Newsletter subscription error:", error);
-    } finally {
-      setNewsletterSubmitting(false);
-    }
-  };
 
   if (loading) {
     return (
@@ -230,6 +194,24 @@ const RecipePage = () => {
       return recipe.image;
     }
     return `/img/${recipe.image}`;
+  };
+
+  // Helper function to replace {LINK} with actual link to mieszanka-2
+  const replaceLinkPlaceholder = (text) => {
+    if (!text || typeof text !== 'string') return text;
+    return text.replace(
+      /\{LINK\}/g,
+      '<a href="/przepis/mieszanka-2" class="text-green-600 hover:text-green-700 underline font-medium">uniwersalnej mieszanki mąk bezglutenowych</a>'
+    );
+  };
+
+  // Helper function to capitalize first letter of each word
+  const capitalizeFirstLetter = (text) => {
+    if (!text || typeof text !== 'string') return text;
+    return text
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
   };
 
   // Helper function to process ingredients for sticky sidebar
@@ -544,7 +526,7 @@ const RecipePage = () => {
                             )}
                             <ul className="list-disc pl-5 sm:pl-6 space-y-2 text-gray-800">
                               {group.items.map((ing, i) => (
-                                <li key={i} className="leading-relaxed">{ing}</li>
+                                <li key={i} className="leading-relaxed" dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }} />
                               ))}
                             </ul>
                           </div>
@@ -553,7 +535,7 @@ const RecipePage = () => {
                     ) : (
                       <ul className="list-disc pl-6 space-y-1 text-gray-800">
                         {normalized.map((ing, i) => (
-                          <li key={i}>{ing}</li>
+                          <li key={i} dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }} />
                         ))}
                       </ul>
                     )}
@@ -594,7 +576,7 @@ const RecipePage = () => {
                           {s.items.length > 0 && (
                             <ul className="list-disc pl-6 space-y-1 text-gray-700">
                               {s.items.map((it, i) => (
-                                <li key={i}>{it}</li>
+                                <li key={i} dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(it) }} />
                               ))}
                             </ul>
                           )}
@@ -628,31 +610,35 @@ const RecipePage = () => {
                 return hasAny;
               })() && (
                 <div className="mt-8 pt-6 border-t border-gray-200">
-                  <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display']">Podstawa i Przyprawy</h2>
+                  <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display'] text-center">Podstawa i Przyprawy</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Podstawa</h3>
-                      <div className="flex flex-wrap gap-2">
+                      <h3 className="text-sm font-semibold text-gray-700 mb-2 text-center">Podstawa</h3>
+                      <div className="flex flex-wrap gap-2 justify-center">
                         {(recipe.base || recipe.bases || recipe.podstawa || '')
                           .toString()
                           .split(',')
                           .map(i => i.trim())
                           .filter(Boolean)
                           .map((i, idx) => (
-                          <span key={idx} className="px-3 py-1 rounded-full text-sm bg-white text-gray-700 border border-gray-200">{i}</span>
+                          <span key={idx} className="px-3 py-1 rounded-full text-sm bg-white text-gray-700 border border-gray-200 whitespace-nowrap">
+                            {capitalizeFirstLetter(i)}
+                          </span>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Przyprawy</h3>
-                      <div className="flex flex-wrap gap-2">
+                      <h3 className="text-sm font-semibold text-gray-700 mb-2 text-center">Przyprawy</h3>
+                      <div className="flex flex-wrap gap-2 justify-center">
                         {(recipe.spices || recipe.przyprawy || '')
                           .toString()
                           .split(',')
                           .map(i => i.trim())
                           .filter(Boolean)
                           .map((i, idx) => (
-                          <span key={idx} className="px-3 py-1 rounded-full text-sm bg-white text-gray-700 border border-gray-200">{i}</span>
+                          <span key={idx} className="px-3 py-1 rounded-full text-sm bg-white text-gray-700 border border-gray-200 whitespace-nowrap">
+                            {capitalizeFirstLetter(i)}
+                          </span>
                         ))}
                       </div>
                     </div>
@@ -660,16 +646,33 @@ const RecipePage = () => {
                 </div>
               )}
 
-              {/* Newsletter at the very bottom */}
-              <ProductNewsletter
-                newsletterName={newsletterName}
-                setNewsletterName={setNewsletterName}
-                newsletterEmail={newsletterEmail}
-                setNewsletterEmail={setNewsletterEmail}
-                newsletterSubmitting={newsletterSubmitting}
-                newsletterSubmitted={newsletterSubmitted}
-                handleNewsletterSubmit={handleNewsletterSubmit}
-              />
+              {/* Newsletter CTA at the very bottom */}
+              <div className="mt-8 pt-6 border-t border-gray-200">
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 sm:p-8 relative overflow-hidden text-center">
+                  <div className="absolute -right-8 -top-8 w-24 h-24 bg-green-200 rounded-full opacity-50 blur-2xl"></div>
+                  <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-green-300 rounded-full opacity-30 blur-3xl"></div>
+                  <div className="relative z-10">
+                    <h3 className="font-['Playfair_Display'] text-xl sm:text-2xl text-green-800 font-bold mb-3">
+                      Dołącz do naszej społeczności!
+                    </h3>
+                    <p className="text-sm sm:text-base text-green-700 mb-6 leading-relaxed max-w-2xl mx-auto">
+                      Odkryj więcej przepisów dostosowanych do potrzeb dzieci z autyzmem. 
+                      Otrzymuj powiadomienia o nowych przepisach i ekskluzywne porady prosto na swoją skrzynkę.
+                    </p>
+                    <motion.button
+                      onClick={() => setIsNewsletterModalOpen(true)}
+                      className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg transition-all duration-300 font-semibold text-base shadow-lg hover:shadow-xl flex items-center justify-center gap-2 mx-auto"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <span>Zapisz się do newslettera</span>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </motion.button>
+                  </div>
+                </div>
+              </div>
             </div>
           </motion.div>
         </div>
@@ -745,7 +748,7 @@ const RecipePage = () => {
                             )}
                             <ul className="list-disc pl-4 space-y-1.5 text-gray-800 text-sm">
                               {group.items.map((ing, i) => (
-                                <li key={i} className="leading-relaxed">{ing}</li>
+                                <li key={i} className="leading-relaxed" dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }} />
                               ))}
                             </ul>
                           </div>
@@ -756,7 +759,7 @@ const RecipePage = () => {
                     return (
                       <ul className="list-disc pl-5 space-y-1.5 text-gray-800 text-sm">
                         {normalized.map((ing, i) => (
-                          <li key={i}>{ing}</li>
+                          <li key={i} dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }} />
                         ))}
                       </ul>
                     );
@@ -822,6 +825,12 @@ const RecipePage = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Newsletter Modal */}
+      <NewsletterModal
+        isOpen={isNewsletterModalOpen}
+        onClose={() => setIsNewsletterModalOpen(false)}
+      />
     </>
   );
 };

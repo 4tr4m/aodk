@@ -9,7 +9,7 @@ import { FaFacebookF, FaInstagram, FaTiktok } from 'react-icons/fa';
 // Replace these values with your EmailJS credentials
 const EMAILJS_PUBLIC_KEY = "0f8Jce-Gsw4GbjCQ_";
 const EMAILJS_SERVICE_ID = "service_m4uai4d";
-const EMAILJS_TEMPLATE_ID = "template_r7rcz39";
+const EMAILJS_TEMPLATE_ID = "template_km1j8qq";
 
 // Initialize EmailJS with your public key
 emailjs.init(EMAILJS_PUBLIC_KEY);
