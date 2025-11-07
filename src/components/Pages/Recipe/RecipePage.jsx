@@ -57,17 +57,23 @@ const RecipePage = () => {
       if (!ingredientsElement) return;
 
       const rect = ingredientsElement.getBoundingClientRect();
-      // Show sticky sidebar when ingredients section starts to leave viewport (earlier trigger)
-      const isPastIngredients = rect.bottom < 200; // Show when ingredients section is 200px above viewport
       const isOnDesktop = window.innerWidth >= 1024;
       
-      // Show sticky ingredients when past ingredients section and on desktop
-      if (isPastIngredients && isOnDesktop) {
+      if (!isOnDesktop) {
+        setIsStickyIngredientsVisible(false);
+        return;
+      }
+
+      // Show sticky sidebar when ingredients section is visible or past it
+      // More lenient condition: show when ingredients section top is below viewport or bottom is above 300px
+      const isPastIngredients = rect.bottom < 300 || rect.top > window.innerHeight;
+      
+      if (isPastIngredients) {
         setIsStickyIngredientsVisible(true);
       } else {
         setIsStickyIngredientsVisible(false);
-        // Reset open state when scrolling back up
-        if (rect.bottom > 300) {
+        // Reset open state when scrolling back up to ingredients section
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
           setIsStickyIngredientsOpen(true);
         }
       }
@@ -124,19 +130,41 @@ const RecipePage = () => {
     }
   }, [recipeId, state.allRecipes, state.wishlist]);
 
-  // Check if user has already subscribed and show modal if not
+  // Check if user has already subscribed and show modal based on recipe opens
   useEffect(() => {
     if (!loading && recipe) {
       // Check localStorage for newsletter subscription
       const hasSubscribed = localStorage.getItem('newsletter_subscribed') === 'true';
       
-      // Only show modal if user hasn't subscribed yet
-      if (!hasSubscribed) {
-        // Small delay to ensure page is loaded
+      // Don't show if already subscribed
+      if (hasSubscribed) return;
+      
+      // Special case: always show for mieszanka-2 recipe
+      const isMieszankaRecipe = recipe.id === 'mieszanka-2' || recipe.id?.includes('mieszanka');
+      
+      if (isMieszankaRecipe) {
+        // Always show modal for mieszanka recipe
         const timer = setTimeout(() => {
           setIsNewsletterModalOpen(true);
         }, 500);
-        
+        return () => clearTimeout(timer);
+      }
+      
+      // For other recipes: count opens and show after 5 opens
+      const recipeOpensKey = 'recipe_opens_count';
+      let opensCount = parseInt(localStorage.getItem(recipeOpensKey) || '0', 10);
+      
+      // Increment count for this recipe open
+      opensCount += 1;
+      localStorage.setItem(recipeOpensKey, opensCount.toString());
+      
+      // Show modal after 5 opens
+      if (opensCount >= 5) {
+        const timer = setTimeout(() => {
+          setIsNewsletterModalOpen(true);
+          // Reset counter after showing modal
+          localStorage.setItem(recipeOpensKey, '0');
+        }, 500);
         return () => clearTimeout(timer);
       }
     }
@@ -242,10 +270,11 @@ const RecipePage = () => {
   };
 
   // Helper function to process ingredients for sticky sidebar
-  const processIngredients = () => {
-    if (!recipe?.ingredients) return { groups: [], hasGroups: false };
+  const processIngredients = (ingredientsData) => {
+    const ingredientsToProcess = ingredientsData || recipe?.ingredients;
+    if (!ingredientsToProcess) return { groups: [], hasGroups: false, normalized: [] };
     
-    const raw = recipe.ingredients;
+    const raw = ingredientsToProcess;
     let items = [];
     if (Array.isArray(raw)) items = raw;
     else if (typeof raw === 'string') {
@@ -739,15 +768,17 @@ const RecipePage = () => {
       </div>
 
       {/* Sticky Ingredients Sidebar */}
-      <StickyIngredientsSidebar
-        isVisible={isStickyIngredientsVisible}
-        isOpen={isStickyIngredientsOpen}
-        onOpen={() => setIsStickyIngredientsOpen(true)}
-        onClose={() => setIsStickyIngredientsOpen(false)}
-        ingredients={recipe?.ingredients}
-        processIngredients={processIngredients}
-        replaceLinkPlaceholder={replaceLinkPlaceholder}
-      />
+      {recipe?.ingredients && (
+        <StickyIngredientsSidebar
+          isVisible={isStickyIngredientsVisible}
+          isOpen={isStickyIngredientsOpen}
+          onOpen={() => setIsStickyIngredientsOpen(true)}
+          onClose={() => setIsStickyIngredientsOpen(false)}
+          ingredients={recipe.ingredients}
+          processIngredients={processIngredients}
+          replaceLinkPlaceholder={replaceLinkPlaceholder}
+        />
+      )}
 
       {/* Image Modal */}
       <AnimatePresence>

@@ -13,7 +13,7 @@ const StickyIngredientsSidebar = ({
 }) => {
   if (!ingredients) return null;
 
-  const { groups, hasGroups, normalized } = processIngredients();
+  const { groups, hasGroups, normalized } = processIngredients(ingredients);
 
   return (
     <AnimatePresence>
