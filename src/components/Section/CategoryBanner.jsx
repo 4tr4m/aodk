@@ -105,16 +105,6 @@ const TitleWithSearch = memo(({ title, toggleSearch, accentColor, showTooltip })
         >
           {title}
         </h2>
-        
-        {/* Small search icon hint that appears on hover */}
-        <motion.span 
-          className="absolute -right-8 sm:-right-10 md:-right-12 top-1/2 -translate-y-1/2 text-green-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileHover={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.2 }}
-        >
-          <FaSearch className="text-lg sm:text-xl md:text-2xl" />
-        </motion.span>
       </motion.div>
       
       <div className="flex-shrink-0">
