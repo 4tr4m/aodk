@@ -73,10 +73,17 @@ const RecipePage = () => {
       const ingredientsElement = ingredientsRef.current;
       const rect = ingredientsElement.getBoundingClientRect();
       
-      // Show sticky sidebar when ingredients section bottom is above 400px from top of viewport
-      const isPastIngredients = rect.bottom < 400;
+      // Show sticky sidebar when ingredients section starts scrolling out of view
+      // Show when ingredients section top is above 200px from top (very lenient)
+      const isPastIngredients = rect.top < 200;
       
-      setIsStickyIngredientsVisible(isPastIngredients);
+      // Always update state to trigger re-render
+      setIsStickyIngredientsVisible(prev => {
+        if (prev !== isPastIngredients) {
+          console.log('Visibility changing:', prev, '->', isPastIngredients, 'rect.top:', rect.top);
+        }
+        return isPastIngredients;
+      });
       
       // Reset open state when scrolling back up to ingredients section
       if (!isPastIngredients && rect.top < window.innerHeight && rect.bottom > 0) {
@@ -88,18 +95,43 @@ const RecipePage = () => {
     const initialCheck = () => {
       checkVisibility();
       // Retry after delays to catch late DOM updates
+      setTimeout(checkVisibility, 50);
       setTimeout(checkVisibility, 100);
+      setTimeout(checkVisibility, 200);
       setTimeout(checkVisibility, 300);
       setTimeout(checkVisibility, 500);
+      setTimeout(checkVisibility, 1000); // Extra check
     };
 
+    // Run initial check immediately and after a delay
     initialCheck();
+    
+    // Also check after window load
+    if (document.readyState === 'complete') {
+      setTimeout(checkVisibility, 100);
+    } else {
+      window.addEventListener('load', () => {
+        setTimeout(checkVisibility, 100);
+      }, { once: true });
+    }
 
-    window.addEventListener('scroll', checkVisibility, { passive: true });
+    // Check on scroll with throttling
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          checkVisibility();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', checkVisibility, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', checkVisibility);
+      window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', checkVisibility);
     };
   }, [recipe?.ingredients, loading]);
@@ -782,7 +814,7 @@ const RecipePage = () => {
         <Footer />
       </div>
 
-      {/* Sticky Ingredients Sidebar - Render as portal to avoid stacking context issues */}
+      {/* Sticky Ingredients Sidebar */}
       {recipe?.ingredients && (
         <StickyIngredientsSidebar
           isVisible={isStickyIngredientsVisible}

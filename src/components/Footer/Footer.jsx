@@ -145,7 +145,7 @@ const Footer = () => {
               <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8 lg:gap-12 items-center lg:items-start">
                 {/* Przepisy - spans 2 columns on desktop, full width on mobile */}
                 <div className="w-full lg:col-span-2 flex flex-col items-center lg:items-start">
-                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-center tracking-wide mb-6 w-full">
+                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center tracking-wide mb-6 w-full">
                     Przepisy
                   </h4>
                   <div className="flex flex-col sm:flex-row items-center sm:items-start lg:items-start justify-center lg:justify-center gap-6 sm:gap-8 w-full">
@@ -180,7 +180,7 @@ const Footer = () => {
 
                 {/* Kontakt - full width on mobile, right column on desktop */}
                 <div className="w-full lg:w-auto flex flex-col items-center lg:items-start space-y-6">
-                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide">
+                  <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide w-full">
                     Kontakt
                   </h4>
                   <ul className="space-y-3 flex flex-col items-center lg:items-start w-full sm:w-auto">
