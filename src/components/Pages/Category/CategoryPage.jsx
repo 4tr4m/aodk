@@ -442,6 +442,11 @@ const CategoryPage = () => {
   }, [isIngredientFilterVisible, handleIngredientFilterClose]);
 
   const handleRecipesFiltered = useCallback((recipes, ingredientName) => {
+    console.log('CategoryPage: handleRecipesFiltered called', { 
+      recipesCount: recipes?.length || 0, 
+      ingredientName,
+      recipes: recipes 
+    });
     if (recipes && ingredientName) {
       setFilteredRecipes(recipes);
       setActiveFilter(ingredientName);
@@ -450,18 +455,22 @@ const CategoryPage = () => {
         ? ingredientName.split(',').map(s => s.trim()).filter(s => s.length > 0).length
         : 1;
       setSelectedIngredientsCount(count);
+      console.log('CategoryPage: Filter set', { count, recipesCount: recipes.length });
     } else {
       setFilteredRecipes(null);
       setActiveFilter(null);
       setSelectedIngredientsCount(0);
+      console.log('CategoryPage: Filter cleared');
     }
   }, []);
 
   // Get recipes to display (either filtered or category recipes)
   const getDisplayRecipes = () => {
     if (filteredRecipes) {
+      console.log('CategoryPage: Returning filtered recipes', filteredRecipes.length);
       return filteredRecipes;
     }
+    console.log('CategoryPage: Returning category recipes', categoryRecipes.length);
     return categoryRecipes;
   };
 

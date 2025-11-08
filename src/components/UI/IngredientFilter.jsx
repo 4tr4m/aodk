@@ -149,22 +149,34 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         // Single ingredient, use existing logic
         try {
           const name = newSelectedIngredients[0].name;
+          console.log('IngredientFilter: Fetching recipes for ingredient:', name);
           const recipes = await recipeService.getRecipesByIngredient(name);
-          setFilteredRecipes(recipes);
-          onRecipesFiltered(recipes, name);
+          console.log('IngredientFilter: Recipes found:', recipes?.length || 0);
+          console.log('IngredientFilter: Recipes data:', recipes);
+          
+          // Ensure recipes is an array
+          const recipesArray = Array.isArray(recipes) ? recipes : [];
+          console.log('IngredientFilter: Setting filteredRecipes to:', recipesArray.length);
+          setFilteredRecipes(recipesArray);
+          console.log('IngredientFilter: Calling onRecipesFiltered with:', recipesArray.length, 'recipes');
+          onRecipesFiltered(recipesArray, name);
         } catch (error) {
-          console.error('Error fetching recipes for single ingredient:', error);
+          console.error('IngredientFilter: Error fetching recipes for single ingredient:', error);
           setFilteredRecipes([]);
           onRecipesFiltered([], newSelectedIngredients[0].name);
         }
       } else {
         // Multiple ingredients, find recipes that contain ALL selected ingredients
+        console.log('Fetching recipes for multiple ingredients:', newSelectedIngredients.map(i => i.name));
         const allRecipes = await Promise.all(
           newSelectedIngredients.map(ing => recipeService.getRecipesByIngredient(ing.name))
         );
         
+        console.log('All recipes arrays:', allRecipes.map((r, i) => ({ ingredient: newSelectedIngredients[i].name, count: r?.length || 0 })));
+        
         // Check if we have any recipes from the first ingredient
         if (allRecipes.length === 0 || !allRecipes[0] || allRecipes[0].length === 0) {
+          console.log('No recipes found for first ingredient');
           setFilteredRecipes([]);
           onRecipesFiltered([], newSelectedIngredients.map(i => i.name).join(', '));
           return;
@@ -177,8 +189,10 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         );
         
         const finalRecipes = allRecipes[0].filter(recipe => commonRecipes.includes(recipe.id));
-        setFilteredRecipes(finalRecipes);
-        onRecipesFiltered(finalRecipes, newSelectedIngredients.map(i => i.name).join(', '));
+        console.log('IngredientFilter: Final common recipes:', finalRecipes.length);
+        const finalRecipesArray = Array.isArray(finalRecipes) ? finalRecipes : [];
+        setFilteredRecipes(finalRecipesArray);
+        onRecipesFiltered(finalRecipesArray, newSelectedIngredients.map(i => i.name).join(', '));
       }
     } catch (error) {
       console.error('Error filtering recipes by ingredient:', error);
@@ -321,7 +335,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         </div>
 
         {/* Selected Ingredient Info */}
-        {selectedIngredient && (
+        {(selectedIngredient || selectedIngredients.length > 0) && (
           <motion.div
             className="p-3 sm:p-4 bg-green-50 border-b border-green-200"
             variants={itemVariants}
