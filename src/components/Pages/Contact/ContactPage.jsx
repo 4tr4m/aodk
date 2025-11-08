@@ -111,8 +111,8 @@ const ContactPage = () => {
               </div>
             </div>
 
-            {/* Social Media */}
-            <div className="flex gap-4">
+            {/* Social Media - Hidden for now */}
+            <div className="hidden">
               {[
                 { Icon: FaFacebookF, link: "https://facebook.com" },
                 { Icon: FaInstagram, link: "https://instagram.com" },

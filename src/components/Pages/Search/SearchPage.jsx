@@ -60,6 +60,7 @@ import CategoryHeader from '../Category/CategoryHeader';
 import CategoryNav from '../Category/CategoryNav';
 import { kuchniaCategories } from '../../../Data/category-data';
 import { motion, AnimatePresence } from 'framer-motion';
+import IngredientFilter from '../../UI/IngredientFilter';
 
 const SearchPage = () => {
   const location = useLocation();
@@ -74,6 +75,12 @@ const SearchPage = () => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const suggestionsRef = useRef(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
+  
+  // Ingredient filter states
+  const [isIngredientFilterVisible, setIsIngredientFilterVisible] = useState(false);
+  const [filteredRecipes, setFilteredRecipes] = useState(null);
+  const [activeFilter, setActiveFilter] = useState(null);
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
 
   // Get current category from URL path
   useEffect(() => {
@@ -97,6 +104,9 @@ const SearchPage = () => {
     try {
       const searchResults = await searchService.searchRecipes(term);
       setRecipes(searchResults);
+      // Clear ingredient filter when performing text search
+      setFilteredRecipes(null);
+      setActiveFilter(null);
     } catch (error) {
       console.error('Search error:', error);
       setErrorMessage('Wystąpił błąd podczas wyszukiwania. Spróbuj ponownie.');
@@ -230,6 +240,42 @@ const SearchPage = () => {
     };
   }, [searchTimeout]);
 
+  // Ingredient filter handlers
+  const handleIngredientFilterClose = useCallback(() => {
+    setIsIngredientFilterVisible(false);
+    setFilteredRecipes(null);
+    setActiveFilter(null);
+    setSelectedIngredient(null);
+  }, []);
+
+  const toggleIngredientFilter = useCallback(() => {
+    setIsIngredientFilterVisible(prev => !prev);
+    if (isIngredientFilterVisible) {
+      handleIngredientFilterClose();
+    }
+  }, [isIngredientFilterVisible, handleIngredientFilterClose]);
+
+  const handleRecipesFiltered = useCallback((filteredRecipesList, ingredientName) => {
+    if (filteredRecipesList && ingredientName) {
+      setFilteredRecipes(filteredRecipesList);
+      setActiveFilter(ingredientName);
+      // Clear text search results when filtering by ingredient
+      setRecipes([]);
+      setSearchTerm('');
+    } else {
+      setFilteredRecipes(null);
+      setActiveFilter(null);
+    }
+  }, []);
+
+  // Get recipes to display (either filtered by ingredient or text search results)
+  const getDisplayRecipes = () => {
+    if (filteredRecipes) {
+      return filteredRecipes;
+    }
+    return recipes;
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <div className="relative mb-8">
@@ -255,18 +301,40 @@ const SearchPage = () => {
       
       {/* Search Section */}
       <div className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="mb-8">
-          <SearchBar
-            placeholder="Wpisz nazwę przepisu, składnik lub kategorię..."
-            onSearchSubmit={handleSearchSubmit}
-            onSuggestionSelect={handleSuggestionSelect}
-            suggestions={suggestions}
-            minCharsForSuggestions={2}
-            onChange={handleSearchInput}
-            initialOpen={true}
-            showCloseButton={false}
-            highlightedTerm={searchTerm}
-          />
+        <div className="mb-8 flex flex-col sm:flex-row items-center gap-4">
+          {/* Filter Button */}
+          <motion.button
+            onClick={toggleIngredientFilter}
+            className="select-none px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl text-white shadow-xl hover:shadow-2xl transition-all duration-300 z-20 flex items-center gap-2 group border-2 flex-shrink-0 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 border-blue-400/30"
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="Filtruj składniki"
+          >
+            <svg 
+              className="w-4 h-4 sm:w-5 sm:h-5 text-white transition-transform duration-300" 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+            </svg>
+            <span className="text-sm sm:text-base font-bold">Filtruj składniki</span>
+          </motion.button>
+          
+          <div className="flex-1 w-full">
+            <SearchBar
+              placeholder="Wpisz nazwę przepisu, składnik lub kategorię..."
+              onSearchSubmit={handleSearchSubmit}
+              onSuggestionSelect={handleSuggestionSelect}
+              suggestions={suggestions}
+              minCharsForSuggestions={2}
+              onChange={handleSearchInput}
+              initialOpen={true}
+              showCloseButton={false}
+              highlightedTerm={searchTerm}
+            />
+          </div>
         </div>
 
         {/* Category Navigation */}
@@ -331,6 +399,32 @@ const SearchPage = () => {
           )}
         </AnimatePresence>
 
+        {/* Active filter info */}
+        {activeFilter && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg"
+          >
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center space-x-2">
+                <span className="text-green-800 font-medium text-sm sm:text-base">
+                  Filtrowanie po składniku: {activeFilter}
+                </span>
+                <span className="text-green-600 text-xs sm:text-sm">
+                  ({filteredRecipes?.length || 0} przepisów)
+                </span>
+              </div>
+              <button
+                onClick={handleIngredientFilterClose}
+                className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors whitespace-nowrap"
+              >
+                Wyczyść filtr
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         {/* Results Section - Conditionally renders based on state */}
         <div className="mt-8 px-2 sm:px-4">
           {/* Error message display */}
@@ -346,22 +440,48 @@ const SearchPage = () => {
             <div className="flex justify-center my-12">
               <Spinner size="lg" color="green" />
             </div>
-          ) : recipes.length > 0 ? (
+          ) : getDisplayRecipes().length > 0 ? (
             // Results found: Display RecipeGrid with results
             <div>
-              <h2 className="text-xl font-semibold mb-4 text-green-700">
-                Wyniki wyszukiwania dla: <span className="font-bold">"{searchTerm}"</span>
-                {currentCategory && <span className="ml-2 text-gray-600">w kategorii: {currentCategory}</span>}
-              </h2>
+              <div className="mb-6 text-center">
+                {activeFilter ? (
+                  <>
+                    <h2 className="text-xl font-semibold mb-2 text-green-700">
+                      Filtrowanie po składniku: <span className="font-bold">"{activeFilter}"</span>
+                    </h2>
+                    <p className="text-lg text-gray-600">
+                      Znalezione przepisy: <strong className="text-green-700">{getDisplayRecipes().length}</strong>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="text-xl font-semibold mb-2 text-green-700">
+                      Wyniki wyszukiwania dla: <span className="font-bold">"{searchTerm}"</span>
+                      {currentCategory && <span className="ml-2 text-gray-600">w kategorii: {currentCategory}</span>}
+                    </h2>
+                    <p className="text-lg text-gray-600">
+                      Znalezione przepisy: <strong className="text-green-700">{getDisplayRecipes().length}</strong>
+                    </p>
+                  </>
+                )}
+              </div>
               {/* RecipeGrid component displays recipes in a responsive grid */}
-              <RecipeGrid recipes={recipes} />
+              <RecipeGrid recipes={getDisplayRecipes()} />
             </div>
-          ) : searchTerm ? (
+          ) : (activeFilter || searchTerm) ? (
             // No results: Show empty state message
             <div className="text-center my-12">
-              <h2 className="text-xl font-semibold mb-2">Brak wyników dla "{searchTerm}"</h2>
+              <h2 className="text-xl font-semibold mb-2">
+                {activeFilter 
+                  ? `Brak wyników dla składnika "${activeFilter}"`
+                  : `Brak wyników dla "${searchTerm}"`
+                }
+              </h2>
               <p className="text-gray-600">
-                Spróbuj innego wyrażenia lub sprawdź pisownię.
+                {activeFilter 
+                  ? "Spróbuj wybrać inny składnik lub wyczyść filtr."
+                  : "Spróbuj innego wyrażenia lub sprawdź pisownię."
+                }
               </p>
             </div>
           ) : (
@@ -375,6 +495,18 @@ const SearchPage = () => {
           )}
         </div>
       </div>
+
+      {/* Ingredient Filter Sidebar */}
+      <IngredientFilter
+        isVisible={isIngredientFilterVisible}
+        onClose={handleIngredientFilterClose}
+        onRecipesFiltered={handleRecipesFiltered}
+        selectedIngredient={selectedIngredient}
+        position="right"
+        compact={false}
+        onClear={handleIngredientFilterClose}
+        navigateToSearch={false}
+      />
 
       <Footer />
     </div>

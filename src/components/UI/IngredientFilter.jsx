@@ -148,13 +148,14 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
       } else if (newSelectedIngredients.length === 1) {
         // Single ingredient, use existing logic
         try {
-          const recipes = await recipeService.getRecipesByIngredient(ingredient.name);
+          const name = newSelectedIngredients[0].name;
+          const recipes = await recipeService.getRecipesByIngredient(name);
           setFilteredRecipes(recipes);
-          onRecipesFiltered(recipes, ingredient.name);
+          onRecipesFiltered(recipes, name);
         } catch (error) {
           console.error('Error fetching recipes for single ingredient:', error);
           setFilteredRecipes([]);
-          onRecipesFiltered([], ingredient.name);
+          onRecipesFiltered([], newSelectedIngredients[0].name);
         }
       } else {
         // Multiple ingredients, find recipes that contain ALL selected ingredients

@@ -221,8 +221,8 @@ const TopNavBar = () => {
 
           {/* Mobile Menu Section - Only visible on mobile devices */}
           <div className="flex md:hidden items-center gap-4">
-            {/* Social media icons for mobile */}
-            <div className="flex gap-3">
+            {/* Social media icons for mobile - Hidden for now */}
+            <div className="hidden">
               {[
                 { icon: FaFacebookF, link: "https://facebook.com" },
                 { icon: FaInstagram, link: "https://instagram.com" },
@@ -274,8 +274,8 @@ const TopNavBar = () => {
             </ul>
           </nav>
 
-          {/* Social Icons - Desktop - Hidden on mobile, visible on medium screens and up */}
-          <div className="hidden md:flex items-center gap-6">
+          {/* Social Icons - Desktop - Hidden on mobile, visible on medium screens and up - Hidden for now */}
+          <div className="hidden">
             <div className="flex gap-6">
               {[
                 { icon: FaFacebookF, link: "https://facebook.com" },
@@ -374,8 +374,8 @@ const TopNavBar = () => {
                 </ul>
               </nav>
 
-              {/* Footer with Social Icons - Social media links at bottom of mobile menu */}
-              <div className="p-6 border-t border-gray-700/50">
+              {/* Footer with Social Icons - Social media links at bottom of mobile menu - Hidden for now */}
+              <div className="hidden p-6 border-t border-gray-700/50">
                 <div className="flex justify-center gap-4">
                   {[
                     { icon: FaFacebookF, link: "https://facebook.com" },
