@@ -56,18 +56,6 @@ const HeroSection = () => {
     setIsOpen(!isOpen);
   }, [isOpen]);
 
-  // Scroll handler for smooth scrolling to categories section
-  const handleScrollToCategories = useCallback((e) => {
-    e.preventDefault();
-    const categoriesElement = document.getElementById('categories');
-    if (categoriesElement) {
-      categoriesElement.scrollIntoView({ 
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  }, []);
-
   return (
     <>
       {/* Parallax background image with scroll-based movement */}
@@ -161,13 +149,10 @@ const HeroSection = () => {
           
           {/* Call-to-action button - scrolls to categories section */}
           <div className="absolute bottom-[85px] sm:bottom-[90px] md:bottom-[100px] left-0 right-0 mx-auto flex justify-center z-30">
-            <a href="#categories" onClick={handleScrollToCategories}>
-              <HeroActionButton 
-                text="ODKRYJ PRZEPISY" 
-                size="hero"
-                className="transform scale-110"
-              />
-            </a>
+            <HeroActionButton 
+              text="ODKRYJ PRZEPISY" 
+              size="hero"
+            />
           </div>
           
           {/* Additional gradient for smoother transition to next section */}

@@ -153,6 +153,7 @@ export const Button = ({
 
 /**
  * Hero section action button - TYLKO DO PRZEWIJANIA W DÓŁ
+ * Enhanced with modern UX/UI effects
  */
 export const HeroActionButton = ({ 
   text = 'ODKRYJ PRZEPISY', 
@@ -183,40 +184,85 @@ export const HeroActionButton = ({
 
   return (
     <div className={`inline-block ${className}`}>
-      <motion.div
-        className={`${padding} bg-green-600/80 backdrop-blur-sm rounded-full border border-white/50 cursor-pointer
-                shadow-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center relative`}
-        initial={{ scale: 0.95, opacity: 0 }}
+      <motion.button
+        className={`${padding} bg-gradient-to-r from-green-600 via-green-600 to-emerald-600 hover:from-green-700 hover:via-green-700 hover:to-emerald-700 rounded-full border-2 border-white/30 cursor-pointer
+                shadow-2xl hover:shadow-green-500/50 transition-all duration-300 inline-flex items-center justify-center relative overflow-hidden group
+                backdrop-blur-sm`}
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
         animate={{ 
-          scale: [1, 1.05, 1],
+          scale: 1,
           opacity: 1,
+          y: 0,
           transition: {
-            scale: { 
-              repeat: Infinity, 
-              duration: 1.5, 
-              ease: "easeInOut",
-              repeatType: "reverse" 
-            },
-            opacity: { duration: 0.3 }
+            duration: 0.5,
+            ease: "easeOut"
           }
         }}
         whileHover={{ 
-          backgroundColor: "rgba(22, 163, 74, 0.9)",
-          scale: 1.08,
+          scale: 1.1,
+          y: -4,
+          boxShadow: "0 20px 40px rgba(34, 197, 94, 0.4), 0 0 20px rgba(34, 197, 94, 0.3)",
           transition: {
-            duration: 0.2
+            duration: 0.3,
+            ease: "easeOut"
           }
         }}
-        whileTap={{ scale: 0.97 }}
+        whileTap={{ 
+          scale: 0.95,
+          y: 0,
+          transition: {
+            duration: 0.1
+          }
+        }}
         onClick={scrollDown}
       >
-        {/* Pulse ring effect */}
+        {/* Animated gradient background */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-green-400/20 via-emerald-400/20 to-green-400/20"
+          animate={{
+            x: ['-100%', '200%'],
+          }}
+          transition={{
+            x: {
+              repeat: Infinity,
+              duration: 3,
+              ease: "linear"
+            }
+          }}
+        />
+
+        {/* Shimmer effect on hover */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+          initial={{ x: '-100%' }}
+          whileHover={{ x: '200%' }}
+          transition={{
+            duration: 0.6,
+            ease: "easeInOut"
+          }}
+        />
+
+        {/* Glow effect */}
+        <motion.div
+          className="absolute inset-0 rounded-full bg-green-400/20 blur-xl"
+          animate={{
+            opacity: [0.5, 0.8, 0.5],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+
+        {/* Multiple pulse rings */}
         <motion.span 
-          className="absolute inset-0 rounded-full border-2 border-green-400/40"
-          initial={{ opacity: 0, scale: 0.85 }}
+          className="absolute inset-0 rounded-full border-2 border-green-300/50"
+          initial={{ opacity: 0, scale: 0.9 }}
           animate={{ 
-            opacity: [0.7, 0, 0.7], 
-            scale: [0.85, 1.2, 0.85],
+            opacity: [0.6, 0, 0.6], 
+            scale: [0.9, 1.3, 0.9],
             transition: { 
               repeat: Infinity, 
               duration: 2,
@@ -226,14 +272,54 @@ export const HeroActionButton = ({
         />
         
         <motion.span 
-          className={`font-['Patrick_Hand'] ${fontSize} text-white tracking-wider drop-shadow-md uppercase px-2 whitespace-nowrap`}
+          className="absolute inset-0 rounded-full border-2 border-green-200/40"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ 
+            opacity: [0.4, 0, 0.4], 
+            scale: [0.95, 1.4, 0.95],
+            transition: { 
+              repeat: Infinity, 
+              duration: 2.5,
+              ease: "easeInOut",
+              delay: 0.3
+            }
+          }}
+        />
+
+        {/* Button content with icon */}
+        <motion.span 
+          className={`relative z-10 font-['Patrick_Hand'] ${fontSize} text-white tracking-wider drop-shadow-lg uppercase px-4 sm:px-6 whitespace-nowrap font-bold flex items-center gap-2`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.1, duration: 0.2 }}
+          transition={{ delay: 0.2, duration: 0.3 }}
         >
           {text}
+          <motion.svg
+            className="w-4 h-4 sm:w-5 sm:h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            initial={{ x: 0 }}
+            whileHover={{ x: 4 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </motion.svg>
         </motion.span>
-      </motion.div>
+
+        {/* Ripple effect on click */}
+        <motion.div
+          className="absolute inset-0 rounded-full bg-white/30"
+          initial={{ scale: 0, opacity: 0 }}
+          whileTap={{
+            scale: 2,
+            opacity: [0.5, 0],
+            transition: {
+              duration: 0.6
+            }
+          }}
+        />
+      </motion.button>
     </div>
   );
 };

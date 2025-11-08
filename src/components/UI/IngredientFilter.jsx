@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiFilter, FiX, FiSearch } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 import recipeService from '../../services/recipeService';
 
-const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngredient: initialSelectedIngredient, position = "right", excludeNames = [], compact = false, onClear }) => {
+const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngredient: initialSelectedIngredient, position = "right", excludeNames = [], compact = false, onClear, navigateToSearch = false }) => {
+  const navigate = useNavigate();
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -12,6 +14,17 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [isFiltering, setIsFiltering] = useState(false);
   const suppressAutoSearchRef = React.useRef(false);
+  
+  // Detect mobile screen size
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+  
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Apply search for currently selected ingredients and close filter
   const handleApplySearch = useCallback(async () => {
@@ -24,6 +37,21 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         return;
       }
 
+      // Build ingredient query string
+      const ingredientQuery = selectedIngredients.length === 1 
+        ? selectedIngredients[0].name 
+        : selectedIngredients.map(i => i.name).join(', ');
+
+      // If navigateToSearch is true OR on mobile, navigate to search page
+      // On mobile, navigating to search page provides better UX
+      if (navigateToSearch || isMobile) {
+        if (typeof onClose === 'function') onClose();
+        // Navigate to search page with ingredient query
+        navigate(`/search?q=${encodeURIComponent(ingredientQuery)}`);
+        return;
+      }
+
+      // Otherwise, filter on current page (desktop behavior)
       if (selectedIngredients.length === 1) {
         const name = selectedIngredients[0].name;
         const recipes = await recipeService.getRecipesByIngredient(name);
@@ -49,7 +77,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
     } finally {
       setIsFiltering(false);
     }
-  }, [selectedIngredients, onRecipesFiltered, onClose]);
+  }, [selectedIngredients, onRecipesFiltered, onClose, navigateToSearch, navigate, isMobile]);
 
   // Set selected ingredient when passed as prop (run only when the value changes meaningfully)
   useEffect(() => {
