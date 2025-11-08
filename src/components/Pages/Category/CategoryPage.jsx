@@ -445,22 +445,37 @@ const CategoryPage = () => {
     console.log('CategoryPage: handleRecipesFiltered called', { 
       recipesCount: recipes?.length || 0, 
       ingredientName,
+      recipesType: Array.isArray(recipes) ? 'array' : typeof recipes,
       recipes: recipes 
     });
-    if (recipes && ingredientName) {
-      setFilteredRecipes(recipes);
+    
+    // Ensure recipes is an array
+    let recipesArray = [];
+    if (Array.isArray(recipes)) {
+      recipesArray = recipes.flat();
+    } else if (recipes) {
+      recipesArray = [recipes];
+    }
+    
+    console.log('CategoryPage: Processed recipes array', { 
+      length: recipesArray.length,
+      firstRecipe: recipesArray[0]
+    });
+    
+    if (recipesArray.length > 0 && ingredientName) {
+      setFilteredRecipes(recipesArray);
       setActiveFilter(ingredientName);
       // Count ingredients - if comma-separated, count after splitting and trimming
       const count = ingredientName.includes(',') 
         ? ingredientName.split(',').map(s => s.trim()).filter(s => s.length > 0).length
         : 1;
       setSelectedIngredientsCount(count);
-      console.log('CategoryPage: Filter set', { count, recipesCount: recipes.length });
+      console.log('CategoryPage: Filter set', { count, recipesCount: recipesArray.length });
     } else {
       setFilteredRecipes(null);
       setActiveFilter(null);
       setSelectedIngredientsCount(0);
-      console.log('CategoryPage: Filter cleared');
+      console.log('CategoryPage: Filter cleared or no recipes found');
     }
   }, []);
 

@@ -55,22 +55,28 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
       if (selectedIngredients.length === 1) {
         const name = selectedIngredients[0].name;
         const recipes = await recipeService.getRecipesByIngredient(name);
-        setFilteredRecipes(recipes);
-        onRecipesFiltered(recipes, name);
+        // Ensure recipes is an array and flatten
+        const recipesArray = Array.isArray(recipes) ? recipes.flat() : [];
+        setFilteredRecipes(recipesArray);
+        onRecipesFiltered(recipesArray, name);
         if (typeof onClose === 'function') onClose();
         return;
       }
 
       // Multiple ingredients → intersection of recipe ids
       const allRecipes = await Promise.all(
-        selectedIngredients.map(ing => recipeService.getRecipesByIngredient(ing.name))
+        selectedIngredients.map(async (ing) => {
+          const recipes = await recipeService.getRecipesByIngredient(ing.name);
+          return Array.isArray(recipes) ? recipes.flat() : [];
+        })
       );
       const base = allRecipes[0] || [];
       const common = base.filter(r =>
         Array.isArray(allRecipes) && allRecipes.every(list => Array.isArray(list) && list.some(x => x.id === r.id))
       );
-      setFilteredRecipes(common);
-      onRecipesFiltered(common, selectedIngredients.map(i => i.name).join(', '));
+      const commonArray = Array.isArray(common) ? common.flat() : [];
+      setFilteredRecipes(commonArray);
+      onRecipesFiltered(commonArray, selectedIngredients.map(i => i.name).join(', '));
       if (typeof onClose === 'function') onClose();
     } catch (err) {
       console.error('Error applying ingredient filter:', err);
@@ -151,12 +157,20 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
           const name = newSelectedIngredients[0].name;
           console.log('IngredientFilter: Fetching recipes for ingredient:', name);
           const recipes = await recipeService.getRecipesByIngredient(name);
+          console.log('IngredientFilter: Raw recipes response:', recipes);
           console.log('IngredientFilter: Recipes found:', recipes?.length || 0);
-          console.log('IngredientFilter: Recipes data:', recipes);
           
-          // Ensure recipes is an array
-          const recipesArray = Array.isArray(recipes) ? recipes : [];
-          console.log('IngredientFilter: Setting filteredRecipes to:', recipesArray.length);
+          // Ensure recipes is an array and flatten if needed
+          let recipesArray = [];
+          if (Array.isArray(recipes)) {
+            recipesArray = recipes.flat();
+          } else if (recipes) {
+            recipesArray = [recipes];
+          }
+          
+          console.log('IngredientFilter: Processed recipes array length:', recipesArray.length);
+          console.log('IngredientFilter: First recipe sample:', recipesArray[0]);
+          
           setFilteredRecipes(recipesArray);
           console.log('IngredientFilter: Calling onRecipesFiltered with:', recipesArray.length, 'recipes');
           onRecipesFiltered(recipesArray, name);
@@ -169,7 +183,11 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         // Multiple ingredients, find recipes that contain ALL selected ingredients
         console.log('Fetching recipes for multiple ingredients:', newSelectedIngredients.map(i => i.name));
         const allRecipes = await Promise.all(
-          newSelectedIngredients.map(ing => recipeService.getRecipesByIngredient(ing.name))
+          newSelectedIngredients.map(async (ing) => {
+            const recipes = await recipeService.getRecipesByIngredient(ing.name);
+            // Ensure it's an array and flatten
+            return Array.isArray(recipes) ? recipes.flat() : [];
+          })
         );
         
         console.log('All recipes arrays:', allRecipes.map((r, i) => ({ ingredient: newSelectedIngredients[i].name, count: r?.length || 0 })));
@@ -190,7 +208,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         
         const finalRecipes = allRecipes[0].filter(recipe => commonRecipes.includes(recipe.id));
         console.log('IngredientFilter: Final common recipes:', finalRecipes.length);
-        const finalRecipesArray = Array.isArray(finalRecipes) ? finalRecipes : [];
+        const finalRecipesArray = Array.isArray(finalRecipes) ? finalRecipes.flat() : [];
         setFilteredRecipes(finalRecipesArray);
         onRecipesFiltered(finalRecipesArray, newSelectedIngredients.map(i => i.name).join(', '));
       }

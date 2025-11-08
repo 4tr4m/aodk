@@ -254,9 +254,25 @@ const recipeService = {
         return [];
       }
       
-      const recipes = data?.map(item => item.recipes).filter(Boolean) || [];
-      console.log('Found recipes:', recipes);
-      return recipes;
+      // Extract recipes from the nested structure
+      let recipes = [];
+      if (data && Array.isArray(data)) {
+        recipes = data
+          .map(item => {
+            // Handle nested recipes object
+            if (item.recipes) {
+              return item.recipes;
+            }
+            return null;
+          })
+          .filter(Boolean);
+      }
+      
+      // Flatten in case of nested arrays
+      recipes = recipes.flat();
+      
+      console.log('Found recipes:', recipes.length, recipes);
+      return recipes || [];
     } catch (err) {
       console.error(`Exception when fetching recipes for ingredient ${ingredientName}:`, err);
       return [];
