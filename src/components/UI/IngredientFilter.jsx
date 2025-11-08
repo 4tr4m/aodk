@@ -4,8 +4,10 @@ import { FiFilter, FiX, FiSearch } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import recipeService from '../../services/recipeService';
 
-const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngredient: initialSelectedIngredient, position = "right", excludeNames = [], compact = false, onClear, navigateToSearch = false }) => {
+const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngredient: initialSelectedIngredient, position = "left", excludeNames = [], compact = false, onClear, navigateToSearch = false }) => {
   const navigate = useNavigate();
+  // Ensure position is a string and normalize it - default to "left"
+  const normalizedPosition = String(position || "left").toLowerCase() === "right" ? "right" : "left";
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,17 +16,6 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
   const [filteredRecipes, setFilteredRecipes] = useState([]);
   const [isFiltering, setIsFiltering] = useState(false);
   const suppressAutoSearchRef = React.useRef(false);
-  
-  // Detect mobile screen size
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
-  
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   // Apply search for currently selected ingredients and close filter
   const handleApplySearch = useCallback(async () => {
@@ -42,48 +33,18 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         ? selectedIngredients[0].name 
         : selectedIngredients.map(i => i.name).join(', ');
 
-      // If navigateToSearch is true OR on mobile, navigate to search page
-      // On mobile, navigating to search page provides better UX
-      if (navigateToSearch || isMobile) {
-        if (typeof onClose === 'function') onClose();
-        // Navigate to search page with ingredient query
-        navigate(`/search?q=${encodeURIComponent(ingredientQuery)}`);
-        return;
-      }
-
-      // Otherwise, filter on current page (desktop behavior)
-      if (selectedIngredients.length === 1) {
-        const name = selectedIngredients[0].name;
-        const recipes = await recipeService.getRecipesByIngredient(name);
-        // Ensure recipes is an array and flatten
-        const recipesArray = Array.isArray(recipes) ? recipes.flat() : [];
-        setFilteredRecipes(recipesArray);
-        onRecipesFiltered(recipesArray, name);
-        if (typeof onClose === 'function') onClose();
-        return;
-      }
-
-      // Multiple ingredients → intersection of recipe ids
-      const allRecipes = await Promise.all(
-        selectedIngredients.map(async (ing) => {
-          const recipes = await recipeService.getRecipesByIngredient(ing.name);
-          return Array.isArray(recipes) ? recipes.flat() : [];
-        })
-      );
-      const base = allRecipes[0] || [];
-      const common = base.filter(r =>
-        Array.isArray(allRecipes) && allRecipes.every(list => Array.isArray(list) && list.some(x => x.id === r.id))
-      );
-      const commonArray = Array.isArray(common) ? common.flat() : [];
-      setFilteredRecipes(commonArray);
-      onRecipesFiltered(commonArray, selectedIngredients.map(i => i.name).join(', '));
+      // Always navigate to search page when clicking "Wyszukaj"
+      // Close the filter first
       if (typeof onClose === 'function') onClose();
+      
+      // Navigate to search page with ingredient query
+      navigate(`/search?q=${encodeURIComponent(ingredientQuery)}&ingredient=true`);
     } catch (err) {
       console.error('Error applying ingredient filter:', err);
     } finally {
       setIsFiltering(false);
     }
-  }, [selectedIngredients, onRecipesFiltered, onClose, navigateToSearch, navigate, isMobile]);
+  }, [selectedIngredients, onRecipesFiltered, onClose, navigate]);
 
   // Set selected ingredient when passed as prop (run only when the value changes meaningfully)
   useEffect(() => {
@@ -256,7 +217,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
   const containerVariants = {
     hidden: { 
       opacity: 0, 
-      x: position === "left" ? '-100%' : '100%'
+      x: normalizedPosition === "left" ? '-100%' : '100%'
     },
     visible: { 
       opacity: 1, 
@@ -269,7 +230,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
     },
     exit: { 
       opacity: 0, 
-      x: position === "left" ? '-100%' : '100%',
+      x: normalizedPosition === "left" ? '-100%' : '100%',
       transition: { duration: 0.2 }
     }
   };
@@ -283,33 +244,33 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
     }
   };
 
-  if (!isVisible) return null;
-
   return (
-    <AnimatePresence>
-      {/* Backdrop to close on outside click */}
-      <motion.div
-        key="backdrop"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/40 z-40"
-        onClick={onClose}
-      />
+    <AnimatePresence mode="wait">
+      {isVisible && (
+        <>
+          {/* Backdrop to close on outside click */}
+          <motion.div
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 z-40"
+            onClick={onClose}
+          />
 
-      {/* Sidebar panel */}
-      <motion.div
-        key="panel"
-        className={`fixed inset-y-0 w-full ${compact ? 'sm:w-64' : 'sm:w-80'} bg-white shadow-2xl z-50 overflow-hidden flex flex-col ${
-          position === "left" ? "left-0" : "right-0"
-        }`}
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        exit="exit"
-        // prevent backdrop click when interacting inside panel
-        onClick={(e) => e.stopPropagation()}
-      >
+          {/* Sidebar panel */}
+          <motion.div
+            key="panel"
+            className={`fixed inset-y-0 w-full ${compact ? 'sm:w-64' : 'sm:w-80'} bg-white shadow-2xl z-50 overflow-hidden flex flex-col ${
+              normalizedPosition === "left" ? "left-0" : "right-0"
+            }`}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            // prevent backdrop click when interacting inside panel
+            onClick={(e) => e.stopPropagation()}
+          >
         {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-3 sm:p-4">
           <div className="flex items-center justify-between">
@@ -482,6 +443,8 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
           </button>
         </div>
       </motion.div>
+        </>
+      )}
     </AnimatePresence>
   );
 };

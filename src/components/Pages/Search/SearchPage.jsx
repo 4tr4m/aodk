@@ -56,6 +56,7 @@ import RecipeGrid from '../Recipe/RecipeGrid';
 import SearchBar from '../../UI/SearchBar';
 import Spinner from '../../UI/Spinner';
 import searchService from '../../../services/searchService';
+import recipeService from '../../../services/recipeService';
 import CategoryHeader from '../Category/CategoryHeader';
 import CategoryNav from '../Category/CategoryNav';
 import { kuchniaCategories } from '../../../Data/category-data';
@@ -91,18 +92,52 @@ const SearchPage = () => {
   /**
    * Perform full search for recipes
    * Called when user submits search or selects a suggestion
-   * Uses searchService.searchRecipes() to get all matching recipes
+   * Uses searchService.searchRecipes() for text search or recipeService.getRecipesByIngredient() for ingredient search
    * 
    * @param {string} term - Search query term
+   * @param {boolean} isIngredientSearch - Whether this is an ingredient search
    */
-  const performSearch = useCallback(async (term) => {
+  const performSearch = useCallback(async (term, isIngredientSearch = false) => {
     if (!term || term.trim() === '') return;
     
     setLoading(true);
     setErrorMessage('');
     
     try {
-      const searchResults = await searchService.searchRecipes(term);
+      let searchResults = [];
+      
+      // If this is an ingredient search, use recipeService.getRecipesByIngredient
+      if (isIngredientSearch) {
+        // Handle multiple ingredients (comma-separated)
+        const ingredients = term.split(',').map(i => i.trim()).filter(i => i.length > 0);
+        
+        if (ingredients.length === 1) {
+          // Single ingredient
+          searchResults = await recipeService.getRecipesByIngredient(ingredients[0]);
+          searchResults = Array.isArray(searchResults) ? searchResults.flat() : [];
+        } else {
+          // Multiple ingredients - find intersection
+          const allRecipes = await Promise.all(
+            ingredients.map(async (ingName) => {
+              const recipes = await recipeService.getRecipesByIngredient(ingName);
+              return Array.isArray(recipes) ? recipes.flat() : [];
+            })
+          );
+          
+          if (allRecipes.length > 0 && allRecipes[0].length > 0) {
+            // Find recipes that appear in ALL ingredient results
+            const recipeIds = allRecipes[0].map(recipe => recipe.id);
+            const commonRecipeIds = recipeIds.filter(recipeId => 
+              allRecipes.every(recipes => recipes && recipes.length > 0 && recipes.some(recipe => recipe.id === recipeId))
+            );
+            searchResults = allRecipes[0].filter(recipe => commonRecipeIds.includes(recipe.id));
+          }
+        }
+      } else {
+        // Regular text search
+        searchResults = await searchService.searchRecipes(term);
+      }
+      
       setRecipes(searchResults);
       // Clear ingredient filter when performing text search
       setFilteredRecipes(null);
@@ -131,10 +166,11 @@ const SearchPage = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const query = searchParams.get('q');
+    const isIngredientSearch = searchParams.get('ingredient') === 'true';
     
     if (query) {
       setSearchTerm(query);
-      performSearch(query);
+      performSearch(query, isIngredientSearch);
     }
   }, [location.search, performSearch]);
 
@@ -502,7 +538,7 @@ const SearchPage = () => {
         onClose={handleIngredientFilterClose}
         onRecipesFiltered={handleRecipesFiltered}
         selectedIngredient={selectedIngredient}
-        position="right"
+        position="left"
         compact={false}
         onClear={handleIngredientFilterClose}
         navigateToSearch={false}

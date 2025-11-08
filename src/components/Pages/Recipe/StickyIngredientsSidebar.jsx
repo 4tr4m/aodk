@@ -1,5 +1,6 @@
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { motion } from 'framer-motion';
 import { FaUtensils, FaTimes } from 'react-icons/fa';
 
 const StickyIngredientsSidebar = ({ 
@@ -11,6 +12,52 @@ const StickyIngredientsSidebar = ({
   processIngredients, 
   replaceLinkPlaceholder 
 }) => {
+  const buttonRef = useRef(null);
+  const sidebarRef = useRef(null);
+
+  // Force repaint when visibility changes - fixes browser rendering bug
+  useEffect(() => {
+    console.log('StickyIngredientsSidebar visibility changed:', { isVisible, isOpen });
+    
+    if (isVisible) {
+      // Multiple repaint triggers to ensure browser renders the element
+      const forceRepaint = () => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            if (buttonRef.current) {
+              void buttonRef.current.offsetHeight; // Force reflow
+              void buttonRef.current.offsetWidth; // Force reflow
+              // Trigger style recalculation - ensure visibility
+              buttonRef.current.style.display = 'flex';
+              buttonRef.current.style.visibility = 'visible';
+              buttonRef.current.style.opacity = '1';
+              console.log('Button repainted:', buttonRef.current.getBoundingClientRect());
+            }
+            if (sidebarRef.current) {
+              void sidebarRef.current.offsetHeight; // Force reflow
+              void sidebarRef.current.offsetWidth; // Force reflow
+              // Trigger style recalculation - ensure visibility
+              sidebarRef.current.style.display = 'block';
+              sidebarRef.current.style.visibility = 'visible';
+              sidebarRef.current.style.opacity = '1';
+              console.log('Sidebar repainted:', sidebarRef.current.getBoundingClientRect());
+            }
+          });
+        });
+      };
+
+      // Immediate repaint
+      forceRepaint();
+      
+      // Additional repaints at different intervals to catch all render cycles
+      setTimeout(forceRepaint, 0);
+      setTimeout(forceRepaint, 16); // One frame
+      setTimeout(forceRepaint, 50);
+      setTimeout(forceRepaint, 100);
+      setTimeout(forceRepaint, 200);
+    }
+  }, [isVisible, isOpen]);
+
   if (!ingredients) return null;
 
   let groups, hasGroups, normalized;
@@ -30,17 +77,37 @@ const StickyIngredientsSidebar = ({
     return null;
   }
 
-  return (
-    <AnimatePresence>
-      {isVisible && !isOpen && (
-        <motion.button
-          onClick={onOpen}
-          className="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-[45] items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 group"
-          initial={{ opacity: 0, x: 100, scale: 0.9 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
-          exit={{ opacity: 0, x: 100, scale: 0.9 }}
+  // Debug logging
+  console.log('StickyIngredientsSidebar render:', { 
+    isVisible, 
+    isOpen, 
+    hasGroups, 
+    normalizedLength: normalized?.length, 
+    groupsLength: groups?.length 
+  });
+
+  const content = (
+    <>
+      {/* Always render button in DOM, just control visibility */}
+      <motion.button
+        key="sticky-button"
+        ref={buttonRef}
+        onClick={onOpen}
+        className="hidden lg:flex fixed right-4 top-1/2 -translate-y-1/2 z-[10000] items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 group"
+        style={{ 
+          willChange: 'transform, opacity',
+          transform: 'translateZ(0)', // Force GPU acceleration
+          backfaceVisibility: 'hidden',
+          isolation: 'isolate', // Create new stacking context
+          pointerEvents: isVisible && !isOpen ? 'auto' : 'none', // Ensure it's clickable
+          visibility: isVisible && !isOpen ? 'visible' : 'hidden',
+          opacity: isVisible && !isOpen ? 1 : 0
+        }}
+          initial={false}
+          animate={isVisible && !isOpen ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 100, scale: 0.9 }}
           whileHover={{ scale: 1.08, x: -4 }}
           whileTap={{ scale: 0.95 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           aria-label="Pokaż składniki"
         >
           <motion.div
@@ -56,16 +123,25 @@ const StickyIngredientsSidebar = ({
             transition={{ duration: 2, repeat: Infinity }}
           />
         </motion.button>
-      )}
       
-      {isVisible && isOpen && (
-        <motion.div
-          className="hidden lg:block fixed right-4 top-1/2 -translate-y-1/2 z-[45]"
-          initial={{ opacity: 0, x: 100, scale: 0.9 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
-          exit={{ opacity: 0, x: 100, scale: 0.9 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        >
+      {/* Always render sidebar in DOM, just control visibility */}
+      <motion.div
+        key="sticky-sidebar"
+        ref={sidebarRef}
+        className="hidden lg:block fixed right-4 top-1/2 -translate-y-1/2 z-[10000]"
+        style={{ 
+          willChange: 'transform, opacity',
+          transform: 'translateZ(0)', // Force GPU acceleration
+          backfaceVisibility: 'hidden',
+          isolation: 'isolate', // Create new stacking context
+          pointerEvents: isVisible && isOpen ? 'auto' : 'none', // Ensure it's interactive
+          visibility: isVisible && isOpen ? 'visible' : 'hidden',
+          opacity: isVisible && isOpen ? 1 : 0
+        }}
+        initial={false}
+        animate={isVisible && isOpen ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0, x: 100, scale: 0.9 }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      >
           <motion.div
             className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-80 max-h-[calc(100vh-8rem)] overflow-hidden flex flex-col backdrop-blur-sm"
             initial={{ scale: 0.9, y: 20 }}
@@ -131,9 +207,33 @@ const StickyIngredientsSidebar = ({
             </div>
           </motion.div>
         </motion.div>
-      )}
-    </AnimatePresence>
+    </>
   );
+
+  // Use portal to render at document root to avoid stacking context issues
+  // Always render a container to ensure browser establishes rendering context
+  if (typeof document !== 'undefined') {
+    return createPortal(
+      <div 
+        id="sticky-ingredients-portal-container"
+        style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          width: '100%', 
+          height: '100%', 
+          pointerEvents: 'none',
+          zIndex: 10000,
+          isolation: 'isolate'
+        }}
+      >
+        {content}
+      </div>,
+      document.body
+    );
+  }
+  
+  return content;
 };
 
 export default StickyIngredientsSidebar;

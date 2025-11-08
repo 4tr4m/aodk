@@ -234,16 +234,7 @@ const recipeService = {
         .from('recipes_ingredients')
         .select(`
           recipe_id,
-          recipes!inner (
-            id,
-            name,
-            category,
-            image,
-            shortdesc,
-            time,
-            difficulty,
-            base_ingredients
-          )
+          recipes!inner (*)
         `)
         .eq('ingredient_id', ingredientId);
       

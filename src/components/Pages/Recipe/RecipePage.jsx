@@ -26,7 +26,7 @@ const RecipePage = () => {
   const [isFullDescExpanded, setIsFullDescExpanded] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isStickyIngredientsVisible, setIsStickyIngredientsVisible] = useState(false);
-  const [isStickyIngredientsOpen, setIsStickyIngredientsOpen] = useState(true);
+  const [isStickyIngredientsOpen, setIsStickyIngredientsOpen] = useState(false);
   const [isBaseSpicesExpanded, setIsBaseSpicesExpanded] = useState(false);
   const ingredientsRef = useRef(null);
 
@@ -55,7 +55,7 @@ const RecipePage = () => {
       return;
     }
 
-    const handleScroll = () => {
+    const checkVisibility = () => {
       const isOnDesktop = window.innerWidth >= 1024;
       
       if (!isOnDesktop) {
@@ -65,6 +65,8 @@ const RecipePage = () => {
 
       // Wait for ingredientsRef to be available
       if (!ingredientsRef.current) {
+        // Retry after a short delay if ref isn't ready
+        setTimeout(checkVisibility, 100);
         return;
       }
 
@@ -78,20 +80,27 @@ const RecipePage = () => {
       
       // Reset open state when scrolling back up to ingredients section
       if (!isPastIngredients && rect.top < window.innerHeight && rect.bottom > 0) {
-        setIsStickyIngredientsOpen(true);
+        setIsStickyIngredientsOpen(false);
       }
     };
 
-    // Initial check with delay to ensure DOM is ready
-    const timeoutId = setTimeout(handleScroll, 200);
+    // Initial check with multiple attempts to ensure DOM is ready
+    const initialCheck = () => {
+      checkVisibility();
+      // Retry after delays to catch late DOM updates
+      setTimeout(checkVisibility, 100);
+      setTimeout(checkVisibility, 300);
+      setTimeout(checkVisibility, 500);
+    };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll, { passive: true });
+    initialCheck();
+
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+    window.addEventListener('resize', checkVisibility, { passive: true });
 
     return () => {
-      clearTimeout(timeoutId);
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
+      window.removeEventListener('scroll', checkVisibility);
+      window.removeEventListener('resize', checkVisibility);
     };
   }, [recipe?.ingredients, loading]);
 
@@ -773,7 +782,7 @@ const RecipePage = () => {
         <Footer />
       </div>
 
-      {/* Sticky Ingredients Sidebar */}
+      {/* Sticky Ingredients Sidebar - Render as portal to avoid stacking context issues */}
       {recipe?.ingredients && (
         <StickyIngredientsSidebar
           isVisible={isStickyIngredientsVisible}

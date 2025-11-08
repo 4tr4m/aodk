@@ -462,8 +462,9 @@ const CategoryPage = () => {
       firstRecipe: recipesArray[0]
     });
     
-    if (recipesArray.length > 0 && ingredientName) {
-      setFilteredRecipes(recipesArray);
+    // Set filter even if no results - this allows showing "no results" message
+    if (ingredientName) {
+      setFilteredRecipes(recipesArray); // Can be empty array
       setActiveFilter(ingredientName);
       // Count ingredients - if comma-separated, count after splitting and trimming
       const count = ingredientName.includes(',') 
@@ -472,18 +473,20 @@ const CategoryPage = () => {
       setSelectedIngredientsCount(count);
       console.log('CategoryPage: Filter set', { count, recipesCount: recipesArray.length });
     } else {
+      // Only clear if ingredientName is null/undefined
       setFilteredRecipes(null);
       setActiveFilter(null);
       setSelectedIngredientsCount(0);
-      console.log('CategoryPage: Filter cleared or no recipes found');
+      console.log('CategoryPage: Filter cleared');
     }
   }, []);
 
   // Get recipes to display (either filtered or category recipes)
   const getDisplayRecipes = () => {
-    if (filteredRecipes) {
+    // filteredRecipes can be an empty array (filter active but no results) or null (no filter)
+    if (filteredRecipes !== null) {
       console.log('CategoryPage: Returning filtered recipes', filteredRecipes.length);
-      return filteredRecipes;
+      return filteredRecipes; // Can be empty array
     }
     console.log('CategoryPage: Returning category recipes', categoryRecipes.length);
     return categoryRecipes;
