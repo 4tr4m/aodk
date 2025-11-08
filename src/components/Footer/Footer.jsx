@@ -156,7 +156,7 @@ const Footer = () => {
                             onClick={() => handleLinkClick(category.link)}
                             className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start lg:justify-start group text-sm sm:text-base font-medium tracking-wide"
                           >
-                            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
+                            <span className="hidden sm:inline opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                             {category.label}
                           </button>
                         </li>
@@ -169,7 +169,7 @@ const Footer = () => {
                             onClick={() => handleLinkClick(category.link)}
                             className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start lg:justify-start group text-sm sm:text-base font-medium tracking-wide"
                           >
-                            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
+                            <span className="hidden sm:inline opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                             {category.label}
                           </button>
                         </li>
@@ -194,7 +194,7 @@ const Footer = () => {
                           onClick={() => handleLinkClick(item.link)}
                           className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start group text-sm sm:text-base font-medium tracking-wide"
                         >
-                          <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
+                          <span className="hidden lg:inline opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                           {item.label}
                         </button>
                       </li>

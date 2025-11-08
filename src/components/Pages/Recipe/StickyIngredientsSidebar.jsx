@@ -15,19 +15,8 @@ const StickyIngredientsSidebar = ({
   const buttonRef = useRef(null);
   const sidebarRef = useRef(null);
 
-  // DEBUG: Log all props on every render
-  console.log('🔵 StickyIngredientsSidebar RENDER:', {
-    isVisible,
-    isOpen,
-    hasIngredients: !!ingredients,
-    ingredientsType: typeof ingredients,
-    ingredientsIsArray: Array.isArray(ingredients)
-  });
-
   // Aggressive repaint forcing - CRITICAL for browser rendering bug
   useEffect(() => {
-    console.log('🟢 StickyIngredientsSidebar useEffect - isVisible changed:', isVisible, 'isOpen:', isOpen);
-    
     if (isVisible) {
       const forceRepaint = () => {
         requestAnimationFrame(() => {
@@ -36,13 +25,11 @@ const StickyIngredientsSidebar = ({
               void buttonRef.current.offsetHeight;
               void buttonRef.current.offsetWidth;
               buttonRef.current.style.display = 'flex';
-              console.log('✅ Button repainted, rect:', buttonRef.current.getBoundingClientRect());
             }
             if (sidebarRef.current && isOpen) {
               void sidebarRef.current.offsetHeight;
               void sidebarRef.current.offsetWidth;
               sidebarRef.current.style.display = 'block';
-              console.log('✅ Sidebar repainted, rect:', sidebarRef.current.getBoundingClientRect());
             }
           });
         });
@@ -55,7 +42,6 @@ const StickyIngredientsSidebar = ({
   }, [isVisible, isOpen]);
 
   if (!ingredients) {
-    console.log('❌ StickyIngredientsSidebar: No ingredients, returning null');
     return null;
   }
 
