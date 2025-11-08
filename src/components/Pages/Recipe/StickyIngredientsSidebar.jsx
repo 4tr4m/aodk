@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUtensils, FaTimes } from 'react-icons/fa';
@@ -14,6 +14,78 @@ const StickyIngredientsSidebar = ({
 }) => {
   const buttonRef = useRef(null);
   const sidebarRef = useRef(null);
+  const contentRef = useRef(null);
+  const [sidebarStyle, setSidebarStyle] = useState({});
+
+  // Calculate positioning to avoid feedback button and center the list
+  useEffect(() => {
+    if (isOpen) {
+      const updatePosition = () => {
+        // Wait for content to be rendered
+        if (!contentRef.current) {
+          setTimeout(updatePosition, 50);
+          return;
+        }
+        
+        const viewportHeight = window.innerHeight;
+        const viewportCenter = viewportHeight / 2;
+        
+        // Feedback button dimensions
+        // Mobile: bottom-4 (16px), h-14 (56px) = ~72px from bottom
+        // Desktop: bottom-6 (24px), with text ~80px height = ~104px from bottom
+        const isDesktop = window.innerWidth >= 640;
+        const feedbackButtonHeight = isDesktop ? 80 : 56;
+        const feedbackButtonBottom = isDesktop ? 24 : 16;
+        const feedbackButtonTop = viewportHeight - feedbackButtonHeight - feedbackButtonBottom;
+        
+        const sidebarHeight = contentRef.current.offsetHeight;
+        const sidebarCenter = sidebarHeight / 2;
+        
+        // Calculate ideal top position to center the sidebar's center at viewport center
+        let idealTop = viewportCenter - sidebarCenter;
+        
+        // Minimum top padding
+        const minTop = 16;
+        idealTop = Math.max(idealTop, minTop);
+        
+        // Maximum top to avoid feedback button (with 20px gap)
+        const gap = 20;
+        const maxTop = feedbackButtonTop - sidebarHeight - gap;
+        
+        // If centered position would overlap with feedback button, adjust
+        if (idealTop + sidebarHeight > feedbackButtonTop - gap) {
+          idealTop = Math.max(maxTop, minTop);
+        }
+        
+        // If sidebar is too tall to fit, position from top
+        if (sidebarHeight > feedbackButtonTop - minTop - gap) {
+          idealTop = minTop;
+        }
+        
+        setSidebarStyle({
+          top: `${idealTop}px`,
+        });
+      };
+      
+      // Initial update with delays to ensure DOM is ready
+      updatePosition();
+      const timeout1 = setTimeout(updatePosition, 50);
+      const timeout2 = setTimeout(updatePosition, 100);
+      const timeout3 = setTimeout(updatePosition, 200);
+      
+      window.addEventListener('resize', updatePosition);
+      
+      return () => {
+        window.removeEventListener('resize', updatePosition);
+        clearTimeout(timeout1);
+        clearTimeout(timeout2);
+        clearTimeout(timeout3);
+      };
+    } else {
+      // Reset style when closed
+      setSidebarStyle({});
+    }
+  }, [isOpen]);
 
   // Aggressive repaint forcing - CRITICAL for browser rendering bug
   useEffect(() => {
@@ -103,10 +175,10 @@ const StickyIngredientsSidebar = ({
         <motion.div
           key="sticky-sidebar"
           ref={sidebarRef}
-          className="hidden lg:block fixed right-4 top-1/2 -translate-y-1/2 z-[10000]"
+          className="hidden lg:block fixed right-4 z-[10000] [transform:translateZ(0)]"
           style={{ 
+            ...sidebarStyle,
             willChange: 'transform, opacity',
-            transform: 'translateZ(0)',
             backfaceVisibility: 'hidden',
             isolation: 'isolate'
           }}
@@ -116,6 +188,7 @@ const StickyIngredientsSidebar = ({
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
           <motion.div
+            ref={contentRef}
             className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-80 max-h-[calc(100vh-8rem)] overflow-hidden flex flex-col backdrop-blur-sm"
             initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
