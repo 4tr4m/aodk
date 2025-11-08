@@ -149,12 +149,12 @@ const Footer = () => {
                     Przepisy
                   </h4>
                   <div className="flex flex-col sm:flex-row items-center sm:items-start lg:items-start justify-center lg:justify-center gap-6 sm:gap-8 w-full">
-                    <ul className="space-y-3 flex flex-col items-center sm:items-start lg:items-start w-full sm:w-auto">
+                    <ul className="space-y-3 flex flex-col items-center sm:items-start lg:items-start">
                       {firstColumnCategories.map((category, index) => (
-                        <li key={`first-${category.label}-${index}`} className="w-full sm:w-auto">
+                        <li key={`first-${category.label}-${index}`} className="flex justify-center sm:justify-start lg:justify-start">
                           <button 
                             onClick={() => handleLinkClick(category.link)}
-                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start lg:justify-start group text-sm sm:text-base font-medium tracking-wide w-full sm:w-auto"
+                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start lg:justify-start group text-sm sm:text-base font-medium tracking-wide"
                           >
                             <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                             {category.label}
@@ -162,12 +162,12 @@ const Footer = () => {
                         </li>
                       ))}
                     </ul>
-                    <ul className="space-y-3 flex flex-col items-center sm:items-start lg:items-start w-full sm:w-auto">
+                    <ul className="space-y-3 flex flex-col items-center sm:items-start lg:items-start">
                       {secondColumnCategories.map((category, index) => (
-                        <li key={`second-${category.label}-${index}`} className="w-full sm:w-auto">
+                        <li key={`second-${category.label}-${index}`} className="flex justify-center sm:justify-start lg:justify-start">
                           <button 
                             onClick={() => handleLinkClick(category.link)}
-                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start lg:justify-start group text-sm sm:text-base font-medium tracking-wide w-full sm:w-auto"
+                            className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center sm:justify-start lg:justify-start group text-sm sm:text-base font-medium tracking-wide"
                           >
                             <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                             {category.label}
@@ -183,16 +183,16 @@ const Footer = () => {
                   <h4 className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg text-center lg:text-left tracking-wide w-full">
                     Kontakt
                   </h4>
-                  <ul className="space-y-3 flex flex-col items-center lg:items-start w-full sm:w-auto">
+                  <ul className="space-y-3 flex flex-col items-center lg:items-start">
                     {[
                       { label: 'Pomoc', link: '/pomoc' },
                       { label: 'O nas', link: '/o-nas' },
                       { label: 'Kontakt', link: '/kontakt' }
                     ].map((item) => (
-                      <li key={item.label} className="w-full sm:w-auto">
+                      <li key={item.label} className="flex justify-center lg:justify-start">
                         <button 
                           onClick={() => handleLinkClick(item.link)}
-                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start group text-sm sm:text-base font-medium tracking-wide w-full sm:w-auto"
+                          className="text-gray-200 hover:text-white transition-colors duration-200 inline-flex items-center justify-center lg:justify-start group text-sm sm:text-base font-medium tracking-wide"
                         >
                           <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 mr-2 text-green-400">→</span>
                           {item.label}

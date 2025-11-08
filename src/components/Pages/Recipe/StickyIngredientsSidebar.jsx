@@ -15,41 +15,49 @@ const StickyIngredientsSidebar = ({
   const buttonRef = useRef(null);
   const sidebarRef = useRef(null);
 
-  // Aggressive repaint forcing to fix browser rendering bug (F12 issue)
+  // DEBUG: Log all props on every render
+  console.log('🔵 StickyIngredientsSidebar RENDER:', {
+    isVisible,
+    isOpen,
+    hasIngredients: !!ingredients,
+    ingredientsType: typeof ingredients,
+    ingredientsIsArray: Array.isArray(ingredients)
+  });
+
+  // Aggressive repaint forcing - CRITICAL for browser rendering bug
   useEffect(() => {
+    console.log('🟢 StickyIngredientsSidebar useEffect - isVisible changed:', isVisible, 'isOpen:', isOpen);
+    
     if (isVisible) {
       const forceRepaint = () => {
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
             if (buttonRef.current && !isOpen) {
-              void buttonRef.current.offsetHeight; // Force reflow
-              void buttonRef.current.offsetWidth; // Force reflow
+              void buttonRef.current.offsetHeight;
+              void buttonRef.current.offsetWidth;
               buttonRef.current.style.display = 'flex';
-              buttonRef.current.style.visibility = 'visible';
-              buttonRef.current.style.opacity = '1';
+              console.log('✅ Button repainted, rect:', buttonRef.current.getBoundingClientRect());
             }
             if (sidebarRef.current && isOpen) {
-              void sidebarRef.current.offsetHeight; // Force reflow
-              void sidebarRef.current.offsetWidth; // Force reflow
+              void sidebarRef.current.offsetHeight;
+              void sidebarRef.current.offsetWidth;
               sidebarRef.current.style.display = 'block';
-              sidebarRef.current.style.visibility = 'visible';
-              sidebarRef.current.style.opacity = '1';
+              console.log('✅ Sidebar repainted, rect:', sidebarRef.current.getBoundingClientRect());
             }
           });
         });
       };
-
-      // Multiple repaints at different intervals
       forceRepaint();
       setTimeout(forceRepaint, 0);
-      setTimeout(forceRepaint, 16);
       setTimeout(forceRepaint, 50);
       setTimeout(forceRepaint, 100);
-      setTimeout(forceRepaint, 200);
     }
   }, [isVisible, isOpen]);
 
-  if (!ingredients) return null;
+  if (!ingredients) {
+    console.log('❌ StickyIngredientsSidebar: No ingredients, returning null');
+    return null;
+  }
 
   // Process ingredients
   let groups, hasGroups, normalized;
@@ -63,7 +71,6 @@ const StickyIngredientsSidebar = ({
     return null;
   }
 
-  // Don't render if no ingredients to show
   if ((!hasGroups && (!normalized || normalized.length === 0)) || 
       (hasGroups && (!groups || groups.length === 0))) {
     return null;
@@ -128,7 +135,6 @@ const StickyIngredientsSidebar = ({
             animate={{ scale: 1, y: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
-            {/* Header */}
             <div className="bg-gradient-to-r from-green-50 to-green-100 px-4 py-3 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-2">
                 <FaUtensils className="text-green-600 flex-shrink-0" />
@@ -145,7 +151,6 @@ const StickyIngredientsSidebar = ({
               </motion.button>
             </div>
 
-            {/* Ingredients Content */}
             <div className="overflow-y-auto flex-1 p-4 scrollbar-thin scrollbar-thumb-green-200 scrollbar-track-gray-100">
               {hasGroups ? (
                 <div className="space-y-4">
@@ -192,7 +197,6 @@ const StickyIngredientsSidebar = ({
     </AnimatePresence>
   );
 
-  // Render via portal to avoid stacking context issues
   if (typeof document !== 'undefined') {
     return createPortal(content, document.body);
   }
