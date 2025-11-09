@@ -44,28 +44,51 @@ const StickyIngredientsSidebar = ({
           feedbackButtonTop = viewportHeight - feedbackButtonHeight - feedbackButtonBottom;
         }
         
-        const sidebarHeight = contentRef.current.offsetHeight;
+        // Minimum top padding
+        const minTop = 20;
+        
+        // Gap to ensure sidebar doesn't overlap feedback button (generous gap for safety)
+        const gap = 60;
+        
+        // Maximum bottom position - sidebar bottom must be well above feedback button
+        const maxBottom = feedbackButtonTop - gap;
+        
+        // Get current sidebar height (may be limited by max-h class)
+        let sidebarHeight = contentRef.current.offsetHeight;
+        
+        // Calculate available space for sidebar
+        const availableHeight = maxBottom - minTop;
+        
+        // If sidebar is too tall, limit its height to fit above feedback button
+        if (sidebarHeight > availableHeight) {
+          const maxAllowedHeight = availableHeight;
+          if (contentRef.current) {
+            contentRef.current.style.maxHeight = `${maxAllowedHeight}px`;
+          }
+          // Recalculate height after setting maxHeight
+          sidebarHeight = Math.min(sidebarHeight, maxAllowedHeight);
+        } else {
+          // Reset maxHeight if sidebar fits naturally
+          if (contentRef.current) {
+            contentRef.current.style.maxHeight = '';
+          }
+        }
+        
         const sidebarCenter = sidebarHeight / 2;
         
         // Calculate ideal top position to center the sidebar's center at viewport center
         let idealTop = viewportCenter - sidebarCenter;
         
-        // Minimum top padding
-        const minTop = 20;
+        // Ensure minimum top padding
         idealTop = Math.max(idealTop, minTop);
         
-        // Maximum top to avoid feedback button (with larger gap for better spacing)
-        const gap = 40; // Increased gap to ensure no overlap
-        const maxTop = feedbackButtonTop - sidebarHeight - gap;
-        
-        // If centered position would overlap with feedback button, adjust upward
-        if (idealTop + sidebarHeight > feedbackButtonTop - gap) {
-          idealTop = Math.max(maxTop, minTop);
-        }
-        
-        // If sidebar is too tall to fit, position from top with padding
-        if (sidebarHeight > feedbackButtonTop - minTop - gap) {
-          idealTop = minTop;
+        // CRITICAL: Ensure sidebar bottom never goes below maxBottom (above feedback button)
+        const sidebarBottom = idealTop + sidebarHeight;
+        if (sidebarBottom > maxBottom) {
+          // Move sidebar up so its bottom is at maxBottom
+          idealTop = maxBottom - sidebarHeight;
+          // But don't go below minTop
+          idealTop = Math.max(idealTop, minTop);
         }
         
         setSidebarStyle({
