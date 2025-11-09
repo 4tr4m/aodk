@@ -16,6 +16,7 @@ const StickyIngredientsSidebar = ({
   const sidebarRef = useRef(null);
   const contentRef = useRef(null);
   const [sidebarStyle, setSidebarStyle] = useState({});
+  const [animateTop, setAnimateTop] = useState(undefined);
 
   // Calculate positioning to avoid feedback button and center the list (desktop only)
   useEffect(() => {
@@ -27,51 +28,73 @@ const StickyIngredientsSidebar = ({
           return;
         }
         
+        // Get content height - use a minimum if it's 0 (content might still be rendering)
+        let contentHeight = contentRef.current.offsetHeight;
+        if (contentHeight === 0) {
+          // Use a reasonable minimum height estimate if content hasn't rendered yet
+          contentHeight = 200; // Minimum estimated height
+        }
+        
         const viewportHeight = window.innerHeight;
+        const viewportWidth = window.innerWidth;
         const viewportCenter = viewportHeight / 2;
         
-        // Try to find the actual feedback button element
-        const feedbackButton = document.querySelector('[aria-label="Podziel się opinią"]');
+        // Try to find the actual feedback button element - try multiple selectors
+        let feedbackButton = document.querySelector('[aria-label="Podziel się opinią"]');
+        if (!feedbackButton) {
+          // Try alternative selector - look for fixed button at bottom right
+          const allButtons = document.querySelectorAll('button');
+          feedbackButton = Array.from(allButtons).find(btn => {
+            const rect = btn.getBoundingClientRect();
+            const styles = window.getComputedStyle(btn);
+            return styles.position === 'fixed' && 
+                   rect.bottom < viewportHeight && 
+                   rect.right < viewportWidth && 
+                   rect.bottom > viewportHeight - 150; // Within 150px of bottom
+          });
+        }
+        
         let feedbackButtonTop = viewportHeight;
         
         if (feedbackButton) {
           const feedbackRect = feedbackButton.getBoundingClientRect();
           feedbackButtonTop = feedbackRect.top;
+          console.log('✅ Found feedback button at:', feedbackButtonTop, 'Button height:', feedbackRect.height);
         } else {
           // Fallback estimation: Desktop button is bottom-6 (24px) with text, ~90px height
           const feedbackButtonHeight = 90;
           const feedbackButtonBottom = 24;
           feedbackButtonTop = viewportHeight - feedbackButtonHeight - feedbackButtonBottom;
+          console.log('⚠️ Feedback button not found, using fallback:', feedbackButtonTop);
         }
         
         // Minimum top padding
         const minTop = 20;
         
-        // Gap to ensure sidebar doesn't overlap feedback button (generous gap for safety)
-        const gap = 80; // Increased gap
+        // LARGE gap to ensure sidebar doesn't overlap feedback button
+        const gap = 120; // Increased gap even more
         
         // Maximum bottom position - sidebar bottom must be well above feedback button
         const maxBottom = feedbackButtonTop - gap;
         
-        // Get current sidebar height from the outer container
-        let sidebarHeight = sidebarRef.current.offsetHeight;
+        // Get sidebar height - measure the inner content div which has the actual content
+        let sidebarHeight = contentRef.current.offsetHeight;
         
-        // If sidebarRef doesn't have height yet, try contentRef
-        if (!sidebarHeight && contentRef.current) {
-          sidebarHeight = contentRef.current.offsetHeight;
-        }
+        // Add padding for header (approximately)
+        const headerHeight = 60; // Approximate header height
+        sidebarHeight = sidebarHeight + headerHeight;
         
         // Calculate available space for sidebar
         const availableHeight = maxBottom - minTop;
         
         // If sidebar is too tall, limit its height to fit above feedback button
         if (sidebarHeight > availableHeight && contentRef.current) {
-          const maxAllowedHeight = availableHeight;
-          contentRef.current.style.maxHeight = `${maxAllowedHeight}px`;
+          const maxAllowedContentHeight = availableHeight - headerHeight;
+          contentRef.current.style.maxHeight = `${maxAllowedContentHeight}px`;
           // Force reflow
           void contentRef.current.offsetHeight;
           // Recalculate height after setting maxHeight
-          sidebarHeight = Math.min(sidebarHeight, maxAllowedHeight);
+          sidebarHeight = Math.min(sidebarHeight, availableHeight);
         } else if (contentRef.current) {
           // Reset maxHeight if sidebar fits naturally
           contentRef.current.style.maxHeight = '';
@@ -94,14 +117,55 @@ const StickyIngredientsSidebar = ({
           idealTop = Math.max(idealTop, minTop);
         }
         
-        // Apply the style directly to the sidebar element to ensure it takes precedence
-        if (sidebarRef.current) {
-          sidebarRef.current.style.top = `${idealTop}px`;
-          sidebarRef.current.style.bottom = 'auto';
-        }
-        
+        // Set the top value
+        setAnimateTop(idealTop);
         setSidebarStyle({
           top: `${idealTop}px`,
+        });
+        
+        // AGGRESSIVE: Apply directly to DOM element multiple times to ensure it sticks
+        const applyStyle = () => {
+          if (sidebarRef.current) {
+            // Remove any transform that might interfere
+            sidebarRef.current.style.top = `${idealTop}px`;
+            sidebarRef.current.style.bottom = 'auto';
+            sidebarRef.current.style.position = 'fixed';
+            sidebarRef.current.style.marginTop = '0';
+            sidebarRef.current.style.marginBottom = '0';
+            // Force a reflow
+            void sidebarRef.current.offsetHeight;
+          }
+        };
+        
+        // Apply immediately
+        applyStyle();
+        
+        // Apply after animation frames - multiple times to override any animations
+        requestAnimationFrame(() => {
+          applyStyle();
+          requestAnimationFrame(() => {
+            applyStyle();
+            setTimeout(() => {
+              applyStyle();
+              setTimeout(() => {
+                applyStyle();
+              }, 100);
+            }, 100);
+          });
+        });
+        
+        // Debug logging
+        console.log('🔧 Sidebar positioning:', {
+          idealTop,
+          sidebarHeight,
+          contentHeight: contentRef.current.offsetHeight,
+          feedbackButtonTop,
+          maxBottom,
+          viewportHeight,
+          viewportCenter,
+          sidebarBottom: idealTop + sidebarHeight,
+          gap: feedbackButtonTop - (idealTop + sidebarHeight),
+          actualComputedTop: sidebarRef.current ? window.getComputedStyle(sidebarRef.current).top : 'N/A'
         });
       };
       
@@ -128,12 +192,13 @@ const StickyIngredientsSidebar = ({
     } else {
       // Reset style when closed or on mobile
       if (sidebarRef.current) {
-        sidebarRef.current.style.top = '';
-        sidebarRef.current.style.bottom = '';
+        sidebarRef.current.style.removeProperty('top');
+        sidebarRef.current.style.removeProperty('bottom');
       }
       if (contentRef.current) {
         contentRef.current.style.maxHeight = '';
       }
+      setAnimateTop(undefined);
       setSidebarStyle({});
     }
   }, [isOpen]);
@@ -266,10 +331,17 @@ const StickyIngredientsSidebar = ({
             ...sidebarStyle,
             willChange: 'transform, opacity',
             backfaceVisibility: 'hidden',
-            isolation: 'isolate'
+            isolation: 'isolate',
+            // Force top position with inline style
+            top: sidebarStyle.top || (animateTop !== undefined ? `${animateTop}px` : undefined)
           }}
           initial={{ opacity: 0, x: 100, scale: 0.9 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
+          animate={{ 
+            opacity: 1, 
+            x: 0, 
+            scale: 1
+            // Don't animate top - let inline style handle it
+          }}
           exit={{ opacity: 0, x: 100, scale: 0.9 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
