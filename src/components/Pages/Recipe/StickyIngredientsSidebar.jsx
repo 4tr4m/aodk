@@ -21,8 +21,8 @@ const StickyIngredientsSidebar = ({
   useEffect(() => {
     if (isOpen && window.innerWidth >= 1024) {
       const updatePosition = () => {
-        // Wait for content to be rendered
-        if (!contentRef.current) {
+        // Wait for sidebar and content to be rendered
+        if (!sidebarRef.current || !contentRef.current) {
           setTimeout(updatePosition, 50);
           return;
         }
@@ -48,30 +48,33 @@ const StickyIngredientsSidebar = ({
         const minTop = 20;
         
         // Gap to ensure sidebar doesn't overlap feedback button (generous gap for safety)
-        const gap = 60;
+        const gap = 80; // Increased gap
         
         // Maximum bottom position - sidebar bottom must be well above feedback button
         const maxBottom = feedbackButtonTop - gap;
         
-        // Get current sidebar height (may be limited by max-h class)
-        let sidebarHeight = contentRef.current.offsetHeight;
+        // Get current sidebar height from the outer container
+        let sidebarHeight = sidebarRef.current.offsetHeight;
+        
+        // If sidebarRef doesn't have height yet, try contentRef
+        if (!sidebarHeight && contentRef.current) {
+          sidebarHeight = contentRef.current.offsetHeight;
+        }
         
         // Calculate available space for sidebar
         const availableHeight = maxBottom - minTop;
         
         // If sidebar is too tall, limit its height to fit above feedback button
-        if (sidebarHeight > availableHeight) {
+        if (sidebarHeight > availableHeight && contentRef.current) {
           const maxAllowedHeight = availableHeight;
-          if (contentRef.current) {
-            contentRef.current.style.maxHeight = `${maxAllowedHeight}px`;
-          }
+          contentRef.current.style.maxHeight = `${maxAllowedHeight}px`;
+          // Force reflow
+          void contentRef.current.offsetHeight;
           // Recalculate height after setting maxHeight
           sidebarHeight = Math.min(sidebarHeight, maxAllowedHeight);
-        } else {
+        } else if (contentRef.current) {
           // Reset maxHeight if sidebar fits naturally
-          if (contentRef.current) {
-            contentRef.current.style.maxHeight = '';
-          }
+          contentRef.current.style.maxHeight = '';
         }
         
         const sidebarCenter = sidebarHeight / 2;
@@ -91,6 +94,12 @@ const StickyIngredientsSidebar = ({
           idealTop = Math.max(idealTop, minTop);
         }
         
+        // Apply the style directly to the sidebar element to ensure it takes precedence
+        if (sidebarRef.current) {
+          sidebarRef.current.style.top = `${idealTop}px`;
+          sidebarRef.current.style.bottom = 'auto';
+        }
+        
         setSidebarStyle({
           top: `${idealTop}px`,
         });
@@ -102,6 +111,7 @@ const StickyIngredientsSidebar = ({
       const timeout2 = setTimeout(updatePosition, 100);
       const timeout3 = setTimeout(updatePosition, 200);
       const timeout4 = setTimeout(updatePosition, 500); // Extra delay for feedback button to render
+      const timeout5 = setTimeout(updatePosition, 1000); // Extra delay to ensure everything is rendered
       
       window.addEventListener('resize', updatePosition);
       window.addEventListener('scroll', updatePosition, { passive: true });
@@ -113,9 +123,17 @@ const StickyIngredientsSidebar = ({
         clearTimeout(timeout2);
         clearTimeout(timeout3);
         clearTimeout(timeout4);
+        clearTimeout(timeout5);
       };
     } else {
       // Reset style when closed or on mobile
+      if (sidebarRef.current) {
+        sidebarRef.current.style.top = '';
+        sidebarRef.current.style.bottom = '';
+      }
+      if (contentRef.current) {
+        contentRef.current.style.maxHeight = '';
+      }
       setSidebarStyle({});
     }
   }, [isOpen]);
