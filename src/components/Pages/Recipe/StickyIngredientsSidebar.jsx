@@ -30,11 +30,19 @@ const StickyIngredientsSidebar = ({
         const viewportHeight = window.innerHeight;
         const viewportCenter = viewportHeight / 2;
         
-        // Feedback button dimensions
-        // Desktop: bottom-6 (24px), with text ~80px height = ~104px from bottom
-        const feedbackButtonHeight = 80;
-        const feedbackButtonBottom = 24;
-        const feedbackButtonTop = viewportHeight - feedbackButtonHeight - feedbackButtonBottom;
+        // Try to find the actual feedback button element
+        const feedbackButton = document.querySelector('[aria-label="Podziel się opinią"]');
+        let feedbackButtonTop = viewportHeight;
+        
+        if (feedbackButton) {
+          const feedbackRect = feedbackButton.getBoundingClientRect();
+          feedbackButtonTop = feedbackRect.top;
+        } else {
+          // Fallback estimation: Desktop button is bottom-6 (24px) with text, ~90px height
+          const feedbackButtonHeight = 90;
+          const feedbackButtonBottom = 24;
+          feedbackButtonTop = viewportHeight - feedbackButtonHeight - feedbackButtonBottom;
+        }
         
         const sidebarHeight = contentRef.current.offsetHeight;
         const sidebarCenter = sidebarHeight / 2;
@@ -43,19 +51,19 @@ const StickyIngredientsSidebar = ({
         let idealTop = viewportCenter - sidebarCenter;
         
         // Minimum top padding
-        const minTop = 16;
+        const minTop = 20;
         idealTop = Math.max(idealTop, minTop);
         
-        // Maximum top to avoid feedback button (with 20px gap)
-        const gap = 20;
+        // Maximum top to avoid feedback button (with larger gap for better spacing)
+        const gap = 40; // Increased gap to ensure no overlap
         const maxTop = feedbackButtonTop - sidebarHeight - gap;
         
-        // If centered position would overlap with feedback button, adjust
+        // If centered position would overlap with feedback button, adjust upward
         if (idealTop + sidebarHeight > feedbackButtonTop - gap) {
           idealTop = Math.max(maxTop, minTop);
         }
         
-        // If sidebar is too tall to fit, position from top
+        // If sidebar is too tall to fit, position from top with padding
         if (sidebarHeight > feedbackButtonTop - minTop - gap) {
           idealTop = minTop;
         }
@@ -70,14 +78,18 @@ const StickyIngredientsSidebar = ({
       const timeout1 = setTimeout(updatePosition, 50);
       const timeout2 = setTimeout(updatePosition, 100);
       const timeout3 = setTimeout(updatePosition, 200);
+      const timeout4 = setTimeout(updatePosition, 500); // Extra delay for feedback button to render
       
       window.addEventListener('resize', updatePosition);
+      window.addEventListener('scroll', updatePosition, { passive: true });
       
       return () => {
         window.removeEventListener('resize', updatePosition);
+        window.removeEventListener('scroll', updatePosition);
         clearTimeout(timeout1);
         clearTimeout(timeout2);
         clearTimeout(timeout3);
+        clearTimeout(timeout4);
       };
     } else {
       // Reset style when closed or on mobile

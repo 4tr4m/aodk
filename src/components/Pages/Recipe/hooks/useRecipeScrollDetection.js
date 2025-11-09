@@ -11,12 +11,6 @@ export const useRecipeScrollDetection = (recipe, loading) => {
     }
 
     const checkVisibility = () => {
-      // Desktop only
-      if (window.innerWidth < 1024) {
-        setIsStickyIngredientsVisible(false);
-        return;
-      }
-
       // Wait for ref
       if (!ingredientsRef.current) {
         setTimeout(checkVisibility, 100);
