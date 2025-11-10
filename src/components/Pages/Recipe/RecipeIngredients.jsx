@@ -22,8 +22,7 @@ const RecipeIngredients = ({ ingredients, ingredientsRef }) => {
           {groups.map((group, groupIdx) => (
             <div key={groupIdx} className="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl p-4 sm:p-5 border border-gray-200">
               {group.title && (
-                <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 font-['Playfair_Display'] flex items-center gap-2 pb-2 border-b border-gray-300">
-                  <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+                <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 font-['Playfair_Display'] pb-2 border-b border-gray-300">
                   {group.title}
                 </h3>
               )}

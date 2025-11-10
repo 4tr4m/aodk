@@ -380,8 +380,7 @@ const StickyIngredientsSidebar = ({
                       className="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-lg p-3 border border-gray-200"
                     >
                       {group.title && (
-                        <h4 className="text-sm font-bold text-gray-800 mb-2 font-['Playfair_Display'] flex items-center gap-1.5 pb-1.5 border-b border-gray-300">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+                        <h4 className="text-sm font-bold text-gray-800 mb-2 font-['Playfair_Display'] pb-1.5 border-b border-gray-300">
                           {group.title}
                         </h4>
                       )}
@@ -477,8 +476,7 @@ const StickyIngredientsSidebar = ({
                       className="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-lg p-3 border border-gray-200"
                     >
                       {group.title && (
-                        <h4 className="text-sm font-bold text-gray-800 mb-2 font-['Playfair_Display'] flex items-center gap-1.5 pb-1.5 border-b border-gray-300">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>
+                        <h4 className="text-sm font-bold text-gray-800 mb-2 font-['Playfair_Display'] pb-1.5 border-b border-gray-300">
                           {group.title}
                         </h4>
                       )}
