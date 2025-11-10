@@ -22,160 +22,109 @@ const StickyIngredientsSidebar = ({
   useEffect(() => {
     if (isOpen && window.innerWidth >= 1024) {
       const updatePosition = () => {
-        // Wait for sidebar and content to be rendered
-        if (!sidebarRef.current || !contentRef.current) {
+        // Wait for sidebar to be rendered - need the actual sidebar container
+        if (!sidebarRef.current) {
           setTimeout(updatePosition, 50);
           return;
         }
         
-        // Get content height - use a minimum if it's 0 (content might still be rendering)
-        let contentHeight = contentRef.current.offsetHeight;
-        if (contentHeight === 0) {
-          // Use a reasonable minimum height estimate if content hasn't rendered yet
-          contentHeight = 200; // Minimum estimated height
-        }
-        
         const viewportHeight = window.innerHeight;
-        const viewportWidth = window.innerWidth;
         const viewportCenter = viewportHeight / 2;
         
-        // Try to find the actual feedback button element - try multiple selectors
+        // Find feedback button - it has aria-label="Podziel się opinią" and is fixed at bottom-right
         let feedbackButton = document.querySelector('[aria-label="Podziel się opinią"]');
-        if (!feedbackButton) {
-          // Try alternative selector - look for fixed button at bottom right
-          const allButtons = document.querySelectorAll('button');
-          feedbackButton = Array.from(allButtons).find(btn => {
-            const rect = btn.getBoundingClientRect();
-            const styles = window.getComputedStyle(btn);
-            return styles.position === 'fixed' && 
-                   rect.bottom < viewportHeight && 
-                   rect.right < viewportWidth && 
-                   rect.bottom > viewportHeight - 150; // Within 150px of bottom
-          });
-        }
         
+        // Calculate feedback button position
+        // Desktop: bottom-6 (24px) + button height (~60-70px with text)
+        // Use actual measurement if found, otherwise use safe estimate
         let feedbackButtonTop = viewportHeight;
         
         if (feedbackButton) {
           const feedbackRect = feedbackButton.getBoundingClientRect();
           feedbackButtonTop = feedbackRect.top;
-          console.log('✅ Found feedback button at:', feedbackButtonTop, 'Button height:', feedbackRect.height);
         } else {
-          // Fallback estimation: Desktop button is bottom-6 (24px) with text, ~90px height
-          const feedbackButtonHeight = 90;
-          const feedbackButtonBottom = 24;
-          feedbackButtonTop = viewportHeight - feedbackButtonHeight - feedbackButtonBottom;
-          console.log('⚠️ Feedback button not found, using fallback:', feedbackButtonTop);
+          // Safe fallback: Desktop uses bottom-6 (24px), button is ~70px tall
+          // So top is at viewportHeight - 24 - 70 = viewportHeight - 94
+          feedbackButtonTop = viewportHeight - 94;
         }
         
-        // Minimum top padding
-        const minTop = 20;
+        // Get the actual sidebar container (the white rounded box inside motion.div)
+        const sidebarContainer = sidebarRef.current.querySelector('.bg-white');
+        if (!sidebarContainer) {
+          setTimeout(updatePosition, 50);
+          return;
+        }
         
-        // LARGE gap to ensure sidebar doesn't overlap feedback button
-        const gap = 120; // Increased gap even more
+        // Measure full sidebar height including header
+        let sidebarHeight = sidebarContainer.offsetHeight;
         
-        // Maximum bottom position - sidebar bottom must be well above feedback button
+        // If height is 0, wait a bit more
+        if (sidebarHeight === 0) {
+          setTimeout(updatePosition, 100);
+          return;
+        }
+        
+        // Minimum top padding from viewport top
+        const minTop = 80; // Account for header/navbar
+        
+        // Gap between sidebar bottom and feedback button top
+        const gap = 40;
+        
+        // Maximum bottom position - sidebar must end well above feedback button
         const maxBottom = feedbackButtonTop - gap;
         
-        // Get sidebar height - measure the inner content div which has the actual content
-        let sidebarHeight = contentRef.current.offsetHeight;
-        
-        // Add padding for header (approximately)
-        const headerHeight = 60; // Approximate header height
-        sidebarHeight = sidebarHeight + headerHeight;
-        
-        // Calculate available space for sidebar
+        // Calculate available space
         const availableHeight = maxBottom - minTop;
         
-        // If sidebar is too tall, limit its height to fit above feedback button
+        // If sidebar is too tall, make it scrollable
         if (sidebarHeight > availableHeight && contentRef.current) {
-          const maxAllowedContentHeight = availableHeight - headerHeight;
+          const maxAllowedContentHeight = availableHeight - 60; // Subtract header height
           contentRef.current.style.maxHeight = `${maxAllowedContentHeight}px`;
-          // Force reflow
-          void contentRef.current.offsetHeight;
-          // Recalculate height after setting maxHeight
-          sidebarHeight = Math.min(sidebarHeight, availableHeight);
+          sidebarHeight = availableHeight; // Use available height
         } else if (contentRef.current) {
-          // Reset maxHeight if sidebar fits naturally
           contentRef.current.style.maxHeight = '';
         }
         
+        // Calculate ideal top to center sidebar vertically
         const sidebarCenter = sidebarHeight / 2;
-        
-        // Calculate ideal top position to center the sidebar's center at viewport center
         let idealTop = viewportCenter - sidebarCenter;
         
         // Ensure minimum top padding
         idealTop = Math.max(idealTop, minTop);
         
-        // CRITICAL: Ensure sidebar bottom never goes below maxBottom (above feedback button)
+        // CRITICAL: Ensure sidebar doesn't go below maxBottom
         const sidebarBottom = idealTop + sidebarHeight;
         if (sidebarBottom > maxBottom) {
-          // Move sidebar up so its bottom is at maxBottom
           idealTop = maxBottom - sidebarHeight;
-          // But don't go below minTop
           idealTop = Math.max(idealTop, minTop);
         }
         
-        // Set the top value
+        // Apply position directly to the motion.div wrapper
+        // Use !important to override any CSS defaults or conflicting styles
+        if (sidebarRef.current) {
+          // Remove any bottom positioning first (in case it was set)
+          sidebarRef.current.style.removeProperty('bottom');
+          // Set top position with !important to ensure it takes precedence
+          sidebarRef.current.style.setProperty('top', `${idealTop}px`, 'important');
+          // Ensure it's fixed positioned (should already be from className, but be explicit)
+          sidebarRef.current.style.setProperty('position', 'fixed', 'important');
+        }
+        
+        // Also set in state for initial render
         setAnimateTop(idealTop);
         setSidebarStyle({
           top: `${idealTop}px`,
         });
-        
-        // AGGRESSIVE: Apply directly to DOM element multiple times to ensure it sticks
-        const applyStyle = () => {
-          if (sidebarRef.current) {
-            // Remove any transform that might interfere
-            sidebarRef.current.style.top = `${idealTop}px`;
-            sidebarRef.current.style.bottom = 'auto';
-            sidebarRef.current.style.position = 'fixed';
-            sidebarRef.current.style.marginTop = '0';
-            sidebarRef.current.style.marginBottom = '0';
-            // Force a reflow
-            void sidebarRef.current.offsetHeight;
-          }
-        };
-        
-        // Apply immediately
-        applyStyle();
-        
-        // Apply after animation frames - multiple times to override any animations
-        requestAnimationFrame(() => {
-          applyStyle();
-          requestAnimationFrame(() => {
-            applyStyle();
-            setTimeout(() => {
-              applyStyle();
-              setTimeout(() => {
-                applyStyle();
-              }, 100);
-            }, 100);
-          });
-        });
-        
-        // Debug logging
-        console.log('🔧 Sidebar positioning:', {
-          idealTop,
-          sidebarHeight,
-          contentHeight: contentRef.current.offsetHeight,
-          feedbackButtonTop,
-          maxBottom,
-          viewportHeight,
-          viewportCenter,
-          sidebarBottom: idealTop + sidebarHeight,
-          gap: feedbackButtonTop - (idealTop + sidebarHeight),
-          actualComputedTop: sidebarRef.current ? window.getComputedStyle(sidebarRef.current).top : 'N/A'
-        });
       };
       
-      // Initial update with delays to ensure DOM is ready
+      // Run positioning with multiple delays to catch all render states
       updatePosition();
-      const timeout1 = setTimeout(updatePosition, 50);
-      const timeout2 = setTimeout(updatePosition, 100);
-      const timeout3 = setTimeout(updatePosition, 200);
-      const timeout4 = setTimeout(updatePosition, 500); // Extra delay for feedback button to render
-      const timeout5 = setTimeout(updatePosition, 1000); // Extra delay to ensure everything is rendered
+      const timeouts = [
+        setTimeout(updatePosition, 50),
+        setTimeout(updatePosition, 100),
+        setTimeout(updatePosition, 200),
+        setTimeout(updatePosition, 500),
+      ];
       
       window.addEventListener('resize', updatePosition);
       window.addEventListener('scroll', updatePosition, { passive: true });
@@ -183,17 +132,14 @@ const StickyIngredientsSidebar = ({
       return () => {
         window.removeEventListener('resize', updatePosition);
         window.removeEventListener('scroll', updatePosition);
-        clearTimeout(timeout1);
-        clearTimeout(timeout2);
-        clearTimeout(timeout3);
-        clearTimeout(timeout4);
-        clearTimeout(timeout5);
+        timeouts.forEach(clearTimeout);
       };
     } else {
-      // Reset style when closed or on mobile
+      // Reset when closed or on mobile
       if (sidebarRef.current) {
         sidebarRef.current.style.removeProperty('top');
         sidebarRef.current.style.removeProperty('bottom');
+        sidebarRef.current.style.removeProperty('transform');
       }
       if (contentRef.current) {
         contentRef.current.style.maxHeight = '';
@@ -326,21 +272,22 @@ const StickyIngredientsSidebar = ({
         <motion.div
           key="sticky-sidebar-desktop"
           ref={sidebarRef}
-          className="hidden lg:block fixed right-4 z-[10000] [transform:translateZ(0)]"
+          className="hidden lg:block fixed right-4 z-[10000]"
           style={{ 
             ...sidebarStyle,
-            willChange: 'transform, opacity',
+            willChange: 'opacity',
             backfaceVisibility: 'hidden',
             isolation: 'isolate',
-            // Force top position with inline style
-            top: sidebarStyle.top || (animateTop !== undefined ? `${animateTop}px` : undefined)
+            // Top position will be set by useEffect with !important to override animations
+            top: sidebarStyle.top || (animateTop !== undefined ? `${animateTop}px` : undefined),
           }}
           initial={{ opacity: 0, x: 100, scale: 0.9 }}
           animate={{ 
             opacity: 1, 
             x: 0, 
-            scale: 1
-            // Don't animate top - let inline style handle it
+            scale: 1,
+            // Explicitly don't animate y/top - let inline style handle it
+            y: 0,
           }}
           exit={{ opacity: 0, x: 100, scale: 0.9 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
