@@ -37,6 +37,25 @@ const RecipePage = () => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isStickyIngredientsOpen, setIsStickyIngredientsOpen] = useState(false);
   const [isBaseSpicesExpanded, setIsBaseSpicesExpanded] = useState(false);
+  
+  // Initialize isDesktop correctly - check on mount
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024;
+    }
+    return false;
+  });
+
+  // Check if we're on desktop and update on resize
+  useEffect(() => {
+    const checkDesktop = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    // Check immediately
+    checkDesktop();
+    window.addEventListener('resize', checkDesktop);
+    return () => window.removeEventListener('resize', checkDesktop);
+  }, []);
 
   // Handle escape key for image modal
   useEffect(() => {
@@ -206,10 +225,14 @@ const RecipePage = () => {
                 onToggle={() => setIsFullDescExpanded(!isFullDescExpanded)}
               />
 
-              <RecipeIngredients
-                ingredients={recipe.ingredients}
-                ingredientsRef={ingredientsRef}
-              />
+              {/* Hide main ingredients list when sticky sidebar is open on desktop */}
+              {/* On desktop: hide when sidebar is open. On mobile: always show */}
+              {(!isDesktop || !isStickyIngredientsOpen) && (
+                <RecipeIngredients
+                  ingredients={recipe.ingredients}
+                  ingredientsRef={ingredientsRef}
+                />
+              )}
 
               <RecipePreparation preparation={recipe.preparation} />
 
@@ -243,7 +266,8 @@ const RecipePage = () => {
         <Footer />
       </div>
 
-      {recipe?.ingredients && (
+      {/* Only render sticky sidebar on desktop */}
+      {recipe?.ingredients && isDesktop && (
         <StickyIngredientsSidebar
           isVisible={isStickyIngredientsVisible}
           isOpen={isStickyIngredientsOpen}
@@ -252,6 +276,7 @@ const RecipePage = () => {
           ingredients={recipe.ingredients}
           processIngredients={processIngredients}
           replaceLinkPlaceholder={replaceLinkPlaceholder}
+          isNewsletterModalOpen={isNewsletterModalOpen}
         />
       )}
 

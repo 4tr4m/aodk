@@ -100,9 +100,9 @@ const NewsletterModal = ({ isOpen, onClose, onSuccess }) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop - Higher z-index than sidebar button (10000) */}
           <motion.div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[20000] flex items-center justify-center p-4"
             variants={backdropVariants}
             initial="hidden"
             animate="visible"
