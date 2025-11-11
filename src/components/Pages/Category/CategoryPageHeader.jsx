@@ -72,7 +72,7 @@ const CategoryPageHeader = ({
                   >
                     {/* Centered title */}
                     <motion.div
-                      className="relative group cursor-pointer flex-shrink-0"
+                      className="relative group cursor-pointer flex-shrink-0 -translate-x-[5px] sm:translate-x-0"
                       onClick={toggleSearch}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
