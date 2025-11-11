@@ -210,7 +210,14 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
     setFilteredRecipes([]);
     setSearchTerm('');
     onRecipesFiltered(null, null);
-    if (typeof onClear === 'function') onClear();
+    // Call onClear callback to clear filter in parent component
+    if (typeof onClear === 'function') {
+      onClear();
+    }
+    // Also close the filter sidebar
+    if (typeof onClose === 'function') {
+      onClose();
+    }
   };
 
   // Animation variants

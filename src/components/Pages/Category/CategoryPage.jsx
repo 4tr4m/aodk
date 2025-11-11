@@ -425,6 +425,14 @@ const CategoryPage = () => {
   }, [location.pathname, location.search, navigate]);
 
   const handleIngredientFilterClose = useCallback(() => {
+    // Only close the sidebar, but keep the filter results if ingredients are selected
+    setIsIngredientFilterVisible(false);
+    // Don't clear filteredRecipes or activeFilter - keep them visible
+    // Only clear if user explicitly clears the filter
+  }, []);
+
+  const clearIngredientFilter = useCallback(() => {
+    // This is called when user explicitly clears the filter
     setIsIngredientFilterVisible(false);
     setFilteredRecipes(null);
     setActiveFilter(null);
@@ -435,11 +443,8 @@ const CategoryPage = () => {
 
   const toggleIngredientFilter = useCallback(() => {
     setIsIngredientFilterVisible(prev => !prev);
-    if (isIngredientFilterVisible) {
-      // Clear filter when closing
-      handleIngredientFilterClose();
-    }
-  }, [isIngredientFilterVisible, handleIngredientFilterClose]);
+    // Don't clear filter when toggling - just open/close sidebar
+  }, []);
 
   const handleRecipesFiltered = useCallback((recipes, ingredientName) => {
     console.log('CategoryPage: handleRecipesFiltered called', { 
@@ -922,7 +927,7 @@ const CategoryPage = () => {
                   </span>
                 </div>
                 <button
-                  onClick={handleIngredientFilterClose}
+                  onClick={clearIngredientFilter}
                   className="px-3 py-1 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
                 >
                   Wyczyść filtr
@@ -971,7 +976,7 @@ const CategoryPage = () => {
         selectedIngredient={selectedIngredient}
         position="left"
         compact={true}
-        onClear={handleIngredientFilterClose}
+        onClear={clearIngredientFilter}
       />
 
       <Footer />
