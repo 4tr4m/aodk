@@ -42,7 +42,7 @@ const BlogPage = () => {
         title="Blog - Autyzm od Kuchni | Wiedza o diecie eliminacyjnej w autyzmie"
         description="Artykuły, porady i przemyślenia dotyczące diety eliminacyjnej w autyzmie. Dowiedz się więcej o diecie bez glutenu, nabiału i cukru."
         keywords="blog o autyzmie, dieta w autyzmie, blog dieta eliminacyjna, porady, autyzm a dieta, dieta bezglutenowa, zaburzenia neurorozwojowe"
-        canonical="https://autyzmkuchni.pl/blog"
+        canonical="https://www.autyzmodkuchni.pl/blog"
       />
       
       <div className="relative mb-8">

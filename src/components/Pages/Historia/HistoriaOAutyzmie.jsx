@@ -26,7 +26,7 @@ const HistoriaOAutyzmie = () => {
         title="O Autyzmie - Autyzm od Kuchni | Historia i doświadczenia"
         description="Poznaj historię Huberta i jego drogi z autyzmem. Dowiedz się, jak dieta i determinacja mogą wspierać rozwój dziecka ze spektrum."
         keywords="autyzm, spektrum autyzmu, dieta przy autyzmie, rozwój dziecka z autyzmem"
-        canonical="https://autyzmkuchni.pl/o-autyzmie"
+        canonical="https://www.autyzmodkuchni.pl/o-autyzmie"
       />
       <div className="relative mb-8">
         <CategoryHeader showLogo={false} />

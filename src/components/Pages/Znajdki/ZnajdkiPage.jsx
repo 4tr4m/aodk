@@ -103,7 +103,7 @@ const ZnajdkiPage = () => {
         title="Znajdki - Autyzm od Kuchni | Polecane produkty bezglutenowe i dietetyczne"
         description="Odkryj sprawdzone produkty spożywcze dostępne w sklepach, które pasują do diety eliminacyjnej - bez glutenu, nabiału i cukru."
         keywords="zdrowa żywność, produkty bezglutenowe, bez nabiału, bez cukru, dieta eliminacyjna, autyzm, produkty polecane"
-        canonical="https://autyzmkuchni.pl/znajdki"
+        canonical="https://www.autyzmodkuchni.pl/znajdki"
       />
       <div className="relative mb-8">
         <CategoryHeader showLogo={false} />

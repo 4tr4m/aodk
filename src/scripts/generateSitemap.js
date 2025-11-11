@@ -7,7 +7,7 @@ const { kuchniaCategories } = require('../Data/category-data');
 const { blogPosts } = require('../Data/blog-data');
 
 // Base URL
-const BASE_URL = 'https://autyzmkuchni.pl';
+const BASE_URL = 'https://www.autyzmodkuchni.pl';
 
 // Current date in YYYY-MM-DD format
 const currentDate = new Date().toISOString().split('T')[0];

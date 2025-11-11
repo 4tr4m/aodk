@@ -31,6 +31,212 @@ const RecipePage = () => {
   
   const { recipe, loading, error, isInWishlist, setIsInWishlist } = useRecipeData(recipeId);
   const { isStickyIngredientsVisible, ingredientsRef } = useRecipeScrollDetection(recipe, loading);
+
+  // Helper function to convert category to slug
+  const getCategorySlug = (category) => {
+    if (!category) return '';
+    const categoryMap = {
+      'OBIADY': 'obiady',
+      'ZUPY': 'zupy',
+      'CHLEBY': 'chleby',
+      'SMAROWIDŁA': 'smarowidla',
+      'DESERY': 'desery',
+      'BABECZKI i MUFFINY': 'babeczki-i-muffiny',
+      'CIASTA': 'ciasta',
+      'CIASTKA': 'ciastka',
+      'SMOOTHIE': 'smoothie',
+      'INNE': 'inne',
+      'ŚWIĘTA': 'swieta',
+      'SNAKI': 'snaki',
+      'SAŁATKI/SUROWKI': 'salatki-surowki',
+      'LUNCH': 'lunch'
+    };
+    return categoryMap[category] || category.toString().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  };
+
+  // Generate keywords for recipe with new important keywords
+  const generateRecipeKeywords = (recipe) => {
+    if (!recipe) return '';
+    
+    const baseKeywords = [
+      'dieta bezglutenowa autyzm', // Najważniejsze - na początku
+      'dieta autyzm',
+      'autyzm leczenie',
+      recipe.name,
+      'przepis bez glutenu',
+      'przepis bez nabiału',
+      'przepis bez cukru',
+      recipe.category ? recipe.category.toLowerCase() : '',
+      'dieta eliminacyjna',
+      'autyzm',
+      'przepisy dla autyzmu',
+      'bezglutenowe przepisy',
+      'bezmleczne dania',
+      'zdrowe przepisy',
+      'przepisy wspierające autyzm'
+    ].filter(Boolean);
+    
+    return baseKeywords.join(', ');
+  };
+
+  // Generate Schema.org Recipe structured data
+  const generateRecipeSchema = (recipe) => {
+    if (!recipe) return null;
+
+    const baseUrl = "https://www.autyzmodkuchni.pl";
+    
+    // Process ingredients - clean HTML and extract text
+    const { normalized } = processIngredientsUtil(recipe.ingredients);
+    const recipeIngredients = (normalized || []).map(ing => {
+      // Remove HTML tags and {LINK} placeholders for Schema.org
+      return ing
+        .replace(/<[^>]*>/g, '') // Remove HTML tags
+        .replace(/\{LINK\}/g, 'uniwersalnej mieszanki mąk bezglutenowych')
+        .trim();
+    }).filter(Boolean);
+    
+    // Process preparation steps
+    let recipeInstructions = [];
+    if (recipe.preparation) {
+      const cleanPreparation = recipe.preparation.replace(/zdrowego.*$/gis, '').trim();
+      const lines = cleanPreparation
+        .split(/\r?\n/)
+        .map(l => l.trim())
+        .filter(Boolean);
+      
+      let stepCounter = 1;
+      let currentStepText = '';
+      
+      lines.forEach(line => {
+        // Skip "Na" headers
+        if (line.match(/^Na\s+[^:]+:/i)) {
+          return;
+        }
+        
+        // Check if line starts with a number (new step)
+        if (/^\d+\./.test(line)) {
+          // Save previous step if exists
+          if (currentStepText.trim()) {
+            recipeInstructions.push({
+              "@type": "HowToStep",
+              "position": stepCounter++,
+              "text": currentStepText.trim()
+            });
+          }
+          // Start new step
+          currentStepText = line.replace(/^\d+\.\s*/, '').trim();
+        } else if (line.length > 0) {
+          // Continue current step
+          if (currentStepText) {
+            currentStepText += ' ' + line;
+          } else {
+            currentStepText = line;
+          }
+        }
+      });
+      
+      // Add last step
+      if (currentStepText.trim()) {
+        recipeInstructions.push({
+          "@type": "HowToStep",
+          "position": stepCounter,
+          "text": currentStepText.trim()
+        });
+      }
+      
+      // Clean HTML from instructions
+      recipeInstructions = recipeInstructions.map(step => ({
+        ...step,
+        text: step.text
+          .replace(/<[^>]*>/g, '') // Remove HTML tags
+          .replace(/\{LINK\}/g, 'uniwersalnej mieszanki mąk bezglutenowych')
+          .trim()
+      }));
+    }
+
+    // Get absolute image URL
+    const getAbsoluteImageUrl = (imagePath) => {
+      if (!imagePath) return `${baseUrl}/img/logo_bckgd.png`;
+      if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        return imagePath;
+      }
+      if (imagePath.startsWith('/')) {
+        return `${baseUrl}${imagePath}`;
+      }
+      return `${baseUrl}/img/${imagePath}`;
+    };
+
+    const recipeSchema = {
+      "@context": "https://schema.org",
+      "@type": "Recipe",
+      "name": recipe.name,
+      "description": recipe.shortdesc || recipe.description || "",
+      "image": getAbsoluteImageUrl(recipe.image),
+      "recipeCategory": recipe.category || "",
+      "recipeCuisine": "Polish",
+      "recipeIngredient": recipeIngredients,
+      "author": {
+        "@type": "Organization",
+        "name": "Autyzm od Kuchni"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Autyzm od Kuchni",
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${baseUrl}/img/logo_bckgd.png`
+        }
+      },
+      "url": typeof window !== 'undefined' ? window.location.href : `${baseUrl}/przepis/${recipe.id}`
+    };
+
+    // Only add recipeInstructions if we have steps
+    if (recipeInstructions.length > 0) {
+      recipeSchema.recipeInstructions = recipeInstructions;
+    }
+
+    return recipeSchema;
+  };
+
+  // Generate BreadcrumbList structured data
+  const generateBreadcrumbSchema = (recipe) => {
+    if (!recipe) return null;
+
+    const baseUrl = "https://www.autyzmodkuchni.pl";
+    const categorySlug = getCategorySlug(recipe.category);
+    const categoryName = recipe.category || 'Przepisy';
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Strona główna",
+          "item": `${baseUrl}/`
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Kuchnia",
+          "item": `${baseUrl}/kuchnia`
+        },
+        ...(categorySlug ? [{
+          "@type": "ListItem",
+          "position": 3,
+          "name": categoryName,
+          "item": `${baseUrl}/kuchnia/${categorySlug}`
+        }] : []),
+        {
+          "@type": "ListItem",
+          "position": categorySlug ? 4 : 3,
+          "name": recipe.name,
+          "item": typeof window !== 'undefined' ? window.location.href : `${baseUrl}/przepis/${recipe.id}`
+        }
+      ]
+    };
+  };
   
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -178,13 +384,24 @@ const RecipePage = () => {
     );
   }
 
+  // Generate SEO data
+  const recipeKeywords = generateRecipeKeywords(recipe);
+  const recipeSchema = generateRecipeSchema(recipe);
+  const breadcrumbSchema = generateBreadcrumbSchema(recipe);
+  
+  // Combine structured data
+  const structuredData = [recipeSchema, breadcrumbSchema].filter(Boolean);
+
   return (
     <>
       <SEO 
-        title={`${recipe.name} - Autyzm od kuchni`}
-        description={recipe.shortdesc}
-        image={recipe.image}
-        url={window.location.href}
+        title={`${recipe.name} - Przepis bez glutenu, nabiału i cukru | Autyzm od Kuchni`}
+        description={recipe.shortdesc || `${recipe.name} - przepis bez glutenu, nabiału i cukru idealny dla osób z autyzmem.`}
+        keywords={recipeKeywords}
+        ogType="recipe"
+        ogImage={recipe.image}
+        canonical={typeof window !== 'undefined' ? window.location.href : undefined}
+        structuredData={structuredData}
       />
       
       <div className="min-h-screen bg-gray-50">

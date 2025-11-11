@@ -7,13 +7,14 @@ const SEO = ({
   keywords, 
   author = "Autyzm od Kuchni",
   ogType = "website",
-  ogImage = "/img/logo.png",
-  canonical
+  ogImage = "/img/logo_bckgd.png",
+  canonical,
+  structuredData // Additional structured data (Recipe, BreadcrumbList, etc.)
 }) => {
   // Default title and description if not provided
   const defaultTitle = "Autyzm od Kuchni - Dieta eliminacyjna bez glutenu, nabiału i cukru";
   const defaultDescription = "Odkryj jak dieta eliminacyjna bez glutenu, nabiału i cukru może wspierać funkcjonowanie osób z autyzmem i zaburzeniami neurorozwojowymi.";
-  const defaultKeywords = "autyzm, dieta eliminacyjna, dieta w autyzmie, bez glutenu, bez nabiału, bez cukru, przepisy dla autyzmu, dieta bezglutenowa, zaburzenia neurorozwojowe";
+  const defaultKeywords = "dieta bezglutenowa autyzm, dieta autyzm, autyzm leczenie, autyzm, dieta eliminacyjna, dieta w autyzmie, bez glutenu, bez nabiału, bez cukru, przepisy dla autyzmu, dieta bezglutenowa, zaburzenia neurorozwojowe";
   
   // Base URL for absolute image URLs (required by Google)
   const baseUrl = "https://www.autyzmodkuchni.pl";
@@ -24,12 +25,12 @@ const SEO = ({
   const metaKeywords = keywords || defaultKeywords;
   
   // Current URL for canonical link if not provided
-  const metaCanonical = canonical || typeof window !== 'undefined' ? window.location.href : '';
+  const metaCanonical = canonical || (typeof window !== 'undefined' ? window.location.href : '');
   
   // Convert relative ogImage path to absolute URL if needed
   // Google requires absolute URLs for og:image and other social meta tags
   const getAbsoluteImageUrl = (imagePath) => {
-    if (!imagePath) return `${baseUrl}/img/logo.png`;
+    if (!imagePath) return `${baseUrl}/img/logo_bckgd.png`;
     // Already absolute URL
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath;
@@ -47,7 +48,7 @@ const SEO = ({
   // Double-check: ensure we never output relative URLs
   const finalOgImage = absoluteOgImage.startsWith('http') 
     ? absoluteOgImage 
-    : `${baseUrl}/img/logo.png`;
+    : `${baseUrl}/img/logo_bckgd.png`;
 
   // Structured data for organization and logo
   const organizationStructuredData = {
@@ -57,7 +58,7 @@ const SEO = ({
     "url": "https://www.autyzmodkuchni.pl",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://www.autyzmodkuchni.pl/img/logo.png",
+      "url": "https://www.autyzmodkuchni.pl/img/logo_bckgd.png",
       "width": 200,
       "height": 200
     },
@@ -94,10 +95,22 @@ const SEO = ({
       {/* Canonical Link */}
       {metaCanonical && <link rel="canonical" href={metaCanonical} />}
       
-      {/* Structured Data for Logo */}
+      {/* Structured Data for Organization */}
       <script type="application/ld+json">
         {JSON.stringify(organizationStructuredData)}
       </script>
+      
+      {/* Additional Structured Data (Recipe, BreadcrumbList, etc.) */}
+      {structuredData && Array.isArray(structuredData) && structuredData.map((data, index) => (
+        <script key={index} type="application/ld+json">
+          {JSON.stringify(data)}
+        </script>
+      ))}
+      {structuredData && !Array.isArray(structuredData) && (
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+      )}
     </Helmet>
   );
 };

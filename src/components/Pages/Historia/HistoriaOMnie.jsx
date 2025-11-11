@@ -13,7 +13,7 @@ const HistoriaOMnie = () => {
         title="O Mnie - Autyzm od Kuchni | Moja historia i pasja do zdrowego gotowania"
         description="Poznaj moją drogę do zdrowego żywienia i jak dieta eliminacyjna pomogła mojemu synowi z autyzmem. Odkryj zasady, które stosuję w mojej kuchni."
         keywords="autyzm, dieta eliminacyjna, zdrowe gotowanie, bezglutenowe, bez nabiału, bez cukru"
-        canonical="https://autyzmkuchni.pl/o-mnie"
+        canonical="https://www.autyzmodkuchni.pl/o-mnie"
       />
       <div className="relative mb-8">
         <CategoryHeader showLogo={false} />

@@ -46,7 +46,7 @@ const ArticlePage = () => {
         keywords={`${blogPost.category}, autyzm, dieta eliminacyjna, ${blogPost.tags?.join(', ') || ''}`}
         ogType="article"
         ogImage={blogPost.image}
-        canonical={`https://autyzmkuchni.pl/blog/${slug}`}
+        canonical={`https://www.autyzmodkuchni.pl/blog/${slug}`}
       />
       {/* Mini hero section with TopNavBar */}
       <div className="relative">

@@ -256,7 +256,7 @@ const CategoryPage = () => {
         title={seoData.title}
         description={seoData.description}
         keywords={seoData.keywords}
-        canonical={`https://autyzmkuchni.pl/kuchnia${categorySlug ? `/${categorySlug}` : ''}`}
+        canonical={`https://www.autyzmodkuchni.pl/kuchnia${categorySlug ? `/${categorySlug}` : ''}`}
       />
       <div className="relative mb-8">
         <CategoryHeader showLogo={false} />
