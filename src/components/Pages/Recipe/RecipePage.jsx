@@ -406,7 +406,7 @@ const RecipePage = () => {
       
       <div className="min-h-screen bg-gray-50">
         <div className="relative mb-8">
-          <CategoryHeader />
+          <CategoryHeader showLogo={false} />
           <div className="absolute top-0 left-0 w-full">
             <TopNavBar />
           </div>

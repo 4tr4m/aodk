@@ -82,7 +82,7 @@ const CategoryHeader = ({ showLogo = true }) => {
               to="/"
               className="transform transition-all duration-300 hover:scale-105 hover:-rotate-2 relative group"
             >
-              <div className="absolute inset-0 bg-black/20 rounded-full blur-xl scale-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute inset-0 bg-black/20 rounded-full blur-xl scale-90 pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300"></div>
               <img 
                 src="/img/logo.png" 
                 alt="Autyzm od kuchni" 
@@ -92,7 +92,7 @@ const CategoryHeader = ({ showLogo = true }) => {
           )}
 
           {/* Navigation icons on the right - optional */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 hidden">
             <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center cursor-pointer hover:bg-white/20 transition-all duration-300">
               <Link to="/search" className="text-gray-100/90 hover:text-white">
                 {/* You can add icons here if needed */}

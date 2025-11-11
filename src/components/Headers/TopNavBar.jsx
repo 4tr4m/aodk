@@ -209,8 +209,8 @@ const TopNavBar = () => {
             className="transform transition-all duration-300 hover:scale-105 hover:-rotate-2 relative group mr-6"
             style={{ display: 'flex', alignItems: 'center', height: '72px' }}
           >
-            {/* Hover effect background glow */}
-            <div className="absolute inset-0 bg-black/20 rounded-full blur-xl scale-90 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            {/* Hover effect background glow - hidden by default, only visible on hover */}
+            <div className="absolute inset-0 bg-black/20 rounded-full blur-xl scale-90 pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300"></div>
             {/* Main logo image */}
             <img 
               src="/img/logo.png" 
