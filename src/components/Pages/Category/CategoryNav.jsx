@@ -48,6 +48,7 @@
 import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaSearch } from 'react-icons/fa';
+import { formatCategoryName } from '../../../utils/categoryUtils';
 
 const CategoryNav = ({ categories, currentSlug, onCategoryClick, onSearchToggle }) => {
   const scrollRef = useRef(null);
@@ -218,25 +219,6 @@ const CategoryNav = ({ categories, currentSlug, onCategoryClick, onSearchToggle 
             {categories.map((category, index) => {
               const categorySlug = category.link.split('/').pop();
               const isActive = categorySlug === currentSlug;
-              
-              // Format category name - capitalize first letter, rest lowercase
-              const formatCategoryName = (name) => {
-                if (!name) return '';
-                const lowercaseWords = ['i', 'a', 'w', 'z', 'na', 'do', 'od', 'po', 'przy', 'bez', 'dla', 'o', 'u', 'ze', 'we', 'ku', 'przeciw', 'między', 'nad', 'pod', 'przed', 'za', 'obok', 'wśród', 'dzięki', 'wobec', 'względem'];
-                
-                return name
-                  .split(' ')
-                  .map((word, idx) => {
-                    if (idx === 0) {
-                      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-                    }
-                    if (lowercaseWords.includes(word.toLowerCase())) {
-                      return word.toLowerCase();
-                    }
-                    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-                  })
-                  .join(' ');
-              };
               
               return (
                 <motion.button

@@ -1,10 +1,17 @@
 import React from 'react';
+import { FaLeaf, FaHeart } from 'react-icons/fa';
 import { replaceLinkPlaceholder } from '../../../utils/recipeUtils';
 
 const RecipePreparation = ({ preparation }) => {
   if (!preparation) return null;
 
-  const lines = preparation
+  // Filter out any "Zdrowego" text that might come from database
+  const cleanPreparation = preparation
+    .replace(/\s*Zdrowego!?\s*[🌱✨💚]*/gi, '')
+    .replace(/\s*Zdrowego\s*[🌱✨💚]*/gi, '')
+    .trim();
+
+  const lines = cleanPreparation
     .split(/\r?\n/)
     .map(l => l.trim())
     .filter(Boolean);
@@ -43,6 +50,24 @@ const RecipePreparation = ({ preparation }) => {
             )}
           </div>
         ))}
+      </div>
+      
+      {/* Hardcoded Zdrowego sign with nice UX/UI */}
+      <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="flex flex-col items-center justify-center py-6 px-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
+          <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap justify-center">
+            <FaLeaf className="text-green-600 text-xl sm:text-2xl animate-pulse" />
+            <span className="text-green-500 text-lg sm:text-xl">✨</span>
+            <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 font-['Playfair_Display']">
+              Zdrowego!
+            </h3>
+            <span className="text-green-500 text-lg sm:text-xl">✨</span>
+            <FaHeart className="text-red-400 text-xl sm:text-2xl animate-pulse" style={{ animationDelay: '0.5s' }} />
+          </div>
+          <p className="text-sm sm:text-base text-gray-600 mt-2 text-center">
+            Smacznego i zdrowego gotowania! 🌱
+          </p>
+        </div>
       </div>
     </div>
   );
