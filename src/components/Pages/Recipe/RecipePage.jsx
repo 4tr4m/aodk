@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useCart } from '../../../context/CartContext';
 import ProductBaseIngredients from './ProductBaseIngredients';
 import StickyIngredientsSidebar from './StickyIngredientsSidebar';
+import StickyIngredientsSidebarMobile from './StickyIngredientsSidebarMobile';
 import RecipeHeader from './RecipeHeader';
 import RecipeHero from './RecipeHero';
 import RecipeDescription from './RecipeDescription';
@@ -36,6 +37,7 @@ const RecipePage = () => {
   const [isFullDescExpanded, setIsFullDescExpanded] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [isStickyIngredientsOpen, setIsStickyIngredientsOpen] = useState(false);
+  const [isStickyIngredientsOpenMobile, setIsStickyIngredientsOpenMobile] = useState(false);
   const [isBaseSpicesExpanded, setIsBaseSpicesExpanded] = useState(false);
   
   // Initialize isDesktop correctly - check on mount
@@ -273,6 +275,20 @@ const RecipePage = () => {
           isOpen={isStickyIngredientsOpen}
           onOpen={() => setIsStickyIngredientsOpen(true)}
           onClose={() => setIsStickyIngredientsOpen(false)}
+          ingredients={recipe.ingredients}
+          processIngredients={processIngredients}
+          replaceLinkPlaceholder={replaceLinkPlaceholder}
+          isNewsletterModalOpen={isNewsletterModalOpen}
+        />
+      )}
+
+      {/* Only render sticky sidebar on mobile */}
+      {recipe?.ingredients && !isDesktop && (
+        <StickyIngredientsSidebarMobile
+          isVisible={isStickyIngredientsVisible}
+          isOpen={isStickyIngredientsOpenMobile}
+          onOpen={() => setIsStickyIngredientsOpenMobile(true)}
+          onClose={() => setIsStickyIngredientsOpenMobile(false)}
           ingredients={recipe.ingredients}
           processIngredients={processIngredients}
           replaceLinkPlaceholder={replaceLinkPlaceholder}
