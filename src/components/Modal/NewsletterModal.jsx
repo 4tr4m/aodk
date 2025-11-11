@@ -1,3 +1,87 @@
+/**
+ * NewsletterModal Component - Newsletter subscription modal for user email collection
+ * 
+ * PURPOSE:
+ * This modal displays a newsletter subscription form that allows users to sign up for email
+ * notifications about new recipes and exclusive tips. It integrates with EmailJS service to
+ * send subscription data via email. The modal appears automatically based on user behavior
+ * or can be triggered manually from various components.
+ * 
+ * USAGE LOCATIONS:
+ * - src/components/Pages/Recipe/RecipePage.jsx
+ *    * Automatically opens after user opens 5 different recipes (tracked in localStorage)
+ *    * Automatically opens for "mieszanka-2" recipe (special promotion)
+ *    * Can be opened manually via RecipeNewsletterCTA component
+ * - src/components/Pages/Category/CategoryPage.jsx
+ *    * Can be triggered from links in category descriptions (e.g., "optymalną domową mieszankę")
+ *    * Opens with pending navigation to specific recipe after subscription
+ * 
+ * HOW IT WORKS:
+ * 1. Opens/closes via props: isOpen (boolean), onClose (function), onSuccess (function)
+ * 2. Collects user data:
+ *    * Name (required text input)
+ *    * Email address (required email input)
+ * 3. Submits data via EmailJS service:
+ *    * Uses EmailJS Public Key, Service ID, and Template ID
+ *    * Sends subscription notification email to website owner
+ * 4. Success handling:
+ *    * Shows success message with checkmark icon
+ *    * Calls onSuccess callback after 2 seconds
+ *    * Stores subscription status in localStorage to prevent repeated prompts
+ * 5. Error handling:
+ *    * Displays user-friendly error messages if submission fails
+ *    * Allows retry without closing modal
+ * 
+ * FEATURES:
+ *   - Smooth animations using framer-motion (spring animations, fade transitions)
+ *   - Responsive design (mobile and desktop layouts)
+ *   - Decorative animated background elements (green gradient circles)
+ *   - Form validation (required fields, email format)
+ *   - Loading states (disabled inputs during submission, spinner animation)
+ *   - Success state with animated checkmark
+ *   - Error state with clear error messages
+ *   - Click outside to close functionality
+ *   - Keyboard accessible close button
+ *   - High z-index (20000) to appear above all other elements including sidebar buttons
+ *   - Privacy note about email consent
+ *   - Prevents closing during form submission
+ * 
+ * CONTENT DISPLAYED:
+ *   - Welcome message: "Dołącz do naszej społeczności!"
+ *   - Description about recipe notifications and exclusive tips
+ *   - Form fields: Name and Email inputs
+ *   - Submit button with loading state
+ *   - Success message: "Dziękujemy za zapis!"
+ *   - Privacy consent note
+ * 
+ * PROPS:
+ *   - isOpen: boolean - Controls modal visibility
+ *   - onClose: function - Function called when modal is closed (click outside, close button, or ESC)
+ *   - onSuccess: function (optional) - Function called after successful subscription (2 second delay)
+ * 
+ * LOCAL STORAGE:
+ *   - 'newsletter_subscribed': 'true' - Set by parent components to prevent repeated prompts
+ * 
+ * EMAILJS INTEGRATION:
+ *   - Public Key: "0f8Jce-Gsw4GbjCQ_"
+ *   - Service ID: "service_m4uai4d"
+ *   - Template ID: "template_km1j8qq"
+ *   - Sends: title, name, email, message, timestamp
+ * 
+ * ANIMATIONS:
+ *   - Backdrop fade in/out (opacity transition)
+ *   - Modal spring animation (scale, translateY)
+ *   - Success message scale animation
+ *   - Close button hover/tap animations (scale, rotate)
+ *   - Submit button hover/tap animations
+ *   - Decorative background elements (static blur effects)
+ * 
+ * Z-INDEX HIERARCHY:
+ *   - Modal backdrop: z-[20000] (highest - appears above everything)
+ *   - StickyIngredientsSidebar button: z-[10000] (when modal closed) or z-[5000] (when modal open)
+ *   - Other modals: z-[100] or z-50
+ */
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaEnvelope, FaCheckCircle } from 'react-icons/fa';
