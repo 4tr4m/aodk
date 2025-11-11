@@ -5,11 +5,9 @@ import { replaceLinkPlaceholder } from '../../../utils/recipeUtils';
 const RecipePreparation = ({ preparation }) => {
   if (!preparation) return null;
 
-  // Filter out any "Zdrowego" text that might come from database
-  const cleanPreparation = preparation
-    .replace(/\s*Zdrowego!?\s*[🌱✨💚]*/gi, '')
-    .replace(/\s*Zdrowego\s*[🌱✨💚]*/gi, '')
-    .trim();
+  // Filter out "Zdrowego" and everything after it from database (case-insensitive)
+  // This removes everything from "Zdrowego" onwards, including any special characters, emojis, etc.
+  const cleanPreparation = preparation.replace(/zdrowego.*$/gis, '').trim();
 
   const lines = cleanPreparation
     .split(/\r?\n/)
@@ -53,7 +51,7 @@ const RecipePreparation = ({ preparation }) => {
       </div>
       
       {/* Hardcoded Zdrowego sign with nice UX/UI */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
+      <div className="mt-8">
         <div className="flex flex-col items-center justify-center py-6 px-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-100">
           <div className="flex items-center gap-2 sm:gap-3 mb-2 flex-wrap justify-center">
             <FaLeaf className="text-green-600 text-xl sm:text-2xl animate-pulse" />
