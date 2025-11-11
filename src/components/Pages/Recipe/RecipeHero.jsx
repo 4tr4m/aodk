@@ -13,6 +13,15 @@ const RecipeHero = ({ recipe, onImageClick }) => {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
       
+      {/* Category tag in top left corner */}
+      {recipe.category && (
+        <div className="absolute top-4 left-4 z-10">
+          <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-green-800 rounded-full text-xs sm:text-sm font-semibold shadow-lg border border-green-200/50">
+            {recipe.category}
+          </span>
+        </div>
+      )}
+      
       <div className="absolute bottom-4 left-4 right-4 text-white">
         <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 font-['Playfair_Display']">
           {recipe.name}

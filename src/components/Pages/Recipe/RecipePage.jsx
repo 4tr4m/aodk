@@ -455,17 +455,6 @@ const RecipePage = () => {
 
               <RecipePreparation preparation={recipe.preparation} />
 
-              {recipe.category && (
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500">Kategoria:</span>
-                    <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                      {recipe.category}
-                    </span>
-                  </div>
-                </div>
-              )}
-
               <ProductBaseIngredients recipe={recipe} />
 
               <RecipeBasesSpices
