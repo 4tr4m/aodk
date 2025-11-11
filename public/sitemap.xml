@@ -1,145 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://autyzmkuchni.pl/</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kuchnia</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/kuchnia</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/blog</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/blog</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kontakt</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/kontakt</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/kuchnia/obiady</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/kuchnia/zupy</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/kuchnia/chleby</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/kuchnia/smarowidla</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/kuchnia/babeczki-muffiny</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/kuchnia/ciasta</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/kuchnia/ciastka</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
+    <loc>https://www.autyzmodkuchni.pl/historia/o-mnie</loc>
+    <lastmod>2025-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.autyzmodkuchni.pl/historia/o-autyzmie</loc>
+    <lastmod>2025-11-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.autyzmodkuchni.pl/znajdki</loc>
+    <lastmod>2025-11-11</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://autyzmkuchni.pl/kuchnia/undefined</loc>
-    <lastmod>2025-04-29</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://autyzmkuchni.pl/blog/jak-rozpoczac-diete-eliminacyjna</loc>
+    <loc>https://www.autyzmodkuchni.pl/blog/jak-rozpoczac-diete-eliminacyjna</loc>
     <lastmod>2024-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/blog/bezglutenowe-sniadania</loc>
+    <loc>https://www.autyzmodkuchni.pl/blog/bezglutenowe-sniadania</loc>
     <lastmod>2024-03-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/blog/suplementacja-dieta-eliminacyjna</loc>
+    <loc>https://www.autyzmodkuchni.pl/blog/suplementacja-dieta-eliminacyjna</loc>
     <lastmod>2024-03-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/blog/wybiorczy-sposob-jedzenia</loc>
+    <loc>https://www.autyzmodkuchni.pl/blog/wybiorczy-sposob-jedzenia</loc>
     <lastmod>2024-03-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/blog/planowanie-posilkow</loc>
+    <loc>https://www.autyzmodkuchni.pl/blog/planowanie-posilkow</loc>
     <lastmod>2024-02-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://autyzmkuchni.pl/blog/czytanie-etykiet</loc>
+    <loc>https://www.autyzmodkuchni.pl/blog/czytanie-etykiet</loc>
     <lastmod>2024-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

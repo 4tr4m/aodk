@@ -4,6 +4,7 @@ import emailjs from '@emailjs/browser';
 import TopNavBar from '../../Headers/TopNavBar';
 import CategoryHeader from '../Category/CategoryHeader';
 import Footer from '../../Footer/Footer';
+import SEO from '../../SEO/SEO';
 import { FaFacebookF, FaInstagram, FaTiktok } from 'react-icons/fa';
 
 // Replace these values with your EmailJS credentials
@@ -68,6 +69,20 @@ const ContactPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO 
+        title="Kontakt - Autyzm od Kuchni | Skontaktuj się z nami"
+        description="Masz pytania dotyczące diety eliminacyjnej w autyzmie? Skontaktuj się z nami. Chętnie odpowiemy na Twoje pytania i pomożemy w drodze do zdrowego żywienia."
+        keywords="kontakt, autyzm, dieta eliminacyjna, porady żywieniowe, pomoc"
+        canonical="https://www.autyzmodkuchni.pl/kontakt"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.autyzmodkuchni.pl/" },
+            { "@type": "ListItem", "position": 2, "name": "Kontakt", "item": "https://www.autyzmodkuchni.pl/kontakt" }
+          ]
+        }}
+      />
       <div className="relative mb-8">
         <CategoryHeader showLogo={false} />
         <div className="absolute top-0 left-0 w-full">

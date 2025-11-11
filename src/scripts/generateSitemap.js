@@ -38,14 +38,41 @@ const generateSitemap = () => {
   // Add category pages
   if (kuchniaCategories && kuchniaCategories.mainCategories) {
     kuchniaCategories.mainCategories.forEach(category => {
-      sitemap += '  <url>\n';
-      sitemap += `    <loc>${BASE_URL}/kuchnia/${category.slug}</loc>\n`;
-      sitemap += `    <lastmod>${currentDate}</lastmod>\n`;
-      sitemap += '    <changefreq>weekly</changefreq>\n';
-      sitemap += '    <priority>0.8</priority>\n';
-      sitemap += '  </url>\n';
+      // Extract slug from link (e.g., '/kuchnia/obiady' -> 'obiady')
+      const slug = category.link ? category.link.replace('/kuchnia/', '') : category.slug;
+      if (slug && slug !== 'undefined') {
+        sitemap += '  <url>\n';
+        sitemap += `    <loc>${BASE_URL}/kuchnia/${slug}</loc>\n`;
+        sitemap += `    <lastmod>${currentDate}</lastmod>\n`;
+        sitemap += '    <changefreq>weekly</changefreq>\n';
+        sitemap += '    <priority>0.8</priority>\n';
+        sitemap += '  </url>\n';
+      }
     });
   }
+  
+  // Add additional static pages
+  const additionalPages = [
+    { url: '/historia/o-mnie', priority: 0.7, changefreq: 'monthly' },
+    { url: '/historia/o-autyzmie', priority: 0.7, changefreq: 'monthly' },
+    { url: '/znajdki', priority: 0.8, changefreq: 'weekly' },
+  ];
+  
+  additionalPages.forEach(page => {
+    sitemap += '  <url>\n';
+    sitemap += `    <loc>${BASE_URL}${page.url}</loc>\n`;
+    sitemap += `    <lastmod>${currentDate}</lastmod>\n`;
+    sitemap += `    <changefreq>${page.changefreq}</changefreq>\n`;
+    sitemap += `    <priority>${page.priority}</priority>\n`;
+    sitemap += '  </url>\n';
+  });
+  
+  // Note: Recipes from database should be added dynamically
+  // For now, recipes are indexed via their category pages
+  // If you need individual recipe URLs in sitemap, you'll need to:
+  // 1. Connect to Supabase in this script
+  // 2. Fetch all recipes
+  // 3. Add them with format: /przepis/{recipe.id}
   
   // Add blog posts
   if (blogPosts) {

@@ -14,6 +14,14 @@ const HistoriaOMnie = () => {
         description="Poznaj moją drogę do zdrowego żywienia i jak dieta eliminacyjna pomogła mojemu synowi z autyzmem. Odkryj zasady, które stosuję w mojej kuchni."
         keywords="autyzm, dieta eliminacyjna, zdrowe gotowanie, bezglutenowe, bez nabiału, bez cukru"
         canonical="https://www.autyzmodkuchni.pl/o-mnie"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.autyzmodkuchni.pl/" },
+            { "@type": "ListItem", "position": 2, "name": "O Mnie", "item": "https://www.autyzmodkuchni.pl/o-mnie" }
+          ]
+        }}
       />
       <div className="relative mb-8">
         <CategoryHeader showLogo={false} />

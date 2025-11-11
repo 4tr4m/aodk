@@ -62,6 +62,7 @@ import CategoryNav from '../Category/CategoryNav';
 import { kuchniaCategories } from '../../../Data/category-data';
 import { motion, AnimatePresence } from 'framer-motion';
 import IngredientFilter from '../../UI/IngredientFilter';
+import SEO from '../../SEO/SEO';
 
 const SearchPage = () => {
   const location = useLocation();
@@ -314,6 +315,13 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      <SEO 
+        title="Wyszukiwarka przepisów - Autyzm od Kuchni"
+        description="Wyszukaj przepisy bez glutenu, nabiału i cukru. Znajdź idealne przepisy dla diety eliminacyjnej w autyzmie."
+        keywords="wyszukiwarka przepisów, przepisy bez glutenu, dieta eliminacyjna, autyzm"
+        canonical="https://www.autyzmodkuchni.pl/search"
+        robots="noindex, nofollow"
+      />
       <div className="relative mb-8">
         <CategoryHeader />
         <div className="absolute top-0 left-0 w-full">

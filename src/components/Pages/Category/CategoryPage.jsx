@@ -207,6 +207,28 @@ const CategoryPage = () => {
 
   const seoData = getSEOData();
 
+  // Breadcrumbs structured data for Category
+  const categoryBreadcrumbs = (() => {
+    const baseUrl = "https://www.autyzmodkuchni.pl";
+    const items = [
+      { "@type": "ListItem", position: 1, name: "Strona główna", item: `${baseUrl}/` },
+      { "@type": "ListItem", position: 2, name: "Kuchnia", item: `${baseUrl}/kuchnia` }
+    ];
+    if (categorySlug) {
+      items.push({
+        "@type": "ListItem",
+        position: 3,
+        name: currentCategory?.label || smartCapitalize(categorySlug),
+        item: `${baseUrl}/kuchnia/${categorySlug}`
+      });
+    }
+    return ({
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": items
+    });
+  })();
+
   const handleCategoryClick = useCallback((categoryLink) => {
     if (location.pathname !== categoryLink) {
       // When navigating to a different category, scroll to top
@@ -257,6 +279,7 @@ const CategoryPage = () => {
         description={seoData.description}
         keywords={seoData.keywords}
         canonical={`https://www.autyzmodkuchni.pl/kuchnia${categorySlug ? `/${categorySlug}` : ''}`}
+        structuredData={categoryBreadcrumbs}
       />
       <div className="relative mb-8">
         <CategoryHeader showLogo={false} />

@@ -78,16 +78,15 @@ const StickyIngredientsSidebarMobile = ({
         <motion.button
           key="sticky-button-mobile"
           onClick={onOpen}
-          className={`fixed bottom-6 right-4 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group flex ${isNewsletterModalOpen ? 'z-[5000]' : 'z-[10000]'}`}
+          className={`fixed top-1/2 left-1/2 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group flex ${isNewsletterModalOpen ? 'z-[5000]' : 'z-[10000]'}`}
           style={{ 
             willChange: 'transform, opacity',
-            transform: 'translateZ(0)',
             backfaceVisibility: 'hidden',
             isolation: 'isolate'
           }}
-          initial={{ opacity: 0, y: 100, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 100, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.9, x: '-50%', y: '-50%' }}
+          animate={{ opacity: 1, scale: 1, x: '-50%', y: '-50%' }}
+          exit={{ opacity: 0, scale: 0.9, x: '-50%', y: '-50%' }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}

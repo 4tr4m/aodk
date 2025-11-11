@@ -9,6 +9,7 @@ const SEO = ({
   ogType = "website",
   ogImage = "/img/logo_bckgd.png",
   canonical,
+  robots, // robots meta tag (e.g., "noindex, nofollow")
   structuredData // Additional structured data (Recipe, BreadcrumbList, etc.)
 }) => {
   // Default title and description if not provided
@@ -68,12 +69,26 @@ const SEO = ({
     ]
   };
 
+  // Structured data for WebSite with SearchAction (sitelinks search box)
+  const websiteStructuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": baseUrl,
+    "name": "Autyzm od Kuchni",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": `${baseUrl}/search?q={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <Helmet>
       <title>{metaTitle}</title>
       <meta name="description" content={metaDescription} />
       <meta name="keywords" content={metaKeywords} />
       <meta name="author" content={author} />
+      {robots && <meta name="robots" content={robots} />}
       
       {/* Open Graph / Facebook - Must use absolute URLs for Google */}
       <meta property="og:type" content={ogType} />
@@ -98,6 +113,11 @@ const SEO = ({
       {/* Structured Data for Organization */}
       <script type="application/ld+json">
         {JSON.stringify(organizationStructuredData)}
+      </script>
+
+      {/* Structured Data for WebSite with SearchAction */}
+      <script type="application/ld+json">
+        {JSON.stringify(websiteStructuredData)}
       </script>
       
       {/* Additional Structured Data (Recipe, BreadcrumbList, etc.) */}

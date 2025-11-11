@@ -47,6 +47,47 @@ const ArticlePage = () => {
         ogType="article"
         ogImage={blogPost.image}
         canonical={`https://www.autyzmodkuchni.pl/blog/${slug}`}
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.autyzmodkuchni.pl/" },
+              { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://www.autyzmodkuchni.pl/blog" },
+              { "@type": "ListItem", "position": 3, "name": blogPost.title, "item": `https://www.autyzmodkuchni.pl/blog/${slug}` }
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            "headline": blogPost.title,
+            "image": blogPost.image?.startsWith('http') ? blogPost.image : `https://www.autyzmodkuchni.pl${blogPost.image?.startsWith('/') ? blogPost.image : '/' + blogPost.image}`,
+            "datePublished": blogPost.date || undefined,
+            "dateModified": blogPost.dateModified || blogPost.date || undefined,
+            "author": { 
+              "@type": "Person", 
+              "name": blogPost.author || "Autyzm od Kuchni" 
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Autyzm od Kuchni",
+              "logo": { 
+                "@type": "ImageObject", 
+                "url": "https://www.autyzmodkuchni.pl/img/logo_bckgd.png",
+                "width": 200,
+                "height": 200
+              }
+            },
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": `https://www.autyzmodkuchni.pl/blog/${slug}`
+            },
+            "url": `https://www.autyzmodkuchni.pl/blog/${slug}`,
+            "articleSection": blogPost.category || undefined,
+            "keywords": blogPost.tags?.join(', ') || undefined,
+            "description": getMetaDescription()
+          }
+        ]}
       />
       {/* Mini hero section with TopNavBar */}
       <div className="relative">

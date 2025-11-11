@@ -1,9 +1,10 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://autyzmkuchni.pl/sitemap.xml
+Sitemap: https://www.autyzmodkuchni.pl/sitemap.xml
 
 # Disallow admin and private routes
 Disallow: /admin/
 Disallow: /private/
-Disallow: /api/ 
+Disallow: /api/
+Disallow: /search 

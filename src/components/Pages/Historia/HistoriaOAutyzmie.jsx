@@ -27,6 +27,14 @@ const HistoriaOAutyzmie = () => {
         description="Poznaj historię Huberta i jego drogi z autyzmem. Dowiedz się, jak dieta i determinacja mogą wspierać rozwój dziecka ze spektrum."
         keywords="autyzm, spektrum autyzmu, dieta przy autyzmie, rozwój dziecka z autyzmem"
         canonical="https://www.autyzmodkuchni.pl/o-autyzmie"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.autyzmodkuchni.pl/" },
+            { "@type": "ListItem", "position": 2, "name": "O Autyzmie", "item": "https://www.autyzmodkuchni.pl/o-autyzmie" }
+          ]
+        }}
       />
       <div className="relative mb-8">
         <CategoryHeader showLogo={false} />

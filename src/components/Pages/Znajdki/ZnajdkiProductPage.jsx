@@ -5,6 +5,7 @@ import CategoryHeader from '../Category/CategoryHeader';
 import Footer from '../../Footer/Footer';
 import ProductNewsletter from '../../Section/ProductNewsletter';
 import FeedbackButton from '../../Feedback/FeedbackButton';
+import SEO from '../../SEO/SEO';
 import { motion } from 'framer-motion';
 import { FiArrowLeft, FiShoppingBag, FiShare2 } from 'react-icons/fi';
 import { FaLeaf, FaRegHeart, FaHeart } from 'react-icons/fa';
@@ -127,6 +128,37 @@ const ZnajdkiProductPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
+      <SEO 
+        title={`${product.name || 'Produkt'} - Znajdki | Autyzm od Kuchni`}
+        description={product.shortdesc || product.fulldesc || `${product.name} - polecany produkt bezglutenowy, bez nabiału i bez cukru idealny dla diety eliminacyjnej w autyzmie.`}
+        keywords={`${product.name}, produkty bezglutenowe, bez nabiału, bez cukru, dieta eliminacyjna, autyzm, produkty polecane, ${allTags.join(', ')}`}
+        canonical={`https://www.autyzmodkuchni.pl/znajdki/${id}`}
+        ogImage={getImageSrc()}
+        structuredData={[
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.autyzmodkuchni.pl/" },
+              { "@type": "ListItem", "position": 2, "name": "Znajdki", "item": "https://www.autyzmodkuchni.pl/znajdki" },
+              { "@type": "ListItem", "position": 3, "name": product.name || "Produkt", "item": `https://www.autyzmodkuchni.pl/znajdki/${id}` }
+            ]
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": product.name,
+            "description": product.shortdesc || product.fulldesc || "",
+            "image": getImageSrc()?.startsWith('http') ? getImageSrc() : `https://www.autyzmodkuchni.pl${getImageSrc()}`,
+            "brand": {
+              "@type": "Brand",
+              "name": "Autyzm od Kuchni"
+            },
+            "category": product.category || "Produkty spożywcze",
+            "url": `https://www.autyzmodkuchni.pl/znajdki/${id}`
+          }
+        ]}
+      />
       <div className="relative mb-8">
         <CategoryHeader />
         <div className="absolute top-0 left-0 w-full">

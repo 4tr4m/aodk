@@ -104,6 +104,14 @@ const ZnajdkiPage = () => {
         description="Odkryj sprawdzone produkty spożywcze dostępne w sklepach, które pasują do diety eliminacyjnej - bez glutenu, nabiału i cukru."
         keywords="zdrowa żywność, produkty bezglutenowe, bez nabiału, bez cukru, dieta eliminacyjna, autyzm, produkty polecane"
         canonical="https://www.autyzmodkuchni.pl/znajdki"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.autyzmodkuchni.pl/" },
+            { "@type": "ListItem", "position": 2, "name": "Znajdki", "item": "https://www.autyzmodkuchni.pl/znajdki" }
+          ]
+        }}
       />
       <div className="relative mb-8">
         <CategoryHeader showLogo={false} />
