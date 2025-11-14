@@ -55,19 +55,109 @@ function normalizePolishChars(text) {
         .replace(/ż/g, 'z');
 }
 
+// Extract stem from Polish word by removing common endings
+// Handles variations like: batat, bataty, batata, batatem, etc.
+function extractPolishStem(word) {
+    if (!word || word.length < 3) return word;
+    
+    const normalized = normalizePolishChars(word);
+    
+    // Common Polish noun endings (singular and plural cases)
+    // Order matters - try longer endings first
+    const endings = [
+        'ami', 'ach', 'owi', 'ach', 'om', 'ów',  // plural cases
+        'em', 'ie', 'iu', 'ą', 'ę', 'y', 'i', 'a', 'u', 'e', 'o'  // singular cases
+    ];
+    
+    // Try to find the stem by removing endings
+    for (const ending of endings) {
+        if (normalized.endsWith(ending) && normalized.length > ending.length + 2) {
+            return normalized.slice(0, -ending.length);
+        }
+    }
+    
+    // If no ending matches, return the word as-is (might already be a stem)
+    return normalized;
+}
+
+// Generate possible variations of a word based on its stem
+// This helps match "batat", "bataty", "batata", etc.
+function getWordVariations(word) {
+    if (!word || word.length < 3) return [normalizePolishChars(word)];
+    
+    const stem = extractPolishStem(word);
+    const normalized = normalizePolishChars(word);
+    
+    // If the word is already the stem, generate variations
+    if (normalized === stem) {
+        return [
+            stem,
+            stem + 'a',   // genitive/accusative singular
+            stem + 'y',   // nominative plural
+            stem + 'i',   // genitive plural / dative singular
+            stem + 'u',   // genitive singular
+            stem + 'em',  // instrumental singular
+            stem + 'owi', // dative singular
+            stem + 'ie',  // locative singular
+            stem + 'ów',  // genitive plural
+            stem + 'om',  // dative plural
+            stem + 'ami', // instrumental plural
+            stem + 'ach'  // locative plural
+        ];
+    }
+    
+    // If word has an ending, return both the stem and the original
+    return [stem, normalized];
+}
+
+// Check if search term matches ingredient with flexible Polish endings
+function matchesIngredientFlexible(searchTerm, ingredient) {
+    if (!searchTerm || !ingredient) return false;
+    
+    const normalizedSearch = normalizePolishChars(searchTerm);
+    const normalizedIngredient = normalizePolishChars(ingredient);
+    
+    // Direct match (includes substring)
+    if (normalizedIngredient.includes(normalizedSearch) || normalizedSearch.includes(normalizedIngredient)) {
+        return true;
+    }
+    
+    // Get variations of search term
+    const searchVariations = getWordVariations(searchTerm);
+    const ingredientVariations = getWordVariations(ingredient);
+    
+    // Check if any variation of search term matches any variation of ingredient
+    for (const searchVar of searchVariations) {
+        for (const ingVar of ingredientVariations) {
+            // Check if one contains the other (flexible matching)
+            if (searchVar.length >= 3 && ingVar.length >= 3) {
+                if (ingVar.includes(searchVar) || searchVar.includes(ingVar)) {
+                    return true;
+                }
+            }
+            // Exact match on stems
+            if (searchVar === ingVar && searchVar.length >= 3) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
 // Enhanced suggestion format
 function formatRecipeAsSuggestion(recipe, searchTerm) {
     if (!recipe || !recipe.name) return null;
     
     const normalizedSearchTerm = normalizePolishChars(searchTerm.toLowerCase());
     
-    // Check if search term matches ingredients
+    // Check if search term matches ingredients (with flexible Polish endings)
     const matchingIngredients = recipe.base_ingredients ? 
         recipe.base_ingredients
             .split(',')
             .map(ingredient => ingredient.trim())
             .filter(ingredient => 
-                normalizePolishChars(ingredient.toLowerCase()).includes(normalizedSearchTerm)
+                matchesIngredientFlexible(searchTerm, ingredient)
             ) : [];
 
     return {
@@ -100,15 +190,15 @@ function scoreRecipe(recipe, searchTerms) {
         }
     }
 
-    // Ingredient matching (lower priority)
+    // Ingredient matching (lower priority) - with flexible Polish endings
     if (recipe.base_ingredients) {
         const ingredients = recipe.base_ingredients.split(',')
-            .map(i => normalizePolishChars(i.trim()));
+            .map(i => i.trim());
         
         for (const term of searchTermsNormalized) {
             for (const ingredient of ingredients) {
-                // Match against full ingredient
-                if (ingredient.includes(term)) {
+                // Match with flexible Polish endings
+                if (matchesIngredientFlexible(term, ingredient)) {
                     score += 50;
                     break;
                 }
@@ -144,13 +234,13 @@ export async function getSuggestions(searchTerm) {
                         }
                     }
 
-                    // Ingredient matching (lower priority)
+                    // Ingredient matching (lower priority) - with flexible Polish endings
                     if (recipe.base_ingredients) {
                         const ingredients = recipe.base_ingredients.split(',')
-                            .map(i => normalizePolishChars(i.trim()));
+                            .map(i => i.trim());
                         
-                        // Check if any ingredient matches the current term
-                        if (ingredients.some(ingredient => ingredient.includes(term))) {
+                        // Check if any ingredient matches the current term (with flexible endings)
+                        if (ingredients.some(ingredient => matchesIngredientFlexible(term, ingredient))) {
                             score += 30;
                         }
                     }
