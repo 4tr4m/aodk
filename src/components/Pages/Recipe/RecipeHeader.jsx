@@ -16,7 +16,7 @@ const RecipeHeader = ({ onBack, onShare, onToggleWishlist, isInWishlist }) => {
           <span className="font-medium">Wróć do kategorii</span>
         </motion.button>
 
-        <div className="flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           <button
             onClick={onShare}
             className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors"

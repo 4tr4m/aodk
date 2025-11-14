@@ -78,7 +78,7 @@ const StickyIngredientsSidebarMobile = ({
         <motion.button
           key="sticky-button-mobile"
           onClick={onOpen}
-          className={`fixed top-[151px] right-4 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group flex ${isNewsletterModalOpen ? 'z-[5000]' : 'z-[10000]'}`}
+          className={`fixed top-[131px] right-4 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group flex ${isNewsletterModalOpen ? 'z-[5000]' : 'z-[10000]'}`}
           style={{ 
             willChange: 'transform, opacity',
             backfaceVisibility: 'hidden',
