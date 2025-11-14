@@ -261,40 +261,44 @@ const recipeService = {
       }
       
       // Use ingredient_id to find recipes through junction table
-      const { data, error } = await supabase
+      // Step 1: Get recipe_ids from junction table
+      const { data: junctionData, error: junctionError } = await supabase
         .from('recipe_ingredient')
-        .select(`
-          recipe_id,
-          recipes!inner (*)
-        `)
+        .select('recipe_id')
         .eq('ingredient_id', ingredientId);
       
-      console.log('Raw query result:', { data, error });
+      console.log('Junction table query result:', { junctionData, junctionError, ingredientId });
       
-      if (error) {
-        console.error(`Error fetching recipes for ingredient ${ingredientName}:`, error);
+      if (junctionError) {
+        console.error(`Error fetching recipe_ids from junction table for ingredient ${ingredientName}:`, junctionError);
         return [];
       }
       
-      // Extract recipes from the nested structure
-      let recipes = [];
-      if (data && Array.isArray(data)) {
-        recipes = data
-          .map(item => {
-            // Handle nested recipes object
-            if (item.recipes) {
-              return item.recipes;
-            }
-            return null;
-          })
-          .filter(Boolean);
+      if (!junctionData || junctionData.length === 0) {
+        console.log(`No recipes found for ingredient ${ingredientName} (ingredient_id: ${ingredientId})`);
+        return [];
       }
       
-      // Flatten in case of nested arrays
-      recipes = recipes.flat();
+      // Step 2: Get unique recipe IDs
+      const recipeIds = [...new Set(junctionData.map(item => item.recipe_id))];
+      console.log('Recipe IDs found:', recipeIds);
       
+      // Step 3: Fetch full recipe data
+      const { data: recipesData, error: recipesError } = await supabase
+        .from('recipes')
+        .select('*')
+        .in('id', recipeIds);
+      
+      console.log('Recipes query result:', { recipesData, recipesError });
+      
+      if (recipesError) {
+        console.error(`Error fetching recipes for ingredient ${ingredientName}:`, recipesError);
+        return [];
+      }
+      
+      const recipes = recipesData || [];
       console.log('Found recipes:', recipes.length, recipes);
-      return recipes || [];
+      return recipes;
     } catch (err) {
       console.error(`Exception when fetching recipes for ingredient ${ingredientName}:`, err);
       return [];

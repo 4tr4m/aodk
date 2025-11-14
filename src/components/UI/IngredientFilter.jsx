@@ -214,10 +214,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
     if (typeof onClear === 'function') {
       onClear();
     }
-    // Also close the filter sidebar
-    if (typeof onClose === 'function') {
-      onClose();
-    }
+    // Don't close the filter sidebar - keep it open so user can select another ingredient
   };
 
   // Animation variants
