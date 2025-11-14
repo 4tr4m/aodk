@@ -157,17 +157,48 @@ const recipeService = {
     try {
       console.log('Searching for recipes with ingredient:', ingredientName);
       
+      // Normalize ingredient name for search (trim and lowercase for better matching)
+      const normalizedName = ingredientName?.trim().toLowerCase() || '';
+      
       // Try to find ingredient_id from ingredients table first
       let ingredientId = null;
       try {
-        console.log('Trying to search ingredients table for:', ingredientName);
-        console.log('Query: SELECT ingredient_id FROM ingredients WHERE name ILIKE %' + ingredientName + '%');
+        console.log('Trying to search ingredients table for:', ingredientName, '(normalized:', normalizedName + ')');
         
-        const { data: ingredientData, error: ingredientError } = await supabase
+        // Try exact match first (case-insensitive) with normalized name
+        let { data: ingredientData, error: ingredientError } = await supabase
           .from('ingredients')
-          .select('ingredient_id')
-          .ilike('name', `%${ingredientName}%`)
+          .select('id')
+          .ilike('name', normalizedName)
           .limit(1);
+        
+        // If no exact match, try partial match with normalized name
+        if (!ingredientData || ingredientData.length === 0) {
+          const { data: partialData, error: partialError } = await supabase
+            .from('ingredients')
+            .select('id')
+            .ilike('name', `%${normalizedName}%`)
+            .limit(1);
+          
+          if (!partialError && partialData && partialData.length > 0) {
+            ingredientData = partialData;
+            ingredientError = null;
+          }
+        }
+        
+        // If still no match, try with original name (in case it has special formatting)
+        if ((!ingredientData || ingredientData.length === 0) && ingredientName !== normalizedName) {
+          const { data: originalData, error: originalError } = await supabase
+            .from('ingredients')
+            .select('id')
+            .ilike('name', `%${ingredientName}%`)
+            .limit(1);
+          
+          if (!originalError && originalData && originalData.length > 0) {
+            ingredientData = originalData;
+            ingredientError = null;
+          }
+        }
         
         console.log('Raw Supabase response:', { 
           data: ingredientData, 
@@ -184,7 +215,7 @@ const recipeService = {
           console.error('Error details:', ingredientError.details);
           console.error('Error hint:', ingredientError.hint);
         } else if (ingredientData && ingredientData.length > 0) {
-          ingredientId = ingredientData[0].ingredient_id;
+          ingredientId = ingredientData[0].id;
           console.log('✅ Found ingredient ID from ingredients table:', ingredientId);
         } else {
           console.log('⚠️ No ingredient found in ingredients table for:', ingredientName);
@@ -231,7 +262,7 @@ const recipeService = {
       
       // Use ingredient_id to find recipes through junction table
       const { data, error } = await supabase
-        .from('recipes_ingredients')
+        .from('recipe_ingredient')
         .select(`
           recipe_id,
           recipes!inner (*)
@@ -276,11 +307,11 @@ const recipeService = {
    */
   getAllIngredients: async () => {
     try {
-      console.log('Fetching all ingredients from recipes_ingredients...');
+      console.log('Fetching all ingredients from recipe_ingredient...');
       
       // Get all unique ingredients from the junction table
       const { data: junctionData, error: junctionError } = await supabase
-        .from('recipes_ingredients')
+        .from('recipe_ingredient')
         .select('ingredient_id')
         .not('ingredient_id', 'is', null);
       
@@ -300,27 +331,38 @@ const recipeService = {
       try {
         const { data: ingredientsData, error: ingredientsError } = await supabase
           .from('ingredients')
-          .select('ingredient_id, name')
-          .in('ingredient_id', uniqueIngredientIds);
+          .select('id, name')
+          .in('id', uniqueIngredientIds);
         
         if (!ingredientsError && ingredientsData) {
           ingredientsData.forEach(ingredient => {
-            ingredientNames.set(ingredient.ingredient_id, ingredient.name);
+            ingredientNames.set(ingredient.id, ingredient.name);
           });
           console.log('Successfully fetched ingredient names from ingredients table');
         } else {
           console.log('Could not fetch from ingredients table, using fallback');
+          if (ingredientsError) {
+            console.error('Ingredients table error:', ingredientsError);
+          }
         }
       } catch (err) {
         console.log('Ingredients table not accessible, using fallback');
+        console.error('Exception:', err);
       }
       
+      // Helper function to capitalize first letter (keep rest as is)
+      const capitalizeFirst = (str) => {
+        if (!str) return str;
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      };
+
       // Create ingredients array with names and count how many recipes use each ingredient
       const ingredientsWithCount = uniqueIngredientIds.map(ingredientId => {
         const count = junctionData.filter(item => item.ingredient_id === ingredientId).length;
+        const rawName = ingredientNames.get(ingredientId) || `Składnik ${ingredientId}`;
         return {
           ingredient_id: ingredientId,
-          name: ingredientNames.get(ingredientId) || `Składnik ${ingredientId}`,
+          name: capitalizeFirst(rawName),
           recipe_count: count
         };
       });
@@ -345,9 +387,9 @@ const recipeService = {
     try {
       console.log('Fetching ingredients for recipe:', recipeId);
       
-      // Step 1: Get ingredient_ids from recipes_ingredients table
+      // Step 1: Get ingredient_ids from recipe_ingredient table
       const { data: junctionData, error: junctionError } = await supabase
-        .from('recipes_ingredients')
+        .from('recipe_ingredient')
         .select('ingredient_id')
         .eq('recipe_id', recipeId);
       
@@ -369,8 +411,8 @@ const recipeService = {
       // Step 2: Get ingredient names from ingredients table
       const { data: ingredientsData, error: ingredientsError } = await supabase
         .from('ingredients')
-        .select('ingredient_id, name')
-        .in('ingredient_id', ingredientIds);
+        .select('id, name')
+        .in('id', ingredientIds);
       
       console.log('Ingredients data:', { ingredientsData, ingredientsError });
       
@@ -383,10 +425,16 @@ const recipeService = {
         }));
       }
       
+      // Helper function to capitalize first letter (keep rest as is)
+      const capitalizeFirst = (str) => {
+        if (!str) return str;
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      };
+
       // Step 3: Return ingredients with names
       const ingredients = ingredientsData?.map(ingredient => ({
-        ingredient_id: ingredient.ingredient_id,
-        name: ingredient.name
+        ingredient_id: ingredient.id,
+        name: capitalizeFirst(ingredient.name)
       })) || [];
       
       console.log('Final ingredients for recipe:', ingredients);
