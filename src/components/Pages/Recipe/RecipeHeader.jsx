@@ -16,11 +16,13 @@ const RecipeHeader = ({ onBack, onShare, onToggleWishlist, isInWishlist }) => {
           <span className="font-medium">Wróć do kategorii</span>
         </motion.button>
 
+        {/* Hidden on mobile, visible on desktop (lg and above) */}
         <div className="hidden lg:flex items-center gap-3">
           <button
             onClick={onShare}
             className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors"
             title="Udostępnij"
+            aria-label="Udostępnij"
           >
             <FaShareAlt />
           </button>
@@ -32,6 +34,7 @@ const RecipeHeader = ({ onBack, onShare, onToggleWishlist, isInWishlist }) => {
                 : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
             }`}
             title={isInWishlist ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
+            aria-label={isInWishlist ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
           >
             <FaHeart className={isInWishlist ? 'fill-current' : ''} />
           </button>
