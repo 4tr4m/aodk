@@ -98,7 +98,10 @@ const RecipePage = () => {
     // Process preparation steps
     let recipeInstructions = [];
     if (recipe.preparation) {
-      const cleanPreparation = recipe.preparation.replace(/zdrowego.*$/gis, '').trim();
+      const cleanPreparation = recipe.preparation
+        .replace(/zdrowego.*$/gis, '')
+        .replace(/smacznego.*$/gis, '')
+        .trim();
       const lines = cleanPreparation
         .split(/\r?\n/)
         .map(l => l.trim())
