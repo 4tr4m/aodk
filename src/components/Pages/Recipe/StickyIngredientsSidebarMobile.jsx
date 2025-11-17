@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUtensils, FaTimes } from 'react-icons/fa';
@@ -15,16 +15,43 @@ const StickyIngredientsSidebarMobile = ({
 }) => {
   // MOBILE ONLY - check if mobile
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+  
+  // Store scroll position
+  const scrollPositionRef = useRef(0);
 
-  // Prevent body scroll when sidebar is open
+  // Prevent body scroll when sidebar is open and preserve scroll position
   useEffect(() => {
     if (isOpen) {
+      // Save current scroll position
+      scrollPositionRef.current = window.pageYOffset || document.documentElement.scrollTop;
+      
+      // Apply styles to prevent scroll while maintaining visual position
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollPositionRef.current}px`;
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      // Restore scroll position
+      const scrollY = scrollPositionRef.current;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      
+      // Restore scroll position after a brief delay to ensure styles are applied
+      window.scrollTo(0, scrollY);
     }
+    
     return () => {
-      document.body.style.overflow = 'unset';
+      // Cleanup: restore scroll position if component unmounts while open
+      if (isOpen) {
+        const scrollY = scrollPositionRef.current;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollY);
+      }
     };
   }, [isOpen]);
 

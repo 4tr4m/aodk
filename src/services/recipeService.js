@@ -383,6 +383,106 @@ const recipeService = {
   },
 
   /**
+   * Get ingredients filtered by category
+   * Only returns ingredients that are used in recipes from the specified category
+   * @param {string} category - The category to filter by (e.g., 'OBIADY', 'ZUPY')
+   * @returns {Promise<Array>} - Array of ingredients used in recipes from the category
+   */
+  getIngredientsByCategory: async (category) => {
+    try {
+      if (!category) {
+        // If no category provided, return all ingredients
+        return await recipeService.getAllIngredients();
+      }
+
+      console.log('Fetching ingredients for category:', category);
+      
+      // Step 1: Get all recipe IDs for this category
+      const { data: categoryRecipes, error: recipesError } = await supabase
+        .from('recipes')
+        .select('id')
+        .eq('category', category);
+      
+      if (recipesError) {
+        console.error('Error fetching recipes for category:', recipesError);
+        return [];
+      }
+      
+      if (!categoryRecipes || categoryRecipes.length === 0) {
+        console.log('No recipes found for category:', category);
+        return [];
+      }
+      
+      const recipeIds = categoryRecipes.map(recipe => recipe.id);
+      console.log(`Found ${recipeIds.length} recipes in category ${category}`);
+      
+      // Step 2: Get ingredient IDs from junction table for these recipes
+      const { data: junctionData, error: junctionError } = await supabase
+        .from('recipe_ingredient')
+        .select('ingredient_id')
+        .in('recipe_id', recipeIds)
+        .not('ingredient_id', 'is', null);
+      
+      if (junctionError) {
+        console.error('Error fetching from junction table:', junctionError);
+        return [];
+      }
+      
+      // Get unique ingredient IDs
+      const uniqueIngredientIds = [...new Set(junctionData?.map(item => item.ingredient_id) || [])];
+      console.log('Unique ingredient IDs for category:', uniqueIngredientIds.length);
+      
+      if (uniqueIngredientIds.length === 0) {
+        return [];
+      }
+      
+      // Step 3: Get ingredient names from ingredients table
+      let ingredientNames = new Map();
+      try {
+        const { data: ingredientsData, error: ingredientsError } = await supabase
+          .from('ingredients')
+          .select('id, name')
+          .in('id', uniqueIngredientIds);
+        
+        if (!ingredientsError && ingredientsData) {
+          ingredientsData.forEach(ingredient => {
+            ingredientNames.set(ingredient.id, ingredient.name);
+          });
+        }
+      } catch (err) {
+        console.log('Could not fetch from ingredients table');
+      }
+      
+      // Helper function to capitalize first letter
+      const capitalizeFirst = (str) => {
+        if (!str) return str;
+        return str.charAt(0).toUpperCase() + str.slice(1);
+      };
+
+      // Create ingredients array with names and count how many recipes use each ingredient in this category
+      const ingredientsWithCount = uniqueIngredientIds.map(ingredientId => {
+        // Count only recipes in this category that use this ingredient
+        const count = junctionData.filter(item => item.ingredient_id === ingredientId).length;
+        const rawName = ingredientNames.get(ingredientId) || `Składnik ${ingredientId}`;
+        return {
+          ingredient_id: ingredientId,
+          name: capitalizeFirst(rawName),
+          recipe_count: count
+        };
+      });
+      
+      // Sort by recipe count (descending) - most used ingredients first
+      const sortedIngredients = ingredientsWithCount.sort((a, b) => b.recipe_count - a.recipe_count);
+      
+      console.log(`Loaded ${sortedIngredients.length} ingredients for category ${category}`);
+      return sortedIngredients;
+    } catch (err) {
+      console.error('Exception when fetching ingredients by category:', err);
+      return [];
+    }
+  },
+
+  /**
    * Get ingredients for a specific recipe using the junction table
    * @param {string} recipeId - The ID of the recipe
    * @returns {Promise<Array>} - Array of ingredients for the recipe

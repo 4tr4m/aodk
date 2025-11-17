@@ -130,8 +130,38 @@ const CategoryPage = () => {
       shortDesc: ''
     };
   };
-
+  
   const currentCategory = getCurrentCategory();
+
+  // Helper function to get category key from slug
+  const getCategoryKeyFromSlug = () => {
+    if (!categorySlug) return null;
+    
+    const slugToKeyMap = {
+      'obiady': 'OBIADY',
+      'zupy': 'ZUPY', 
+      'chleby': 'CHLEBY',
+      'smarowidla': 'SMAROWIDŁA',
+      'desery': 'DESERY',
+      'babeczki-muffiny': 'BABECZKI i MUFFINY',
+      'babeczki-i-muffiny': 'BABECZKI i MUFFINY',
+      'ciasta': 'CIASTA',
+      'ciastka': 'CIASTKA',
+      'smoothie': 'SMOOTHIE',
+      'inne': 'INNE',
+      'swieta': 'ŚWIĘTA'
+    };
+    
+    let categoryKey = slugToKeyMap[categorySlug];
+    if (!categoryKey) {
+      categoryKey = Object.keys(state.allRecipes).find(key => {
+        const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const normalizedSlug = categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return normalizedKey.includes(normalizedSlug) || normalizedSlug.includes(normalizedKey);
+      });
+    }
+    return categoryKey;
+  };
   
   const getCategoryRecipes = () => {
     if (!categorySlug) {
@@ -387,6 +417,8 @@ const CategoryPage = () => {
         position="left"
         compact={true}
         onClear={clearIngredientFilter}
+        category={getCategoryKeyFromSlug()}
+        categoryLabel={currentCategory?.label || null}
       />
 
       <Footer />

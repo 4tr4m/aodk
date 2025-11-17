@@ -4,7 +4,7 @@ import { FiFilter, FiX, FiSearch } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import recipeService from '../../services/recipeService';
 
-const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngredient: initialSelectedIngredient, position = "left", excludeNames = [], compact = false, onClear, navigateToSearch = false }) => {
+const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngredient: initialSelectedIngredient, position = "left", excludeNames = [], compact = false, onClear, navigateToSearch = false, category = null, categoryLabel = null }) => {
   const navigate = useNavigate();
   // Ensure position is a string and normalize it - default to "left"
   const normalizedPosition = String(position || "left").toLowerCase() === "right" ? "right" : "left";
@@ -57,12 +57,15 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
     });
   }, [initialSelectedIngredient]);
 
-  // Load ingredients on component mount
+  // Load ingredients on component mount - filtered by category if provided
   useEffect(() => {
     const loadIngredients = async () => {
       try {
         setLoading(true);
-        const data = await recipeService.getAllIngredients();
+        // If category is provided, only load ingredients from that category
+        const data = category 
+          ? await recipeService.getIngredientsByCategory(category)
+          : await recipeService.getAllIngredients();
         setIngredients(data);
       } catch (error) {
         console.error('Error loading ingredients:', error);
@@ -74,7 +77,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
     if (isVisible) {
       loadIngredients();
     }
-  }, [isVisible]);
+  }, [isVisible, category]);
 
   // Filter ingredients based on search term and exclusions
   const excludedSet = new Set(excludeNames.map(n => n?.toLowerCase().trim()).filter(Boolean));
@@ -280,7 +283,14 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <FiFilter className="text-lg sm:text-xl" />
-              <h2 className="text-base sm:text-lg font-semibold">Filtruj po składnikach</h2>
+              <div className="flex flex-col">
+                <h2 className="text-base sm:text-lg font-semibold">Filtruj po składnikach</h2>
+                {categoryLabel && (
+                  <p className="text-xs sm:text-sm text-green-100 mt-0.5">
+                    Tylko składniki z kategorii: {categoryLabel}
+                  </p>
+                )}
+              </div>
             </div>
             <button
               onClick={onClose}
@@ -297,9 +307,16 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
             <div className="flex-shrink-0 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center mt-0.5">
               <span className="text-white text-xs font-bold">i</span>
             </div>
-            <p className="text-xs text-blue-800">
-              <strong>Dotknij składnik</strong> aby znaleźć przepisy z tym składnikiem. Możesz wybrać kilka składników!
-            </p>
+            <div className="flex-1">
+              <p className="text-xs text-blue-800">
+                <strong>Dotknij składnik</strong> aby znaleźć przepisy z tym składnikiem. Możesz wybrać kilka składników!
+              </p>
+              {categoryLabel && (
+                <p className="text-xs text-blue-700 mt-1 font-medium">
+                  📋 Pokazujemy tylko składniki z kategorii: <strong>{categoryLabel}</strong>
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -409,16 +426,23 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         </div>
 
         {/* Footer (desktop) */}
-        <div className="hidden sm:flex p-3 sm:p-4 border-t border-gray-200 bg-gray-50 items-center gap-3">
-          <p className="text-xs text-gray-500 flex-1">
-            {selectedIngredients.length > 1 ? (
-              <span>Znajdź przepisy zawierające <strong>wszystkie</strong> wybrane składniki</span>
-            ) : selectedIngredients.length === 1 ? (
-              <span>Znajdź przepisy zawierające <strong>{selectedIngredients[0].name}</strong></span>
-            ) : (
-              <span>Kliknij na składnik, aby zobaczyć przepisy</span>
-            )}
-          </p>
+        <div className="hidden sm:flex flex-col p-3 sm:p-4 border-t border-gray-200 bg-gray-50 gap-2">
+          {categoryLabel && (
+            <div className="flex items-center gap-2 text-xs text-gray-600 bg-blue-50 px-2 py-1 rounded">
+              <span>📋</span>
+              <span>Pokazujemy tylko składniki z kategorii: <strong>{categoryLabel}</strong></span>
+            </div>
+          )}
+          <div className="flex items-center gap-3">
+            <p className="text-xs text-gray-500 flex-1">
+              {selectedIngredients.length > 1 ? (
+                <span>Znajdź przepisy zawierające <strong>wszystkie</strong> wybrane składniki</span>
+              ) : selectedIngredients.length === 1 ? (
+                <span>Znajdź przepisy zawierające <strong>{selectedIngredients[0].name}</strong></span>
+              ) : (
+                <span>Kliknij na składnik, aby zobaczyć przepisy</span>
+              )}
+            </p>
           <button
             onClick={handleApplySearch}
             disabled={selectedIngredients.length === 0 || isFiltering}
