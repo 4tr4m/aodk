@@ -31,15 +31,25 @@ const StickyIngredientsSidebarMobile = ({
       document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
     } else {
-      // Restore scroll position
+      // Restore scroll position with proper timing
       const scrollY = scrollPositionRef.current;
+      
+      // Remove fixed positioning
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
       document.body.style.overflow = '';
       
-      // Restore scroll position after a brief delay to ensure styles are applied
-      window.scrollTo(0, scrollY);
+      // Use requestAnimationFrame to ensure scroll happens after styles are removed
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          window.scrollTo({
+            top: scrollY,
+            left: 0,
+            behavior: 'auto'
+          });
+        });
+      });
     }
     
     return () => {
@@ -50,7 +60,16 @@ const StickyIngredientsSidebarMobile = ({
         document.body.style.top = '';
         document.body.style.width = '';
         document.body.style.overflow = '';
-        window.scrollTo(0, scrollY);
+        
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            window.scrollTo({
+              top: scrollY,
+              left: 0,
+              behavior: 'auto'
+            });
+          });
+        });
       }
     };
   }, [isOpen]);
@@ -144,7 +163,11 @@ const StickyIngredientsSidebarMobile = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onClose();
+            }}
           />
           
           {/* Bottom Sheet */}
