@@ -10,7 +10,8 @@ const SEO = ({
   ogImage = "/img/logo_bckgd.png",
   canonical,
   robots, // robots meta tag (e.g., "noindex, nofollow")
-  structuredData // Additional structured data (Recipe, BreadcrumbList, etc.)
+  structuredData, // Additional structured data (Recipe, BreadcrumbList, etc.)
+  faqData // FAQPage structured data for AI Overview optimization
 }) => {
   // Default title and description if not provided
   const defaultTitle = "Autyzm od Kuchni - Dieta eliminacyjna bez glutenu, nabiału i cukru";
@@ -129,6 +130,24 @@ const SEO = ({
       {structuredData && !Array.isArray(structuredData) && (
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
+        </script>
+      )}
+      
+      {/* FAQPage Schema - Critical for Google AI Overview */}
+      {faqData && Array.isArray(faqData) && faqData.length > 0 && (
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqData.map(faq => ({
+              "@type": "Question",
+              "name": faq.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.answer
+              }
+            }))
+          })}
         </script>
       )}
     </Helmet>
