@@ -12,6 +12,43 @@ const CategoryDescription = ({
 }) => {
   if (!description) return null;
 
+  // Process description to replace {categorySlug:recipe-id} or {recipe-id} format with clickable links
+  const processDescription = (text) => {
+    // Match pattern like: word {categorySlug:recipe-id} or word {recipe-id}
+    // Supports both formats: {obiady:mieszanka-1} or {mieszanka-1}
+    const regex = /(\S+)\s*\{([^}]+)\}/g;
+    let processedText = text;
+    let match;
+
+    while ((match = regex.exec(text)) !== null) {
+      const wordBefore = match[1]; // The word before {recipe-id}
+      const recipeIdentifier = match[2]; // The content inside {} (could be "categorySlug:recipeId" or just "recipeId")
+      const fullMatch = match[0]; // The full match including word and {recipe-id}
+
+      // Parse the identifier - check if it contains a colon (categorySlug:recipeId format)
+      let recipeId, recipeUrl;
+      if (recipeIdentifier.includes(':')) {
+        const [categorySlug, id] = recipeIdentifier.split(':');
+        recipeId = id.trim();
+        recipeUrl = `/kuchnia/${categorySlug.trim()}/${recipeId}`;
+      } else {
+        // Old format: just recipe ID (backward compatibility)
+        recipeId = recipeIdentifier.trim();
+        recipeUrl = `/przepis/${recipeId}`;
+      }
+
+      // Create the clickable link HTML
+      const linkHtml = `<span class="inline-block relative group"><a href="${recipeUrl}" data-newsletter-trigger data-recipe-id="${recipeId}" class="relative z-10 text-green-600 font-medium transition-colors duration-200 group-hover:text-green-700 underline decoration-1 underline-offset-2 cursor-pointer">${wordBefore}</a><span class="absolute bottom-0 left-0 w-full h-[25%] bg-green-100/40 transform transition-all duration-200 -z-0 group-hover:h-[80%] group-hover:bg-green-50/20"></span></span>`;
+
+      // Replace the full match (word + {recipe-id}) with just the clickable word
+      processedText = processedText.replace(fullMatch, linkHtml);
+    }
+
+    return processedText;
+  };
+
+  const processedDescription = processDescription(description);
+
   return (
     <AnimatePresence>
       {description && !isSearching && !isScrolled && (
@@ -45,18 +82,18 @@ const CategoryDescription = ({
                   WebkitBoxOrient: 'vertical'
                 }}
                 onClick={(e) => {
-                  // Handle click on the link to mieszanka-2
+                  // Handle click on the recipe link
                   const target = e.target.closest('a[data-newsletter-trigger]');
                   if (target) {
                     e.preventDefault();
-                    onNewsletterLinkClick();
+                    const recipeId = target.getAttribute('data-recipe-id');
+                    if (recipeId && onNewsletterLinkClick) {
+                      onNewsletterLinkClick(recipeId);
+                    }
                   }
                 }}
                 dangerouslySetInnerHTML={{
-                  __html: description.replace(
-                    /{LINK}/g,
-                    '<span class="inline-block relative group"><a href="/przepis/mieszanka-2" data-newsletter-trigger class="relative z-10 text-green-600 font-medium transition-colors duration-200 group-hover:text-green-700 underline decoration-1 underline-offset-2 cursor-pointer">optymalną domową mieszankę na mąkę bezglutenową</a><span class="absolute bottom-0 left-0 w-full h-[25%] bg-green-100/40 transform transition-all duration-200 -z-0 group-hover:h-[80%] group-hover:bg-green-50/20"></span></span>'
-                  )
+                  __html: processedDescription
                 }}
               />
               {description.length > 150 && (

@@ -82,6 +82,7 @@ const App = () => {
           <Route path="/historia/o-autyzmie" element={<HistoriaOAutyzmie />} />
           <Route path="/znajdki" element={<ZnajdkiPage />} />
           <Route path="/znajdki/:id" element={<ZnajdkiProductPage />} />
+          <Route path="/kuchnia/:categorySlug/:recipeId" element={<RecipePage />} />
           <Route path="/przepis/:recipeId" element={<RecipePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

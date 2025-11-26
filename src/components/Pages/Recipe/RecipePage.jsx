@@ -22,10 +22,10 @@ import NewsletterModal from '../../Modal/NewsletterModal';
 import FeedbackButton from '../../Feedback/FeedbackButton';
 import { useRecipeData } from './hooks/useRecipeData';
 import { useRecipeScrollDetection } from './hooks/useRecipeScrollDetection';
-import { processIngredients as processIngredientsUtil, replaceLinkPlaceholder } from '../../../utils/recipeUtils';
+import { processIngredients as processIngredientsUtil, replaceLinkPlaceholder, getRecipeUrl } from '../../../utils/recipeUtils';
 
 const RecipePage = () => {
-  const { recipeId } = useParams();
+  const { recipeId } = useParams(); // Support both /przepis/:recipeId and /kuchnia/:categorySlug/:recipeId
   const navigate = useNavigate();
   const { dispatch } = useCart();
   
@@ -190,7 +190,7 @@ const RecipePage = () => {
           "url": `${baseUrl}/img/logo_bckgd.png`
         }
       },
-      "url": typeof window !== 'undefined' ? window.location.href : `${baseUrl}/przepis/${recipe.id}`
+      "url": typeof window !== 'undefined' ? window.location.href : `${baseUrl}${getRecipeUrl(recipe.id, recipe.category)}`
     };
 
     // Only add recipeInstructions if we have steps

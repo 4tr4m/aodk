@@ -4,8 +4,9 @@ import recipeService from '../../../../services/recipeService';
 
 /**
  * Custom hook for ingredient filter functionality on category page
+ * @param {string} categoryKey - The category key to filter recipes by (e.g., 'OBIADY', 'ZUPY')
  */
-export const useIngredientFilter = () => {
+export const useIngredientFilter = (categoryKey = null) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isIngredientFilterVisible, setIsIngredientFilterVisible] = useState(false);
@@ -13,6 +14,12 @@ export const useIngredientFilter = () => {
   const [activeFilter, setActiveFilter] = useState(null);
   const [selectedIngredient, setSelectedIngredient] = useState(null);
   const [selectedIngredientsCount, setSelectedIngredientsCount] = useState(0);
+
+  // Helper function to filter recipes by category
+  const filterRecipesByCategory = (recipes, category) => {
+    if (!category || !recipes || recipes.length === 0) return recipes;
+    return recipes.filter(recipe => recipe.category === category);
+  };
 
   // Handle URL parameter for ingredient filtering
   useEffect(() => {
@@ -26,7 +33,13 @@ export const useIngredientFilter = () => {
       // Automatically search for recipes with this ingredient
       const searchForIngredient = async () => {
         try {
-          const recipes = await recipeService.getRecipesByIngredient(ingredientParam);
+          let recipes = await recipeService.getRecipesByIngredient(ingredientParam);
+          
+          // Filter by category if we're on a category page
+          if (categoryKey && recipes) {
+            recipes = filterRecipesByCategory(recipes, categoryKey);
+          }
+          
           setFilteredRecipes(recipes);
           setActiveFilter(ingredientParam);
           setSelectedIngredientsCount(1); // Single ingredient from URL
@@ -40,7 +53,7 @@ export const useIngredientFilter = () => {
       
       searchForIngredient();
     }
-  }, [location.search]);
+  }, [location.search, categoryKey]);
 
   // Remove ?ingredient from URL
   const removeIngredientQueryParam = useCallback(() => {

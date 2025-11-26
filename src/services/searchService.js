@@ -149,8 +149,6 @@ function matchesIngredientFlexible(searchTerm, ingredient) {
 function formatRecipeAsSuggestion(recipe, searchTerm) {
     if (!recipe || !recipe.name) return null;
     
-    const normalizedSearchTerm = normalizePolishChars(searchTerm.toLowerCase());
-    
     // Check if search term matches ingredients (with flexible Polish endings)
     const matchingIngredients = recipe.base_ingredients ? 
         recipe.base_ingredients

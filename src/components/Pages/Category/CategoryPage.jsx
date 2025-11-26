@@ -47,6 +47,36 @@ const CategoryPage = () => {
     handleSearchSubmit,
   } = useCategorySearch();
 
+  // Helper function to get category key from slug (needed before useIngredientFilter)
+  const getCategoryKeyFromSlug = () => {
+    if (!categorySlug) return null;
+    
+    const slugToKeyMap = {
+      'obiady': 'OBIADY',
+      'zupy': 'ZUPY', 
+      'chleby': 'CHLEBY',
+      'smarowidla': 'SMAROWIDŁA',
+      'desery': 'DESERY',
+      'babeczki-muffiny': 'BABECZKI i MUFFINY',
+      'babeczki-i-muffiny': 'BABECZKI i MUFFINY',
+      'ciasta': 'CIASTA',
+      'ciastka': 'CIASTKA',
+      'smoothie': 'SMOOTHIE',
+      'inne': 'INNE',
+      'swieta': 'ŚWIĘTA'
+    };
+    
+    let categoryKey = slugToKeyMap[categorySlug];
+    if (!categoryKey) {
+      categoryKey = Object.keys(state.allRecipes).find(key => {
+        const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const normalizedSlug = categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return normalizedKey.includes(normalizedSlug) || normalizedSlug.includes(normalizedKey);
+      });
+    }
+    return categoryKey;
+  };
+
   const {
     isIngredientFilterVisible,
     filteredRecipes,
@@ -57,7 +87,7 @@ const CategoryPage = () => {
     clearIngredientFilter,
     toggleIngredientFilter,
     handleRecipesFiltered,
-  } = useIngredientFilter();
+  } = useIngredientFilter(getCategoryKeyFromSlug());
 
   useEffect(() => {
     if (!state.isLoading) {
@@ -132,36 +162,6 @@ const CategoryPage = () => {
   };
   
   const currentCategory = getCurrentCategory();
-
-  // Helper function to get category key from slug
-  const getCategoryKeyFromSlug = () => {
-    if (!categorySlug) return null;
-    
-    const slugToKeyMap = {
-      'obiady': 'OBIADY',
-      'zupy': 'ZUPY', 
-      'chleby': 'CHLEBY',
-      'smarowidla': 'SMAROWIDŁA',
-      'desery': 'DESERY',
-      'babeczki-muffiny': 'BABECZKI i MUFFINY',
-      'babeczki-i-muffiny': 'BABECZKI i MUFFINY',
-      'ciasta': 'CIASTA',
-      'ciastka': 'CIASTKA',
-      'smoothie': 'SMOOTHIE',
-      'inne': 'INNE',
-      'swieta': 'ŚWIĘTA'
-    };
-    
-    let categoryKey = slugToKeyMap[categorySlug];
-    if (!categoryKey) {
-      categoryKey = Object.keys(state.allRecipes).find(key => {
-        const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const normalizedSlug = categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '');
-        return normalizedKey.includes(normalizedSlug) || normalizedSlug.includes(normalizedKey);
-      });
-    }
-    return categoryKey;
-  };
   
   const getCategoryRecipes = () => {
     if (!categorySlug) {
@@ -297,10 +297,35 @@ const CategoryPage = () => {
     fetchCategories();
   }, []);
 
-  const handleNewsletterLinkClick = useCallback(() => {
-    setPendingNavigation('/przepis/mieszanka-2');
+  const handleNewsletterLinkClick = useCallback((recipeId) => {
+    // Try to find the recipe to get its category for better URL
+    const allRecipes = Object.values(state.allRecipes).flat();
+    const recipe = allRecipes.find(r => r.id === recipeId);
+    
+    let url = `/przepis/${recipeId}`; // Fallback to old format
+    
+    if (recipe && recipe.category) {
+      // Convert category to slug
+      const categoryMap = {
+        'OBIADY': 'obiady',
+        'ZUPY': 'zupy',
+        'CHLEBY': 'chleby',
+        'SMAROWIDŁA': 'smarowidla',
+        'DESERY': 'desery',
+        'BABECZKI i MUFFINY': 'babeczki-i-muffiny',
+        'CIASTA': 'ciasta',
+        'CIASTKA': 'ciastka',
+        'SMOOTHIE': 'smoothie',
+        'INNE': 'inne',
+        'ŚWIĘTA': 'swieta'
+      };
+      const categorySlug = categoryMap[recipe.category] || recipe.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      url = `/kuchnia/${categorySlug}/${recipeId}`;
+    }
+    
+    setPendingNavigation(url);
     setIsNewsletterModalOpen(true);
-  }, []);
+  }, [state.allRecipes]);
 
   return (
     <div ref={pageRef} className="min-h-screen bg-gray-100">

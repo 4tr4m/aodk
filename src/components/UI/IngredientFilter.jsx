@@ -120,9 +120,17 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         try {
           const name = newSelectedIngredients[0].name;
           console.log('IngredientFilter: Fetching recipes for ingredient:', name);
-          const recipes = await recipeService.getRecipesByIngredient(name);
+          let recipes = await recipeService.getRecipesByIngredient(name);
           console.log('IngredientFilter: Raw recipes response:', recipes);
-          console.log('IngredientFilter: Recipes found:', recipes?.length || 0);
+          
+          // Filter by category if category is provided
+          if (category && recipes) {
+            const recipesArray = Array.isArray(recipes) ? recipes.flat() : [recipes];
+            recipes = recipesArray.filter(recipe => recipe.category === category);
+            console.log('IngredientFilter: Filtered by category', category, '- Recipes found:', recipes?.length || 0);
+          } else {
+            console.log('IngredientFilter: Recipes found (no category filter):', recipes?.length || 0);
+          }
           
           // Ensure recipes is an array and flatten if needed
           let recipesArray = [];
@@ -148,7 +156,12 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         console.log('Fetching recipes for multiple ingredients:', newSelectedIngredients.map(i => i.name));
         const allRecipes = await Promise.all(
           newSelectedIngredients.map(async (ing) => {
-            const recipes = await recipeService.getRecipesByIngredient(ing.name);
+            let recipes = await recipeService.getRecipesByIngredient(ing.name);
+            // Filter by category if category is provided
+            if (category && recipes) {
+              const recipesArray = Array.isArray(recipes) ? recipes.flat() : [recipes];
+              recipes = recipesArray.filter(recipe => recipe.category === category);
+            }
             // Ensure it's an array and flatten
             return Array.isArray(recipes) ? recipes.flat() : [];
           })
@@ -182,7 +195,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
     } finally {
       setIsFiltering(false);
     }
-  }, [onRecipesFiltered, selectedIngredients]);
+  }, [onRecipesFiltered, selectedIngredients, category]);
 
   // Auto-search when selected ingredient changes and ingredients are loaded (guard against loops)
   const hasAutoSearchedRef = React.useRef(false);
@@ -454,6 +467,7 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
           >
             {isFiltering ? 'Wyszukiwanie...' : `Wyszukaj (${selectedIngredients.length || 0})`}
           </button>
+          </div>
         </div>
 
         {/* Sticky action (mobile) */}

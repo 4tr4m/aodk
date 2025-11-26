@@ -21,13 +21,15 @@ import { useNavigate } from 'react-router-dom';
 import { FiClock, FiArrowRight, FiAward } from 'react-icons/fi';
 import { motion } from 'framer-motion';
 import { getRecipeImageUrl } from '../../../utils/imageUtils';
+import { getRecipeUrl } from '../../../utils/recipeUtils';
 
 const RecipeGrid = ({ recipes }) => {
   const navigate = useNavigate();
 
-  // When a recipe card is clicked, navigate to the recipe page
+  // When a recipe card is clicked, navigate to the recipe page with category for better SEO
   const handleRecipeClick = (recipe) => {
-    navigate(`/przepis/${recipe.id}`);
+    const url = getRecipeUrl(recipe.id, recipe.category);
+    navigate(url);
   };
 
   // Animation variants for the grid and cards
