@@ -471,7 +471,17 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
         </div>
 
         {/* Sticky action (mobile) */}
-        <div className="sm:hidden sticky bottom-0 bg-white border-t border-gray-200 p-3">
+        <div className="sm:hidden sticky bottom-0 bg-white border-t border-gray-200 p-3 space-y-2">
+          {/* Info text for mobile */}
+          <div className="text-xs text-gray-500 text-center px-2">
+            {selectedIngredients.length > 1 ? (
+              <span>Znajdź przepisy zawierające <strong>wszystkie</strong> wybrane składniki</span>
+            ) : selectedIngredients.length === 1 ? (
+              <span>Znajdź przepisy zawierające <strong>{selectedIngredients[0].name}</strong></span>
+            ) : (
+              <span>Kliknij na składnik, aby zobaczyć przepisy</span>
+            )}
+          </div>
           <button
             onClick={handleApplySearch}
             disabled={selectedIngredients.length === 0 || isFiltering}
