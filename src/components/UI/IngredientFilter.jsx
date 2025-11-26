@@ -37,8 +37,13 @@ const IngredientFilter = ({ onRecipesFiltered, onClose, isVisible, selectedIngre
       // Close the filter first
       if (typeof onClose === 'function') onClose();
       
+      // Check if mobile device
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 640;
+      
       // Navigate to search page with ingredient query
-      navigate(`/search?q=${encodeURIComponent(ingredientQuery)}&ingredient=true`);
+      // Add hash for mobile to scroll to results section
+      const url = `/search?q=${encodeURIComponent(ingredientQuery)}&ingredient=true${isMobile ? '#search-results-section' : ''}`;
+      navigate(url);
     } catch (err) {
       console.error('Error applying ingredient filter:', err);
     } finally {

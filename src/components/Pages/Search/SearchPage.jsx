@@ -176,6 +176,38 @@ const SearchPage = () => {
   }, [location.search, performSearch]);
 
   /**
+   * Scroll to results section on mobile when coming from ingredient filter
+   * Only scrolls if:
+   * - On mobile device
+   * - Coming from ingredient filter (has ingredient=true param)
+   * - Results are loaded (not loading)
+   * - Hash is present in URL
+   */
+  useEffect(() => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 640;
+    const searchParams = new URLSearchParams(location.search);
+    const isIngredientSearch = searchParams.get('ingredient') === 'true';
+    const hasHash = location.hash === '#search-results-section';
+    
+    if (isMobile && isIngredientSearch && hasHash && !loading && (recipes.length > 0 || activeFilter)) {
+      // Wait for DOM to update, then scroll
+      setTimeout(() => {
+        const resultsSection = document.getElementById('search-results-section');
+        if (resultsSection) {
+          const offset = 80; // Offset for sticky header
+          const elementPosition = resultsSection.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - offset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 300); // Small delay to ensure content is rendered
+    }
+  }, [loading, recipes, activeFilter, location.search, location.hash]);
+
+  /**
    * Handle search input changes - fetches live suggestions
    * Called on every keystroke via SearchBar's onChange callback
    * Uses debounce (150ms) to reduce API calls
@@ -487,7 +519,7 @@ const SearchPage = () => {
           ) : getDisplayRecipes().length > 0 ? (
             // Results found: Display RecipeGrid with results
             <div>
-              <div className="mb-6 text-center">
+              <div id="search-results-section" className="mb-6 text-center">
                 {activeFilter ? (
                   <>
                     <h2 className="text-xl font-semibold mb-2 text-green-700">
