@@ -11,7 +11,8 @@ const StickyIngredientsSidebar = ({
   ingredients, 
   processIngredients, 
   replaceLinkPlaceholder,
-  isNewsletterModalOpen = false
+  isNewsletterModalOpen = false,
+  isImageModalOpen = false
 }) => {
   const buttonRef = useRef(null);
   const sidebarRef = useRef(null);
@@ -189,12 +190,12 @@ const StickyIngredientsSidebar = ({
   const content = (
     <AnimatePresence>
       {/* Desktop Button - Only show on desktop */}
-      {isVisible && !isOpen && (
+      {isVisible && !isOpen && !isImageModalOpen && (
         <motion.button
           key="sticky-button-desktop"
           ref={buttonRef}
           onClick={onOpen}
-          className={`fixed right-4 top-1/2 -translate-y-1/2 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 group flex ${isNewsletterModalOpen ? 'z-[5000]' : 'z-[10000]'}`}
+          className={`fixed right-4 top-1/2 -translate-y-1/2 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow-2xl hover:shadow-3xl transition-all duration-300 group flex ${isNewsletterModalOpen ? 'z-[5000]' : isImageModalOpen ? 'z-[40]' : 'z-[10000]'}`}
           style={{ 
             willChange: 'transform, opacity',
             transform: 'translateZ(0)',
@@ -225,11 +226,11 @@ const StickyIngredientsSidebar = ({
       )}
       
       {/* Desktop Sidebar - Only show on desktop */}
-      {isVisible && isOpen && (
+      {isVisible && isOpen && !isImageModalOpen && (
         <motion.div
           key="sticky-sidebar-desktop"
           ref={sidebarRef}
-          className={`fixed right-4 ${isNewsletterModalOpen ? 'z-[5000]' : 'z-[10000]'}`}
+          className={`fixed right-4 ${isNewsletterModalOpen ? 'z-[5000]' : isImageModalOpen ? 'z-[40]' : 'z-[10000]'}`}
           style={{ 
             ...sidebarStyle,
             willChange: 'opacity',

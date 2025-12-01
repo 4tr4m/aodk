@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaCommentAlt } from 'react-icons/fa';
 import FeedbackModal from './FeedbackModal';
 
-const FeedbackButton = () => {
+const FeedbackButton = ({ isImageModalOpen = false }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleModal = () => {
@@ -71,14 +71,14 @@ const FeedbackButton = () => {
     return () => clearTimeout(timer);
   }, []);
   
-  const shouldShow = !isOpen && mounted;
+  const shouldShow = !isOpen && mounted && !isImageModalOpen;
 
   return (
     <>
       <AnimatePresence>
         {shouldShow && (
           <motion.button
-            className="group fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[60] bg-green-600 hover:bg-green-700 text-white shadow-2xl flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 rounded-full sm:px-4 sm:pr-5 sm:py-4 w-14 h-14 sm:w-auto sm:h-auto"
+            className={`group fixed bottom-4 right-4 sm:bottom-6 sm:right-6 bg-green-600 hover:bg-green-700 text-white shadow-2xl flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-green-300 transition-all duration-300 rounded-full sm:px-4 sm:pr-5 sm:py-4 w-14 h-14 sm:w-auto sm:h-auto ${isImageModalOpen ? 'z-[40]' : 'z-[60]'}`}
             onClick={toggleModal}
             variants={buttonVariants}
             initial="hidden"

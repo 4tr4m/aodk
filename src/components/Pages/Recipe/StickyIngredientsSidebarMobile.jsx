@@ -11,7 +11,8 @@ const StickyIngredientsSidebarMobile = ({
   ingredients, 
   processIngredients, 
   replaceLinkPlaceholder,
-  isNewsletterModalOpen = false
+  isNewsletterModalOpen = false,
+  isImageModalOpen = false
 }) => {
   // MOBILE ONLY - check if mobile
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
@@ -120,11 +121,11 @@ const StickyIngredientsSidebarMobile = ({
   const content = (
     <AnimatePresence>
       {/* Mobile Floating Button */}
-      {isVisible && !isOpen && (
+      {isVisible && !isOpen && !isImageModalOpen && (
         <motion.button
           key="sticky-button-mobile"
           onClick={onOpen}
-          className={`fixed top-[131px] right-4 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group flex ${isNewsletterModalOpen ? 'z-[5000]' : 'z-[10000]'}`}
+          className={`fixed top-[131px] right-4 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group flex ${isNewsletterModalOpen ? 'z-[5000]' : isImageModalOpen ? 'z-[40]' : 'z-[10000]'}`}
           style={{ 
             willChange: 'transform, opacity',
             backfaceVisibility: 'hidden',
@@ -154,12 +155,12 @@ const StickyIngredientsSidebarMobile = ({
       )}
       
       {/* Mobile Bottom Sheet */}
-      {isOpen && (
+      {isOpen && !isImageModalOpen && (
         <>
           {/* Backdrop */}
           <motion.div
             key="backdrop-mobile"
-            className={`fixed inset-0 bg-black/50 backdrop-blur-sm ${isNewsletterModalOpen ? 'z-[4999]' : 'z-[9999]'}`}
+            className={`fixed inset-0 bg-black/50 backdrop-blur-sm ${isNewsletterModalOpen ? 'z-[4999]' : isImageModalOpen ? 'z-[39]' : 'z-[9999]'}`}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -173,7 +174,7 @@ const StickyIngredientsSidebarMobile = ({
           {/* Bottom Sheet */}
           <motion.div
             key="sticky-sidebar-mobile"
-            className={`fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl ${isNewsletterModalOpen ? 'z-[5000]' : 'z-[10000]'}`}
+            className={`fixed inset-x-0 bottom-0 bg-white rounded-t-3xl shadow-2xl ${isNewsletterModalOpen ? 'z-[5000]' : isImageModalOpen ? 'z-[40]' : 'z-[10000]'}`}
             style={{ 
               maxHeight: '85vh',
               willChange: 'transform',

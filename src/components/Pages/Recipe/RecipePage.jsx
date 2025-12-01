@@ -473,7 +473,7 @@ const RecipePage = () => {
           </motion.div>
         </div>
         
-        <FeedbackButton />
+        <FeedbackButton isImageModalOpen={isImageModalOpen} />
         <Footer />
       </div>
 
@@ -488,6 +488,7 @@ const RecipePage = () => {
           processIngredients={processIngredients}
           replaceLinkPlaceholder={replaceLinkPlaceholder}
           isNewsletterModalOpen={isNewsletterModalOpen}
+          isImageModalOpen={isImageModalOpen}
         />
       )}
 
@@ -502,6 +503,7 @@ const RecipePage = () => {
           processIngredients={processIngredients}
           replaceLinkPlaceholder={replaceLinkPlaceholder}
           isNewsletterModalOpen={isNewsletterModalOpen}
+          isImageModalOpen={isImageModalOpen}
         />
       )}
 
