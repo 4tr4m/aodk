@@ -26,7 +26,8 @@ async function fetchAllRecipes() {
 
     const { data: recipes, error } = await supabase
         .from('recipes')
-        .select('id, name, category, base_ingredients, image, shortdesc');
+        .select('id, name, category, base_ingredients, image, shortdesc')
+        .eq('is_published', true);
 
     if (error) {
         console.error('Error fetching recipes:', error);

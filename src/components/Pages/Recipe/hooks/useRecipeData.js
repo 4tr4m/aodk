@@ -22,12 +22,13 @@ export const useRecipeData = (recipeId) => {
         const foundRecipe = allRecipes.find(r => r.id === searchId);
         
         if (foundRecipe) {
+          // Recipe found in context (already filtered by is_published)
           setRecipe(foundRecipe);
           setIsInWishlist(state.wishlist.some(item => item.id === foundRecipe.id));
         } else {
-          // If not found in context, fetch from Supabase
-          const recipes = await recipeService.getAllRecipes();
-          const supabaseRecipe = recipes.find(r => r.id === searchId);
+          // If not found in context, fetch directly from Supabase using getRecipeById
+          // This ensures we check is_published status
+          const supabaseRecipe = await recipeService.getRecipeById(searchId);
           
           if (supabaseRecipe) {
             setRecipe(supabaseRecipe);

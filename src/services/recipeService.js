@@ -5,14 +5,15 @@ import supabase from '../lib/supabase-browser';
  */
 const recipeService = {
   /**
-   * Get all recipes
+   * Get all recipes (only published ones)
    * @returns {Promise<Object>} - Supabase response with recipes data or error
    */
   getAllRecipes: async () => {
     try {
       const { data, error } = await supabase
         .from('recipes')
-        .select('*');
+        .select('*')
+        .eq('is_published', true);
       
       if (error) {
         console.error('Error fetching recipes:', error);
@@ -27,7 +28,7 @@ const recipeService = {
   },
 
   /**
-   * Get recipes by category
+   * Get recipes by category (only published ones)
    * @param {string} category - The category to filter by
    * @returns {Promise<Object>} - Supabase response with filtered recipes data or error
    */
@@ -36,7 +37,8 @@ const recipeService = {
       const { data, error } = await supabase
         .from('recipes')
         .select('*')
-        .eq('category', category);
+        .eq('category', category)
+        .eq('is_published', true);
       
       if (error) {
         console.error(`Error fetching ${category} recipes:`, error);
@@ -51,9 +53,9 @@ const recipeService = {
   },
 
   /**
-   * Get a recipe by ID
+   * Get a recipe by ID (only if published)
    * @param {string} id - The ID of the recipe to get
-   * @returns {Promise<Object>} - Supabase response with the recipe data or error
+   * @returns {Promise<Object>} - Supabase response with the recipe data or error (null if unpublished)
    */
   getRecipeById: async (id) => {
     try {
@@ -61,10 +63,16 @@ const recipeService = {
         .from('recipes')
         .select('*')
         .eq('id', id)
+        .eq('is_published', true)
         .single();
       
       if (error) {
         console.error(`Error fetching recipe with ID ${id}:`, error);
+        return null;
+      }
+      
+      // Double check: if recipe exists but is_published is false, return null
+      if (data && data.is_published === false) {
         return null;
       }
       
@@ -76,7 +84,7 @@ const recipeService = {
   },
 
   /**
-   * Search recipes by name
+   * Search recipes by name (only published ones)
    * @param {string} query - The search query
    * @returns {Promise<Object>} - Supabase response with matching recipes or error
    */
@@ -84,7 +92,8 @@ const recipeService = {
     return await supabase
       .from('recipes')
       .select('*')
-      .ilike('name', `%${query}%`);
+      .ilike('name', `%${query}%`)
+      .eq('is_published', true);
   },
 
   /**
@@ -226,13 +235,14 @@ const recipeService = {
         console.log('Ingredients table not accessible, trying fallback approach');
       }
       
-      // If we couldn't get ingredient_id from ingredients table, try to find it by searching recipes
+        // If we couldn't get ingredient_id from ingredients table, try to find it by searching recipes
       if (!ingredientId) {
         console.log('Searching for ingredient in base_ingredients as fallback...');
         const { data: recipesData, error: recipesError } = await supabase
           .from('recipes')
           .select('id, base_ingredients')
-          .ilike('base_ingredients', `%${ingredientName}%`);
+          .ilike('base_ingredients', `%${ingredientName}%`)
+          .eq('is_published', true);
         
         if (recipesError) {
           console.error('Error fetching recipes for ingredient search:', recipesError);
@@ -244,12 +254,13 @@ const recipeService = {
           return [];
         }
         
-        // Get full recipe data
+        // Get full recipe data (only published)
         const recipeIds = recipesData.map(recipe => recipe.id);
         const { data: fullRecipes, error: fullRecipesError } = await supabase
           .from('recipes')
           .select('*')
-          .in('id', recipeIds);
+          .in('id', recipeIds)
+          .eq('is_published', true);
         
         if (fullRecipesError) {
           console.error('Error fetching full recipe data:', fullRecipesError);
@@ -283,11 +294,12 @@ const recipeService = {
       const recipeIds = [...new Set(junctionData.map(item => item.recipe_id))];
       console.log('Recipe IDs found:', recipeIds);
       
-      // Step 3: Fetch full recipe data
+      // Step 3: Fetch full recipe data (only published)
       const { data: recipesData, error: recipesError } = await supabase
         .from('recipes')
         .select('*')
-        .in('id', recipeIds);
+        .in('id', recipeIds)
+        .eq('is_published', true);
       
       console.log('Recipes query result:', { recipesData, recipesError });
       
