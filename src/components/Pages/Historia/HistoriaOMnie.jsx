@@ -157,62 +157,54 @@ const HistoriaOMnie = () => {
             
             <div className="bg-white p-4 sm:p-5 rounded-xl shadow-md">
               {/* Image and text layout - image on right, tighter spacing */}
-              <div className="grid md:grid-cols-2 gap-4 mb-4 items-start">
+              <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-start">
                 {/* Text section - left */}
-                <div className="prose prose-base max-w-none text-gray-600 font-['Lato'] leading-relaxed space-y-3">
-                  <p className="mb-0">
+                <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed">
+                  <p>
                     Zawsze stawiam na opcje najbardziej odżywcze. Uważam, że jeśli coś jest szkodliwe dla kobiet w ciąży i małych dzieci, to w jakimś stopniu może szkodzić wszystkim, dlatego staram się unikać takich produktów.
                   </p>
                   
-                  <p className="mb-0">
+                  <p>
                     Wyznaję zasadę, że wszystko jest dobre w umiarkowanych ilościach, a rzeczy, które szkodzą, staram się ograniczać. Zdaję sobie sprawę, że niektóre składniki mogą budzić kontrowersje (np. ksylitol, brązowy ryż, makaron kukurydziany), ale zawsze wybieram "mniejsze zło", kierując się troską o zdrowie.
                   </p>
                 </div>
 
-                {/* Image section - right with enhanced text overlay */}
+                {/* Image section - right - same style as first image */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.9, duration: 0.8 }}
-                  className="relative h-[280px] sm:h-[320px] md:h-[380px] rounded-xl overflow-hidden shadow-xl group"
+                  className="relative h-[450px] rounded-2xl overflow-hidden shadow-xl"
                 >
                   <img
                     src="/img/2.jpeg"
                     alt="Zdrowa żywność - przepisy dla Huberta"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
-                  {/* Enhanced gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                  
-                  {/* Beautiful text overlay with backdrop blur */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-                    <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 sm:p-4 border border-white/20 shadow-lg">
-                      <p className="font-['Playfair_Display'] text-white text-sm sm:text-base font-semibold mb-1 drop-shadow-lg">
-                        Zdrowa żywność
-                      </p>
-                      <p className="font-['Lato'] text-white/95 text-xs sm:text-sm italic drop-shadow-md">
-                        przygotowana z miłością i troską
-                      </p>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+                    <div className="p-6 text-white">
+                      <h3 className="text-2xl font-['Playfair_Display'] mb-2">Zdrowa żywność</h3>
+                      <p className="font-['Lato'] text-white/90">przygotowana z miłością i troską</p>
                     </div>
                   </div>
                 </motion.div>
               </div>
 
-              {/* Remaining text - tighter spacing */}
-              <div className="prose prose-base max-w-none text-gray-600 font-['Lato'] leading-relaxed space-y-3">
-                <p className="mb-0">
+              {/* Remaining text - no gap after image section */}
+              <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed mt-6">
+                <p>
                   W mojej kuchni, w przepisach dla Huberta, nie znajdziesz glutenu (chociaż mogą występować śladowe ilości), nabiału krowiego (sporadycznie sięgam po nabiał kozi, który zawiera kazeinę, ale w mniejszych ilościach i o innej strukturze niż kazeina krowia, co może być lepiej tolerowane przez niektóre osoby), ani cukru (generalnie staram się słodzić owocami, a jeśli muszę, używam ksylitolu lub miodu; bardzo rzadko stosuję cukier brązowy i to w minimalnych ilościach).
                 </p>
                 
-                <p className="mb-0">
+                <p>
                   Nigdy nie smażę. Ograniczam mąkę kukurydzianą i ryżową, ponieważ kukurydza często pochodzi z modyfikowanej genetycznie kukurydzy, co budzi moje obawy dotyczące zdrowia (jednak odstępstwem jest makaron kukurydziany, który stosuję, jeśli nie jestem w stanie zakupić innego). Z kolei ryż może zawierać substancje toksyczne, takie jak arsen.
                 </p>
                 
-                <p className="mb-0">
+                <p>
                   Na początku naszej drogi dieta była znacznie bardziej restrykcyjna, ze względu na alergie – Hubert, oprócz wyżej wymienionych produktów, nie spożywał ani ryżu, ani kukurydzy. Obecnie, ponieważ Hubert funkcjonuje rewelacyjnie, stosujemy pewne odstępstwa.
                 </p>
                 
-                <p className="mb-0">
+                <p>
                   Opieram się na zasadach diety czystożerczej, chociaż w niektórych przypadkach pozwalam sobie na wyjątki. W moich przepisach znajdziesz jajka, które są cennym źródłem białka i witamin, i które dość ciężko zastąpić substytutem. Pozostali członkowie rodziny spożywają gluten, głównie w formie orkiszu albo pszenicy durum, a przepisy z glutenem można znaleźć na stronie "Zdrowe Jemy".
                 </p>
               </div>
