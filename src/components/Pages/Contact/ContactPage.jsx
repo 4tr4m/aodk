@@ -102,7 +102,7 @@ const ContactPage = () => {
             {/* Profile Image */}
             <div className="w-full aspect-square rounded-xl mb-8 overflow-hidden">
               <img 
-                src="/img/Me.jpg"
+                src="/img/Me.jpeg"
                 alt="Zdjęcie profilowe"
                 className="w-full h-full object-cover"
               />
