@@ -134,7 +134,7 @@ const HistoriaOMnie = () => {
                   <FaLeaf className="text-green-600 text-xl" />
                 </div>
                 <h3 className="text-xl font-['Playfair_Display'] text-gray-800 mb-2">Bez glutenu</h3>
-                <p className="text-gray-600 text-sm">W moich przepisach nie znajdziesz glutenu, a jedynie sporadycznie dopuszczalne odstępstwa.</p>
+                <p className="text-gray-600 text-sm">W moich przepisach nie znajdziesz glutenu.</p>
               </div>
               
               <div className="bg-white p-4 rounded-xl shadow-md flex flex-col items-center text-center">
