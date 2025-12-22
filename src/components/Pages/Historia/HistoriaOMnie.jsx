@@ -123,89 +123,96 @@ const HistoriaOMnie = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}
-            className="mt-16"
+            className="mt-8"
           >
-            <h2 className="text-3xl font-['Playfair_Display'] text-gray-900 text-center mb-12">
+            <h2 className="text-3xl font-['Playfair_Display'] text-gray-900 text-center mb-6">
               Zasady, które stosuję w mojej kuchni
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-              <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-center text-center">
-                <div className="bg-green-100 p-3 rounded-full mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-white p-4 rounded-xl shadow-md flex flex-col items-center text-center">
+                <div className="bg-green-100 p-3 rounded-full mb-3">
                   <FaLeaf className="text-green-600 text-xl" />
                 </div>
                 <h3 className="text-xl font-['Playfair_Display'] text-gray-800 mb-2">Bez glutenu</h3>
-                <p className="text-gray-600">W moich przepisach nie znajdziesz glutenu, a jedynie sporadycznie dopuszczalne odstępstwa.</p>
+                <p className="text-gray-600 text-sm">W moich przepisach nie znajdziesz glutenu, a jedynie sporadycznie dopuszczalne odstępstwa.</p>
               </div>
               
-              <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-center text-center">
-                <div className="bg-green-100 p-3 rounded-full mb-4">
+              <div className="bg-white p-4 rounded-xl shadow-md flex flex-col items-center text-center">
+                <div className="bg-green-100 p-3 rounded-full mb-3">
                   <FaHeart className="text-green-600 text-xl" />
                 </div>
                 <h3 className="text-xl font-['Playfair_Display'] text-gray-800 mb-2">Bez nabiału krowiego</h3>
-                <p className="text-gray-600">Unikam nabiału krowiego, czasem sięgam po nabiał kozi, który może być lepiej tolerowany.</p>
+                <p className="text-gray-600 text-sm">Unikam nabiału krowiego, czasem sięgam po nabiał kozi, który może być lepiej tolerowany.</p>
               </div>
               
-              <div className="bg-white p-6 rounded-xl shadow-md flex flex-col items-center text-center">
-                <div className="bg-green-100 p-3 rounded-full mb-4">
+              <div className="bg-white p-4 rounded-xl shadow-md flex flex-col items-center text-center">
+                <div className="bg-green-100 p-3 rounded-full mb-3">
                   <FaAppleAlt className="text-green-600 text-xl" />
                 </div>
                 <h3 className="text-xl font-['Playfair_Display'] text-gray-800 mb-2">Bez cukru</h3>
-                <p className="text-gray-600">Stosuję naturalne słodzenie owocami, ksylitolem lub miodem zamiast cukru.</p>
+                <p className="text-gray-600 text-sm">Stosuję naturalne słodzenie owocami, ksylitolem lub miodem zamiast cukru.</p>
               </div>
             </div>
             
-            <div className="bg-white p-6 rounded-xl shadow-md mt-8">
-              {/* Image and text layout - image on right */}
-              <div className="grid md:grid-cols-2 gap-6 mb-6 items-start">
+            <div className="bg-white p-4 sm:p-5 rounded-xl shadow-md">
+              {/* Image and text layout - image on right, tighter spacing */}
+              <div className="grid md:grid-cols-2 gap-4 mb-4 items-start">
                 {/* Text section - left */}
-                <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed">
-                  <p>
+                <div className="prose prose-base max-w-none text-gray-600 font-['Lato'] leading-relaxed space-y-3">
+                  <p className="mb-0">
                     Zawsze stawiam na opcje najbardziej odżywcze. Uważam, że jeśli coś jest szkodliwe dla kobiet w ciąży i małych dzieci, to w jakimś stopniu może szkodzić wszystkim, dlatego staram się unikać takich produktów.
                   </p>
                   
-                  <p>
+                  <p className="mb-0">
                     Wyznaję zasadę, że wszystko jest dobre w umiarkowanych ilościach, a rzeczy, które szkodzą, staram się ograniczać. Zdaję sobie sprawę, że niektóre składniki mogą budzić kontrowersje (np. ksylitol, brązowy ryż, makaron kukurydziany), ale zawsze wybieram "mniejsze zło", kierując się troską o zdrowie.
                   </p>
                 </div>
 
-                {/* Image section - right */}
+                {/* Image section - right with enhanced text overlay */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.9, duration: 0.8 }}
-                  className="relative h-[350px] md:h-[400px] rounded-xl overflow-hidden shadow-lg"
+                  className="relative h-[280px] sm:h-[320px] md:h-[380px] rounded-xl overflow-hidden shadow-xl group"
                 >
                   <img
                     src="/img/2.jpeg"
                     alt="Zdrowa żywność - przepisy dla Huberta"
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end">
-                    <div className="p-3 text-white">
-                      <p className="font-['Lato'] text-xs sm:text-sm italic">
-                        Zdrowa żywność przygotowana z miłością i troską
+                  {/* Enhanced gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                  
+                  {/* Beautiful text overlay with backdrop blur */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+                    <div className="bg-white/10 backdrop-blur-md rounded-lg p-3 sm:p-4 border border-white/20 shadow-lg">
+                      <p className="font-['Playfair_Display'] text-white text-sm sm:text-base font-semibold mb-1 drop-shadow-lg">
+                        Zdrowa żywność
+                      </p>
+                      <p className="font-['Lato'] text-white/95 text-xs sm:text-sm italic drop-shadow-md">
+                        przygotowana z miłością i troską
                       </p>
                     </div>
                   </div>
                 </motion.div>
               </div>
 
-              {/* Remaining text */}
-              <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed">
-                <p>
+              {/* Remaining text - tighter spacing */}
+              <div className="prose prose-base max-w-none text-gray-600 font-['Lato'] leading-relaxed space-y-3">
+                <p className="mb-0">
                   W mojej kuchni, w przepisach dla Huberta, nie znajdziesz glutenu (chociaż mogą występować śladowe ilości), nabiału krowiego (sporadycznie sięgam po nabiał kozi, który zawiera kazeinę, ale w mniejszych ilościach i o innej strukturze niż kazeina krowia, co może być lepiej tolerowane przez niektóre osoby), ani cukru (generalnie staram się słodzić owocami, a jeśli muszę, używam ksylitolu lub miodu; bardzo rzadko stosuję cukier brązowy i to w minimalnych ilościach).
                 </p>
                 
-                <p>
+                <p className="mb-0">
                   Nigdy nie smażę. Ograniczam mąkę kukurydzianą i ryżową, ponieważ kukurydza często pochodzi z modyfikowanej genetycznie kukurydzy, co budzi moje obawy dotyczące zdrowia (jednak odstępstwem jest makaron kukurydziany, który stosuję, jeśli nie jestem w stanie zakupić innego). Z kolei ryż może zawierać substancje toksyczne, takie jak arsen.
                 </p>
                 
-                <p>
+                <p className="mb-0">
                   Na początku naszej drogi dieta była znacznie bardziej restrykcyjna, ze względu na alergie – Hubert, oprócz wyżej wymienionych produktów, nie spożywał ani ryżu, ani kukurydzy. Obecnie, ponieważ Hubert funkcjonuje rewelacyjnie, stosujemy pewne odstępstwa.
                 </p>
                 
-                <p>
+                <p className="mb-0">
                   Opieram się na zasadach diety czystożerczej, chociaż w niektórych przypadkach pozwalam sobie na wyjątki. W moich przepisach znajdziesz jajka, które są cennym źródłem białka i witamin, i które dość ciężko zastąpić substytutem. Pozostali członkowie rodziny spożywają gluten, głównie w formie orkiszu albo pszenicy durum, a przepisy z glutenem można znaleźć na stronie "Zdrowe Jemy".
                 </p>
               </div>
