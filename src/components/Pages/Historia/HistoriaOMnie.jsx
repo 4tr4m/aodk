@@ -114,12 +114,12 @@ const HistoriaOMnie = () => {
             </div>
 
             {/* Image and text side by side */}
-            <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center mb-6">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-start">
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.7, duration: 0.8 }}
-                className="relative h-[400px] rounded-2xl overflow-hidden shadow-xl"
+                className="relative h-[350px] md:h-[380px] rounded-2xl overflow-hidden shadow-xl"
               >
                 <img
                   src="/img/history2.jpeg"
