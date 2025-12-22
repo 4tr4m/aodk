@@ -99,7 +99,9 @@ const HistoriaOMnie = () => {
             <h2 className="text-3xl font-['Playfair_Display'] text-gray-900 mb-6">
               Jak to się zaczęło?
             </h2>
-            <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed">
+            
+            {/* First part: Text */}
+            <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed mb-6">
               <p className="font-medium text-gray-800 italic mb-4">
                 "Jestem pasjonatką zdrowego żywienia… ale nie zawsze tak było."
               </p>
@@ -109,12 +111,36 @@ const HistoriaOMnie = () => {
               <p>
                 Ścieżkę, która była alternatywą dla ekstensywnej suplementacji, przeszczepu komórek macierzystych, cerebrolizyny (wstrzykiwanie dziecku wyciągu z mózgu świń), tlenoterapii hiperbarycznej, stymulacji mózgu prądem stałym czy stymulacji mózgu polem magnetycznym, gdzie skuteczność tych metod nie została jeszcze jednoznacznie potwierdzona.
               </p>
-              <p className="font-medium text-green-700">
-                Zdecydowaliśmy się walczyć o syna za pomocą diety.
-              </p>
-              <p>
-                Szczęście w nieszczęściu, nasza lekarka rodzinna dokładnie wiedziała, jakie kroki należy podjąć. Wstrzymała szczepienia, zleciła badanie poziomu witaminy D oraz test na krew utajoną w kale. Dodatkowo zaleciła dietę eliminacyjną.
-              </p>
+            </div>
+
+            {/* Image and text side by side */}
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center mb-6">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.7, duration: 0.8 }}
+                className="relative h-[400px] rounded-2xl overflow-hidden shadow-xl"
+              >
+                <img
+                  src="/img/history2.jpeg"
+                  alt="Moja rodzina - wspólna droga do zdrowia"
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
+                  <div className="px-6 pb-[5px] text-white">
+                    <p className="text-2xl font-['Playfair_Display']">Moja rodzina - wspólna droga do zdrowia</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed">
+                <p className="font-medium text-green-700 mb-4">
+                  Zdecydowaliśmy się walczyć o syna za pomocą diety.
+                </p>
+                <p>
+                  Szczęście w nieszczęściu, nasza lekarka rodzinna dokładnie wiedziała, jakie kroki należy podjąć. Wstrzymała szczepienia, zleciła badanie poziomu witaminy D oraz test na krew utajoną w kale. Dodatkowo zaleciła dietę eliminacyjną.
+                </p>
+              </div>
             </div>
           </motion.div>
 
