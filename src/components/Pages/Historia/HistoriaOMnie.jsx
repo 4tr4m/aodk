@@ -57,7 +57,7 @@ const HistoriaOMnie = () => {
               className="relative h-[450px] rounded-2xl overflow-hidden shadow-xl"
             >
               <img
-                src="/img/history.jpg"
+                src="/img/history.jpeg"
                 alt="Historia o mnie"
                 className="absolute inset-0 w-full h-full object-cover"
               />
