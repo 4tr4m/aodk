@@ -379,16 +379,30 @@ const RecipePage = () => {
   // Combine structured data
   const structuredData = [recipeSchema, breadcrumbSchema].filter(Boolean);
 
-  // Get absolute URL for recipe image
+  // Get absolute URL for recipe image - use same logic as getRecipeImageSrc but return absolute URL
   const getAbsoluteImageUrl = (imagePath) => {
-    if (!imagePath) return `${baseUrl}/img/logo_bckgd.png`;
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    // Use same logic as getRecipeImageSrc from recipeUtils
+    let relativePath;
+    
+    if (!imagePath || imagePath.trim() === '') {
+      // If no image, use default recipe image (not logo)
+      relativePath = '/img/ciasta.jpg';
+    } else if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      // Already absolute URL
       return imagePath;
+    } else if (imagePath.startsWith('/img/')) {
+      // Already has /img/ prefix
+      relativePath = imagePath;
+    } else if (imagePath.startsWith('/')) {
+      // Path starting with / but not /img/ - add /img/ prefix
+      relativePath = `/img${imagePath}`;
+    } else {
+      // Relative path without leading / - add /img/ prefix
+      relativePath = `/img/${imagePath}`;
     }
-    if (imagePath.startsWith('/')) {
-      return `${baseUrl}${imagePath}`;
-    }
-    return `${baseUrl}/img/${imagePath}`;
+    
+    // Convert relative path to absolute URL
+    return `${baseUrl}${relativePath}`;
   };
   
   // Get absolute canonical URL
@@ -411,7 +425,7 @@ const RecipePage = () => {
         description={recipe.shortdesc || `${recipe.name} - przepis bez glutenu, nabiału i cukru idealny dla osób z autyzmem.`}
         keywords={recipeKeywords}
         ogType="article"
-        ogImage={getAbsoluteImageUrl(recipe.image)}
+        ogImage={recipe?.image ? getAbsoluteImageUrl(recipe.image) : `${baseUrl}/img/ciasta.jpg`}
         canonical={getRecipeCanonicalUrl()}
         structuredData={structuredData}
       />
