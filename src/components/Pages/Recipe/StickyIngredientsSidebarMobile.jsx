@@ -120,40 +120,6 @@ const StickyIngredientsSidebarMobile = ({
 
   const content = (
     <AnimatePresence>
-      {/* Mobile Floating Button */}
-      {isVisible && !isOpen && !isImageModalOpen && (
-        <motion.button
-          key="sticky-button-mobile"
-          onClick={onOpen}
-          className={`fixed top-[131px] right-4 items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 group flex ${isNewsletterModalOpen ? 'z-[5000]' : isImageModalOpen ? 'z-[40]' : 'z-[10000]'}`}
-          style={{ 
-            willChange: 'transform, opacity',
-            backfaceVisibility: 'hidden',
-            isolation: 'isolate'
-          }}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.9 }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          aria-label="Pokaż składniki"
-        >
-          <motion.div
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-          >
-            <FaUtensils className="w-5 h-5" />
-          </motion.div>
-          <span className="font-semibold text-sm sm:text-base">Składniki</span>
-          <motion.div
-            className="absolute -right-1 -top-1 w-3 h-3 bg-green-400 rounded-full"
-            animate={{ scale: [1, 1.3, 1], opacity: [0.7, 0, 0.7] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          />
-        </motion.button>
-      )}
-      
       {/* Mobile Bottom Sheet */}
       {isOpen && !isImageModalOpen && (
         <>

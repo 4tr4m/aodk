@@ -2,20 +2,37 @@ import React from 'react';
 import { FaUtensils } from 'react-icons/fa';
 import { processIngredients, replaceLinkPlaceholder } from '../../../utils/recipeUtils';
 
-const RecipeIngredients = ({ ingredients, ingredientsRef }) => {
+const RecipeIngredients = ({ ingredients, ingredientsRef, onMobileButtonClick, isMobileButtonVisible }) => {
   const { groups, hasGroups, normalized } = processIngredients(ingredients);
   
   if (!normalized || normalized.length === 0) return null;
+
+  // Check if mobile
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
 
   return (
     <div 
       className="mb-8" 
       ref={ingredientsRef}
     >
-      <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display'] flex items-center gap-2">
-        <FaUtensils className="text-green-600" />
-        Składniki
-      </h2>
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <h2 className="text-xl font-bold text-gray-800 font-['Playfair_Display'] flex items-center gap-2">
+          <FaUtensils className="text-green-600" />
+          Składniki
+        </h2>
+        
+        {/* Mobile button - inline with heading */}
+        {isMobile && onMobileButtonClick && (
+          <button
+            onClick={onMobileButtonClick}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-sm font-semibold flex-shrink-0"
+            aria-label="Pokaż składniki"
+          >
+            <FaUtensils className="w-4 h-4" />
+            <span>Składniki</span>
+          </button>
+        )}
+      </div>
       
       {hasGroups ? (
         <div className="space-y-6">

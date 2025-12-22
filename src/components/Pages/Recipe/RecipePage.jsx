@@ -476,6 +476,8 @@ const RecipePage = () => {
                 <RecipeIngredients
                   ingredients={recipe.ingredients}
                   ingredientsRef={ingredientsRef}
+                  onMobileButtonClick={() => setIsStickyIngredientsOpenMobile(true)}
+                  isMobileButtonVisible={isStickyIngredientsVisible}
                 />
               )}
 
