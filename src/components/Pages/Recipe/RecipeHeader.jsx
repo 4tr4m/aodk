@@ -1,8 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaArrowLeft, FaHeart, FaShareAlt } from 'react-icons/fa';
+import { FaArrowLeft, FaHeart } from 'react-icons/fa';
+import ShareButton from '../../UI/ShareButton';
 
-const RecipeHeader = ({ onBack, onShare, onToggleWishlist, isInWishlist }) => {
+const RecipeHeader = ({ onBack, onToggleWishlist, isInWishlist, recipe }) => {
   return (
     <div className="max-w-6xl mx-auto px-4 -mt-6 mb-2">
       <div className="flex items-center justify-between">
@@ -16,19 +17,17 @@ const RecipeHeader = ({ onBack, onShare, onToggleWishlist, isInWishlist }) => {
           <span className="font-medium">Wróć do kategorii</span>
         </motion.button>
 
-        {/* Hidden on mobile, visible on desktop (lg and above) */}
-        <div className="hidden lg:flex items-center gap-3">
-          <button
-            onClick={onShare}
-            className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors"
-            title="Udostępnij"
-            aria-label="Udostępnij"
-          >
-            <FaShareAlt />
-          </button>
+        {/* Share and Wishlist buttons - visible on all screen sizes */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Share button - visible on all screen sizes */}
+          <ShareButton
+            title={recipe?.name}
+            text={recipe?.shortdesc}
+            url={typeof window !== 'undefined' ? window.location.href : undefined}
+          />
           <button
             onClick={onToggleWishlist}
-            className={`p-2 rounded-full transition-colors ${
+            className={`p-2 sm:p-3 rounded-full transition-colors ${
               isInWishlist 
                 ? 'text-red-500 hover:text-red-600 hover:bg-red-50' 
                 : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
@@ -36,7 +35,7 @@ const RecipeHeader = ({ onBack, onShare, onToggleWishlist, isInWishlist }) => {
             title={isInWishlist ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
             aria-label={isInWishlist ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
           >
-            <FaHeart className={isInWishlist ? 'fill-current' : ''} />
+            <FaHeart className={`text-lg sm:text-xl ${isInWishlist ? 'fill-current' : ''}`} />
           </button>
         </div>
       </div>

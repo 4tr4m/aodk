@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import SearchBar from '../../UI/SearchBar';
 import CategorySearchIcon from './CategorySearchIcon';
 import CategoryFilterButton from './CategoryFilterButton';
+import ShareButton from '../../UI/ShareButton';
 import { formatCategoryName } from '../../../utils/categoryUtils';
 
 const CategoryPageHeader = ({
@@ -153,8 +154,14 @@ const CategoryPageHeader = ({
               </AnimatePresence>
             </div>
             
-            {/* Right spacer for symmetry - same width as filter button */}
-            <div style={{ gridColumn: '3', minWidth: '120px' }} className="hidden sm:block"></div>
+            {/* Share button - visible on all screen sizes */}
+            <div style={{ gridColumn: '3', minWidth: '120px' }} className="flex items-center justify-end gap-2 sm:gap-3">
+              <ShareButton
+                title={currentCategory ? formatCategoryName(currentCategory.label) : 'Wszystkie Przepisy'}
+                text={currentCategory?.description || 'Przepisy bez glutenu, nabiału i cukru'}
+                url={typeof window !== 'undefined' ? window.location.href : undefined}
+              />
+            </div>
           </motion.div>
         </div>
       </motion.div>

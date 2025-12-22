@@ -334,22 +334,6 @@ const RecipePage = () => {
     }
   };
 
-  const handleShare = async () => {
-    if (navigator.share && recipe) {
-      try {
-        await navigator.share({
-          title: recipe.name,
-          text: recipe.shortdesc,
-          url: window.location.href,
-        });
-      } catch (err) {
-        // Fallback to copying URL
-        navigator.clipboard.writeText(window.location.href);
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-    }
-  };
 
   const processIngredients = (ingredientsData) => {
     return processIngredientsUtil(ingredientsData || recipe?.ingredients);
@@ -442,9 +426,9 @@ const RecipePage = () => {
 
         <RecipeHeader
           onBack={() => navigate(-1)}
-          onShare={handleShare}
           onToggleWishlist={handleToggleWishlist}
           isInWishlist={isInWishlist}
+          recipe={recipe}
         />
 
         <div className="max-w-6xl mx-auto px-4 py-8">
