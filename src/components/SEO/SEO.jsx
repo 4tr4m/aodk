@@ -26,11 +26,25 @@ const SEO = ({
   const metaDescription = description || defaultDescription;
   const metaKeywords = keywords || defaultKeywords;
   
-  // Current URL for canonical link if not provided
-  const metaCanonical = canonical || (typeof window !== 'undefined' ? window.location.href : '');
+  // Helper to ensure absolute URL
+  const getAbsoluteUrl = (url) => {
+    if (!url) return baseUrl;
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    if (url.startsWith('/')) {
+      return `${baseUrl}${url}`;
+    }
+    return `${baseUrl}/${url}`;
+  };
+  
+  // Current URL for canonical link if not provided - ensure it's absolute
+  const metaCanonical = canonical 
+    ? getAbsoluteUrl(canonical)
+    : (typeof window !== 'undefined' ? window.location.href : baseUrl);
   
   // Convert relative ogImage path to absolute URL if needed
-  // Google requires absolute URLs for og:image and other social meta tags
+  // Google and WhatsApp require absolute URLs for og:image and other social meta tags
   const getAbsoluteImageUrl = (imagePath) => {
     if (!imagePath) return `${baseUrl}/img/logo_bckgd.png`;
     // Already absolute URL
@@ -41,7 +55,10 @@ const SEO = ({
     if (imagePath.startsWith('/')) {
       return `${baseUrl}${imagePath}`;
     }
-    // Relative path without leading /
+    // Relative path without leading / - assume it's in /img/ folder
+    if (!imagePath.startsWith('img/')) {
+      return `${baseUrl}/img/${imagePath}`;
+    }
     return `${baseUrl}/${imagePath}`;
   };
   
@@ -91,7 +108,7 @@ const SEO = ({
       <meta name="author" content={author} />
       {robots && <meta name="robots" content={robots} />}
       
-      {/* Open Graph / Facebook - Must use absolute URLs for Google */}
+      {/* Open Graph / Facebook / WhatsApp - Must use absolute URLs */}
       <meta property="og:type" content={ogType} />
       <meta property="og:title" content={metaTitle} />
       <meta property="og:description" content={metaDescription} />
@@ -99,8 +116,10 @@ const SEO = ({
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:image:secure_url" content={finalOgImage} />
-      <meta property="og:url" content={metaCanonical || baseUrl} />
+      <meta property="og:image:alt" content={metaTitle} />
+      <meta property="og:url" content={metaCanonical} />
       <meta property="og:site_name" content="Autyzm od Kuchni" />
+      <meta property="og:locale" content="pl_PL" />
       
       {/* Twitter - Must use absolute URLs for Google */}
       <meta name="twitter:card" content="summary_large_image" />

@@ -31,6 +31,9 @@ const RecipePage = () => {
   
   const { recipe, loading, error, isInWishlist, setIsInWishlist } = useRecipeData(recipeId);
   const { isStickyIngredientsVisible, ingredientsRef } = useRecipeScrollDetection(recipe, loading);
+  
+  // Base URL for absolute URLs (used for SEO and social sharing)
+  const baseUrl = "https://www.autyzmodkuchni.pl";
 
   // Helper function to convert category to slug
   const getCategorySlug = (category) => {
@@ -82,8 +85,6 @@ const RecipePage = () => {
   // Generate Schema.org Recipe structured data
   const generateRecipeSchema = (recipe) => {
     if (!recipe) return null;
-
-    const baseUrl = "https://www.autyzmodkuchni.pl";
     
     // Process ingredients - clean HTML and extract text
     const { normalized } = processIngredientsUtil(recipe.ingredients);
@@ -205,7 +206,6 @@ const RecipePage = () => {
   const generateBreadcrumbSchema = (recipe) => {
     if (!recipe) return null;
 
-    const baseUrl = "https://www.autyzmodkuchni.pl";
     const categorySlug = getCategorySlug(recipe.category);
     const categoryName = recipe.category || 'Przepisy';
 
@@ -395,15 +395,40 @@ const RecipePage = () => {
   // Combine structured data
   const structuredData = [recipeSchema, breadcrumbSchema].filter(Boolean);
 
+  // Get absolute URL for recipe image
+  const getAbsoluteImageUrl = (imagePath) => {
+    if (!imagePath) return `${baseUrl}/img/logo_bckgd.png`;
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    if (imagePath.startsWith('/')) {
+      return `${baseUrl}${imagePath}`;
+    }
+    return `${baseUrl}/img/${imagePath}`;
+  };
+  
+  // Get absolute canonical URL
+  const getRecipeCanonicalUrl = () => {
+    if (typeof window !== 'undefined') {
+      return window.location.href;
+    }
+    // Fallback: construct URL from recipe data
+    const categorySlug = getCategorySlug(recipe.category);
+    if (categorySlug) {
+      return `${baseUrl}/kuchnia/${categorySlug}/${recipe.id}`;
+    }
+    return `${baseUrl}/przepis/${recipe.id}`;
+  };
+
   return (
     <>
       <SEO 
         title={`${recipe.name} - Przepis bez glutenu, nabiału i cukru | Autyzm od Kuchni`}
         description={recipe.shortdesc || `${recipe.name} - przepis bez glutenu, nabiału i cukru idealny dla osób z autyzmem.`}
         keywords={recipeKeywords}
-        ogType="recipe"
-        ogImage={recipe.image}
-        canonical={typeof window !== 'undefined' ? window.location.href : undefined}
+        ogType="article"
+        ogImage={getAbsoluteImageUrl(recipe.image)}
+        canonical={getRecipeCanonicalUrl()}
         structuredData={structuredData}
       />
       
