@@ -155,31 +155,10 @@ const HistoriaOMnie = () => {
               </div>
             </div>
             
-            <div className="bg-white p-8 rounded-xl shadow-md mt-8">
-              {/* Image and text layout */}
-              <div className="grid md:grid-cols-2 gap-8 mb-8 items-start">
-                {/* Image section */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.9, duration: 0.8 }}
-                  className="relative h-[400px] md:h-[500px] rounded-xl overflow-hidden shadow-lg"
-                >
-                  <img
-                    src="/img/2.jpeg"
-                    alt="Zdrowa żywność - przepisy dla Huberta"
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end">
-                    <div className="p-4 text-white">
-                      <p className="font-['Lato'] text-sm sm:text-base italic">
-                        Zdrowa żywność przygotowana z miłością i troską
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Text section */}
+            <div className="bg-white p-6 rounded-xl shadow-md mt-8">
+              {/* Image and text layout - image on right */}
+              <div className="grid md:grid-cols-2 gap-6 mb-6 items-start">
+                {/* Text section - left */}
                 <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed">
                   <p>
                     Zawsze stawiam na opcje najbardziej odżywcze. Uważam, że jeśli coś jest szkodliwe dla kobiet w ciąży i małych dzieci, to w jakimś stopniu może szkodzić wszystkim, dlatego staram się unikać takich produktów.
@@ -189,6 +168,27 @@ const HistoriaOMnie = () => {
                     Wyznaję zasadę, że wszystko jest dobre w umiarkowanych ilościach, a rzeczy, które szkodzą, staram się ograniczać. Zdaję sobie sprawę, że niektóre składniki mogą budzić kontrowersje (np. ksylitol, brązowy ryż, makaron kukurydziany), ale zawsze wybieram "mniejsze zło", kierując się troską o zdrowie.
                   </p>
                 </div>
+
+                {/* Image section - right */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.9, duration: 0.8 }}
+                  className="relative h-[350px] md:h-[400px] rounded-xl overflow-hidden shadow-lg"
+                >
+                  <img
+                    src="/img/2.jpeg"
+                    alt="Zdrowa żywność - przepisy dla Huberta"
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-end">
+                    <div className="p-3 text-white">
+                      <p className="font-['Lato'] text-xs sm:text-sm italic">
+                        Zdrowa żywność przygotowana z miłością i troską
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
 
               {/* Remaining text */}
