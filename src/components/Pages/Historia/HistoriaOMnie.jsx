@@ -31,15 +31,15 @@ const HistoriaOMnie = () => {
       </div>
       
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="space-y-12"
+          className="space-y-8 md:space-y-10"
         >
           {/* Hero Section */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 md:mb-10">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-['Playfair_Display'] text-gray-900 mb-6">
               O Mnie
             </h1>
@@ -49,7 +49,7 @@ const HistoriaOMnie = () => {
           </div>
 
           {/* Image and Text Section */}
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -94,7 +94,7 @@ const HistoriaOMnie = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="mt-16 bg-white p-8 rounded-2xl shadow-lg"
+            className="bg-white p-6 md:p-8 rounded-2xl shadow-lg"
           >
             <h2 className="text-3xl font-['Playfair_Display'] text-gray-900 mb-6">
               Jak to się zaczęło?
@@ -123,13 +123,12 @@ const HistoriaOMnie = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}
-            className="mt-8"
           >
-            <h2 className="text-3xl font-['Playfair_Display'] text-gray-900 text-center mb-6">
+            <h2 className="text-3xl font-['Playfair_Display'] text-gray-900 text-center mb-4 md:mb-5">
               Zasady, które stosuję w mojej kuchni
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 md:mb-5">
               <div className="bg-white p-4 rounded-xl shadow-md flex flex-col items-center text-center">
                 <div className="bg-green-100 p-3 rounded-full mb-3">
                   <FaLeaf className="text-green-600 text-xl" />
@@ -156,9 +155,9 @@ const HistoriaOMnie = () => {
             </div>
             
             <div className="bg-white p-4 sm:p-5 rounded-xl shadow-md">
-              {/* Image and text layout - image on right, tighter spacing */}
-              <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-start">
-                {/* Text section - left */}
+              {/* First part: Text and image side by side */}
+              <div className="grid md:grid-cols-2 gap-4 md:gap-6 items-start mb-4 md:mb-5">
+                {/* First three paragraphs - left */}
                 <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed">
                   <p>
                     Zawsze stawiam na opcje najbardziej odżywcze. Uważam, że jeśli coś jest szkodliwe dla kobiet w ciąży i małych dzieci, to w jakimś stopniu może szkodzić wszystkim, dlatego staram się unikać takich produktów.
@@ -167,14 +166,18 @@ const HistoriaOMnie = () => {
                   <p>
                     Wyznaję zasadę, że wszystko jest dobre w umiarkowanych ilościach, a rzeczy, które szkodzą, staram się ograniczać. Zdaję sobie sprawę, że niektóre składniki mogą budzić kontrowersje (np. ksylitol, brązowy ryż, makaron kukurydziany), ale zawsze wybieram "mniejsze zło", kierując się troską o zdrowie.
                   </p>
+                  
+                  <p>
+                    W mojej kuchni, w przepisach dla Huberta, nie znajdziesz glutenu (chociaż mogą występować śladowe ilości), nabiału krowiego (sporadycznie sięgam po nabiał kozi, który zawiera kazeinę, ale w mniejszych ilościach i o innej strukturze niż kazeina krowia, co może być lepiej tolerowane przez niektóre osoby), ani cukru (generalnie staram się słodzić owocami, a jeśli muszę, używam ksylitolu lub miodu; bardzo rzadko stosuję cukier brązowy i to w minimalnych ilościach).
+                  </p>
                 </div>
 
-                {/* Image section - right - same style as first image */}
+                {/* Image section - right - adjusted height to match text */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 0.9, duration: 0.8 }}
-                  className="relative h-[450px] rounded-2xl overflow-hidden shadow-xl"
+                  className="relative h-[380px] md:h-[400px] rounded-2xl overflow-hidden shadow-xl"
                 >
                   <img
                     src="/img/2.jpeg"
@@ -182,19 +185,15 @@ const HistoriaOMnie = () => {
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
-                    <div className="p-6 text-white">
-                      <h3 className="text-2xl font-['Playfair_Display'] mb-2">Zdrowa żywność</h3>
-                      <p className="font-['Lato'] text-white/90">przygotowana z miłością i troską</p>
+                    <div className="px-6 pb-[5px] text-white">
+                      <p className="text-2xl font-['Playfair_Display']">Zdrowa żywność przygotowana z miłością i troską</p>
                     </div>
                   </div>
                 </motion.div>
               </div>
 
-              {/* Remaining text - no gap after image section */}
-              <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed mt-6">
-                <p>
-                  W mojej kuchni, w przepisach dla Huberta, nie znajdziesz glutenu (chociaż mogą występować śladowe ilości), nabiału krowiego (sporadycznie sięgam po nabiał kozi, który zawiera kazeinę, ale w mniejszych ilościach i o innej strukturze niż kazeina krowia, co może być lepiej tolerowane przez niektóre osoby), ani cukru (generalnie staram się słodzić owocami, a jeśli muszę, używam ksylitolu lub miodu; bardzo rzadko stosuję cukier brązowy i to w minimalnych ilościach).
-                </p>
+              {/* Second part: Remaining text flows below, full width */}
+              <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed">
                 
                 <p>
                   Nigdy nie smażę. Ograniczam mąkę kukurydzianą i ryżową, ponieważ kukurydza często pochodzi z modyfikowanej genetycznie kukurydzy, co budzi moje obawy dotyczące zdrowia (jednak odstępstwem jest makaron kukurydziany, który stosuję, jeśli nie jestem w stanie zakupić innego). Z kolei ryż może zawierać substancje toksyczne, takie jak arsen.
@@ -216,7 +215,7 @@ const HistoriaOMnie = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2, duration: 0.8 }}
-            className="bg-green-50 p-8 rounded-xl text-center mt-16"
+            className="bg-green-50 p-6 md:p-8 rounded-xl text-center"
           >
             <h3 className="text-2xl font-['Playfair_Display'] text-gray-900 mb-4">
               Zapraszam do wspólnej drogi
