@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FaShareAlt } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaShareAlt, FaCheck } from 'react-icons/fa';
 
 const ShareButton = ({ 
   title, 
   text, 
   url, 
   className = '',
-  variant = 'default' // 'default', 'floating', 'inline'
+  variant = 'default' // 'default', 'floating', 'inline', 'icon-only'
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -37,7 +37,7 @@ const ShareButton = ({
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopied(false), 3000);
     } catch (err) {
       console.error('Error copying to clipboard:', err);
       // Last resort: show URL in alert
@@ -45,28 +45,30 @@ const ShareButton = ({
     }
   };
 
-  // Floating variant - fixed position button
+  // Floating variant - fixed position button with text
   if (variant === 'floating') {
     return (
       <motion.button
         onClick={handleShare}
-        className={`fixed bottom-20 right-4 sm:right-6 z-50 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-lg p-4 sm:p-5 transition-all duration-200 ${className}`}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        aria-label="Udostępnij"
+        className={`fixed bottom-20 right-4 sm:right-6 z-50 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white rounded-full shadow-lg hover:shadow-xl p-4 sm:p-5 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-green-300 ${className}`}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        aria-label="Udostępnij tę stronę"
         title="Udostępnij"
       >
-        <FaShareAlt className="text-xl sm:text-2xl" />
-        {copied && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap"
-          >
-            Skopiowano!
-          </motion.div>
-        )}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {copied ? (
+            <>
+              <FaCheck className="text-xl sm:text-2xl" />
+              <span className="text-sm sm:text-base font-medium hidden sm:inline">Skopiowano!</span>
+            </>
+          ) : (
+            <>
+              <FaShareAlt className="text-xl sm:text-2xl" />
+              <span className="text-sm sm:text-base font-medium hidden sm:inline">Udostępnij</span>
+            </>
+          )}
+        </div>
       </motion.button>
     );
   }
@@ -76,37 +78,79 @@ const ShareButton = ({
     return (
       <motion.button
         onClick={handleShare}
-        className={`flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-all duration-200 ${className}`}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="Udostępnij"
+        className={`flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300 ${className}`}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        aria-label="Udostępnij tę stronę"
       >
-        <FaShareAlt />
-        <span>{copied ? 'Skopiowano!' : 'Udostępnij'}</span>
+        {copied ? (
+          <>
+            <FaCheck className="text-base" />
+            <span>Skopiowano!</span>
+          </>
+        ) : (
+          <>
+            <FaShareAlt className="text-base" />
+            <span>Udostępnij</span>
+          </>
+        )}
       </motion.button>
     );
   }
 
-  // Default variant - icon button
+  // Icon-only variant - just icon button (for tight spaces)
+  if (variant === 'icon-only') {
+    return (
+      <motion.button
+        onClick={handleShare}
+        className={`relative flex items-center justify-center p-2.5 sm:p-3 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-green-300 ${className}`}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        aria-label="Udostępnij tę stronę"
+        title="Udostępnij"
+      >
+        {copied ? (
+          <FaCheck className="text-lg sm:text-xl" />
+        ) : (
+          <FaShareAlt className="text-lg sm:text-xl" />
+        )}
+        <AnimatePresence>
+          {copied && (
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.9 }}
+              className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap shadow-lg z-10 pointer-events-none"
+            >
+              Skopiowano link!
+              <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.button>
+    );
+  }
+
+  // Default variant - button with icon and text (more accessible)
   return (
     <motion.button
       onClick={handleShare}
-      className={`flex items-center justify-center p-2 sm:p-3 bg-green-600 hover:bg-green-700 text-white rounded-full shadow-md hover:shadow-lg transition-all duration-200 ${className}`}
-      whileHover={{ scale: 1.1 }}
-      whileTap={{ scale: 0.9 }}
-      aria-label="Udostępnij"
+      className={`relative flex items-center gap-2 px-4 py-2.5 bg-green-600 hover:bg-green-700 active:bg-green-800 text-white rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-green-300 ${className}`}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      aria-label="Udostępnij tę stronę"
       title="Udostępnij"
     >
-      <FaShareAlt className="text-lg sm:text-xl" />
-      {copied && (
-        <motion.span
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap"
-        >
-          Skopiowano!
-        </motion.span>
+      {copied ? (
+        <>
+          <FaCheck className="text-base sm:text-lg" />
+          <span className="text-sm sm:text-base">Skopiowano!</span>
+        </>
+      ) : (
+        <>
+          <FaShareAlt className="text-base sm:text-lg" />
+          <span className="text-sm sm:text-base">Udostępnij</span>
+        </>
       )}
     </motion.button>
   );

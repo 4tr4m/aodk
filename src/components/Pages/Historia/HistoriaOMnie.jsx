@@ -258,7 +258,7 @@ const HistoriaOMnie = () => {
               Jeśli szukasz przepisów, które mogą wspierać zdrowie i rozwój, zapraszam do wypróbowania moich sprawdzonych przepisów.
             </p>
             <a 
-              href="/przepisy" 
+              href="/kuchnia" 
               className="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors font-medium"
             >
               Zobacz przepisy
