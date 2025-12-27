@@ -36,7 +36,7 @@ const HistoriaOMnie = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="space-y-8 md:space-y-10"
+          className="space-y-6 md:space-y-8"
         >
           {/* Hero Section */}
           <div className="text-center mb-8 md:mb-10">
@@ -94,15 +94,15 @@ const HistoriaOMnie = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="bg-white p-6 md:p-8 rounded-2xl shadow-lg"
+            className="bg-white p-6 md:p-8 lg:p-10 rounded-2xl shadow-lg"
           >
-            <h2 className="text-3xl font-['Playfair_Display'] text-gray-900 mb-6">
+            <h2 className="text-3xl md:text-4xl font-['Playfair_Display'] text-gray-900 text-center mb-8 md:mb-10">
               Jak to się zaczęło?
             </h2>
             
             {/* First part: Text */}
-            <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed mb-6">
-              <p className="font-medium text-gray-800 italic mb-4">
+            <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed mb-8">
+              <p className="font-medium text-gray-800 italic mb-4 text-center text-lg">
                 "Jestem pasjonatką zdrowego żywienia… ale nie zawsze tak było."
               </p>
               <p>
@@ -114,21 +114,12 @@ const HistoriaOMnie = () => {
             </div>
 
             {/* Image and text side by side */}
-            <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
-              <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed md:order-first">
-                <p className="font-medium text-green-700 mb-4">
-                  Zdecydowaliśmy się walczyć o syna za pomocą diety.
-                </p>
-                <p>
-                  Szczęście w nieszczęściu, nasza lekarka rodzinna dokładnie wiedziała, jakie kroki należy podjąć. Wstrzymała szczepienia, zleciła badanie poziomu witaminy D oraz test na krew utajoną w kale. Dodatkowo zaleciła dietę eliminacyjną.
-                </p>
-              </div>
-
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 items-stretch">
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.7, duration: 0.8 }}
-                className="relative h-[350px] md:h-[380px] rounded-2xl overflow-hidden shadow-xl md:order-last"
+                className="relative h-[350px] md:h-full min-h-[350px] rounded-2xl overflow-hidden shadow-xl order-2 md:order-1"
               >
                 <img
                   src="/img/history2.jpeg"
@@ -137,10 +128,19 @@ const HistoriaOMnie = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
                   <div className="px-6 pb-[5px] text-white">
-                    <p className="text-2xl font-['Playfair_Display']">Moja rodzina - wspólna droga do zdrowia</p>
+                    <p className="text-xl md:text-2xl font-['Playfair_Display']">Moja rodzina - wspólna droga do zdrowia</p>
                   </div>
                 </div>
               </motion.div>
+
+              <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed order-1 md:order-2">
+                <p className="font-medium text-green-700 mb-4 text-lg">
+                  Zdecydowaliśmy się walczyć o syna za pomocą diety.
+                </p>
+                <p>
+                  Szczęście w nieszczęściu, nasza lekarka rodzinna dokładnie wiedziała, jakie kroki należy podjąć. Wstrzymała szczepienia, zleciła badanie poziomu witaminy D oraz test na krew utajoną w kale. Dodatkowo zaleciła dietę eliminacyjną.
+                </p>
+              </div>
             </div>
           </motion.div>
 
@@ -149,20 +149,20 @@ const HistoriaOMnie = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}
-            className="bg-white p-6 md:p-8 rounded-2xl shadow-lg"
+            className="bg-white p-6 md:p-8 lg:p-10 rounded-2xl shadow-lg"
           >
-            <h2 className="text-3xl font-['Playfair_Display'] text-gray-900 text-center mb-6 md:mb-8">
+            <h2 className="text-3xl md:text-4xl font-['Playfair_Display'] text-gray-900 text-center mb-8 md:mb-10">
               Zasady, które stosuję w mojej kuchni
             </h2>
             
             {/* Image and content side by side */}
-            <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-start">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-10 items-stretch mb-8">
               {/* Image section - left */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.9, duration: 0.8 }}
-                className="relative h-[450px] md:h-[500px] rounded-2xl overflow-hidden shadow-xl"
+                className="relative h-[350px] md:h-full min-h-[400px] rounded-2xl overflow-hidden shadow-xl"
               >
                 <img
                   src="/img/2.jpeg"
@@ -171,7 +171,7 @@ const HistoriaOMnie = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
                   <div className="px-6 pb-[5px] text-white">
-                    <p className="text-2xl font-['Playfair_Display']">Zdrowa żywność przygotowana z miłością i troską</p>
+                    <p className="text-xl md:text-2xl font-['Playfair_Display']">Zdrowa żywność przygotowana z miłością i troską</p>
                   </div>
                 </div>
               </motion.div>
@@ -224,8 +224,8 @@ const HistoriaOMnie = () => {
               </div>
             </div>
 
-            {/* Full width text below - no gap */}
-            <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed mt-6 pt-6 border-t border-gray-200">
+            {/* Full width text below */}
+            <div className="prose prose-lg max-w-none text-gray-600 font-['Lato'] leading-relaxed mt-8 pt-8 border-t border-gray-200">
               <p>
                 W mojej kuchni, w przepisach dla Huberta, nie znajdziesz glutenu (chociaż mogą występować śladowe ilości), nabiału krowiego (sporadycznie sięgam po nabiał kozi, który zawiera kazeinę, ale w mniejszych ilościach i o innej strukturze niż kazeina krowia, co może być lepiej tolerowane przez niektóre osoby), ani cukru (generalnie staram się słodzić owocami, a jeśli muszę, używam ksylitolu lub miodu; bardzo rzadko stosuję cukier brązowy i to w minimalnych ilościach).
               </p>
