@@ -158,12 +158,12 @@ const SearchIcon = memo(({ toggleSearch, showTooltip }) => {
   return (
     <div className="relative inline-block">
       <motion.div 
-        className="cursor-pointer relative select-none search-icon-container group"
+        className="cursor-pointer relative select-none search-icon-container group flex items-center"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={toggleSearch}
         initial={{ scale: 1 }}
-        style={{ top: '-10px', position: 'relative', left: '0', ...(isMobile ? { left: '-15px' } : {}) }}
+        style={{ left: '0', ...(isMobile ? { left: '-15px' } : {}) }}
       >
         <div className="relative flex items-center justify-center">
           <FaSearch 
@@ -403,7 +403,7 @@ const CategoryBanner = () => {
     <section 
       id="categories" 
       ref={bannerRef} 
-      className={`relative ${SECTION_BG} min-h-[320px] sm:min-h-[350px] md:min-h-[420px] overflow-hidden pt-6 pb-16 md:pt-10 md:pb-20`}
+      className={`relative ${SECTION_BG} min-h-[320px] sm:min-h-[350px] md:min-h-[420px] overflow-hidden py-24`}
     >
       {/* Wavy dividers */}
       <WaveDivider position="top" color={dividerColor} />

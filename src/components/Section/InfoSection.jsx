@@ -86,7 +86,7 @@ const InfoSection = () => {
           <motion.div className="text-center mb-6 sm:mb-8 relative" variants={fadeInUp}>
             <div className="inline-flex flex-col items-center relative mb-2">
               <motion.div 
-                className="relative w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 rounded-full shadow-lg overflow-hidden cursor-pointer border-4 border-white/50 mb-4"
+                className="relative w-32 h-32 sm:w-36 sm:h-36 md:w-44 md:h-44 rounded-full shadow-lg overflow-hidden cursor-pointer border-4 border-white/50 mb-4"
                 whileHover={{ scale: 1.08, boxShadow: '0px 10px 25px rgba(0, 0, 0, 0.1)' }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 300, damping: 15 }}
@@ -117,93 +117,182 @@ const InfoSection = () => {
             </div>
           </motion.div>
 
-          {/* Main Content */}
-          <motion.div className="space-y-4 sm:space-y-6 max-w-3xl mx-auto" variants={fadeInUp}>
-            <motion.div className="prose prose-lg text-gray-600 font-['Lato'] space-y-4" variants={fadeInUp}>
-              <motion.p className="text-lg sm:text-xl md:text-2xl leading-relaxed px-2 sm:px-0">
+          {/* Main Content - Text with Wrapped Images */}
+          <motion.div className="space-y-8 sm:space-y-12 max-w-6xl mx-auto" variants={fadeInUp}>
+            {/* Introduction Text */}
+            <motion.div className="prose prose-lg text-gray-600 font-['Lato'] space-y-6 text-center max-w-4xl mx-auto" variants={fadeInUp}>
+              <motion.p className="text-lg sm:text-xl leading-relaxed px-4 sm:px-0">
                 Dieta w autyzmie odgrywa kluczową rolę w codziennym funkcjonowaniu. 
-                <span className="text-green-700 font-semibold"> Odpowiednio dobrane posiłki mogą znacząco 
+                <span className="text-green-700 font-bold text-xl sm:text-2xl"> Odpowiednio dobrane posiłki mogą znacząco 
                 wpłynąć na samopoczucie i rozwój</span>. Nasze przepisy zostały stworzone z myślą o 
                 specjalnych potrzebach żywieniowych, eliminując składniki, które często powodują problemy.
               </motion.p>
 
-              <motion.p className="text-lg sm:text-xl md:text-2xl leading-relaxed px-2 sm:px-0">
-                Wszystkie nasze przepisy są <span className="text-green-700 font-semibold">bezglutenowe, 
+              <motion.p className="text-lg sm:text-xl leading-relaxed px-4 sm:px-0">
+                Wszystkie nasze przepisy są <span className="text-green-700 font-bold text-xl sm:text-2xl">bezglutenowe, 
                 bez nabiału krowiego i bez zbędnego cukru</span>. Stawiamy na naturalne składniki i proste 
                 metody przygotowania, które nie wymagają smażenia.
               </motion.p>
             </motion.div>
 
-            {/* Features Section */}
+            {/* Features Section - Images Wrapped Around Text */}
             <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 py-4 sm:py-6"
+              className="space-y-12 sm:space-y-16 py-8 sm:py-12"
               variants={staggerContainer}
             >
+              {/* Feature 1: Bez Glutenu - Image Left, Text Right */}
               <motion.div 
-                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
+                className="flex flex-col md:flex-row items-center gap-6 sm:gap-8 md:gap-10"
                 variants={fadeInUp}
-                whileHover={{ y: -5 }}
               >
-                <div className="absolute inset-0 overflow-hidden">
-                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
-                  <div className="h-full w-full bg-gray-200">
-                    <img src="/img/noGluten.jpg" alt="Bez glutenu" className="w-full h-full object-cover" />
+                <motion.div 
+                  className="w-full md:w-1/2 overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 group cursor-pointer h-[300px] sm:h-[350px] md:h-[400px] flex-shrink-0"
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  style={{ borderRadius: '20px' }}
+                >
+                  <div className="relative h-full w-full">
+                    <motion.div 
+                      className="bg-gradient-to-t from-black/90 via-black/70 to-black/50 absolute inset-0 z-10"
+                      whileHover={{ opacity: 0.8 }}
+                    />
+                    <motion.img 
+                      src="/img/noGluten.jpg" 
+                      alt="Bez glutenu" 
+                      className="w-full h-full object-cover" 
+                      style={{ borderRadius: '20px' }}
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.7 }}
+                    />
+                    <div className="absolute inset-0 z-20 flex items-end justify-center pb-6 sm:pb-8">
+                      <h3 className="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl font-bold text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 2px 10px rgba(0,0,0,1)' }}>Bez Glutenu</h3>
+                    </div>
                   </div>
-                </div>
-                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
-                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Glutenu</h3>
-                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Wszystkie przepisy są bezpieczne dla osób z celiakią</p>
+                </motion.div>
+                
+                <div className="w-full md:w-1/2 space-y-4">
+                  <p className="text-lg sm:text-xl text-gray-700 font-['Lato'] leading-relaxed">
+                    Wszystkie nasze przepisy są <span className="text-green-700 font-bold">w pełni bezglutenowe</span>, co oznacza, że są bezpieczne dla osób z celiakią oraz nietolerancją glutenu. Wykluczamy wszystkie zboża zawierające gluten, takie jak pszenica, żyto, jęczmień i owies.
+                  </p>
+                  <p className="text-lg sm:text-xl text-gray-700 font-['Lato'] leading-relaxed">
+                    Zamiast tego wykorzystujemy naturalne, bezglutenowe alternatywy, które są równie smaczne i odżywcze. Nasze przepisy opierają się na mąkach z migdałów, kokosa, gryki czy prosa, które dostarczają wartościowych składników odżywczych.
+                  </p>
                 </div>
               </motion.div>
 
+              {/* Feature 2: Bez Nabiału - Text Left, Image Right */}
               <motion.div 
-                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
+                className="flex flex-col md:flex-row-reverse items-center gap-6 sm:gap-8 md:gap-10"
                 variants={fadeInUp}
-                whileHover={{ y: -5 }}
               >
-                <div className="absolute inset-0 overflow-hidden">
-                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
-                  <div className="h-full w-full bg-gray-200">
-                    <img src="/img/noDairy.jpg" alt="Bez nabiału" className="w-full h-full object-cover" />
+                <motion.div 
+                  className="w-full md:w-1/2 overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 group cursor-pointer h-[300px] sm:h-[350px] md:h-[400px] flex-shrink-0"
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  style={{ borderRadius: '20px' }}
+                >
+                  <div className="relative h-full w-full">
+                    <motion.div 
+                      className="bg-gradient-to-t from-black/90 via-black/70 to-black/50 absolute inset-0 z-10"
+                      whileHover={{ opacity: 0.8 }}
+                    />
+                    <motion.img 
+                      src="/img/noDairy.jpg" 
+                      alt="Bez nabiału" 
+                      className="w-full h-full object-cover" 
+                      style={{ borderRadius: '20px' }}
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.7 }}
+                    />
+                    <div className="absolute inset-0 z-20 flex items-end justify-center pb-6 sm:pb-8">
+                      <h3 className="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl font-bold text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 2px 10px rgba(0,0,0,1)' }}>Bez Nabiału</h3>
+                    </div>
                   </div>
-                </div>
-                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
-                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Nabiału</h3>
-                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Wykluczamy nabiał krowi ze wszystkich przepisów</p>
+                </motion.div>
+                
+                <div className="w-full md:w-1/2 space-y-4">
+                  <p className="text-lg sm:text-xl text-gray-700 font-['Lato'] leading-relaxed">
+                    Wykluczamy <span className="text-green-700 font-bold">nabiał krowi ze wszystkich przepisów</span>, ponieważ często powoduje problemy trawienne i może wpływać na funkcjonowanie osób z autyzmem. Kazeina zawarta w mleku krowim może być trudna do strawienia i powodować stany zapalne.
+                  </p>
+                  <p className="text-lg sm:text-xl text-gray-700 font-['Lato'] leading-relaxed">
+                    W naszych przepisach znajdziesz alternatywy roślinne, takie jak mleko migdałowe, kokosowe czy owsiane. Czasami sięgamy po nabiał kozi, który zawiera kazeinę o innej strukturze i może być lepiej tolerowany przez niektóre osoby.
+                  </p>
                 </div>
               </motion.div>
 
+              {/* Feature 3: Bez Smażenia - Image Left, Text Right */}
               <motion.div 
-                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
+                className="flex flex-col md:flex-row items-center gap-6 sm:gap-8 md:gap-10"
                 variants={fadeInUp}
-                whileHover={{ y: -5 }}
               >
-                <div className="absolute inset-0 overflow-hidden">
-                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
-                  <div className="h-full w-full bg-gray-200">
-                    <img src="/img/noFry.jpg" alt="Bez smażenia" className="w-full h-full object-cover" />
+                <motion.div 
+                  className="w-full md:w-1/2 overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 group cursor-pointer h-[300px] sm:h-[350px] md:h-[400px] flex-shrink-0"
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  style={{ borderRadius: '20px' }}
+                >
+                  <div className="relative h-full w-full">
+                    <motion.div 
+                      className="bg-gradient-to-t from-black/90 via-black/70 to-black/50 absolute inset-0 z-10"
+                      whileHover={{ opacity: 0.8 }}
+                    />
+                    <motion.img 
+                      src="/img/noFry.jpg" 
+                      alt="Bez smażenia" 
+                      className="w-full h-full object-cover" 
+                      style={{ borderRadius: '20px' }}
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.7 }}
+                    />
+                    <div className="absolute inset-0 z-20 flex items-end justify-center pb-6 sm:pb-8">
+                      <h3 className="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl font-bold text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 2px 10px rgba(0,0,0,1)' }}>Bez Smażenia</h3>
+                    </div>
                   </div>
-                </div>
-                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
-                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Smażenia</h3>
-                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Zdrowe metody przygotowania potraw</p>
+                </motion.div>
+                
+                <div className="w-full md:w-1/2 space-y-4">
+                  <p className="text-lg sm:text-xl text-gray-700 font-['Lato'] leading-relaxed">
+                    <span className="text-green-700 font-bold">Nigdy nie smażymy</span> naszych potraw. Smażenie w wysokich temperaturach może prowadzić do powstawania szkodliwych związków i utraty wartości odżywczych. Zamiast tego stosujemy zdrowe metody przygotowania.
+                  </p>
+                  <p className="text-lg sm:text-xl text-gray-700 font-['Lato'] leading-relaxed">
+                    Nasze przepisy opierają się na gotowaniu, pieczeniu, duszeniu i przygotowywaniu na parze. Te metody zachowują naturalne smaki i wartości odżywcze składników, jednocześnie zapewniając pyszne i zdrowe posiłki.
+                  </p>
                 </div>
               </motion.div>
 
+              {/* Feature 4: Bez Cukru - Text Left, Image Right */}
               <motion.div 
-                className="text-center overflow-hidden relative rounded-xl md:rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 group"
+                className="flex flex-col md:flex-row-reverse items-center gap-6 sm:gap-8 md:gap-10"
                 variants={fadeInUp}
-                whileHover={{ y: -5 }}
               >
-                <div className="absolute inset-0 overflow-hidden">
-                  <div className="bg-gradient-to-t from-black/70 via-black/40 to-transparent absolute inset-0 z-10"></div>
-                  <div className="h-full w-full bg-gray-200">
-                    <img src="/img/noSugar.jpg" alt="Bez cukru" className="w-full h-full object-cover" />
+                <motion.div 
+                  className="w-full md:w-1/2 overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 group cursor-pointer h-[300px] sm:h-[350px] md:h-[400px] flex-shrink-0"
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  style={{ borderRadius: '20px' }}
+                >
+                  <div className="relative h-full w-full">
+                    <motion.div 
+                      className="bg-gradient-to-t from-black/90 via-black/70 to-black/50 absolute inset-0 z-10"
+                      whileHover={{ opacity: 0.8 }}
+                    />
+                    <motion.img 
+                      src="/img/noSugar.jpg" 
+                      alt="Bez cukru" 
+                      className="w-full h-full object-cover" 
+                      style={{ borderRadius: '20px' }}
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.7 }}
+                    />
+                    <div className="absolute inset-0 z-20 flex items-end justify-center pb-6 sm:pb-8">
+                      <h3 className="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl font-bold text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)]" style={{ textShadow: '0 2px 10px rgba(0,0,0,1)' }}>Bez Cukru</h3>
+                    </div>
                   </div>
-                </div>
-                <div className="relative z-20 p-5 sm:p-8 md:p-10 min-h-[220px] sm:min-h-[250px] md:min-h-[280px] flex flex-col items-center justify-end text-white">
-                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl mb-2 sm:mb-3 font-semibold tracking-wide group-hover:scale-105 transition-transform duration-300">Bez Cukru</h3>
-                  <p className="font-['Lato'] text-white/90 text-sm sm:text-base md:text-lg">Słodzimy ksylitolem, który działa w jelitach przeciwgrzybicznie, często owocami</p>
+                </motion.div>
+                
+                <div className="w-full md:w-1/2 space-y-4">
+                  <p className="text-lg sm:text-xl text-gray-700 font-['Lato'] leading-relaxed">
+                    Wszystkie nasze przepisy są <span className="text-green-700 font-bold">bez białego cukru</span>. Zamiast tego słodzimy naturalnie owocami, które dostarczają błonnika i wartościowych składników odżywczych.
+                  </p>
+                  <p className="text-lg sm:text-xl text-gray-700 font-['Lato'] leading-relaxed">
+                    Gdy potrzebujemy dodatkowego słodzidła, sięgamy po ksylitol, który nie tylko słodzi, ale także <span className="text-green-700 font-bold">działa przeciwgrzybicznie w jelitach</span>, wspierając zdrowie układu pokarmowego. Czasami używamy również miodu, który jest naturalnym źródłem energii.
+                  </p>
                 </div>
               </motion.div>
             </motion.div>

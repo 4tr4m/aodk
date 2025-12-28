@@ -65,6 +65,10 @@
   padding: 0;
 }
 
+html {
+  font-size: 16px; /* Base font size */
+}
+
 html, body {
   height: 100%;
   margin: 0;
@@ -81,6 +85,8 @@ html, body {
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-size: 1.125rem; /* 18px for better readability */
+  line-height: 1.6;
 }
 
 .hide-scrollbar::-webkit-scrollbar {

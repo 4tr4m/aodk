@@ -5,7 +5,6 @@ import InfoSection from '../components/Section/InfoSection';
 import Footer from '../components/Footer/Footer';
 import HeroSection from '../components/Hero/HeroSection';
 import SEO from '../components/SEO/SEO';
-import ShareButton from '../components/UI/ShareButton';
 
 const HomePage = () => {
   // FAQ data for Google AI Overview optimization
@@ -37,7 +36,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen text-base">
       <SEO 
         title="Autyzm od Kuchni - Dieta eliminacyjna bez glutenu, nabiału i cukru"
         description="Autyzm od Kuchni: Bez Glutenu - wszystkie przepisy są bezpieczne dla osób z celiakią. Bez Nabiału - wykluczamy nabiał krowi ze wszystkich przepisów. Bez Smażenia - zdrowe metody przygotowania potraw. Odkryj jak dieta eliminacyjna może wspierać funkcjonowanie osób z autyzmem."
@@ -53,13 +52,6 @@ const HomePage = () => {
               <HeroSection />
             </div>
           </div>
-          {/* Floating share button */}
-          <ShareButton
-            title="Autyzm od Kuchni - Dieta eliminacyjna bez glutenu, nabiału i cukru"
-            text="Odkryj jak dieta eliminacyjna bez glutenu, nabiału i cukru może wspierać funkcjonowanie osób z autyzmem."
-            url="https://www.autyzmodkuchni.pl"
-            variant="floating"
-          />
         </div>
         <div className="relative z-10 bg-white">
           <CategoryBanner />

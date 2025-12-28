@@ -116,7 +116,7 @@ const Footer = () => {
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-8 lg:gap-12 pt-8 lg:pt-12 pb-8">
+          <div className="flex flex-col lg:flex-row items-center lg:items-start justify-between gap-8 lg:gap-12 pt-12 lg:pt-16 pb-12">
             {/* Logo - centered on mobile, left-aligned on desktop */}
             <div 
               onClick={toggleInfoModal}

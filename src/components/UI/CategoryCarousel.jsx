@@ -407,7 +407,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
                             to={item.link}
                             animate={false}
                             state={{ scrollToTitle: true }}
-                            className="shadow-md hover:shadow-lg transition-all duration-300 bg-green-600 hover:bg-green-500 text-white font-semibold px-7 sm:px-9 py-2 sm:py-2.5 rounded-lg transform hover:-translate-y-0.5 relative overflow-hidden before:absolute before:inset-0 before:bg-white/20 before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-300 before:ease-out will-change-transform text-sm sm:text-base"
+                            className="shadow-md hover:shadow-lg transition-all duration-300 bg-green-600 hover:bg-green-500 text-white font-semibold px-10 sm:px-12 py-2.5 sm:py-3 rounded-lg transform hover:-translate-y-1 relative overflow-hidden before:absolute before:inset-0 before:bg-white/20 before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-300 before:ease-out will-change-transform text-sm sm:text-base"
                           />
                         </motion.div>
                       </motion.div>

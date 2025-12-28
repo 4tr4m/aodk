@@ -102,18 +102,18 @@ const HeroSection = () => {
                   style={{ opacity: textOpacity, y: textY }} // Scroll-based fade and movement
                 >
                   {/* Main headline - responsive typography */}
-                  <h1 className="font-['Caveat'] text-xl sm:text-2xl md:text-4xl font-bold text-white leading-relaxed text-center tracking-wide mb-4 sm:mb-6 transition-all duration-300 group-hover:text-gray-50 drop-shadow-lg group-hover:drop-shadow-xl">
-                    DIETA ELIMINACYJNA <br/>
+                  <h1 className="font-['Caveat'] text-xl sm:text-2xl md:text-4xl font-bold text-white leading-relaxed text-center tracking-wide mb-4 sm:mb-6 transition-all duration-300 group-hover:text-gray-50 drop-shadow-lg group-hover:drop-shadow-xl" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
+                    Dieta Eliminacyjna <br/>
                     <span className="text-lg sm:text-xl md:text-3xl font-normal tracking-wider opacity-95 transition-all duration-300 group-hover:opacity-100">
-                      TRANSFORMUJĄCA <br/>
-                      FUNKCJONOWANIE <br/>
-                      W AUTYŹMIE I ZABURZENIACH <br className="hidden sm:block" />
-                      <span className="hidden sm:inline">NEUROROZWOJOWYCH</span>
-                      <span className="sm:hidden text-[1.0em]">NEUROROZWOJOWYCH</span>
+                      Transformująca <br/>
+                      Funkcjonowanie <br/>
+                      W Autyzmie I Zaburzeniach <br className="hidden sm:block" />
+                      <span className="hidden sm:inline">Neurorozwojowych</span>
+                      <span className="sm:hidden text-[1.0em]">Neurorozwojowych</span>
                     </span>
                   </h1>
                   {/* Subtitle - hidden on mobile, visible on larger screens */}
-                  <h2 className="hidden sm:block mt-4 sm:mt-6 font-['Patrick_Hand'] text-base sm:text-lg md:text-xl font-normal text-gray-50/90 leading-relaxed text-center tracking-wide transition-all duration-300 group-hover:text-white">
+                  <h2 className="hidden sm:block mt-4 sm:mt-6 font-['Patrick_Hand'] text-base sm:text-lg md:text-xl font-normal text-gray-50/90 leading-relaxed text-center tracking-wide transition-all duration-300 group-hover:text-white" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
                     Proste, odżywcze przepisy bez glutenu, nabiału krowiego, cukru i <br className="hidden sm:block" />
                     bez smażenia – wspierające zdrowie i rozwój
                   </h2>

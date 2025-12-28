@@ -200,7 +200,7 @@ const TopNavBar = () => {
   return (
     <>
       {/* Main navbar container with transparent background and high z-index */}
-      <div className="relative top-0 left-0 w-full z-50 text-gray-50 py-2 bg-transparent">
+      <div className="relative top-0 left-0 w-full z-50 text-gray-50 py-6 bg-transparent">
         {/* Inner container with max width and responsive padding */}
         <div className="max-w-[1400px] mx-auto px-4 md:px-[60px] flex flex-row items-center justify-between relative z-50 min-h-[80px]">
           {/* Logo section - clickable link to home page */}
@@ -263,7 +263,7 @@ const TopNavBar = () => {
                   {/* Main navigation link */}
                   <Link 
                     to={item.link}
-                    className="no-underline text-[20px] font-['Patrick_Hand'] font-semibold uppercase tracking-wide transition-all duration-300 py-3 md:py-1.5 px-4 md:px-0 text-gray-50/90 mix-blend-overlay group-hover:text-yellow-400"
+                    className="no-underline text-base font-['Patrick_Hand'] font-medium uppercase tracking-wider transition-all duration-300 py-3 md:py-1.5 px-4 md:px-0 text-gray-50/90 mix-blend-overlay group-hover:text-yellow-400"
                   >
                     {item.label}
                   </Link>
