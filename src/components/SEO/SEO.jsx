@@ -7,7 +7,7 @@ const SEO = ({
   keywords, 
   author = "Autyzm od Kuchni",
   ogType = "website",
-  ogImage = "/img/logo_bckgd.png",
+  ogImage = "/img/logo google.png",
   canonical,
   robots, // robots meta tag (e.g., "noindex, nofollow")
   structuredData, // Additional structured data (Recipe, BreadcrumbList, etc.)
@@ -46,20 +46,24 @@ const SEO = ({
   // Convert relative ogImage path to absolute URL if needed
   // Google and WhatsApp require absolute URLs for og:image and other social meta tags
   const getAbsoluteImageUrl = (imagePath) => {
-    if (!imagePath) return `${baseUrl}/img/logo_bckgd.png`;
+    if (!imagePath) return `${baseUrl}/img/logo%20google.png`;
     // Already absolute URL
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath;
     }
+    // Encode spaces and special characters in the path
+    const encodePath = (path) => {
+      return path.split('/').map(segment => encodeURIComponent(segment)).join('/');
+    };
     // Relative path starting with /
     if (imagePath.startsWith('/')) {
-      return `${baseUrl}${imagePath}`;
+      return `${baseUrl}${encodePath(imagePath)}`;
     }
     // Relative path without leading / - assume it's in /img/ folder
     if (!imagePath.startsWith('img/')) {
-      return `${baseUrl}/img/${imagePath}`;
+      return `${baseUrl}/img/${encodeURIComponent(imagePath)}`;
     }
-    return `${baseUrl}/${imagePath}`;
+    return `${baseUrl}/${encodePath(imagePath)}`;
   };
   
   const absoluteOgImage = getAbsoluteImageUrl(ogImage);
@@ -67,7 +71,7 @@ const SEO = ({
   // Double-check: ensure we never output relative URLs
   const finalOgImage = absoluteOgImage.startsWith('http') 
     ? absoluteOgImage 
-    : `${baseUrl}/img/logo_bckgd.png`;
+    : `${baseUrl}/img/logo%20google.png`;
 
   // Structured data for organization and logo
   const organizationStructuredData = {
@@ -77,7 +81,7 @@ const SEO = ({
     "url": "https://www.autyzmodkuchni.pl",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://www.autyzmodkuchni.pl/img/logo_bckgd.png",
+      "url": "https://www.autyzmodkuchni.pl/img/logo%20google.png",
       "width": 200,
       "height": 200
     },
