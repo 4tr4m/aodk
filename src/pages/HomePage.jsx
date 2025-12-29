@@ -1,4 +1,3 @@
-import React from 'react';
 import TopNavBar from '../components/Headers/TopNavBar';
 import CategoryBanner from '../components/Section/CategoryBanner';
 import InfoSection from '../components/Section/InfoSection';

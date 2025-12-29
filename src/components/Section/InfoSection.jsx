@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-
+import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { InfoActionButton } from '../UI/Button';
 import InfoModal from '../Modal/InfoModal';
@@ -7,11 +6,6 @@ import InfoModal from '../Modal/InfoModal';
 const InfoSection = () => {
   const prefersReducedMotion = useReducedMotion();
   const [showInfoModal, setShowInfoModal] = useState(false);
-
-  // const handleClick = () => {
-  //   navigate('/kuchnia');
-  //   window.scrollTo({ top: 0, behavior: 'smooth' });
-  // };
 
   const toggleInfoModal = () => {
     setShowInfoModal(!showInfoModal);
