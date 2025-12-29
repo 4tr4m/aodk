@@ -145,7 +145,7 @@ const TopNavBar = () => {
           <Link 
             to={item.link}
             onClick={() => setIsMobileMenuOpen(false)} // Close mobile menu when link is clicked
-            className={`text-[18px] font-['Patrick_Hand'] font-normal leading-[1.2] whitespace-nowrap transition-all duration-300 mix-blend-normal block
+            className={`text-base font-['Patrick_Hand'] font-medium uppercase tracking-wider leading-[1.2] whitespace-nowrap transition-all duration-300 mix-blend-normal block
               ${isMobileMenuOpen ? 'text-white hover:text-yellow-400' : 'text-gray-50/95 hover:text-yellow-400'}`}
           >
             {item.label}
@@ -263,7 +263,7 @@ const TopNavBar = () => {
                   {/* Main navigation link */}
                   <Link 
                     to={item.link}
-                    className="no-underline text-base font-['Patrick_Hand'] font-medium uppercase tracking-wider transition-all duration-300 py-3 md:py-1.5 px-4 md:px-0 text-gray-50/90 mix-blend-overlay group-hover:text-yellow-400"
+                    className="no-underline text-[20px] font-['Patrick_Hand'] font-medium uppercase tracking-wider transition-all duration-300 py-3 md:py-1.5 px-4 md:px-0 text-gray-50/90 mix-blend-overlay group-hover:text-yellow-400"
                   >
                     {item.label}
                   </Link>
@@ -339,7 +339,7 @@ const TopNavBar = () => {
                             setIsMobileMenuOpen(false);
                           }
                         }}
-                        className="flex items-center justify-between w-full text-xl font-['Patrick_Hand'] text-white hover:text-yellow-400 transition-all duration-300 py-3 px-4 rounded-lg hover:bg-gray-800/50"
+                        className="flex items-center justify-between w-full text-[20px] font-['Patrick_Hand'] text-white hover:text-yellow-400 transition-all duration-300 py-3 px-4 rounded-lg hover:bg-gray-800/50"
                       >
                         <span>{item.label}</span>
                         {/* Show expand/collapse icon for items with dropdowns */}
@@ -362,7 +362,7 @@ const TopNavBar = () => {
                               key={subindex}
                               to={subitem.link}
                               onClick={() => setIsMobileMenuOpen(false)} // Close menu when sub-item is clicked
-                              className="block w-full text-gray-300 hover:text-yellow-400 py-2 px-3 rounded hover:bg-gray-700/50 text-base sm:text-lg font-['Patrick_Hand'] transition-all duration-300 break-words"
+                              className="block w-full text-gray-300 hover:text-yellow-400 py-2 px-3 rounded hover:bg-gray-700/50 text-base font-['Patrick_Hand'] font-medium uppercase tracking-wider transition-all duration-300 break-words"
                             >
                               {subitem.label}
                             </Link>
