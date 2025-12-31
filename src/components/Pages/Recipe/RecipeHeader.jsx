@@ -35,10 +35,10 @@ const RecipeHeader = ({ onBack, onToggleWishlist, isInWishlist, recipe }) => {
               url={typeof window !== 'undefined' ? window.location.href : undefined}
             />
           </div>
-          {/* Favorites button - smaller on mobile */}
+          {/* Favorites button - hidden on mobile, visible on larger screens */}
           <button
             onClick={onToggleWishlist}
-            className={`p-2 rounded-full transition-colors ${
+            className={`hidden sm:flex p-2 sm:p-3 rounded-full transition-colors ${
               isInWishlist 
                 ? 'text-red-500 hover:text-red-600 hover:bg-red-50' 
                 : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
@@ -46,7 +46,7 @@ const RecipeHeader = ({ onBack, onToggleWishlist, isInWishlist, recipe }) => {
             title={isInWishlist ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
             aria-label={isInWishlist ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
           >
-            <FaHeart className={`text-base sm:text-xl ${isInWishlist ? 'fill-current' : ''}`} />
+            <FaHeart className={`text-xl ${isInWishlist ? 'fill-current' : ''}`} />
           </button>
         </div>
       </div>

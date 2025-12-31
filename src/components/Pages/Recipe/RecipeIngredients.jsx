@@ -15,13 +15,20 @@ const RecipeIngredients = ({ ingredients, ingredientsRef, onMobileButtonClick, i
       className="mb-8" 
       ref={ingredientsRef}
     >
-      <div className="flex items-center justify-between gap-3 mb-4">
+      {/* Sticky header on mobile when scrolled past ingredients section */}
+      <div 
+        className={`flex items-center justify-between gap-3 mb-4 ${
+          isMobile && isMobileButtonVisible 
+            ? 'sticky top-16 z-30 bg-white py-2 -mx-4 px-4 border-b border-gray-200 shadow-sm' 
+            : ''
+        }`}
+      >
         <h2 className="text-xl font-bold text-gray-800 font-['Playfair_Display'] flex items-center gap-2">
           <FaUtensils className="text-green-600" />
           Składniki
         </h2>
         
-        {/* Mobile button - inline with heading */}
+        {/* Mobile button - always visible when on mobile */}
         {isMobile && onMobileButtonClick && (
           <button
             onClick={onMobileButtonClick}
