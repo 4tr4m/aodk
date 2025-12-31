@@ -36,8 +36,8 @@ const CategoryPageHeader = ({
         <div id="category-title" className="flex flex-col items-center justify-center relative" style={{ overflow: 'visible' }}>
           {/* Fixed container for filter button, title/search, and magnifying glass */}
           <motion.div 
-            className="relative w-full flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-6 px-2 sm:px-3 md:px-4"
-            style={{ overflow: 'visible', zIndex: 40, paddingTop: '0.5rem', paddingBottom: '0.5rem', display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center' }}
+            className="relative w-full flex items-center gap-3 sm:gap-3 md:gap-4 lg:gap-6 px-2 sm:px-3 md:px-4"
+            style={{ overflow: 'visible', zIndex: 40, paddingTop: '0.5rem', paddingBottom: '0.5rem', display: 'grid', gridTemplateColumns: 'auto 1fr auto', alignItems: 'center', gap: '0.75rem' }}
             animate={{
               paddingTop: isScrolled ? '0.25rem' : '0.5rem',
               paddingBottom: isScrolled ? '0.25rem' : '0.5rem',
@@ -45,15 +45,17 @@ const CategoryPageHeader = ({
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {/* Enhanced Magical Ingredient Filter Button */}
-            <CategoryFilterButton
-              onClick={toggleIngredientFilter}
-              selectedIngredientsCount={selectedIngredientsCount}
-              activeFilter={activeFilter}
-              isFilterVisible={isIngredientFilterVisible}
-            />
+            <div className="flex-shrink-0" style={{ gridColumn: '1' }}>
+              <CategoryFilterButton
+                onClick={toggleIngredientFilter}
+                selectedIngredientsCount={selectedIngredientsCount}
+                activeFilter={activeFilter}
+                isFilterVisible={isIngredientFilterVisible}
+              />
+            </div>
 
             {/* Title and SearchBar with transitions - centered layout using grid column */}
-            <div className="flex items-center justify-center min-w-0" style={{ gridColumn: '2', justifySelf: 'center', width: '100%' }}>
+            <div className="flex items-center justify-center min-w-0 px-1 sm:px-2" style={{ gridColumn: '2', justifySelf: 'center', width: '100%' }}>
               <AnimatePresence mode="wait">
                 {!isSearching ? (
                   <motion.div
@@ -73,7 +75,7 @@ const CategoryPageHeader = ({
                   >
                     {/* Centered title */}
                     <motion.div
-                      className="relative group cursor-pointer flex-shrink-0 -translate-x-[5px] sm:translate-x-0"
+                      className="relative group cursor-pointer flex-shrink-0"
                       onClick={toggleSearch}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
@@ -87,7 +89,7 @@ const CategoryPageHeader = ({
                         whileHover={{ opacity: 1 }}
                       />
                       
-                      <h1 className="relative font-['Playfair_Display'] text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl text-[#2D3748] font-bold tracking-wide text-center break-words group-hover:text-green-600 transition-colors duration-300 px-2 sm:px-3">
+                      <h1 className="relative font-['Playfair_Display'] text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl text-[#2D3748] font-bold tracking-wide text-center break-words group-hover:text-green-600 transition-colors duration-300 px-1 sm:px-3">
                         {/* Mobile: Split multi-word titles into two lines */}
                         <span className="block sm:hidden">
                           {(() => {
@@ -114,8 +116,8 @@ const CategoryPageHeader = ({
                     
                     {/* Search icon - with proper spacing to prevent clipping */}
                     <motion.div 
-                      className="flex-shrink-0"
-                      style={{ overflow: 'visible', zIndex: 50, position: 'relative', padding: '0.5rem', margin: '-0.5rem' }}
+                      className="flex-shrink-0 ml-1 sm:ml-2"
+                      style={{ overflow: 'visible', zIndex: 50, position: 'relative' }}
                       animate={{
                         opacity: isScrolled ? 0 : 1,
                         scale: isScrolled ? 0.8 : 1,
@@ -154,13 +156,23 @@ const CategoryPageHeader = ({
               </AnimatePresence>
             </div>
             
-            {/* Share button - visible on all screen sizes */}
-            <div style={{ gridColumn: '3', minWidth: '120px' }} className="flex items-center justify-end gap-2 sm:gap-3">
-              <ShareButton
-                title={currentCategory ? formatCategoryName(currentCategory.label) : 'Wszystkie Przepisy'}
-                text={currentCategory?.description || 'Przepisy bez glutenu, nabiału i cukru'}
-                url={typeof window !== 'undefined' ? window.location.href : undefined}
-              />
+            {/* Share button - icon-only on mobile, full button on larger screens */}
+            <div style={{ gridColumn: '3' }} className="flex items-center justify-end flex-shrink-0">
+              <div className="hidden sm:block">
+                <ShareButton
+                  title={currentCategory ? formatCategoryName(currentCategory.label) : 'Wszystkie Przepisy'}
+                  text={currentCategory?.description || 'Przepisy bez glutenu, nabiału i cukru'}
+                  url={typeof window !== 'undefined' ? window.location.href : undefined}
+                />
+              </div>
+              <div className="block sm:hidden">
+                <ShareButton
+                  variant="icon-only"
+                  title={currentCategory ? formatCategoryName(currentCategory.label) : 'Wszystkie Przepisy'}
+                  text={currentCategory?.description || 'Przepisy bez glutenu, nabiału i cukru'}
+                  url={typeof window !== 'undefined' ? window.location.href : undefined}
+                />
+              </div>
             </div>
           </motion.div>
         </div>

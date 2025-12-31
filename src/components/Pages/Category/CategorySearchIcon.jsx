@@ -45,7 +45,7 @@ const CategorySearchIcon = ({ toggleSearch }) => {
           {/* Attention ring */}
           <div className="absolute -inset-1 rounded-full bg-green-400/20 animate-pulse" style={{ margin: '-4px' }}></div>
           
-          <FaSearch className="text-[2rem] sm:text-[2.5rem] md:text-[2.8rem] lg:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" style={{ position: 'relative', zIndex: 50, display: 'block' }} />
+          <FaSearch className="text-[1.5rem] sm:text-[2.5rem] md:text-[2.8rem] lg:text-[3.1rem] text-green-600 hover:text-green-500 transition-colors duration-300 drop-shadow-lg relative z-10 search-icon" style={{ position: 'relative', zIndex: 50, display: 'block' }} />
         </div>
       </motion.div>
     </div>

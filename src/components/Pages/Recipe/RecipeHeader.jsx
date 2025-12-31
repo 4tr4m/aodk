@@ -19,15 +19,26 @@ const RecipeHeader = ({ onBack, onToggleWishlist, isInWishlist, recipe }) => {
 
         {/* Share and Wishlist buttons - visible on all screen sizes */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Share button - visible on all screen sizes */}
-          <ShareButton
-            title={recipe?.name}
-            text={recipe?.shortdesc}
-            url={typeof window !== 'undefined' ? window.location.href : undefined}
-          />
+          {/* Share button - icon-only on mobile, full button on larger screens */}
+          <div className="hidden sm:block">
+            <ShareButton
+              title={recipe?.name}
+              text={recipe?.shortdesc}
+              url={typeof window !== 'undefined' ? window.location.href : undefined}
+            />
+          </div>
+          <div className="block sm:hidden">
+            <ShareButton
+              variant="icon-only"
+              title={recipe?.name}
+              text={recipe?.shortdesc}
+              url={typeof window !== 'undefined' ? window.location.href : undefined}
+            />
+          </div>
+          {/* Favorites button - smaller on mobile */}
           <button
             onClick={onToggleWishlist}
-            className={`p-2 sm:p-3 rounded-full transition-colors ${
+            className={`p-2 rounded-full transition-colors ${
               isInWishlist 
                 ? 'text-red-500 hover:text-red-600 hover:bg-red-50' 
                 : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
@@ -35,7 +46,7 @@ const RecipeHeader = ({ onBack, onToggleWishlist, isInWishlist, recipe }) => {
             title={isInWishlist ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
             aria-label={isInWishlist ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
           >
-            <FaHeart className={`text-lg sm:text-xl ${isInWishlist ? 'fill-current' : ''}`} />
+            <FaHeart className={`text-base sm:text-xl ${isInWishlist ? 'fill-current' : ''}`} />
           </button>
         </div>
       </div>
