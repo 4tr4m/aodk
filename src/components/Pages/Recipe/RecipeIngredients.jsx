@@ -38,7 +38,7 @@ const RecipeIngredients = ({ ingredients, ingredientsRef, onMobileButtonClick, i
             Składniki
           </h2>
           
-          {/* Mobile button - inline with heading when ingredients section is still visible */}
+          {/* Mobile button - inline with heading (hidden when fixed button is visible) */}
           {isMobile && onMobileButtonClick && !isMobileButtonVisible && (
             <button
               onClick={onMobileButtonClick}

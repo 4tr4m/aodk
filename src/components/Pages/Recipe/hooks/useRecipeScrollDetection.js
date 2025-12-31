@@ -19,8 +19,9 @@ export const useRecipeScrollDetection = (recipe, loading) => {
 
       const rect = ingredientsRef.current.getBoundingClientRect();
       
-      // Show sidebar when ingredients section is in the viewport or has scrolled past the top
-      const shouldShow = rect.top < window.innerHeight;
+      // Show fixed button only when ingredients section header has scrolled past the top of viewport
+      // Use a small offset (like 100px) to account for the header area
+      const shouldShow = rect.top < 100;
       
       setIsStickyIngredientsVisible(prev => {
         if (prev !== shouldShow) {
