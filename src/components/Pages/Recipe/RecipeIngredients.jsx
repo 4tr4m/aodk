@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FaUtensils } from 'react-icons/fa';
 import { processIngredients, replaceLinkPlaceholder } from '../../../utils/recipeUtils';
 
@@ -13,31 +14,61 @@ const RecipeIngredients = ({ ingredients, ingredientsRef, onMobileButtonClick, i
   return (
     <>
       {/* Fixed button on mobile when scrolled past ingredients section - icon only, compact */}
-      {isMobile && onMobileButtonClick && isMobileButtonVisible && (
-        <button
-          onClick={onMobileButtonClick}
-          className="fixed top-20 right-4 z-[45] flex items-center justify-center bg-green-600 hover:bg-green-700 active:bg-green-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
-          style={{
-            transform: 'translateZ(0)',
-            willChange: 'transform',
-            width: '48px',
-            height: '48px',
-            minWidth: '48px',
-            minHeight: '48px',
-            padding: '0',
-            marginRight: '0',
-            marginLeft: 'auto',
-            position: 'fixed',
-            top: '80px',
-            right: '16px',
-            zIndex: 45,
-          }}
-          aria-label="Pokaż składniki"
-          title="Składniki"
-        >
-          <FaUtensils className="w-5 h-5" />
-        </button>
-      )}
+      <AnimatePresence mode="wait">
+        {isMobile && onMobileButtonClick && isMobileButtonVisible && (
+          <motion.button
+            key="fixed-button"
+            onClick={onMobileButtonClick}
+            className="fixed top-20 right-4 z-[45] flex items-center justify-center bg-green-600 hover:bg-green-700 active:bg-green-800 text-white rounded-full shadow-lg hover:shadow-xl"
+            style={{
+              transform: 'translateZ(0)',
+              willChange: 'transform',
+              width: '48px',
+              height: '48px',
+              minWidth: '48px',
+              minHeight: '48px',
+              padding: '0',
+              position: 'fixed',
+              top: '80px',
+              right: '16px',
+              zIndex: 45,
+            }}
+            initial={{ 
+              opacity: 0, 
+              scale: 0.5,
+              y: -20,
+            }}
+            animate={{ 
+              opacity: 1, 
+              scale: 1,
+              y: 0,
+            }}
+            exit={{ 
+              opacity: 0, 
+              scale: 0.5,
+              y: -20,
+            }}
+            transition={{ 
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+              duration: 0.3
+            }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="Pokaż składniki"
+            title="Składniki"
+          >
+            <motion.div
+              initial={{ rotate: -180, opacity: 0 }}
+              animate={{ rotate: 0, opacity: 1 }}
+              transition={{ delay: 0.1, duration: 0.3 }}
+            >
+              <FaUtensils className="w-5 h-5" />
+            </motion.div>
+          </motion.button>
+        )}
+      </AnimatePresence>
       
       <div 
         className="mb-8" 
@@ -50,21 +81,59 @@ const RecipeIngredients = ({ ingredients, ingredientsRef, onMobileButtonClick, i
           </h2>
           
           {/* Mobile button - inline with heading (hidden when fixed button is visible) */}
-          {/* On mobile: icon only, on larger screens: icon + text */}
-          {isMobile && onMobileButtonClick && !isMobileButtonVisible && (
-            <button
-              onClick={onMobileButtonClick}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 text-base font-semibold flex-shrink-0"
-              style={{
-                paddingLeft: 'calc(0.75rem - 5px)',
-                paddingRight: 'calc(0.75rem - 5px)',
-              }}
-              aria-label="Pokaż składniki"
-            >
-              <FaUtensils className="w-4 h-4 flex-shrink-0" />
-              <span className="text-base">Składniki</span>
-            </button>
-          )}
+          <AnimatePresence mode="wait">
+            {isMobile && onMobileButtonClick && !isMobileButtonVisible && (
+              <motion.button
+                key="inline-button"
+                onClick={onMobileButtonClick}
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg shadow-md hover:shadow-lg text-base font-semibold flex-shrink-0"
+                style={{
+                  paddingLeft: 'calc(0.75rem - 5px)',
+                  paddingRight: 'calc(0.75rem - 5px)',
+                }}
+                initial={{ 
+                  opacity: 0, 
+                  scale: 0.8,
+                  x: 20,
+                }}
+                animate={{ 
+                  opacity: 1, 
+                  scale: 1,
+                  x: 0,
+                }}
+                exit={{ 
+                  opacity: 0, 
+                  scale: 0.8,
+                  x: 20,
+                }}
+                transition={{ 
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 25,
+                  duration: 0.3
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                aria-label="Pokaż składniki"
+              >
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <FaUtensils className="w-4 h-4 flex-shrink-0" />
+                </motion.div>
+                <motion.span 
+                  className="text-base"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1, duration: 0.2 }}
+                >
+                  Składniki
+                </motion.span>
+              </motion.button>
+            )}
+          </AnimatePresence>
         </div>
       
       {hasGroups ? (
