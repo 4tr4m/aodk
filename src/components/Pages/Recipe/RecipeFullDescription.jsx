@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { replaceLinkPlaceholder } from '../../../utils/recipeUtils';
 
 const RecipeFullDescription = ({ fulldesc, isExpanded, onToggle }) => {
   // Helper function to get preview text with fade calculation
@@ -206,7 +207,7 @@ const RecipeFullDescription = ({ fulldesc, isExpanded, onToggle }) => {
                 <div className="prose max-w-none mb-2.5">
                   <p 
                     className="text-gray-700 leading-relaxed text-sm sm:text-base whitespace-pre-wrap break-words"
-                    dangerouslySetInnerHTML={{ __html: fulldesc }}
+                    dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(fulldesc) }}
                   />
                 </div>
                 <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
@@ -233,7 +234,7 @@ const RecipeFullDescription = ({ fulldesc, isExpanded, onToggle }) => {
       
       {!isExpanded && (
         <div className="sr-only">
-          <p dangerouslySetInnerHTML={{ __html: fulldesc }} />
+          <p dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(fulldesc) }} />
         </div>
       )}
     </motion.div>

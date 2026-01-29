@@ -61,11 +61,35 @@ export const getRecipeImageSrc = (image) => {
 };
 
 /**
+ * Normalize URL to relative format
+ * Handles: full URLs, relative URLs, short formats
+ * @param {string} url - URL in any format
+ * @returns {string} Normalized relative URL starting with /
+ */
+const normalizeUrl = (url) => {
+  if (!url || typeof url !== 'string') return url;
+  
+  let normalized = url.trim();
+  
+  // Remove full domain if present
+  normalized = normalized.replace(/^https?:\/\/(www\.)?autyzmodkuchni\.pl/i, '');
+  
+  // Ensure it starts with /
+  if (!normalized.startsWith('/')) {
+    normalized = '/' + normalized;
+  }
+  
+  return normalized;
+};
+
+/**
  * Replace recipe link placeholders with actual clickable links
  * Supports formats:
  * - {categorySlug:recipeId} - e.g., {obiady:mieszanka-1} - makes the entire text clickable
  * - {recipeId} - e.g., {mieszanka-1} - makes the entire text clickable (backward compatibility)
  * - {LINK} - old format, replaced with mieszanka-2 link (backward compatibility)
+ * - {URL:fullUrl} - e.g., {URL:https://www.autyzmodkuchni.pl/kuchnia/chleby/chleb-2} or {URL:kuchnia/chleby/chleb-2}
+ * - Direct URLs in placeholders: {https://...} or {kuchnia/chleby/chleb-2}
  * @param {string} text - Text that may contain recipe link placeholders
  * @returns {string} Text with replaced links
  */
@@ -79,18 +103,28 @@ export const replaceLinkPlaceholder = (text) => {
   const match = text.match(recipeLinkRegex);
   
   if (match) {
-    const recipeIdentifier = match[1]; // The content inside {} (could be "categorySlug:recipeId" or just "recipeId")
+    const recipeIdentifier = match[1].trim(); // The content inside {}
     
-    // Parse the identifier - check if it contains a colon (categorySlug:recipeId format)
-    let recipeId, recipeUrl;
-    if (recipeIdentifier.includes(':')) {
+    let recipeUrl;
+    
+    // Check if it's a URL format (starts with http, https, or contains /)
+    if (recipeIdentifier.toLowerCase().startsWith('url:')) {
+      // Format: {URL:https://...} or {URL:kuchnia/chleby/chleb-2}
+      const urlPart = recipeIdentifier.substring(4).trim();
+      recipeUrl = normalizeUrl(urlPart);
+    } else if (recipeIdentifier.startsWith('http://') || recipeIdentifier.startsWith('https://')) {
+      // Format: {https://www.autyzmodkuchni.pl/kuchnia/chleby/chleb-2}
+      recipeUrl = normalizeUrl(recipeIdentifier);
+    } else if (recipeIdentifier.includes('/')) {
+      // Format: {kuchnia/chleby/chleb-2} or {/kuchnia/chleby/chleb-2}
+      recipeUrl = normalizeUrl(recipeIdentifier);
+    } else if (recipeIdentifier.includes(':')) {
+      // Format: {categorySlug:recipeId} - e.g., {obiady:mieszanka-1}
       const [categorySlug, id] = recipeIdentifier.split(':');
-      recipeId = id.trim();
-      recipeUrl = `/kuchnia/${categorySlug.trim()}/${recipeId}`;
+      recipeUrl = `/kuchnia/${categorySlug.trim()}/${id.trim()}`;
     } else {
-      // Old format: just recipe ID (backward compatibility)
-      recipeId = recipeIdentifier.trim();
-      recipeUrl = `/przepis/${recipeId}`;
+      // Old format: just recipe ID (backward compatibility) - e.g., {mieszanka-1}
+      recipeUrl = `/przepis/${recipeIdentifier}`;
     }
     
     // Remove the placeholder from the text
@@ -103,6 +137,15 @@ export const replaceLinkPlaceholder = (text) => {
     processedText = processedText.replace(
       /\{LINK\}/g,
       '<a href="/przepis/mieszanka-2" class="text-green-600 hover:text-green-700 underline font-medium">uniwersalnej mieszanki mąk bezglutenowych</a>'
+    );
+    
+    // Also handle direct <a href> tags - normalize their URLs if needed
+    processedText = processedText.replace(
+      /<a\s+href=["']([^"']+)["']/gi,
+      (match, url) => {
+        const normalized = normalizeUrl(url);
+        return `<a href="${normalized}"`;
+      }
     );
   }
   
