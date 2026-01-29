@@ -56,7 +56,7 @@ const RecipeImageModal = ({ isOpen, onClose, recipe }) => {
           }}
         >
           <motion.div
-            className="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] h-[95vh] sm:h-auto sm:max-h-[90vh] flex flex-col overflow-hidden"
+            className="relative bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-[95vw] h-[95vh] sm:h-[90vh] flex flex-col overflow-hidden"
             initial={{ scale: 0.95, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -77,10 +77,15 @@ const RecipeImageModal = ({ isOpen, onClose, recipe }) => {
               <FaTimes className="w-5 h-5 sm:w-6 sm:h-6" />
             </motion.button>
             
-            {/* Image container - full size, responsive */}
-            <div className="relative flex-1 overflow-auto rounded-t-xl sm:rounded-t-2xl bg-gray-50 flex items-center justify-center min-h-0">
+            {/* Image container - fits screen without scrolling */}
+            <div 
+              className="relative flex-1 flex items-center justify-center overflow-hidden rounded-t-xl sm:rounded-t-2xl bg-gray-50 min-h-0"
+              style={{
+                maxHeight: 'calc(100% - 100px)' // Reserve space for footer (approx 100px)
+              }}
+            >
               {!imageLoaded && !imageError && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-50 z-10">
                   <div className="flex flex-col items-center gap-3">
                     <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-3 border-green-600 border-t-transparent"></div>
                     <p className="text-sm text-gray-500">Ładowanie obrazu...</p>
@@ -90,11 +95,16 @@ const RecipeImageModal = ({ isOpen, onClose, recipe }) => {
               <motion.img
                 src={imageSrc}
                 alt={recipe.name}
-                className={`max-w-full max-h-full w-auto h-auto object-contain ${
+                className={`object-contain ${
                   imageLoaded ? 'opacity-100' : 'opacity-0'
                 } transition-opacity duration-300`}
                 style={{
-                  padding: 'clamp(1rem, 2vw, 2rem)'
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  width: 'auto',
+                  height: 'auto',
+                  padding: 'clamp(1rem, 2vw, 2rem)',
+                  objectFit: 'contain'
                 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: imageLoaded ? 1 : 0 }}
