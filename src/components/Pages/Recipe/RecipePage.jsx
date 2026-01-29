@@ -22,7 +22,7 @@ import NewsletterModal from '../../Modal/NewsletterModal';
 import FeedbackButton from '../../Feedback/FeedbackButton';
 import { useRecipeData } from './hooks/useRecipeData';
 import { useRecipeScrollDetection } from './hooks/useRecipeScrollDetection';
-import { processIngredients as processIngredientsUtil, replaceLinkPlaceholder, getRecipeUrl } from '../../../utils/recipeUtils';
+import { processIngredients as processIngredientsUtil, replaceLinkPlaceholder, getRecipeUrl, getCategorySlug } from '../../../utils/recipeUtils';
 
 const RecipePage = () => {
   const { recipeId } = useParams(); // Support both /przepis/:recipeId and /kuchnia/:categorySlug/:recipeId
@@ -35,26 +35,42 @@ const RecipePage = () => {
   // Base URL for absolute URLs (used for SEO and social sharing)
   const baseUrl = "https://www.autyzmodkuchni.pl";
 
-  // Helper function to convert category to slug
-  const getCategorySlug = (category) => {
-    if (!category) return '';
-    const categoryMap = {
-      'OBIADY': 'obiady',
-      'ZUPY': 'zupy',
-      'CHLEBY': 'chleby',
-      'SMAROWIDŁA': 'smarowidla',
-      'DESERY': 'desery',
-      'BABECZKI i MUFFINY': 'babeczki-i-muffiny',
-      'CIASTA': 'ciasta',
-      'CIASTKA': 'ciastka',
-      'SMOOTHIE': 'smoothie',
-      'INNE': 'inne',
-      'ŚWIĘTA': 'swieta',
-      'SNAKI': 'snaki',
-      'SAŁATKI/SUROWKI': 'salatki-surowki',
-      'LUNCH': 'lunch'
-    };
-    return categoryMap[category] || category.toString().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  // Get absolute URL for recipe image - use same logic as getRecipeImageSrc but return absolute URL
+  // Properly encode URL for social media sharing (WhatsApp, Facebook, etc.)
+  const getAbsoluteImageUrl = (imagePath) => {
+    // Use same logic as getRecipeImageSrc from recipeUtils
+    let relativePath;
+    
+    if (!imagePath || imagePath.trim() === '') {
+      // If no image, use default recipe image (not logo)
+      relativePath = '/img/ciasta.jpg';
+    } else if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      // Already absolute URL - encode it properly
+      try {
+        const url = new URL(imagePath);
+        return url.href;
+      } catch {
+        return imagePath;
+      }
+    } else if (imagePath.startsWith('/img/')) {
+      // Already has /img/ prefix
+      relativePath = imagePath;
+    } else if (imagePath.startsWith('/')) {
+      // Path starting with / but not /img/ - add /img/ prefix
+      relativePath = `/img${imagePath}`;
+    } else {
+      // Relative path without leading / - add /img/ prefix
+      relativePath = `/img/${imagePath}`;
+    }
+    
+    // Encode the path properly for social media (handle spaces and special chars)
+    const encodedPath = relativePath.split('/').map(segment => {
+      if (!segment) return segment;
+      return encodeURIComponent(segment);
+    }).join('/');
+    
+    // Convert relative path to absolute URL
+    return `${baseUrl}${encodedPath}`;
   };
 
   // Generate keywords for recipe with new important keywords
@@ -158,18 +174,6 @@ const RecipePage = () => {
       }));
     }
 
-    // Get absolute image URL
-    const getAbsoluteImageUrl = (imagePath) => {
-      if (!imagePath) return `${baseUrl}/img/logo_bckgd.png`;
-      if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-        return imagePath;
-      }
-      if (imagePath.startsWith('/')) {
-        return `${baseUrl}${imagePath}`;
-      }
-      return `${baseUrl}/img/${imagePath}`;
-    };
-
     const recipeSchema = {
       "@context": "https://schema.org",
       "@type": "Recipe",
@@ -188,7 +192,7 @@ const RecipePage = () => {
         "name": "Autyzm od Kuchni",
         "logo": {
           "@type": "ImageObject",
-          "url": `${baseUrl}/img/logo_bckgd.png`
+          "url": `${baseUrl}/img/logo.png`
         }
       },
       "url": typeof window !== 'undefined' ? window.location.href : `${baseUrl}${getRecipeUrl(recipe.id, recipe.category)}`
@@ -379,44 +383,6 @@ const RecipePage = () => {
   // Combine structured data
   const structuredData = [recipeSchema, breadcrumbSchema].filter(Boolean);
 
-  // Get absolute URL for recipe image - use same logic as getRecipeImageSrc but return absolute URL
-  // Properly encode URL for social media sharing (WhatsApp, Facebook, etc.)
-  const getAbsoluteImageUrl = (imagePath) => {
-    // Use same logic as getRecipeImageSrc from recipeUtils
-    let relativePath;
-    
-    if (!imagePath || imagePath.trim() === '') {
-      // If no image, use default recipe image (not logo)
-      relativePath = '/img/ciasta.jpg';
-    } else if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      // Already absolute URL - encode it properly
-      try {
-        const url = new URL(imagePath);
-        return url.href;
-      } catch {
-        return imagePath;
-      }
-    } else if (imagePath.startsWith('/img/')) {
-      // Already has /img/ prefix
-      relativePath = imagePath;
-    } else if (imagePath.startsWith('/')) {
-      // Path starting with / but not /img/ - add /img/ prefix
-      relativePath = `/img${imagePath}`;
-    } else {
-      // Relative path without leading / - add /img/ prefix
-      relativePath = `/img/${imagePath}`;
-    }
-    
-    // Encode the path properly for social media (handle spaces and special chars)
-    const encodedPath = relativePath.split('/').map(segment => {
-      if (!segment) return segment;
-      return encodeURIComponent(segment);
-    }).join('/');
-    
-    // Convert relative path to absolute URL
-    return `${baseUrl}${encodedPath}`;
-  };
-  
   // Get absolute canonical URL
   const getRecipeCanonicalUrl = () => {
     if (typeof window !== 'undefined') {

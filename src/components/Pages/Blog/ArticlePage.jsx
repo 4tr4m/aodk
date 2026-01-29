@@ -73,7 +73,7 @@ const ArticlePage = () => {
               "name": "Autyzm od Kuchni",
               "logo": { 
                 "@type": "ImageObject", 
-                "url": "https://www.autyzmodkuchni.pl/img/logo_bckgd.png",
+                "url": "https://www.autyzmodkuchni.pl/img/logo.png",
                 "width": 200,
                 "height": 200
               }

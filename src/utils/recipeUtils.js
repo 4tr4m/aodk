@@ -98,11 +98,58 @@ export const replaceLinkPlaceholder = (text) => {
   
   let processedText = text;
   
+  // Default classes for green, underlined, clickable links with nice UX
+  const defaultLinkClasses = 'text-green-600 hover:text-green-700 underline font-medium transition-all duration-200 cursor-pointer hover:underline-offset-2 active:scale-95';
+  
+  // FIRST: Process existing <a href> tags from database to ensure they have proper styling
+  // This prevents double-processing and ensures all links are styled consistently
+  processedText = processedText.replace(
+    /<a\s+([^>]*?)href=["']([^"']+)["']([^>]*?)>(.*?)<\/a>/gi,
+    (match, attrsBefore, url, attrsAfter, linkText) => {
+      // Normalize URL to prevent duplication
+      const normalized = normalizeUrl(url);
+      
+      // Extract existing class attribute if present
+      const allAttrs = (attrsBefore + ' ' + attrsAfter).trim();
+      const classMatch = allAttrs.match(/class=["']([^"']+)["']/i);
+      
+      let finalClasses = defaultLinkClasses;
+      if (classMatch) {
+        const existingClasses = classMatch[1];
+        // Check if link already has proper styling (to avoid duplication)
+        if (existingClasses.includes('text-green-600') && existingClasses.includes('underline')) {
+          // Already styled, just normalize URL
+          const attrsWithoutClass = allAttrs.replace(/class=["'][^"']*["']/gi, '').trim();
+          const finalAttrs = attrsWithoutClass ? `${attrsWithoutClass} ` : '';
+          return `<a ${finalAttrs}href="${normalized}" class="${existingClasses}">${linkText}</a>`;
+        }
+        // Remove conflicting color/underline classes and keep others
+        const cleanedClasses = existingClasses
+          .replace(/\b(text-\w+|hover:text-\w+|underline|font-\w+|transition-\w+|cursor-\w+|hover:underline-offset-\w+|active:scale-\w+)\b/g, '')
+          .trim();
+        if (cleanedClasses) {
+          finalClasses = `${cleanedClasses} ${defaultLinkClasses}`.trim();
+        }
+      }
+      
+      // Remove class attribute from attrs and add our classes
+      const attrsWithoutClass = allAttrs.replace(/class=["'][^"']*["']/gi, '').trim();
+      const finalAttrs = attrsWithoutClass ? `${attrsWithoutClass} ` : '';
+      
+      return `<a ${finalAttrs}href="${normalized}" class="${finalClasses}">${linkText}</a>`;
+    }
+  );
+  
+  // SECOND: Process placeholders - but only if text doesn't already contain links
+  // Check if text already has links (to avoid wrapping links in links)
+  const hasExistingLinks = /<a\s+[^>]*href/i.test(processedText);
+  
   // Check if text contains a recipe link placeholder
   const recipeLinkRegex = /\{([^}]+)\}/;
-  const match = text.match(recipeLinkRegex);
+  const match = processedText.match(recipeLinkRegex);
   
-  if (match) {
+  if (match && !hasExistingLinks) {
+    // Only process placeholders if there are no existing links (to avoid nesting)
     const recipeIdentifier = match[1].trim(); // The content inside {}
     
     let recipeUrl;
@@ -128,51 +175,20 @@ export const replaceLinkPlaceholder = (text) => {
     }
     
     // Remove the placeholder from the text
-    const textWithoutPlaceholder = text.replace(/\s*\{[^}]+\}/g, '').trim();
+    const textWithoutPlaceholder = processedText.replace(/\s*\{[^}]+\}/g, '').trim();
     
-    // Wrap the entire text in a clickable link
-    processedText = `<a href="${recipeUrl}" class="text-green-600 hover:text-green-700 underline font-medium transition-colors duration-200 cursor-pointer">${textWithoutPlaceholder}</a>`;
+    // Wrap the entire text in a clickable link with proper styling
+    processedText = `<a href="${recipeUrl}" class="${defaultLinkClasses}">${textWithoutPlaceholder}</a>`;
+  } else if (match && hasExistingLinks) {
+    // If there are existing links, just remove the placeholder (don't wrap in link)
+    processedText = processedText.replace(/\s*\{[^}]+\}/g, '').trim();
   } else {
     // Handle old {LINK} format for backward compatibility
     processedText = processedText.replace(
       /\{LINK\}/g,
-      '<a href="/przepis/mieszanka-2" class="text-green-600 hover:text-green-700 underline font-medium transition-all duration-200 cursor-pointer hover:underline-offset-2">uniwersalnej mieszanki mąk bezglutenowych</a>'
+      `<a href="/przepis/mieszanka-2" class="${defaultLinkClasses}">uniwersalnej mieszanki mąk bezglutenowych</a>`
     );
   }
-  
-  // Process all <a href> tags from database - add green color, underline, and nice UX effects
-  // This handles direct HTML links from database
-  processedText = processedText.replace(
-    /<a\s+([^>]*?)href=["']([^"']+)["']([^>]*?)>(.*?)<\/a>/gi,
-    (match, attrsBefore, url, attrsAfter, linkText) => {
-      const normalized = normalizeUrl(url);
-      
-      // Default classes for green, underlined, clickable links
-      const defaultClasses = 'text-green-600 hover:text-green-700 underline font-medium transition-all duration-200 cursor-pointer hover:underline-offset-2 active:scale-95';
-      
-      // Extract existing class attribute if present
-      const allAttrs = (attrsBefore + ' ' + attrsAfter).trim();
-      const classMatch = allAttrs.match(/class=["']([^"']+)["']/i);
-      
-      let finalClasses = defaultClasses;
-      if (classMatch) {
-        const existingClasses = classMatch[1];
-        // Remove conflicting color/underline classes and keep others
-        const cleanedClasses = existingClasses
-          .replace(/\b(text-\w+|hover:text-\w+|underline|font-\w+|transition-\w+|cursor-\w+|hover:underline-offset-\w+|active:scale-\w+)\b/g, '')
-          .trim();
-        if (cleanedClasses) {
-          finalClasses = `${cleanedClasses} ${defaultClasses}`.trim();
-        }
-      }
-      
-      // Remove class attribute from attrs and add our classes
-      const attrsWithoutClass = allAttrs.replace(/class=["'][^"']*["']/gi, '').trim();
-      const finalAttrs = attrsWithoutClass ? `${attrsWithoutClass} ` : '';
-      
-      return `<a ${finalAttrs}href="${normalized}" class="${finalClasses}">${linkText}</a>`;
-    }
-  );
   
   return processedText;
 };

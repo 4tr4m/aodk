@@ -7,7 +7,7 @@ const SEO = ({
   keywords, 
   author = "Autyzm od Kuchni",
   ogType = "website",
-  ogImage = "/img/logo google.png",
+  ogImage = "/img/logo.png",
   canonical,
   robots, // robots meta tag (e.g., "noindex, nofollow")
   structuredData, // Additional structured data (Recipe, BreadcrumbList, etc.)
@@ -46,7 +46,7 @@ const SEO = ({
   // Convert relative ogImage path to absolute URL if needed
   // Google and WhatsApp require absolute URLs for og:image and other social meta tags
   const getAbsoluteImageUrl = (imagePath) => {
-    if (!imagePath) return `${baseUrl}/img/logo%20google.png`;
+    if (!imagePath) return `${baseUrl}/img/logo.png`;
     // Already absolute URL
     if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
       return imagePath;
@@ -71,7 +71,7 @@ const SEO = ({
   // Double-check: ensure we never output relative URLs
   const finalOgImage = absoluteOgImage.startsWith('http') 
     ? absoluteOgImage 
-    : `${baseUrl}/img/logo%20google.png`;
+    : `${baseUrl}/img/logo.png`;
 
   // Structured data for organization and logo
   const organizationStructuredData = {
@@ -81,7 +81,7 @@ const SEO = ({
     "url": "https://www.autyzmodkuchni.pl",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://www.autyzmodkuchni.pl/img/logo%20google.png",
+      "url": "https://www.autyzmodkuchni.pl/img/logo.png",
       "width": 200,
       "height": 200
     },
