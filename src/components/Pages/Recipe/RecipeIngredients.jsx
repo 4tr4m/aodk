@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUtensils } from 'react-icons/fa';
 import { processIngredients, replaceLinkPlaceholder } from '../../../utils/recipeUtils';
 
 const RecipeIngredients = ({ ingredients, ingredientsRef, onMobileButtonClick, isMobileButtonVisible }) => {
   const { groups, hasGroups, normalized } = processIngredients(ingredients);
+  
+  // CRITICAL: Process links ONCE using useMemo to prevent multiple processing on re-renders
+  const processedGroups = useMemo(() => {
+    if (!hasGroups) return null;
+    return groups.map(group => ({
+      ...group,
+      items: group.items.map(ing => replaceLinkPlaceholder(ing))
+    }));
+  }, [groups, hasGroups]);
+
+  const processedNormalized = useMemo(() => {
+    if (!normalized) return [];
+    return normalized.map(ing => replaceLinkPlaceholder(ing));
+  }, [normalized]);
   
   if (!normalized || normalized.length === 0) return null;
 
@@ -138,7 +152,7 @@ const RecipeIngredients = ({ ingredients, ingredientsRef, onMobileButtonClick, i
       
       {hasGroups ? (
         <div className="space-y-6">
-          {groups.map((group, groupIdx) => (
+          {processedGroups.map((group, groupIdx) => (
             <div key={groupIdx} className="bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-xl p-4 sm:p-5 border border-gray-200">
               {group.title && (
                 <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 font-['Playfair_Display'] pb-2 border-b border-gray-300">
@@ -146,8 +160,8 @@ const RecipeIngredients = ({ ingredients, ingredientsRef, onMobileButtonClick, i
                 </h3>
               )}
               <ul className="list-disc pl-5 sm:pl-6 space-y-2 text-gray-800">
-                {group.items.map((ing, i) => (
-                  <li key={i} className="leading-relaxed" dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }} />
+                {group.items.map((processedHtml, i) => (
+                  <li key={i} className="leading-relaxed" dangerouslySetInnerHTML={{ __html: processedHtml }} />
                 ))}
               </ul>
             </div>
@@ -155,8 +169,8 @@ const RecipeIngredients = ({ ingredients, ingredientsRef, onMobileButtonClick, i
         </div>
       ) : (
         <ul className="list-disc pl-6 space-y-1 text-gray-800">
-          {normalized.map((ing, i) => (
-            <li key={i} dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }} />
+          {processedNormalized.map((processedHtml, i) => (
+            <li key={i} dangerouslySetInnerHTML={{ __html: processedHtml }} />
           ))}
         </ul>
       )}

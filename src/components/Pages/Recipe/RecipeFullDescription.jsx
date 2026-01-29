@@ -4,6 +4,12 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { replaceLinkPlaceholder } from '../../../utils/recipeUtils';
 
 const RecipeFullDescription = ({ fulldesc, isExpanded, onToggle }) => {
+  // CRITICAL: Process links ONCE using useMemo to prevent multiple processing on re-renders
+  const processedFulldesc = useMemo(() => {
+    if (!fulldesc) return '';
+    return replaceLinkPlaceholder(fulldesc);
+  }, [fulldesc]);
+  
   // Helper function to get preview text with fade calculation
   const getPreviewText = (htmlText) => {
     if (!htmlText || !htmlText.trim()) return { preview: '', fadeStart: 0, hasMore: false };
@@ -207,7 +213,7 @@ const RecipeFullDescription = ({ fulldesc, isExpanded, onToggle }) => {
                 <div className="prose max-w-none mb-2.5">
                   <p 
                     className="text-gray-700 leading-relaxed text-sm sm:text-base whitespace-pre-wrap break-words"
-                    dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(fulldesc) }}
+                    dangerouslySetInnerHTML={{ __html: processedFulldesc }}
                   />
                 </div>
                 <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-200">
@@ -234,7 +240,7 @@ const RecipeFullDescription = ({ fulldesc, isExpanded, onToggle }) => {
       
       {!isExpanded && (
         <div className="sr-only">
-          <p dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(fulldesc) }} />
+          <p dangerouslySetInnerHTML={{ __html: processedFulldesc }} />
         </div>
       )}
     </motion.div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUtensils, FaTimes } from 'react-icons/fa';
@@ -19,6 +19,22 @@ const StickyIngredientsSidebarMobile = ({
   
   // Store scroll position
   const scrollPositionRef = useRef(0);
+  
+  const { groups, hasGroups, normalized } = processIngredients(ingredients);
+  
+  // CRITICAL: Process links ONCE using useMemo to prevent multiple processing on re-renders
+  const processedGroups = useMemo(() => {
+    if (!hasGroups) return null;
+    return groups.map(group => ({
+      ...group,
+      items: group.items.map(ing => replaceLinkPlaceholder(ing))
+    }));
+  }, [groups, hasGroups, replaceLinkPlaceholder]);
+
+  const processedNormalized = useMemo(() => {
+    if (!normalized) return [];
+    return normalized.map(ing => replaceLinkPlaceholder(ing));
+  }, [normalized, replaceLinkPlaceholder]);
 
   // Prevent body scroll when sidebar is open and preserve scroll position
   useEffect(() => {
@@ -101,18 +117,6 @@ const StickyIngredientsSidebarMobile = ({
     return null;
   }
 
-  // Process ingredients
-  let groups, hasGroups, normalized;
-  try {
-    const result = processIngredients(ingredients);
-    groups = result.groups;
-    hasGroups = result.hasGroups;
-    normalized = result.normalized;
-  } catch (error) {
-    console.error('Error processing ingredients:', error);
-    return null;
-  }
-
   if ((!hasGroups && (!normalized || normalized.length === 0)) || 
       (hasGroups && (!groups || groups.length === 0))) {
     return null;
@@ -177,7 +181,7 @@ const StickyIngredientsSidebarMobile = ({
             <div className="overflow-y-auto flex-1 p-4 pb-8 max-h-[calc(85vh-80px)] scrollbar-thin scrollbar-thumb-green-200 scrollbar-track-gray-100">
               {hasGroups ? (
                 <div className="space-y-4">
-                  {groups.map((group, groupIdx) => (
+                  {processedGroups.map((group, groupIdx) => (
                     <motion.div
                       key={groupIdx}
                       initial={{ opacity: 0, y: 10 }}
@@ -191,8 +195,8 @@ const StickyIngredientsSidebarMobile = ({
                         </h4>
                       )}
                       <ul className="list-disc pl-5 space-y-2 text-gray-800 text-sm sm:text-base">
-                        {group.items.map((ing, i) => (
-                          <li key={i} className="leading-relaxed" dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }} />
+                        {group.items.map((processedHtml, i) => (
+                          <li key={i} className="leading-relaxed" dangerouslySetInnerHTML={{ __html: processedHtml }} />
                         ))}
                       </ul>
                     </motion.div>
@@ -200,14 +204,14 @@ const StickyIngredientsSidebarMobile = ({
                 </div>
               ) : (
                 <ul className="list-disc pl-6 space-y-2 text-gray-800 text-sm sm:text-base">
-                  {normalized.map((ing, i) => (
+                  {processedNormalized.map((processedHtml, i) => (
                     <motion.li
                       key={i}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05 }}
                       className="leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: replaceLinkPlaceholder(ing) }}
+                      dangerouslySetInnerHTML={{ __html: processedHtml }}
                     />
                   ))}
                 </ul>

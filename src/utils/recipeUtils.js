@@ -109,20 +109,29 @@ export const replaceLinkPlaceholder = (text) => {
   const defaultLinkClasses = 'text-green-600 hover:text-green-700 underline font-medium transition-all duration-200 cursor-pointer hover:underline-offset-2 active:scale-95';
   
   // Process existing <a href> tags from database
-  // Simple, direct approach - replace the entire <a> tag with properly styled version
+  // CRITICAL: Support BOTH ASCII quotes (" ' code 34/39) AND Unicode quotes (U+201C U+201D U+2018 U+2019)
+  // Using Unicode escape sequences to match curly quotes from database
   let processedText = text.replace(
-    /<a\s+([^>]*?)href\s*=\s*["']([^"']+)["']([^>]*?)>(.*?)<\/a>/gi,
-    (match, attrsBefore, url, attrsAfter, linkText) => {
-      // Clean URL - keep full URLs as-is, normalize relative URLs
+    /<a\s+[^>]*?href\s*=\s*["\u201C\u201D'\u2018\u2019]([^"\u201C\u201D'\u2018\u2019]+)["\u201C\u201D'\u2018\u2019][^>]*?>(.*?)<\/a>/gi,
+    (match, url, linkText) => {
+      // Clean URL - remove any whitespace, quotes (both ASCII and Unicode), or artifacts
       let cleanUrl = url.trim();
+      // Remove ASCII quotes (34, 39) and Unicode quotes (U+201C, U+201D, U+2018, U+2019)
+      cleanUrl = cleanUrl.replace(/^["\u201C\u201D'\u2018\u2019]+|["\u201C\u201D'\u2018\u2019]+$/g, '');
       
-      // Keep full URLs exactly as-is to prevent duplication
-      const finalUrl = (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://'))
-        ? cleanUrl
-        : normalizeUrl(cleanUrl, false);
+      // CRITICAL: For full URLs, use them EXACTLY as-is (no normalization)
+      // For relative URLs, normalize them
+      let finalUrl;
+      if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+        // Full URL - use EXACTLY as provided, no changes
+        finalUrl = cleanUrl;
+      } else {
+        // Relative URL - normalize it
+        finalUrl = normalizeUrl(cleanUrl, false);
+      }
       
-      // Always apply our styling classes - ignore any existing classes to prevent conflicts
       // Return clean link with proper URL and styling
+      // Use ASCII double quotes for href attribute
       return `<a href="${finalUrl}" class="${defaultLinkClasses}">${linkText}</a>`;
     }
   );
