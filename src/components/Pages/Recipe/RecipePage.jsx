@@ -380,6 +380,7 @@ const RecipePage = () => {
   const structuredData = [recipeSchema, breadcrumbSchema].filter(Boolean);
 
   // Get absolute URL for recipe image - use same logic as getRecipeImageSrc but return absolute URL
+  // Properly encode URL for social media sharing (WhatsApp, Facebook, etc.)
   const getAbsoluteImageUrl = (imagePath) => {
     // Use same logic as getRecipeImageSrc from recipeUtils
     let relativePath;
@@ -388,8 +389,13 @@ const RecipePage = () => {
       // If no image, use default recipe image (not logo)
       relativePath = '/img/ciasta.jpg';
     } else if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      // Already absolute URL
-      return imagePath;
+      // Already absolute URL - encode it properly
+      try {
+        const url = new URL(imagePath);
+        return url.href;
+      } catch {
+        return imagePath;
+      }
     } else if (imagePath.startsWith('/img/')) {
       // Already has /img/ prefix
       relativePath = imagePath;
@@ -401,8 +407,14 @@ const RecipePage = () => {
       relativePath = `/img/${imagePath}`;
     }
     
+    // Encode the path properly for social media (handle spaces and special chars)
+    const encodedPath = relativePath.split('/').map(segment => {
+      if (!segment) return segment;
+      return encodeURIComponent(segment);
+    }).join('/');
+    
     // Convert relative path to absolute URL
-    return `${baseUrl}${relativePath}`;
+    return `${baseUrl}${encodedPath}`;
   };
   
   // Get absolute canonical URL

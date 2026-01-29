@@ -117,13 +117,19 @@ const SEO = ({
       <meta property="og:title" content={metaTitle} />
       <meta property="og:description" content={metaDescription} />
       <meta property="og:image" content={finalOgImage} />
+      <meta property="og:image:url" content={finalOgImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:image:secure_url" content={finalOgImage} />
       <meta property="og:image:alt" content={metaTitle} />
+      <meta property="og:image:type" content="image/jpeg" />
       <meta property="og:url" content={metaCanonical} />
       <meta property="og:site_name" content="Autyzm od Kuchni" />
       <meta property="og:locale" content="pl_PL" />
+      
+      {/* Additional meta tags for better social media compatibility */}
+      <meta name="image" content={finalOgImage} />
+      <link rel="image_src" href={finalOgImage} />
       
       {/* Twitter - Must use absolute URLs for Google */}
       <meta name="twitter:card" content="summary_large_image" />
