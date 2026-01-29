@@ -293,6 +293,7 @@ const CategoryBanner = () => {
         const { data: categories, error } = await supabase
           .from('categories')
           .select('*')
+          .eq('is_displayed', true) // Only fetch categories with is_displayed = true
           .order('display_name');
 
         if (error) {

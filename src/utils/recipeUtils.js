@@ -136,18 +136,43 @@ export const replaceLinkPlaceholder = (text) => {
     // Handle old {LINK} format for backward compatibility
     processedText = processedText.replace(
       /\{LINK\}/g,
-      '<a href="/przepis/mieszanka-2" class="text-green-600 hover:text-green-700 underline font-medium">uniwersalnej mieszanki mąk bezglutenowych</a>'
-    );
-    
-    // Also handle direct <a href> tags - normalize their URLs if needed
-    processedText = processedText.replace(
-      /<a\s+href=["']([^"']+)["']/gi,
-      (match, url) => {
-        const normalized = normalizeUrl(url);
-        return `<a href="${normalized}"`;
-      }
+      '<a href="/przepis/mieszanka-2" class="text-green-600 hover:text-green-700 underline font-medium transition-all duration-200 cursor-pointer hover:underline-offset-2">uniwersalnej mieszanki mąk bezglutenowych</a>'
     );
   }
+  
+  // Process all <a href> tags from database - add green color, underline, and nice UX effects
+  // This handles direct HTML links from database
+  processedText = processedText.replace(
+    /<a\s+([^>]*?)href=["']([^"']+)["']([^>]*?)>(.*?)<\/a>/gi,
+    (match, attrsBefore, url, attrsAfter, linkText) => {
+      const normalized = normalizeUrl(url);
+      
+      // Default classes for green, underlined, clickable links
+      const defaultClasses = 'text-green-600 hover:text-green-700 underline font-medium transition-all duration-200 cursor-pointer hover:underline-offset-2 active:scale-95';
+      
+      // Extract existing class attribute if present
+      const allAttrs = (attrsBefore + ' ' + attrsAfter).trim();
+      const classMatch = allAttrs.match(/class=["']([^"']+)["']/i);
+      
+      let finalClasses = defaultClasses;
+      if (classMatch) {
+        const existingClasses = classMatch[1];
+        // Remove conflicting color/underline classes and keep others
+        const cleanedClasses = existingClasses
+          .replace(/\b(text-\w+|hover:text-\w+|underline|font-\w+|transition-\w+|cursor-\w+|hover:underline-offset-\w+|active:scale-\w+)\b/g, '')
+          .trim();
+        if (cleanedClasses) {
+          finalClasses = `${cleanedClasses} ${defaultClasses}`.trim();
+        }
+      }
+      
+      // Remove class attribute from attrs and add our classes
+      const attrsWithoutClass = allAttrs.replace(/class=["'][^"']*["']/gi, '').trim();
+      const finalAttrs = attrsWithoutClass ? `${attrsWithoutClass} ` : '';
+      
+      return `<a ${finalAttrs}href="${normalized}" class="${finalClasses}">${linkText}</a>`;
+    }
+  );
   
   return processedText;
 };

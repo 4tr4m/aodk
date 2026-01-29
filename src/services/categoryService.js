@@ -5,7 +5,9 @@ const categoryService = {
     try {
       const { data, error } = await supabase
         .from('categories')
-        .select('*');
+        .select('*')
+        .eq('is_displayed', true) // Only fetch categories with is_displayed = true
+        .order('display_name');
       
       if (error) {
         console.error('Error fetching categories:', error);
