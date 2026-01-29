@@ -61,17 +61,26 @@ export const getRecipeImageSrc = (image) => {
 };
 
 /**
- * Normalize URL to relative format
- * Handles: full URLs, relative URLs, short formats
+ * Normalize URL - keep full URLs as-is, convert relative URLs to proper format
+ * Handles: full URLs (keeps as-is), relative URLs, short formats
  * @param {string} url - URL in any format
- * @returns {string} Normalized relative URL starting with /
+ * @param {boolean} keepFullUrl - If true, keep full URLs as-is (default: true)
+ * @returns {string} Normalized URL (full URL kept as-is, relative URLs normalized)
  */
-const normalizeUrl = (url) => {
+const normalizeUrl = (url, keepFullUrl = true) => {
   if (!url || typeof url !== 'string') return url;
   
   let normalized = url.trim();
   
-  // Remove full domain if present
+  // Remove any surrounding quotes that might have been included
+  normalized = normalized.replace(/^["']|["']$/g, '');
+  
+  // If it's a full URL and we want to keep it, return as-is
+  if (keepFullUrl && (normalized.startsWith('http://') || normalized.startsWith('https://'))) {
+    return normalized;
+  }
+  
+  // Remove full domain if present (only if we're converting to relative)
   normalized = normalized.replace(/^https?:\/\/(www\.)?autyzmodkuchni\.pl/i, '');
   
   // Ensure it starts with /
@@ -96,47 +105,25 @@ const normalizeUrl = (url) => {
 export const replaceLinkPlaceholder = (text) => {
   if (!text || typeof text !== 'string') return text;
   
-  let processedText = text;
-  
   // Default classes for green, underlined, clickable links with nice UX
   const defaultLinkClasses = 'text-green-600 hover:text-green-700 underline font-medium transition-all duration-200 cursor-pointer hover:underline-offset-2 active:scale-95';
   
-  // FIRST: Process existing <a href> tags from database to ensure they have proper styling
-  // This prevents double-processing and ensures all links are styled consistently
-  processedText = processedText.replace(
-    /<a\s+([^>]*?)href=["']([^"']+)["']([^>]*?)>(.*?)<\/a>/gi,
+  // Process existing <a href> tags from database
+  // Simple, direct approach - replace the entire <a> tag with properly styled version
+  let processedText = text.replace(
+    /<a\s+([^>]*?)href\s*=\s*["']([^"']+)["']([^>]*?)>(.*?)<\/a>/gi,
     (match, attrsBefore, url, attrsAfter, linkText) => {
-      // Normalize URL to prevent duplication
-      const normalized = normalizeUrl(url);
+      // Clean URL - keep full URLs as-is, normalize relative URLs
+      let cleanUrl = url.trim();
       
-      // Extract existing class attribute if present
-      const allAttrs = (attrsBefore + ' ' + attrsAfter).trim();
-      const classMatch = allAttrs.match(/class=["']([^"']+)["']/i);
+      // Keep full URLs exactly as-is to prevent duplication
+      const finalUrl = (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://'))
+        ? cleanUrl
+        : normalizeUrl(cleanUrl, false);
       
-      let finalClasses = defaultLinkClasses;
-      if (classMatch) {
-        const existingClasses = classMatch[1];
-        // Check if link already has proper styling (to avoid duplication)
-        if (existingClasses.includes('text-green-600') && existingClasses.includes('underline')) {
-          // Already styled, just normalize URL
-          const attrsWithoutClass = allAttrs.replace(/class=["'][^"']*["']/gi, '').trim();
-          const finalAttrs = attrsWithoutClass ? `${attrsWithoutClass} ` : '';
-          return `<a ${finalAttrs}href="${normalized}" class="${existingClasses}">${linkText}</a>`;
-        }
-        // Remove conflicting color/underline classes and keep others
-        const cleanedClasses = existingClasses
-          .replace(/\b(text-\w+|hover:text-\w+|underline|font-\w+|transition-\w+|cursor-\w+|hover:underline-offset-\w+|active:scale-\w+)\b/g, '')
-          .trim();
-        if (cleanedClasses) {
-          finalClasses = `${cleanedClasses} ${defaultLinkClasses}`.trim();
-        }
-      }
-      
-      // Remove class attribute from attrs and add our classes
-      const attrsWithoutClass = allAttrs.replace(/class=["'][^"']*["']/gi, '').trim();
-      const finalAttrs = attrsWithoutClass ? `${attrsWithoutClass} ` : '';
-      
-      return `<a ${finalAttrs}href="${normalized}" class="${finalClasses}">${linkText}</a>`;
+      // Always apply our styling classes - ignore any existing classes to prevent conflicts
+      // Return clean link with proper URL and styling
+      return `<a href="${finalUrl}" class="${defaultLinkClasses}">${linkText}</a>`;
     }
   );
   
