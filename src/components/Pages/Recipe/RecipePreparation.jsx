@@ -30,6 +30,19 @@ const RecipePreparation = ({ preparation }) => {
   
   if (current.title || current.items.length) steps.push(current);
 
+  // Add "Zdrowego! 🌱✨💚" as the last bullet point in the last step
+  if (steps.length > 0) {
+    const lastStep = steps[steps.length - 1];
+    // If last step has items, add to them; otherwise create items array
+    if (!lastStep.items) {
+      lastStep.items = [];
+    }
+    lastStep.items.push('Zdrowego! 🌱✨💚');
+  } else {
+    // If no steps, create one with just the closing message
+    steps.push({ title: null, items: ['Zdrowego! 🌱✨💚'] });
+  }
+
   return (
     <div className="mt-8">
       <h2 className="text-xl font-bold text-gray-800 mb-4 font-['Playfair_Display']">
@@ -50,13 +63,6 @@ const RecipePreparation = ({ preparation }) => {
             )}
           </div>
         ))}
-      </div>
-      
-      {/* Elegant closing message */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
-        <p className="text-center text-gray-600 font-['Lato'] text-base leading-relaxed">
-          Smacznego i zdrowego gotowania! 🌱
-        </p>
       </div>
     </div>
   );

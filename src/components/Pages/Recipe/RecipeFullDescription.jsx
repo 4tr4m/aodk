@@ -32,20 +32,26 @@ const RecipeFullDescription = ({ fulldesc, isExpanded, onToggle }) => {
     // Get preview text (plain text for preview)
     const previewText = cleanText.substring(0, textCutoff).trim();
     
-    // Find last three words for fade effect (increased from two)
+    // Find last four words for fade effect (3-4 words greying out)
     const words = previewText.split(/\s+/).filter(w => w.length > 0);
-    if (words.length < 3) {
-      // If less than 3 words, fade from the second-to-last word or from beginning
+    if (words.length < 4) {
+      // If less than 4 words, fade from an earlier position
       if (words.length < 2) {
         return { preview: previewText, fadeStart: previewText.length, hasMore: true };
       }
-      // If only 2 words, fade from the first word
-      const firstWordEnd = previewText.indexOf(' ');
-      return { preview: previewText, fadeStart: firstWordEnd >= 0 ? firstWordEnd + 1 : 0, hasMore: true };
+      // If 2-3 words, fade from the first word or second word
+      if (words.length === 2) {
+        const firstWordEnd = previewText.indexOf(' ');
+        return { preview: previewText, fadeStart: firstWordEnd >= 0 ? firstWordEnd + 1 : 0, hasMore: true };
+      }
+      // If 3 words, fade from the first word
+      const firstSpaceIndex = previewText.indexOf(' ');
+      const secondSpaceIndex = previewText.indexOf(' ', firstSpaceIndex + 1);
+      return { preview: previewText, fadeStart: secondSpaceIndex >= 0 ? secondSpaceIndex + 1 : firstSpaceIndex + 1, hasMore: true };
     }
     
-    // Find the start position of the last three words
-    // Get the index of the space before the third-to-last word
+    // Find the start position of the last four words
+    // Get the index of the space before the fourth-to-last word
     const previewLastSpaceIndex = previewText.lastIndexOf(' ');
     if (previewLastSpaceIndex < 0) {
       return { preview: previewText, fadeStart: 0, hasMore: true };
@@ -57,10 +63,16 @@ const RecipeFullDescription = ({ fulldesc, isExpanded, onToggle }) => {
       return { preview: previewText, fadeStart: previewLastSpaceIndex + 1, hasMore: true };
     }
     
-    // Find the space before the third-to-last word (start of fade area)
+    // Find the space before the third-to-last word
     const thirdLastSpaceIndex = previewText.lastIndexOf(' ', secondLastSpaceIndex - 1);
-    // Start fading a bit earlier to create a larger fade area
-    const fadeStart = thirdLastSpaceIndex >= 0 ? thirdLastSpaceIndex + 1 : secondLastSpaceIndex + 1;
+    if (thirdLastSpaceIndex < 0) {
+      return { preview: previewText, fadeStart: secondLastSpaceIndex + 1, hasMore: true };
+    }
+    
+    // Find the space before the fourth-to-last word (start of fade area for 4 words)
+    const fourthLastSpaceIndex = previewText.lastIndexOf(' ', thirdLastSpaceIndex - 1);
+    // Start fading from the fourth-to-last word to create a larger, more visible fade area
+    const fadeStart = fourthLastSpaceIndex >= 0 ? fourthLastSpaceIndex + 1 : thirdLastSpaceIndex + 1;
     
     return { preview: previewText, fadeStart, hasMore: true };
   };
@@ -113,18 +125,23 @@ const RecipeFullDescription = ({ fulldesc, isExpanded, onToggle }) => {
                     {fade && (
                       <span className="inline-block fade-gradient">
                         {fade.split('').map((char, idx) => {
-                          // More gradual fade - start fading earlier and fade more slowly
-                          // Use a smoother curve for better visual effect
+                          // Better fade effect - more visible and smoother
+                          // Use a cubic ease-in-out curve for a more natural fade
                           const progress = idx / fade.length;
-                          // Start fading from the beginning, but more gradually
-                          // Use a quadratic curve for smoother transition
-                          const opacity = Math.max(0.05, 1 - (progress * progress * 1.2));
+                          // Start with full opacity and fade more gradually
+                          // Use cubic curve for smoother, more visible transition
+                          // Make the fade start earlier and be more pronounced
+                          const easedProgress = progress < 0.5 
+                            ? 2 * progress * progress 
+                            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                          const opacity = Math.max(0.08, 1 - (easedProgress * 0.92));
                           return (
                             <span
                               key={idx}
                               style={{
                                 opacity: opacity,
-                                color: `rgba(55, 65, 81, ${opacity})`
+                                color: `rgba(55, 65, 81, ${opacity})`,
+                                transition: 'opacity 0.1s ease-out'
                               }}
                             >
                               {char === ' ' ? '\u00A0' : char}
