@@ -290,14 +290,15 @@ const CategoryBanner = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        // Try simple query first without ordering
         const { data: categories, error } = await supabase
           .from('categories')
-          .select('*')
-          // .eq('is_displayed', true) // Temporarily commented - column doesn't exist in DB yet
-          .order('display_name');
+          .select('*');
+          // .order('display_name'); // Temporarily commented - checking if column exists
 
         if (error) {
           console.error("Error fetching categories:", error);
+          console.error("Full error details:", JSON.stringify(error, null, 2));
           // Fallback to hardcoded categories
           loadFallbackCategories();
           return;
