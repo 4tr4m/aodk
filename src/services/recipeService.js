@@ -148,7 +148,6 @@ const recipeService = {
       
       if (error) {
         console.error('Error fetching categories:', error);
-        console.error('Full error details:', JSON.stringify(error, null, 2));
         return [];
       }
       

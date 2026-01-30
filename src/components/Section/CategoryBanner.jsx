@@ -298,7 +298,6 @@ const CategoryBanner = () => {
 
         if (error) {
           console.error("Error fetching categories:", error);
-          console.error("Full error details:", JSON.stringify(error, null, 2));
           // Fallback to hardcoded categories
           loadFallbackCategories();
           return;
