@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import CategoryHeader from '../Category/CategoryHeader';
 import TopNavBar from '../../Headers/TopNavBar';
 import Footer from '../../Footer/Footer';
-import { blogPosts } from '../../../Data/blog-data';
+import blogService from '../../../services/blogService';
 import SEO from '../../SEO/SEO';
 import { motion } from 'framer-motion';
 import FeedbackButton from '../../Feedback/FeedbackButton';
@@ -11,22 +11,34 @@ import FeedbackButton from '../../Feedback/FeedbackButton';
 const BlogPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState(null);
+  const [blogPosts, setBlogPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Get unique tags from all blog posts
-  const allTags = [...new Set(blogPosts.flatMap(post => post.tags || []))];
+  // Fetch blog posts from Supabase on component mount
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      const posts = await blogService.getAllArticles();
+      setBlogPosts(posts);
+      setLoading(false);
+    };
+    
+    fetchPosts();
+  }, []);
+
+  // Get unique tags from all blog posts (categories in Supabase)
+  const allTags = [...new Set(blogPosts.map(post => post.category))];
 
   // Filter posts based on search and selected tag
   const filteredPosts = blogPosts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesTag = !selectedTag || (post.tags && post.tags.includes(selectedTag));
+    const matchesTag = !selectedTag || post.category === selectedTag;
     return matchesSearch && matchesTag;
   });
 
   // Get latest posts (most recent 3)
-  const latestPosts = [...blogPosts]
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 3);
+  const latestPosts = [...blogPosts].slice(0, 3);
 
   const handleSearch = useCallback((e) => {
     setSearchQuery(e.target.value);
@@ -35,6 +47,17 @@ const BlogPage = () => {
   const handleTagClick = useCallback((tag) => {
     setSelectedTag(selectedTag === tag ? null : tag);
   }, [selectedTag]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Ładowanie artykułów...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">

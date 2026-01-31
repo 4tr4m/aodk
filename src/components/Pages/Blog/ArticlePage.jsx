@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import CategoryHeader from '../Category/CategoryHeader';
 import TopNavBar from '../../Headers/TopNavBar';
-import { blogPosts } from '../../../Data/blog-data';
-import { articleDetails } from '../../../Data/article-data';
+import blogService from '../../../services/blogService';
 import SEO from '../../SEO/SEO';
 import FeedbackButton from '../../Feedback/FeedbackButton';
 
@@ -11,41 +10,67 @@ const ArticlePage = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
   
-  const blogPost = blogPosts.find(post => post.slug === slug);
-  const articleDetail = articleDetails[slug];
+  const [article, setArticle] = useState(null);
+  const [relatedArticles, setRelatedArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (!blogPost || !articleDetail) {
-      navigate('/blog');
-    }
-  }, [blogPost, articleDetail, navigate]);
+    const fetchArticle = async () => {
+      setLoading(true);
+      const fetchedArticle = await blogService.getArticleBySlug(slug);
+      
+      if (!fetchedArticle) {
+        navigate('/blog');
+        return;
+      }
+      
+      setArticle(fetchedArticle);
+      
+      // Fetch related articles if they exist
+      if (fetchedArticle.related_articles && fetchedArticle.related_articles.length > 0) {
+        const related = await blogService.getRelatedArticles(fetchedArticle.related_articles);
+        setRelatedArticles(related);
+      }
+      
+      setLoading(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    
+    fetchArticle();
+  }, [slug, navigate]);
 
-  if (!blogPost || !articleDetail) return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Ładowanie artykułu...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const relatedArticles = blogPosts.filter(post => 
-    articleDetail.relatedArticles.includes(post.slug)
-  );
+  if (!article) return null;
 
   // Extract first paragraph for meta description (strip HTML tags)
   const getMetaDescription = () => {
-    const content = articleDetail.content;
+    const content = article.content;
     const firstParagraph = content.match(/<p>(.*?)<\/p>/);
     if (firstParagraph && firstParagraph[1]) {
       // Remove HTML tags
       return firstParagraph[1].replace(/<\/?[^>]+(>|$)/g, "").substring(0, 160);
     }
-    return blogPost.excerpt || "Artykuł na temat diety eliminacyjnej w autyzmie.";
+    return article.excerpt || "Artykuł na temat diety eliminacyjnej w autyzmie.";
   };
 
   return (
     <div>
       <SEO 
-        title={`${blogPost.title} | Autyzm od Kuchni`}
+        title={`${article.title} | Autyzm od Kuchni`}
         description={getMetaDescription()}
-        keywords={`${blogPost.category}, autyzm, dieta eliminacyjna, ${blogPost.tags?.join(', ') || ''}`}
+        keywords={`${article.category}, autyzm, dieta eliminacyjna`}
         ogType="article"
-        ogImage={blogPost.image}
+        ogImage={article.image}
         canonical={`https://www.autyzmodkuchni.pl/blog/${slug}`}
         structuredData={[
           {
@@ -54,19 +79,19 @@ const ArticlePage = () => {
             "itemListElement": [
               { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://www.autyzmodkuchni.pl/" },
               { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://www.autyzmodkuchni.pl/blog" },
-              { "@type": "ListItem", "position": 3, "name": blogPost.title, "item": `https://www.autyzmodkuchni.pl/blog/${slug}` }
+              { "@type": "ListItem", "position": 3, "name": article.title, "item": `https://www.autyzmodkuchni.pl/blog/${slug}` }
             ]
           },
           {
             "@context": "https://schema.org",
             "@type": "BlogPosting",
-            "headline": blogPost.title,
-            "image": blogPost.image?.startsWith('http') ? blogPost.image : `https://www.autyzmodkuchni.pl${blogPost.image?.startsWith('/') ? blogPost.image : '/' + blogPost.image}`,
-            "datePublished": blogPost.date || undefined,
-            "dateModified": blogPost.dateModified || blogPost.date || undefined,
+            "headline": article.title,
+            "image": article.image?.startsWith('http') ? article.image : `https://www.autyzmodkuchni.pl${article.image?.startsWith('/') ? article.image : '/' + article.image}`,
+            "datePublished": article.date || undefined,
+            "dateModified": article.updated_at || article.date || undefined,
             "author": { 
               "@type": "Person", 
-              "name": blogPost.author || "Autyzm od Kuchni" 
+              "name": article.author || "Autyzm od Kuchni" 
             },
             "publisher": {
               "@type": "Organization",
@@ -83,8 +108,7 @@ const ArticlePage = () => {
               "@id": `https://www.autyzmodkuchni.pl/blog/${slug}`
             },
             "url": `https://www.autyzmodkuchni.pl/blog/${slug}`,
-            "articleSection": blogPost.category || undefined,
-            "keywords": blogPost.tags?.join(', ') || undefined,
+            "articleSection": article.category || undefined,
             "description": getMetaDescription()
           }
         ]}
@@ -114,19 +138,19 @@ const ArticlePage = () => {
           {/* Article Header */}
           <header className="mb-12">
             <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
-              <span>{blogPost.date}</span>
+              <span>{article.date}</span>
               <span>•</span>
-              <span>{blogPost.category}</span>
+              <span>{article.category}</span>
               <span>•</span>
-              <span>{blogPost.author}</span>
+              <span>{article.author}</span>
             </div>
             <h1 className="font-['Caveat'] text-5xl text-[#2D3748] mb-6">
-              {blogPost.title}
+              {article.title}
             </h1>
             <div className="relative h-[400px] rounded-xl overflow-hidden shadow-lg">
               <img 
-                src={blogPost.image} 
-                alt={blogPost.title}
+                src={article.image} 
+                alt={article.title}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -135,7 +159,7 @@ const ArticlePage = () => {
           {/* Article Content */}
           <article className="prose prose-lg max-w-none mb-16">
             <div 
-              dangerouslySetInnerHTML={{ __html: articleDetail.content }} 
+              dangerouslySetInnerHTML={{ __html: article.content }} 
               className="font-['Lato'] text-gray-700 leading-relaxed"
             />
           </article>
