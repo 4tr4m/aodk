@@ -83,7 +83,6 @@ const TopNavBar = () => {
       try {
         // Fetch all categories from Supabase
         const categories = await categoryService.getCategories();
-        console.log('Navbar - Raw categories from Supabase:', categories);
         
         if (categories && categories.length > 0) {
           // Transform Supabase categories to match the expected format for dropdown menus
@@ -91,14 +90,12 @@ const TopNavBar = () => {
             // Create URL-friendly slug from label if slug is not available
             // Converts spaces to hyphens and removes special characters
             const slug = category.slug || category.label?.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
-            console.log(`Navbar - Category: ${category.label}, slug: ${slug}, original slug: ${category.slug}`);
             return {
               label: category.label,           // Display name for the category
               link: `/kuchnia/${slug}`,        // URL path for the category page
               shortDesc: category.short_desc || '' // Optional short description
             };
           });
-          console.log('Navbar - Transformed categories:', transformedCategories);
           setKuchniaItems(transformedCategories);
         } else {
           // Fallback to hardcoded categories if Supabase fetch fails or returns empty

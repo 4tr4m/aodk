@@ -70,32 +70,42 @@ const CategoryDescription = ({
         >
           <div className="bg-white rounded-lg p-4 md:p-5 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 max-w-3xl mx-auto">
             <div className="prose prose-sm max-w-none">
-              <p 
-                className={`font-['Lato'] text-sm md:text-base text-gray-600 text-center max-w-2xl mx-auto leading-relaxed transition-all duration-200 ${
-                  !isExpanded && description.length > 150 
-                    ? 'overflow-hidden' 
-                    : ''
-                }`}
-                style={{
-                  display: !isExpanded && description.length > 150 ? '-webkit-box' : 'block',
-                  WebkitLineClamp: !isExpanded && description.length > 150 ? 3 : 'unset',
-                  WebkitBoxOrient: 'vertical'
-                }}
-                onClick={(e) => {
-                  // Handle click on the recipe link
-                  const target = e.target.closest('a[data-newsletter-trigger]');
-                  if (target) {
-                    e.preventDefault();
-                    const recipeId = target.getAttribute('data-recipe-id');
-                    if (recipeId && onNewsletterLinkClick) {
-                      onNewsletterLinkClick(recipeId);
+              {/* Description with fade-out teaser effect */}
+              <div className="relative">
+                <p 
+                  className={`font-['Lato'] text-sm md:text-base text-gray-600 text-center max-w-2xl mx-auto leading-relaxed transition-all duration-200 ${
+                    !isExpanded && description.length > 150 
+                      ? 'overflow-hidden' 
+                      : ''
+                  }`}
+                  style={{
+                    display: !isExpanded && description.length > 150 ? '-webkit-box' : 'block',
+                    WebkitLineClamp: !isExpanded && description.length > 150 ? 2 : 'unset',
+                    WebkitBoxOrient: 'vertical'
+                  }}
+                  onClick={(e) => {
+                    // Handle click on the recipe link
+                    const target = e.target.closest('a[data-newsletter-trigger]');
+                    if (target) {
+                      e.preventDefault();
+                      const recipeId = target.getAttribute('data-recipe-id');
+                      if (recipeId && onNewsletterLinkClick) {
+                        onNewsletterLinkClick(recipeId);
+                      }
                     }
-                  }
-                }}
-                dangerouslySetInnerHTML={{
-                  __html: processedDescription
-                }}
-              />
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: processedDescription
+                  }}
+                />
+                
+                {/* Gradient fade-out overlay when text is collapsed */}
+                {!isExpanded && description.length > 150 && (
+                  <div 
+                    className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white via-white/90 to-transparent pointer-events-none"
+                  />
+                )}
+              </div>
               {description.length > 150 && (
                 <motion.button
                   onClick={onToggleExpand}

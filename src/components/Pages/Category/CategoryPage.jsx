@@ -19,6 +19,7 @@ import { useCategorySearch } from './hooks/useCategorySearch';
 import { useIngredientFilter } from './hooks/useIngredientFilter';
 import { useScrollDetection } from './hooks/useScrollDetection';
 import { smartCapitalize } from '../../../utils/categoryUtils';
+import supabase from '../../../lib/supabase-browser';
 
 const CategoryPage = () => {
   const { categorySlug } = useParams();
@@ -95,6 +96,25 @@ const CategoryPage = () => {
     }
   }, [state.isLoading]);
 
+  // Fetch categories from Supabase on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('*');
+        
+        if (!error && data) {
+          setCategories(data);
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err);
+      }
+    };
+    
+    fetchCategories();
+  }, []);
+
   // Effect to scroll to top if coming from carousel click or footer
   useEffect(() => {
     if (location.state?.scrollToTitle || location.state?.scrollToTop) {
@@ -145,15 +165,42 @@ const CategoryPage = () => {
   const getCurrentCategory = () => {
     if (!categorySlug) return null;
     
-    // First try to find in hardcoded categories
+    // First, try to find category from Supabase
+    const supabaseCategory = categories.find(cat => {
+      // Try matching by slug first (most reliable)
+      if (cat.slug === categorySlug) return true;
+      
+      // Try matching by link
+      if (cat.link && cat.link.includes(categorySlug)) return true;
+      
+      // Try matching by label (normalized)
+      if (cat.label) {
+        const normalizedLabel = cat.label.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const normalizedSlug = categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (normalizedLabel === normalizedSlug) return true;
+      }
+      
+      return false;
+    });
+    
+    if (supabaseCategory) {
+      return {
+        label: supabaseCategory.label, // Use 'label' from database
+        link: supabaseCategory.link || `/kuchnia/${categorySlug}`,
+        description: supabaseCategory.description || 'Odkryj nasze pyszne przepisy!',
+        shortDesc: supabaseCategory.short_desc || '',
+        image: supabaseCategory.image || `${categorySlug}.jpg`
+      };
+    }
+    
+    // Fallback: try to find in hardcoded categories (for backwards compatibility)
     const hardcodedCategory = kuchniaCategories.mainCategories.find(cat => 
       cat.link.split('/').pop() === categorySlug
     );
     
     if (hardcodedCategory) return hardcodedCategory;
     
-    // If not found in hardcoded, create a dynamic category based on the slug
-    // This handles cases where the category comes from Supabase
+    // If not found anywhere, create a dynamic category based on the slug
     return {
       label: smartCapitalize(categorySlug),
       link: `/kuchnia/${categorySlug}`,

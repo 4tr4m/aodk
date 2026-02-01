@@ -90,8 +90,8 @@ const CategoryPageHeader = ({
                       />
                       
                       <h1 className="relative font-['Playfair_Display'] text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl text-[#2D3748] font-bold tracking-wide text-center break-words group-hover:text-green-600 transition-colors duration-300 px-1 sm:px-3">
-                        {/* Mobile: Split multi-word titles into two lines */}
-                        <span className="block sm:hidden">
+                        {/* Mobile: Split multi-word titles into two lines + UPPERCASE + shifted left */}
+                        <span className="block sm:hidden uppercase" style={{ marginRight: '5px' }}>
                           {(() => {
                             const title = currentCategory ? formatCategoryName(currentCategory.label) : 'Wszystkie Przepisy';
                             const words = title.split(' ');

@@ -187,7 +187,6 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
 
   const handleItemClick = useCallback((item) => {
     if (item.link) {
-      console.log('CategoryCarousel: Navigating to', item.link, 'with scrollToTitle state');
       navigate(item.link, { state: { scrollToTitle: true } });
     }
   }, [navigate]);
