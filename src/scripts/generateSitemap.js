@@ -4,7 +4,6 @@ const path = require('path');
 // Import data
 require('dotenv').config();
 const { kuchniaCategories } = require('../Data/category-data');
-const { blogPosts } = require('../Data/blog-data');
 
 // Base URL
 const BASE_URL = 'https://www.autyzmodkuchni.pl';
@@ -67,28 +66,12 @@ const generateSitemap = () => {
     sitemap += '  </url>\n';
   });
   
-  // Note: Recipes from database should be added dynamically
-  // For now, recipes are indexed via their category pages
-  // If you need individual recipe URLs in sitemap, you'll need to:
+  // Note: Recipes and blog posts from database should be added dynamically
+  // For now, recipes and blog posts are indexed via their category/blog pages
+  // If you need individual URLs in sitemap, you'll need to:
   // 1. Connect to Supabase in this script
-  // 2. Fetch all recipes
-  // 3. Add them with format: /przepis/{recipe.id}
-  
-  // Add blog posts
-  if (blogPosts) {
-    blogPosts.forEach(post => {
-      sitemap += '  <url>\n';
-      sitemap += `    <loc>${BASE_URL}/blog/${post.slug}</loc>\n`;
-      
-      // Use post date if available, otherwise use current date
-      const postDate = post.date ? new Date(post.date).toISOString().split('T')[0] : currentDate;
-      sitemap += `    <lastmod>${postDate}</lastmod>\n`;
-      
-      sitemap += '    <changefreq>monthly</changefreq>\n';
-      sitemap += '    <priority>0.7</priority>\n';
-      sitemap += '  </url>\n';
-    });
-  }
+  // 2. Fetch all recipes/blog posts
+  // 3. Add them with format: /przepis/{recipe.id} or /blog/{post.slug}
   
   sitemap += '</urlset>';
   

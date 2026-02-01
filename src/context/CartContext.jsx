@@ -24,20 +24,8 @@ const loadInitialState = () => {
     return {
       cart: savedCart ? JSON.parse(savedCart) : [],
       wishlist: savedWishlist ? JSON.parse(savedWishlist) : [],
-      // Initialize with empty categories, will be filled after fetching from Supabase
-      allRecipes: {
-        OBIADY: [],
-        ZUPY: [],
-        CHLEBY: [],
-        SMAROWIDŁA: [],
-        DESERY: [],
-        'BABECZKI i MUFFINY': [],
-        CIASTA: [],
-        CIASTKA: [],
-        SMOOTHIE: [],
-        INNE: [],
-        ŚWIĘTA: []
-      },
+      // Initialize with empty object, will be filled dynamically after fetching from Supabase
+      allRecipes: {},
       isLoading: true,
       error: null
     };
@@ -183,20 +171,18 @@ export const CartProvider = ({ children }) => {
         
         console.log(`Successfully loaded ${recipes.length} recipes from Supabase`);
         
-        // Organize recipes by category
-        const recipesByCategory = {
-          OBIADY: recipes.filter(recipe => recipe.category === 'OBIADY'),
-          ZUPY: recipes.filter(recipe => recipe.category === 'ZUPY'),
-          CHLEBY: recipes.filter(recipe => recipe.category === 'CHLEBY'),
-          SMAROWIDŁA: recipes.filter(recipe => recipe.category === 'SMAROWIDŁA'),
-          DESERY: recipes.filter(recipe => recipe.category === 'DESERY'),
-          'BABECZKI i MUFFINY': recipes.filter(recipe => recipe.category === 'BABECZKI i MUFFINY'),
-          CIASTA: recipes.filter(recipe => recipe.category === 'CIASTA'),
-          CIASTKA: recipes.filter(recipe => recipe.category === 'CIASTKA'),
-          SMOOTHIE: recipes.filter(recipe => recipe.category === 'SMOOTHIE'),
-          INNE: recipes.filter(recipe => recipe.category === 'INNE'),
-          ŚWIĘTA: recipes.filter(recipe => recipe.category === 'ŚWIĘTA')
-        };
+        // Organize recipes by category DYNAMICALLY
+        // Get unique categories from recipes and create dynamic structure
+        const recipesByCategory = recipes.reduce((acc, recipe) => {
+          const category = recipe.category;
+          if (category) {
+            if (!acc[category]) {
+              acc[category] = [];
+            }
+            acc[category].push(recipe);
+          }
+          return acc;
+        }, {});
         
         dispatch({ type: 'SET_RECIPES', payload: recipesByCategory });
       } catch (err) {

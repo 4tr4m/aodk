@@ -52,29 +52,32 @@ const CategoryPage = () => {
   const getCategoryKeyFromSlug = () => {
     if (!categorySlug) return null;
     
-    const slugToKeyMap = {
-      'obiady': 'OBIADY',
-      'zupy': 'ZUPY', 
-      'chleby': 'CHLEBY',
-      'smarowidla': 'SMAROWIDŁA',
-      'desery': 'DESERY',
-      'babeczki-muffiny': 'BABECZKI i MUFFINY',
-      'babeczki-i-muffiny': 'BABECZKI i MUFFINY',
-      'ciasta': 'CIASTA',
-      'ciastka': 'CIASTKA',
-      'smoothie': 'SMOOTHIE',
-      'inne': 'INNE',
-      'swieta': 'ŚWIĘTA'
-    };
+    // Try to find category in Supabase data first (dynamic mapping)
+    const supabaseCategory = categories.find(cat => {
+      // Match by link (e.g., /kuchnia/obiady -> obiady)
+      const linkSlug = cat.link?.split('/').pop();
+      if (linkSlug === categorySlug) return true;
+      
+      // Match by label normalized (e.g., OBIADY -> obiady)
+      const normalizedLabel = cat.label?.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const normalizedSlug = categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (normalizedLabel === normalizedSlug) return true;
+      
+      return false;
+    });
     
-    let categoryKey = slugToKeyMap[categorySlug];
-    if (!categoryKey) {
-      categoryKey = Object.keys(state.allRecipes).find(key => {
-        const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const normalizedSlug = categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '');
-        return normalizedKey.includes(normalizedSlug) || normalizedSlug.includes(normalizedKey);
-      });
+    if (supabaseCategory) {
+      // Return the label as the category key (matches state.allRecipes keys)
+      return supabaseCategory.label;
     }
+    
+    // Fallback: try fuzzy matching in state.allRecipes
+    let categoryKey = Object.keys(state.allRecipes).find(key => {
+      const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const normalizedSlug = categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '');
+      return normalizedKey.includes(normalizedSlug) || normalizedSlug.includes(normalizedKey);
+    });
+    
     return categoryKey;
   };
 
@@ -102,7 +105,8 @@ const CategoryPage = () => {
       try {
         const { data, error } = await supabase
           .from('categories')
-          .select('*');
+          .select('*')
+          .order('id', { ascending: true }); // Sort by id to maintain database order
         
         if (!error && data) {
           setCategories(data);
@@ -215,27 +219,26 @@ const CategoryPage = () => {
       return Object.values(state.allRecipes).flat();
     }
     
-    // Create a mapping of slugs to category keys
-    const slugToKeyMap = {
-      'obiady': 'OBIADY',
-      'zupy': 'ZUPY', 
-      'chleby': 'CHLEBY',
-      'smarowidla': 'SMAROWIDŁA',
-      'desery': 'DESERY',
-      'babeczki-muffiny': 'BABECZKI i MUFFINY',
-      'babeczki-i-muffiny': 'BABECZKI i MUFFINY',
-      'ciasta': 'CIASTA',
-      'ciastka': 'CIASTKA',
-      'smoothie': 'SMOOTHIE',
-      'inne': 'INNE',
-      'swieta': 'ŚWIĘTA'
-    };
+    // Try to find category in Supabase data first (dynamic mapping)
+    const supabaseCategory = categories.find(cat => {
+      // Match by link (e.g., /kuchnia/obiady -> obiady)
+      const linkSlug = cat.link?.split('/').pop();
+      if (linkSlug === categorySlug) return true;
+      
+      // Match by label normalized (e.g., OBIADY -> obiady)
+      const normalizedLabel = cat.label?.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const normalizedSlug = categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (normalizedLabel === normalizedSlug) return true;
+      
+      return false;
+    });
     
-    // First try direct mapping
-    let categoryKey = slugToKeyMap[categorySlug];
-    
-    // If no direct mapping, try fuzzy matching
-    if (!categoryKey) {
+    let categoryKey;
+    if (supabaseCategory) {
+      // Use the label as the category key
+      categoryKey = supabaseCategory.label;
+    } else {
+      // Fallback: try fuzzy matching
       categoryKey = Object.keys(state.allRecipes).find(key => {
         // Convert both to lowercase and replace spaces/special chars for comparison
         const normalizedKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');

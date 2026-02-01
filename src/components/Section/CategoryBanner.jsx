@@ -293,8 +293,8 @@ const CategoryBanner = () => {
         // Try simple query first without ordering
         const { data: categories, error } = await supabase
           .from('categories')
-          .select('*');
-          // .order('display_name'); // Temporarily commented - checking if column exists
+          .select('*')
+          .order('id', { ascending: true }); // Sort by id to maintain database order
 
         if (error) {
           console.error("Error fetching categories:", error);
