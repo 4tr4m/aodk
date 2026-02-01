@@ -86,7 +86,7 @@ const HeroSection = () => {
                 <img 
                   src="/img/logo.png" 
                   alt="Autyzm od kuchni" 
-                  className="w-full h-auto block overflow-visible relative z-1 scale-125 sm:scale-100" 
+                  className="w-full h-auto block relative z-1 scale-125 sm:scale-100" 
                 />
               </motion.div>
             </div>
