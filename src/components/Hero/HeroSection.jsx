@@ -29,15 +29,6 @@ const ANIMATION_VALUES = {
   TEXT_Y: [0, -50]
 };
 
-// Background image styles
-const BACKGROUND_STYLES = {
-  backgroundImage: 'url(./img/main-hero.webp)',
-  backgroundPosition: 'center',
-  backgroundSize: 'cover',
-  backgroundRepeat: 'no-repeat',
-  backfaceVisibility: 'hidden'
-};
-
 const HeroSection = () => {
   // State for controlling the info modal visibility
   const [isOpen, setIsOpen] = useState(false);
@@ -60,14 +51,21 @@ const HeroSection = () => {
     <>
       {/* Parallax background image with scroll-based movement */}
       <motion.div 
-        className="absolute top-0 left-0 w-full h-screen z-0 will-change-transform"
+        className="absolute top-0 left-0 w-full h-screen z-0 will-change-transform overflow-hidden"
         style={{
-          ...BACKGROUND_STYLES,
           y: backgroundY, // Parallax effect - moves slower than scroll
         }}
       >
+        {/* Background image with fetchpriority for LCP optimization */}
+        <img
+          src="./img/main-hero.webp"
+          alt=""
+          fetchpriority="high"
+          className="absolute top-0 left-0 w-full h-full object-cover"
+          style={{ backfaceVisibility: 'hidden' }}
+        />
         {/* Dark overlay for better text readability */}
-        <div className="absolute top-0 left-0 w-full h-full bg-black/30 -z-10"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-black/30 z-10"></div>
       </motion.div>
 
       {/* Main hero header container - full screen height */}
@@ -85,7 +83,9 @@ const HeroSection = () => {
               >
                 <img 
                   src="/img/logo.png" 
-                  alt="Autyzm od kuchni" 
+                  alt="Autyzm od kuchni"
+                  width="493"
+                  height="493"
                   className="w-full h-auto block relative z-1 scale-125 sm:scale-100" 
                 />
               </motion.div>
