@@ -220,6 +220,21 @@ const Footer = () => {
               </div>
             </nav>
           </div>
+          
+          {/* Copyright section with SEO backlink */}
+          <div className="border-t border-white/10 pt-8 pb-4 text-center">
+            <p className="text-gray-300 text-sm">
+              © 2026 Autyzm od kuchni. Wszystkie prawa zastrzeżone. |{' '}
+              <a 
+                href="https://www.stalowewitryny.pl" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-300 hover:text-white transition-colors duration-200 underline decoration-gray-500 hover:decoration-white"
+              >
+                Projekt i realizacja: stalowewitryny.pl
+              </a>
+            </p>
+          </div>
         </div>
       </div>
 
