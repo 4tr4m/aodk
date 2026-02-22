@@ -62,8 +62,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import { 
   kuchniaCategories,
   historiaCategories,
-  // wiedzaCategories, // Commented out - not currently used
-  blogCategories,
+  // wiedzaCategories, blogCategories - not used; blog is a simple link
 } from '../../Data/category-data';
 // Service for fetching dynamic categories from Supabase
 import categoryService from '../../services/categoryService';
@@ -185,12 +184,7 @@ const TopNavBar = () => {
     //   dropdown: wiedzaCategories,
     //   type: 'wiedza'
     // },
-    { 
-      label: 'BLOG', // Blog section
-      link: '/blog',
-      dropdown: blogCategories, // Static categories from data file
-      type: 'blog'
-    },
+    { label: 'BLOG', link: '/blog' }, // Blog - simple link, no dropdown
     { label: 'KONTAKT', link: '/kontakt' }, // Contact page
   ];
 
