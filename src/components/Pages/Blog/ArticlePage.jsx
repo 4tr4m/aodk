@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import CategoryHeader from '../Category/CategoryHeader';
 import TopNavBar from '../../Headers/TopNavBar';
+import Footer from '../../Footer/Footer';
 import blogService from '../../../services/blogService';
 import SEO from '../../SEO/SEO';
 import FeedbackButton from '../../Feedback/FeedbackButton';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 const ArticlePage = () => {
   const { slug } = useParams();
@@ -149,7 +151,7 @@ const ArticlePage = () => {
             </h1>
             <div className="relative h-[400px] rounded-xl overflow-hidden shadow-lg">
               <img 
-                src={article.image} 
+                src={article.image || getImageUrl('inne.jpg')} 
                 alt={article.title}
                 className="w-full h-full object-cover"
               />
@@ -179,7 +181,7 @@ const ArticlePage = () => {
                   >
                     <div className="relative h-48 overflow-hidden">
                       <img 
-                        src={related.image}
+                        src={related.image || getImageUrl('inne.jpg')}
                         alt={related.title}
                         className="w-full h-full object-cover"
                       />
@@ -198,6 +200,7 @@ const ArticlePage = () => {
         </div>
       </div>
       <FeedbackButton />
+      <Footer />
     </div>
   );
 };

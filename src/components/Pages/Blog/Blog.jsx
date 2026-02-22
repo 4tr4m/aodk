@@ -7,6 +7,7 @@ import blogService from '../../../services/blogService';
 import SEO from '../../SEO/SEO';
 import { motion } from 'framer-motion';
 import FeedbackButton from '../../Feedback/FeedbackButton';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 const BlogPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -96,6 +97,14 @@ const BlogPage = () => {
           Artykuły, porady i przemyślenia na temat diety eliminacyjnej
         </p>
       </motion.div>
+
+      <div className="max-w-7xl mx-auto px-4 md:px-8 mb-12 flex justify-center">
+        <img
+          src={getImageUrl('inne.jpg')}
+          alt="Dania z kategorii inne"
+          className="w-full max-w-3xl rounded-xl shadow-md object-cover"
+        />
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         <div className="flex flex-col lg:flex-row gap-8">
