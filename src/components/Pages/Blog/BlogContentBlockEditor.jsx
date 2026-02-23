@@ -53,8 +53,12 @@ const BlogContentBlockEditor = ({ blocks, onChange }) => {
           </button>
         </div>
       </div>
-      <p className="text-xs text-gray-500 mb-3">
+      <p className="text-xs text-gray-500 mb-1">
         Dodaj bloki w dowolnej kolejności. Na zapis zostaną zamienione na HTML i zapisane w Supabase.
+      </p>
+      <p className="text-xs text-gray-500 mb-3">
+        W blokach tekstowych możesz używać prostych znaczników: <strong>**pogrubienie**</strong>, <em>*kursywa*</em>,
+        nagłówki (#, ##) i listy (-, 1.). Złożone układy wprowadzaj przez „Raw HTML”.
       </p>
       <div className="space-y-3">
         {blocks.length === 0 && (
@@ -126,13 +130,32 @@ const BlogContentBlockEditor = ({ blocks, onChange }) => {
                 />
               )}
               {block.type === 'text' && (
-                <textarea
-                  value={block.text ?? ''}
-                  onChange={(e) => updateBlock(block.id, { text: e.target.value })}
-                  placeholder="Akapit tekstu (zapisany jako &lt;p&gt;)"
-                  rows={3}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-                />
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-gray-500">
+                    <span className="uppercase tracking-wide font-semibold text-gray-400 mr-1">
+                      Formatowanie:
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded bg-gray-100 border border-gray-200">
+                      **pogrubienie**
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded bg-gray-100 border border-gray-200">
+                      *kursywa*
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded bg-gray-100 border border-gray-200">
+                      # nagłówek
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded bg-gray-100 border border-gray-200">
+                      - lista
+                    </span>
+                  </div>
+                  <textarea
+                    value={block.text ?? ''}
+                    onChange={(e) => updateBlock(block.id, { text: e.target.value })}
+                    placeholder="Akapit tekstu. Możesz używać **pogrubienia**, *kursywy*, list itp."
+                    rows={4}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
+                  />
+                </div>
               )}
               {block.type === 'raw' && (
                 <textarea

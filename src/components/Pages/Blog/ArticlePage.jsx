@@ -115,25 +115,34 @@ const ArticlePage = () => {
           }
         ]}
       />
-      {/* Header - same pattern as Contact and Blog */}
-      <div className="relative mb-8">
+      {/* Header - same pattern as Contact and Blog, but tighter spacing on article page */}
+      <div className="relative mb-2 md:mb-4">
         <CategoryHeader showLogo={false} />
         <div className="absolute top-0 left-0 w-full">
           <TopNavBar />
         </div>
       </div>
 
-      {/* Article content area - warm background like Wiedza */}
-      <main className="flex-1 bg-[#F6EFE9] pt-2 pb-10 md:pt-4 md:pb-14">
+      {/* Article content area - warm background like Wiedza, pulled closer to navbar */}
+      <main className="flex-1 bg-[#F6EFE9] pt-0 pb-10 md:pt-0 md:pb-14">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Breadcrumb */}
-          <div className="mb-8">
+          {/* Breadcrumb / navigation */}
+          <div className="mb-6 flex flex-wrap items-center gap-3 justify-between">
             <Link 
               to="/blog" 
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 rounded-xl border border-gray-100 shadow-sm transition-all duration-200 group"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/90 hover:bg-white text-gray-800 hover:text-gray-900 rounded-full border border-gray-200 shadow-sm transition-all duration-200 group"
             >
               <span className="text-lg group-hover:-translate-x-0.5 transition-transform duration-200">←</span>
-              <span className="font-medium font-['Lato']">Wróć do bloga</span>
+              <span className="font-semibold font-['Lato'] tracking-wide text-sm md:text-base">
+                Wróć do bloga
+              </span>
+            </Link>
+            <Link
+              to="/"
+              className="hidden sm:inline-flex items-center gap-2 px-3 py-2 text-sm font-['Lato'] rounded-full border border-transparent text-gray-600 hover:text-gray-800 hover:border-gray-300 bg-transparent transition-all duration-200"
+            >
+              <span className="text-base">🏠</span>
+              <span>Strona główna</span>
             </Link>
           </div>
 
