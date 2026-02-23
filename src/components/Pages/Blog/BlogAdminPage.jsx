@@ -1,70 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import blogService from '../../../services/blogService';
+import { blocksToHtml, htmlToBlocks } from '../../../utils/blogContentUtils';
+import BlogAdminLogin from './BlogAdminLogin';
+import BlogAdminArticleList from './BlogAdminArticleList';
+import BlogAdminArticleForm from './BlogAdminArticleForm';
 
-const blockId = () => `b-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
-
-const escapeHtml = (s) => {
-  if (s == null) return '';
-  const div = document.createElement('div');
-  div.textContent = s;
-  return div.innerHTML;
-};
-
-/** Build HTML from blocks for Supabase content column */
-const blocksToHtml = (blocks) => {
-  return blocks
-    .map((block) => {
-      if (block.type === 'header') {
-        const level = Math.min(6, Math.max(1, Number(block.level) || 2));
-        return `<h${level}>${escapeHtml(block.text || '')}</h${level}>`;
-      }
-      if (block.type === 'image') {
-        const raw = (block.path || '').trim();
-        const src = raw.startsWith('/') ? raw : raw ? `/img/${raw.replace(/^\/?/, '')}` : '';
-        if (!src) return '';
-        return `<img src="${escapeHtml(src)}" alt="" />`;
-      }
-      if (block.type === 'text') {
-        return `<p>${escapeHtml(block.text || '').replace(/\n/g, '<br />')}</p>`;
-      }
-      return '';
-    })
-    .filter(Boolean)
-    .join('\n') || '';
-};
-
-const defaultBlock = (type) => {
-  const id = blockId();
-  if (type === 'header') return { id, type: 'header', level: 2, text: '' };
-  if (type === 'image') return { id, type: 'image', path: 'Blog/' };
-  if (type === 'text') return { id, type: 'text', text: '' };
-  return { id, type: 'text', text: '' };
-};
+const emptyForm = () => ({
+  title: '',
+  slug: '',
+  date: new Date().toISOString().slice(0, 10),
+  category: 'Dieta',
+  excerpt: '',
+  author: 'Marta Chmielnicka',
+  image: '/img/Blog/',
+  relatedSlugs: '',
+});
 
 /**
- * Admin page to create blog articles with interactive block editor.
- * Route: /admin/blog. Content built as header/image/text blocks, converted to HTML on save.
+ * Admin page: list articles, create/edit with block editor.
+ * Route: /admin/blog. Editing loads article content as blocks (same UI as create).
  */
 const BlogAdminPage = () => {
   const [status, setStatus] = useState({ type: null, message: '' });
   const [isAuthed, setIsAuthed] = useState(false);
   const [login, setLogin] = useState({ username: '', password: '' });
-  const [blocks, setBlocks] = useState([]);
   const [articles, setArticles] = useState([]);
   const [loadingArticles, setLoadingArticles] = useState(false);
-  const [editingSlug, setEditingSlug] = useState(null); // original slug when editing
-  const [rawContent, setRawContent] = useState('');
-  const [form, setForm] = useState({
-    title: '',
-    slug: '',
-    date: new Date().toISOString().slice(0, 10),
-    category: 'Dieta',
-    excerpt: '',
-    author: 'Marta Chmielnicka',
-    image: '/img/Blog/',
-    relatedSlugs: '',
-  });
+  const [editingSlug, setEditingSlug] = useState(null);
+  const [form, setForm] = useState(emptyForm());
+  const [blocks, setBlocks] = useState([]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.localStorage?.getItem('blogAdminAuthed') === 'true') {
@@ -73,31 +38,14 @@ const BlogAdminPage = () => {
   }, []);
 
   useEffect(() => {
-    const loadArticles = async () => {
+    const load = async () => {
       setLoadingArticles(true);
       const list = await blogService.getAllArticles();
       setArticles(list || []);
       setLoadingArticles(false);
     };
-    if (isAuthed) {
-      loadArticles();
-    }
+    if (isAuthed) load();
   }, [isAuthed]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    if (name === 'title' && !form.slug) {
-      const slug = value
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9ąćęłńóśźż-]/g, '')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-      setForm((prev) => ({ ...prev, slug }));
-    }
-  };
 
   const handleLoginChange = (e) => {
     const { name, value } = e.target;
@@ -109,7 +57,7 @@ const BlogAdminPage = () => {
     if (login.username === 'admin' && login.password === 'Martusia84!') {
       setIsAuthed(true);
       if (typeof window !== 'undefined') {
-        window.localStorage?.setItem('blogAdminAuthed', 'true');
+        window.localStorage.setItem('blogAdminAuthed', 'true');
       }
       setStatus({ type: null, message: '' });
     } else {
@@ -117,34 +65,12 @@ const BlogAdminPage = () => {
     }
   };
 
-  const addBlock = (type) => setBlocks((prev) => [...prev, defaultBlock(type)]);
-  const removeBlock = (id) => setBlocks((prev) => prev.filter((b) => b.id !== id));
-  const updateBlock = (id, patch) =>
-    setBlocks((prev) => prev.map((b) => (b.id === id ? { ...b, ...patch } : b)));
-  const moveBlock = (index, dir) => {
-    const next = index + dir;
-    if (next < 0 || next >= blocks.length) return;
-    setBlocks((prev) => {
-      const arr = [...prev];
-      [arr[index], arr[next]] = [arr[next], arr[index]];
-      return arr;
-    });
-  };
+  const setFormField = (patch) => setForm((prev) => ({ ...prev, ...patch }));
 
   const startNewArticle = () => {
     setEditingSlug(null);
-    setForm({
-      title: '',
-      slug: '',
-      date: new Date().toISOString().slice(0, 10),
-      category: 'Dieta',
-      excerpt: '',
-      author: 'Marta Chmielnicka',
-      image: '/img/Blog/',
-      relatedSlugs: '',
-    });
+    setForm(emptyForm());
     setBlocks([]);
-    setRawContent('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -162,8 +88,7 @@ const BlogAdminPage = () => {
         ? article.related_articles.join(', ')
         : '',
     });
-    setBlocks([]); // editing uses raw HTML for now
-    setRawContent(article.content || '');
+    setBlocks(htmlToBlocks(article.content || ''));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -171,7 +96,6 @@ const BlogAdminPage = () => {
     e.preventDefault();
     setStatus({ type: null, message: '' });
     const isEditing = Boolean(editingSlug);
-    const content = isEditing ? rawContent : blocksToHtml(blocks);
 
     const confirmed = window.confirm(
       isEditing
@@ -180,6 +104,7 @@ const BlogAdminPage = () => {
     );
     if (!confirmed) return;
 
+    const content = blocksToHtml(blocks);
     const related_articles = form.relatedSlugs
       .split(',')
       .map((s) => s.trim())
@@ -211,13 +136,11 @@ const BlogAdminPage = () => {
         : 'Artykuł dodany. Slug: ' + data?.slug,
     });
 
-    // Refresh list
     const list = await blogService.getAllArticles();
     setArticles(list || []);
 
     if (isEditing) {
       setEditingSlug(null);
-      setRawContent('');
     }
     setBlocks([]);
   };
@@ -229,6 +152,7 @@ const BlogAdminPage = () => {
           ← Wróć do bloga
         </Link>
         <h1 className="text-2xl font-bold text-gray-800 mb-4">Panel bloga (admin)</h1>
+
         {isAuthed && (
           <p className="mb-6 text-sm text-gray-600">
             {editingSlug
@@ -257,330 +181,29 @@ const BlogAdminPage = () => {
         )}
 
         {!isAuthed ? (
-          <form
+          <BlogAdminLogin
+            login={login}
+            onLoginChange={handleLoginChange}
             onSubmit={handleLoginSubmit}
-            className="space-y-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
-          >
-            <p className="text-sm text-gray-600">
-              Zaloguj się, aby dodać lub edytować artykuły na blogu.
-            </p>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Użytkownik</label>
-              <input
-                type="text"
-                name="username"
-                value={login.username}
-                onChange={handleLoginChange}
-                required
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Hasło</label>
-              <input
-                type="password"
-                name="password"
-                value={login.password}
-                onChange={handleLoginChange}
-                required
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors"
-            >
-              Zaloguj
-            </button>
-          </form>
+            status={status}
+          />
         ) : (
           <>
-            {/* Existing articles list */}
-            <section className="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-800">Istniejące artykuły</h2>
-                <button
-                  type="button"
-                  onClick={startNewArticle}
-                  className="text-sm text-green-700 hover:underline"
-                >
-                  + Nowy artykuł
-                </button>
-              </div>
-              {loadingArticles ? (
-                <p className="text-sm text-gray-500">Ładowanie artykułów...</p>
-              ) : articles.length === 0 ? (
-                <p className="text-sm text-gray-500">Brak artykułów w bazie.</p>
-              ) : (
-                <ul className="space-y-2 max-h-64 overflow-auto">
-                  {articles.map((article) => (
-                    <li
-                      key={article.slug}
-                      className="flex items-center justify-between gap-3 text-sm border border-gray-100 rounded-lg px-3 py-2 hover:bg-gray-50"
-                    >
-                      <div className="min-w-0">
-                        <div className="font-medium text-gray-800 truncate">
-                          {article.title || '(bez tytułu)'}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {article.date} · {article.category} · slug: {article.slug}
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => startEditArticle(article)}
-                        className="px-3 py-1 text-xs rounded-lg border border-green-600 text-green-700 hover:bg-green-50 whitespace-nowrap"
-                      >
-                        Edytuj
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-
-            {/* Create / edit form */}
-            <form
+            <BlogAdminArticleList
+              articles={articles}
+              loading={loadingArticles}
+              onEdit={startEditArticle}
+              onNew={startNewArticle}
+            />
+            <BlogAdminArticleForm
+              form={form}
+              onFormChange={setFormField}
+              blocks={blocks}
+              onBlocksChange={setBlocks}
               onSubmit={handleSubmit}
-              className="space-y-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
-            >
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tytuł *</label>
-            <input
-              type="text"
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
+              isEditing={Boolean(editingSlug)}
+              slugHint={!editingSlug}
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Slug (URL) *</label>
-            <input
-              type="text"
-              name="slug"
-              value={form.slug}
-              onChange={handleChange}
-              required
-              placeholder="np. jak-zaczac-diete-eliminacyjna"
-              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 font-mono text-sm"
-            />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Data *</label>
-              <input
-                type="date"
-                name="date"
-                value={form.date}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Kategoria *</label>
-              <input
-                type="text"
-                name="category"
-                value={form.category}
-                onChange={handleChange}
-                required
-                placeholder="np. Dieta"
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Lead / excerpt *</label>
-            <input
-              type="text"
-              name="excerpt"
-              value={form.excerpt}
-              onChange={handleChange}
-              required
-              placeholder="Krótki opis (np. Praktyczny przewodnik)"
-              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Autor *</label>
-            <input
-              type="text"
-              name="author"
-              value={form.author}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Obraz na górze (ścieżka)</label>
-            <input
-              type="text"
-              name="image"
-              value={form.image}
-              onChange={handleChange}
-              placeholder="/img/Blog/nazwa.jpg lub Blog/nazwa.jpg"
-              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 font-mono text-sm"
-            />
-          </div>
-
-          {/* Content editor: blocks for new article, raw HTML for editing */}
-          <div>
-            {editingSlug ? (
-              <>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Treść artykułu (bezpośredni HTML)
-                </label>
-                <textarea
-                  value={rawContent}
-                  onChange={(e) => setRawContent(e.target.value)}
-                  rows={16}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 font-mono text-xs"
-                />
-                <p className="mt-1 text-xs text-gray-500">
-                  Tu edytujesz istniejący HTML z Supabase (np. wklejony z edytora). Zostanie zapisany
-                  1:1.
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="flex items-center justify-between gap-4 mb-2">
-                  <label className="block text-sm font-medium text-gray-700">Treść artykułu (bloki)</label>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => addBlock('header')}
-                      className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
-                    >
-                      + Nagłówek
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => addBlock('image')}
-                      className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
-                    >
-                      + Obraz
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => addBlock('text')}
-                      className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
-                    >
-                      + Tekst
-                    </button>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 mb-3">
-                  Dodaj bloki w dowolnej kolejności. Na zapis zostaną zamienione na HTML i zapisane w Supabase.
-                </p>
-                <div className="space-y-3">
-                  {blocks.length === 0 && (
-                    <div className="text-sm text-gray-400 py-4 border border-dashed border-gray-200 rounded-xl text-center">
-                      Brak bloków. Kliknij „+ Nagłówek”, „+ Obraz” lub „+ Tekst”.
-                    </div>
-                  )}
-                  {blocks.map((block, index) => (
-                    <div
-                      key={block.id}
-                      className="flex gap-2 items-start p-4 bg-gray-50 rounded-xl border border-gray-200"
-                    >
-                      <div className="flex flex-col gap-1 flex-shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => moveBlock(index, -1)}
-                          disabled={index === 0}
-                          className="p-1.5 rounded bg-white border border-gray-200 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
-                          title="Przesuń w górę"
-                        >
-                          ↑
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => moveBlock(index, 1)}
-                          disabled={index === blocks.length - 1}
-                          className="p-1.5 rounded bg-white border border-gray-200 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
-                          title="Przesuń w dół"
-                        >
-                          ↓
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => removeBlock(block.id)}
-                          className="p-1.5 rounded bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
-                          title="Usuń blok"
-                        >
-                          ×
-                        </button>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        {block.type === 'header' && (
-                          <>
-                            <select
-                              value={block.level ?? 2}
-                              onChange={(e) => updateBlock(block.id, { level: Number(e.target.value) })}
-                              className="mb-2 block w-full max-w-[120px] px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-sm"
-                            >
-                              {[1, 2, 3, 4, 5, 6].map((n) => (
-                                <option key={n} value={n}>
-                                  H{n}
-                                </option>
-                              ))}
-                            </select>
-                            <input
-                              type="text"
-                              value={block.text ?? ''}
-                              onChange={(e) => updateBlock(block.id, { text: e.target.value })}
-                              placeholder="Tekst nagłówka"
-                              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-                            />
-                          </>
-                        )}
-                        {block.type === 'image' && (
-                          <input
-                            type="text"
-                            value={block.path ?? ''}
-                            onChange={(e) => updateBlock(block.id, { path: e.target.value })}
-                            placeholder="np. Blog/1.jpg (plik w public/img/...)"
-                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 font-mono text-sm"
-                          />
-                        )}
-                        {block.type === 'text' && (
-                          <textarea
-                            value={block.text ?? ''}
-                            onChange={(e) => updateBlock(block.id, { text: e.target.value })}
-                            placeholder="Akapit tekstu (zapisany jako &lt;p&gt;)"
-                            rows={3}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-                          />
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Powiązane artykuły (slugi po przecinku)</label>
-            <input
-              type="text"
-              name="relatedSlugs"
-              value={form.relatedSlugs}
-              onChange={handleChange}
-              placeholder="slug-artykulu-1, slug-artykulu-2"
-              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 font-mono text-sm"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors"
-          >
-            {editingSlug ? 'Zapisz zmiany' : 'Zapisz artykuł'}
-          </button>
-        </form>
           </>
         )}
       </div>
