@@ -6,6 +6,7 @@ import ContactPage from './components/Pages/Contact/ContactPage';
 import CategoryPage from './components/Pages/Category/CategoryPage';
 import BlogPage from './components/Pages/Blog/Blog';
 import ArticlePage from './components/Pages/Blog/ArticlePage';
+import BlogAdminPage from './components/Pages/Blog/BlogAdminPage';
 import SearchPage from './components/Pages/Search/SearchPage';
 import HistoriaOMnie from './components/Pages/Historia/HistoriaOMnie';
 import HistoriaOAutyzmie from './components/Pages/Historia/HistoriaOAutyzmie';
@@ -76,6 +77,7 @@ const App = () => {
           <Route path="/kuchnia/:categorySlug" element={<CategoryPage />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:slug" element={<ArticlePage />} />
+          <Route path="/admin/blog" element={<BlogAdminPage />} />
           <Route path="/kontakt" element={<ContactPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/historia/o-mnie" element={<HistoriaOMnie />} />

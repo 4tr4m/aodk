@@ -66,7 +66,7 @@ const ArticlePage = () => {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <SEO 
         title={`${article.title} | Autyzm od Kuchni`}
         description={getMetaDescription()}
@@ -115,41 +115,41 @@ const ArticlePage = () => {
           }
         ]}
       />
-      {/* Mini hero section with TopNavBar */}
-      <div className="relative">
+      {/* Header - same pattern as Contact and Blog */}
+      <div className="relative mb-8">
         <CategoryHeader showLogo={false} />
         <div className="absolute top-0 left-0 w-full">
           <TopNavBar />
         </div>
       </div>
 
-      {/* Article Content */}
-      <div className="bg-[#F6EFE9] py-12">
-        <div className="max-w-4xl mx-auto px-5">
+      {/* Article content area - warm background like Wiedza */}
+      <main className="flex-1 bg-[#F6EFE9] py-8 md:py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <div className="mb-8">
             <Link 
               to="/blog" 
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 rounded-lg transition-all duration-200 group"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-white/80 hover:bg-white text-gray-700 hover:text-gray-900 rounded-xl border border-gray-100 shadow-sm transition-all duration-200 group"
             >
-              <span className="text-lg group-hover:-translate-x-1 transition-transform duration-200">←</span>
-              <span className="font-medium">Wróć do bloga</span>
+              <span className="text-lg group-hover:-translate-x-0.5 transition-transform duration-200">←</span>
+              <span className="font-medium font-['Lato']">Wróć do bloga</span>
             </Link>
           </div>
 
-          {/* Article Header */}
-          <header className="mb-12">
-            <div className="flex items-center gap-4 mb-4 text-sm text-gray-600">
+          {/* Article header */}
+          <header className="mb-10">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 mb-4">
               <span>{article.date}</span>
-              <span>•</span>
+              <span>·</span>
               <span>{article.category}</span>
-              <span>•</span>
+              <span>·</span>
               <span>{article.author}</span>
             </div>
-            <h1 className="font-['Caveat'] text-5xl text-[#2D3748] mb-6">
+            <h1 className="font-['Caveat'] text-4xl sm:text-5xl text-[#2D3748] mb-6 leading-tight">
               {article.title}
             </h1>
-            <div className="relative h-[400px] rounded-xl overflow-hidden shadow-lg">
+            <div className="relative h-64 sm:h-80 md:h-[400px] rounded-2xl overflow-hidden shadow-lg border border-gray-100">
               <img 
                 src={article.image || getImageUrl('inne.jpg')} 
                 alt={article.title}
@@ -158,39 +158,39 @@ const ArticlePage = () => {
             </div>
           </header>
 
-          {/* Article Content */}
-          <article className="prose prose-lg max-w-none mb-16">
+          {/* Article body */}
+          <article className="mb-16">
             <div 
               dangerouslySetInnerHTML={{ __html: article.content }} 
-              className="font-['Lato'] text-gray-700 leading-relaxed"
+              className="font-['Lato'] text-gray-700 leading-relaxed prose prose-lg max-w-none prose-headings:font-['Patrick_Hand'] prose-headings:text-[#2D3748] prose-p:mb-4 prose-a:text-green-600 prose-a:no-underline hover:prose-a:underline"
             />
           </article>
 
-          {/* Related Articles */}
+          {/* Related articles */}
           {relatedArticles.length > 0 && (
-            <section className="border-t border-gray-200 pt-12">
-              <h2 className="font-['Caveat'] text-3xl text-[#2D3748] mb-8">
+            <section className="border-t border-gray-200/80 pt-10">
+              <h2 className="font-['Caveat'] text-3xl text-[#2D3748] mb-6">
                 Powiązane artykuły
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {relatedArticles.map((related, index) => (
                   <Link 
-                    key={index}
+                    key={related.slug || index}
                     to={`/blog/${related.slug}`}
-                    className="bg-white rounded-lg overflow-hidden shadow-md transition-transform duration-300 hover:scale-105"
+                    className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100"
                   >
-                    <div className="relative h-48 overflow-hidden">
+                    <div className="relative h-44 overflow-hidden">
                       <img 
                         src={related.image || getImageUrl('inne.jpg')}
-                        alt={related.title}
-                        className="w-full h-full object-cover"
+                        alt=""
+                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                       />
                     </div>
-                    <div className="p-6">
-                      <h3 className="font-['Patrick_Hand'] text-xl mb-2 text-gray-800">
+                    <div className="p-5">
+                      <h3 className="font-['Patrick_Hand'] text-lg text-[#2D3748] mb-2 line-clamp-2">
                         {related.title}
                       </h3>
-                      <p className="text-gray-600 text-sm">{related.excerpt}</p>
+                      <p className="text-gray-600 text-sm line-clamp-2">{related.excerpt}</p>
                     </div>
                   </Link>
                 ))}
@@ -198,7 +198,7 @@ const ArticlePage = () => {
             </section>
           )}
         </div>
-      </div>
+      </main>
       <FeedbackButton />
       <Footer />
     </div>

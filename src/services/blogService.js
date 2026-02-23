@@ -101,7 +101,33 @@ const blogService = {
       console.error('Exception when fetching related articles:', err);
       return [];
     }
-  }
+  },
+
+  /**
+   * Create a new blog article (for admin use).
+   * Requires RLS to allow INSERT on blog_articles (e.g. for authenticated users).
+   * @param {Object} article - { title, slug, date, category, excerpt, author, content, image?, related_articles? }
+   * @returns {Promise<{ data: object | null, error: object | null }>}
+   */
+  createArticle: async (article) => {
+    const payload = {
+      title: article.title,
+      slug: article.slug,
+      date: article.date,
+      category: article.category,
+      excerpt: article.excerpt,
+      author: article.author,
+      content: article.content,
+      ...(article.image && { image: article.image }),
+      ...(article.related_articles && { related_articles: article.related_articles }),
+    };
+    const { data, error } = await supabase
+      .from('blog_articles')
+      .insert(payload)
+      .select()
+      .single();
+    return { data, error };
+  },
 };
 
 export default blogService;
