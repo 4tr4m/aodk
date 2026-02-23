@@ -128,6 +128,36 @@ const blogService = {
       .single();
     return { data, error };
   },
+
+  /**
+   * Update an existing blog article by slug (for admin use).
+   * Requires RLS to allow UPDATE on blog_articles.
+   * @param {string} slug - Existing article slug (original)
+   * @param {Object} article - Fields to update
+   * @returns {Promise<{ data: object | null, error: object | null }>}
+   */
+  updateArticle: async (slug, article) => {
+    const payload = {
+      title: article.title,
+      slug: article.slug,
+      date: article.date,
+      category: article.category,
+      excerpt: article.excerpt,
+      author: article.author,
+      content: article.content,
+      ...(article.image && { image: article.image }),
+      ...(article.related_articles && { related_articles: article.related_articles }),
+    };
+
+    const { data, error } = await supabase
+      .from('blog_articles')
+      .update(payload)
+      .eq('slug', slug)
+      .select()
+      .single();
+
+    return { data, error };
+  },
 };
 
 export default blogService;

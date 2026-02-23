@@ -124,7 +124,7 @@ const ArticlePage = () => {
       </div>
 
       {/* Article content area - warm background like Wiedza */}
-      <main className="flex-1 bg-[#F6EFE9] py-8 md:py-12">
+      <main className="flex-1 bg-[#F6EFE9] pt-2 pb-10 md:pt-4 md:pb-14">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <div className="mb-8">

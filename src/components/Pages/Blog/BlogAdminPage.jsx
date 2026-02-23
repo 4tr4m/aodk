@@ -51,6 +51,10 @@ const BlogAdminPage = () => {
   const [isAuthed, setIsAuthed] = useState(false);
   const [login, setLogin] = useState({ username: '', password: '' });
   const [blocks, setBlocks] = useState([]);
+  const [articles, setArticles] = useState([]);
+  const [loadingArticles, setLoadingArticles] = useState(false);
+  const [editingSlug, setEditingSlug] = useState(null); // original slug when editing
+  const [rawContent, setRawContent] = useState('');
   const [form, setForm] = useState({
     title: '',
     slug: '',
@@ -67,6 +71,18 @@ const BlogAdminPage = () => {
       setIsAuthed(true);
     }
   }, []);
+
+  useEffect(() => {
+    const loadArticles = async () => {
+      setLoadingArticles(true);
+      const list = await blogService.getAllArticles();
+      setArticles(list || []);
+      setLoadingArticles(false);
+    };
+    if (isAuthed) {
+      loadArticles();
+    }
+  }, [isAuthed]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,15 +131,60 @@ const BlogAdminPage = () => {
     });
   };
 
+  const startNewArticle = () => {
+    setEditingSlug(null);
+    setForm({
+      title: '',
+      slug: '',
+      date: new Date().toISOString().slice(0, 10),
+      category: 'Dieta',
+      excerpt: '',
+      author: 'Marta Chmielnicka',
+      image: '/img/Blog/',
+      relatedSlugs: '',
+    });
+    setBlocks([]);
+    setRawContent('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const startEditArticle = (article) => {
+    setEditingSlug(article.slug);
+    setForm({
+      title: article.title || '',
+      slug: article.slug || '',
+      date: article.date || new Date().toISOString().slice(0, 10),
+      category: article.category || '',
+      excerpt: article.excerpt || '',
+      author: article.author || '',
+      image: article.image || '',
+      relatedSlugs: Array.isArray(article.related_articles)
+        ? article.related_articles.join(', ')
+        : '',
+    });
+    setBlocks([]); // editing uses raw HTML for now
+    setRawContent(article.content || '');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus({ type: null, message: '' });
-    const content = blocksToHtml(blocks);
+    const isEditing = Boolean(editingSlug);
+    const content = isEditing ? rawContent : blocksToHtml(blocks);
+
+    const confirmed = window.confirm(
+      isEditing
+        ? 'Czy na pewno chcesz zapisać zmiany w artykule?'
+        : 'Czy na pewno chcesz opublikować nowy artykuł?'
+    );
+    if (!confirmed) return;
+
     const related_articles = form.relatedSlugs
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean);
-    const { data, error } = await blogService.createArticle({
+    const payload = {
       title: form.title,
       slug: form.slug,
       date: form.date,
@@ -133,19 +194,31 @@ const BlogAdminPage = () => {
       content,
       image: form.image || undefined,
       related_articles: related_articles.length ? related_articles : undefined,
-    });
+    };
+
+    const { data, error } = isEditing
+      ? await blogService.updateArticle(editingSlug, payload)
+      : await blogService.createArticle(payload);
+
     if (error) {
       setStatus({ type: 'error', message: error.message || 'Błąd zapisu' });
       return;
     }
-    setStatus({ type: 'success', message: 'Artykuł dodany. Slug: ' + data?.slug });
-    setForm((prev) => ({
-      ...prev,
-      title: '',
-      slug: '',
-      excerpt: '',
-      relatedSlugs: '',
-    }));
+    setStatus({
+      type: 'success',
+      message: isEditing
+        ? 'Artykuł zaktualizowany. Slug: ' + data?.slug
+        : 'Artykuł dodany. Slug: ' + data?.slug,
+    });
+
+    // Refresh list
+    const list = await blogService.getAllArticles();
+    setArticles(list || []);
+
+    if (isEditing) {
+      setEditingSlug(null);
+      setRawContent('');
+    }
     setBlocks([]);
   };
 
@@ -155,7 +228,23 @@ const BlogAdminPage = () => {
         <Link to="/blog" className="text-green-600 hover:text-green-700 font-medium mb-6 inline-block">
           ← Wróć do bloga
         </Link>
-        <h1 className="text-2xl font-bold text-gray-800 mb-8">Panel bloga (admin)</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Panel bloga (admin)</h1>
+        {isAuthed && (
+          <p className="mb-6 text-sm text-gray-600">
+            {editingSlug
+              ? `Tryb edycji artykułu: ${editingSlug}`
+              : 'Tryb dodawania nowego artykułu.'}{' '}
+            {editingSlug && (
+              <button
+                type="button"
+                onClick={startNewArticle}
+                className="ml-2 text-green-700 hover:underline"
+              >
+                + Nowy artykuł
+              </button>
+            )}
+          </p>
+        )}
 
         {status.message && (
           <div
@@ -205,7 +294,56 @@ const BlogAdminPage = () => {
             </button>
           </form>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <>
+            {/* Existing articles list */}
+            <section className="mb-8 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-800">Istniejące artykuły</h2>
+                <button
+                  type="button"
+                  onClick={startNewArticle}
+                  className="text-sm text-green-700 hover:underline"
+                >
+                  + Nowy artykuł
+                </button>
+              </div>
+              {loadingArticles ? (
+                <p className="text-sm text-gray-500">Ładowanie artykułów...</p>
+              ) : articles.length === 0 ? (
+                <p className="text-sm text-gray-500">Brak artykułów w bazie.</p>
+              ) : (
+                <ul className="space-y-2 max-h-64 overflow-auto">
+                  {articles.map((article) => (
+                    <li
+                      key={article.slug}
+                      className="flex items-center justify-between gap-3 text-sm border border-gray-100 rounded-lg px-3 py-2 hover:bg-gray-50"
+                    >
+                      <div className="min-w-0">
+                        <div className="font-medium text-gray-800 truncate">
+                          {article.title || '(bez tytułu)'}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {article.date} · {article.category} · slug: {article.slug}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => startEditArticle(article)}
+                        className="px-3 py-1 text-xs rounded-lg border border-green-600 text-green-700 hover:bg-green-50 whitespace-nowrap"
+                      >
+                        Edytuj
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+
+            {/* Create / edit form */}
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
+            >
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Tytuł *</label>
             <input
@@ -289,119 +427,141 @@ const BlogAdminPage = () => {
             />
           </div>
 
-          {/* Block-based content editor */}
+          {/* Content editor: blocks for new article, raw HTML for editing */}
           <div>
-            <div className="flex items-center justify-between gap-4 mb-2">
-              <label className="block text-sm font-medium text-gray-700">Treść artykułu (bloki)</label>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => addBlock('header')}
-                  className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
-                >
-                  + Nagłówek
-                </button>
-                <button
-                  type="button"
-                  onClick={() => addBlock('image')}
-                  className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
-                >
-                  + Obraz
-                </button>
-                <button
-                  type="button"
-                  onClick={() => addBlock('text')}
-                  className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
-                >
-                  + Tekst
-                </button>
-              </div>
-            </div>
-            <p className="text-xs text-gray-500 mb-3">
-              Dodaj bloki w dowolnej kolejności. Na zapis zostaną zamienione na HTML i zapisane w Supabase.
-            </p>
-            <div className="space-y-3">
-              {blocks.length === 0 && (
-                <div className="text-sm text-gray-400 py-4 border border-dashed border-gray-200 rounded-xl text-center">
-                  Brak bloków. Kliknij „+ Nagłówek”, „+ Obraz” lub „+ Tekst”.
-                </div>
-              )}
-              {blocks.map((block, index) => (
-                <div
-                  key={block.id}
-                  className="flex gap-2 items-start p-4 bg-gray-50 rounded-xl border border-gray-200"
-                >
-                  <div className="flex flex-col gap-1 flex-shrink-0">
+            {editingSlug ? (
+              <>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Treść artykułu (bezpośredni HTML)
+                </label>
+                <textarea
+                  value={rawContent}
+                  onChange={(e) => setRawContent(e.target.value)}
+                  rows={16}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 font-mono text-xs"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Tu edytujesz istniejący HTML z Supabase (np. wklejony z edytora). Zostanie zapisany
+                  1:1.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-between gap-4 mb-2">
+                  <label className="block text-sm font-medium text-gray-700">Treść artykułu (bloki)</label>
+                  <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
-                      onClick={() => moveBlock(index, -1)}
-                      disabled={index === 0}
-                      className="p-1.5 rounded bg-white border border-gray-200 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
-                      title="Przesuń w górę"
+                      onClick={() => addBlock('header')}
+                      className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
                     >
-                      ↑
+                      + Nagłówek
                     </button>
                     <button
                       type="button"
-                      onClick={() => moveBlock(index, 1)}
-                      disabled={index === blocks.length - 1}
-                      className="p-1.5 rounded bg-white border border-gray-200 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
-                      title="Przesuń w dół"
+                      onClick={() => addBlock('image')}
+                      className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
                     >
-                      ↓
+                      + Obraz
                     </button>
                     <button
                       type="button"
-                      onClick={() => removeBlock(block.id)}
-                      className="p-1.5 rounded bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
-                      title="Usuń blok"
+                      onClick={() => addBlock('text')}
+                      className="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg"
                     >
-                      ×
+                      + Tekst
                     </button>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    {block.type === 'header' && (
-                      <>
-                        <select
-                          value={block.level ?? 2}
-                          onChange={(e) => updateBlock(block.id, { level: Number(e.target.value) })}
-                          className="mb-2 block w-full max-w-[120px] px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-sm"
+                </div>
+                <p className="text-xs text-gray-500 mb-3">
+                  Dodaj bloki w dowolnej kolejności. Na zapis zostaną zamienione na HTML i zapisane w Supabase.
+                </p>
+                <div className="space-y-3">
+                  {blocks.length === 0 && (
+                    <div className="text-sm text-gray-400 py-4 border border-dashed border-gray-200 rounded-xl text-center">
+                      Brak bloków. Kliknij „+ Nagłówek”, „+ Obraz” lub „+ Tekst”.
+                    </div>
+                  )}
+                  {blocks.map((block, index) => (
+                    <div
+                      key={block.id}
+                      className="flex gap-2 items-start p-4 bg-gray-50 rounded-xl border border-gray-200"
+                    >
+                      <div className="flex flex-col gap-1 flex-shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => moveBlock(index, -1)}
+                          disabled={index === 0}
+                          className="p-1.5 rounded bg-white border border-gray-200 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                          title="Przesuń w górę"
                         >
-                          {[1, 2, 3, 4, 5, 6].map((n) => (
-                            <option key={n} value={n}>H{n}</option>
-                          ))}
-                        </select>
-                        <input
-                          type="text"
-                          value={block.text ?? ''}
-                          onChange={(e) => updateBlock(block.id, { text: e.target.value })}
-                          placeholder="Tekst nagłówka"
-                          className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-                        />
-                      </>
-                    )}
-                    {block.type === 'image' && (
-                      <input
-                        type="text"
-                        value={block.path ?? ''}
-                        onChange={(e) => updateBlock(block.id, { path: e.target.value })}
-                        placeholder="np. Blog/1.jpg (plik w public/img/...)"
-                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 font-mono text-sm"
-                      />
-                    )}
-                    {block.type === 'text' && (
-                      <textarea
-                        value={block.text ?? ''}
-                        onChange={(e) => updateBlock(block.id, { text: e.target.value })}
-                        placeholder="Akapit tekstu (zapisany jako &lt;p&gt;)"
-                        rows={3}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
-                      />
-                    )}
-                  </div>
+                          ↑
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveBlock(index, 1)}
+                          disabled={index === blocks.length - 1}
+                          className="p-1.5 rounded bg-white border border-gray-200 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                          title="Przesuń w dół"
+                        >
+                          ↓
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeBlock(block.id)}
+                          className="p-1.5 rounded bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
+                          title="Usuń blok"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        {block.type === 'header' && (
+                          <>
+                            <select
+                              value={block.level ?? 2}
+                              onChange={(e) => updateBlock(block.id, { level: Number(e.target.value) })}
+                              className="mb-2 block w-full max-w-[120px] px-3 py-1.5 rounded-lg border border-gray-200 bg-white text-sm"
+                            >
+                              {[1, 2, 3, 4, 5, 6].map((n) => (
+                                <option key={n} value={n}>
+                                  H{n}
+                                </option>
+                              ))}
+                            </select>
+                            <input
+                              type="text"
+                              value={block.text ?? ''}
+                              onChange={(e) => updateBlock(block.id, { text: e.target.value })}
+                              placeholder="Tekst nagłówka"
+                              className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
+                            />
+                          </>
+                        )}
+                        {block.type === 'image' && (
+                          <input
+                            type="text"
+                            value={block.path ?? ''}
+                            onChange={(e) => updateBlock(block.id, { path: e.target.value })}
+                            placeholder="np. Blog/1.jpg (plik w public/img/...)"
+                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200 font-mono text-sm"
+                          />
+                        )}
+                        {block.type === 'text' && (
+                          <textarea
+                            value={block.text ?? ''}
+                            onChange={(e) => updateBlock(block.id, { text: e.target.value })}
+                            placeholder="Akapit tekstu (zapisany jako &lt;p&gt;)"
+                            rows={3}
+                            className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Powiązane artykuły (slugi po przecinku)</label>
@@ -418,9 +578,10 @@ const BlogAdminPage = () => {
             type="submit"
             className="w-full py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors"
           >
-            Zapisz artykuł
+            {editingSlug ? 'Zapisz zmiany' : 'Zapisz artykuł'}
           </button>
         </form>
+          </>
         )}
       </div>
     </div>
