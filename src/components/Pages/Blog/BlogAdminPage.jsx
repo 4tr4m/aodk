@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import blogService from '../../../services/blogService';
 
@@ -9,6 +9,8 @@ import blogService from '../../../services/blogService';
  */
 const BlogAdminPage = () => {
   const [status, setStatus] = useState({ type: null, message: '' });
+  const [isAuthed, setIsAuthed] = useState(false);
+  const [login, setLogin] = useState({ username: '', password: '' });
   const [form, setForm] = useState({
     title: '',
     slug: '',
@@ -20,6 +22,12 @@ const BlogAdminPage = () => {
     content: '<p>Treść artykułu w HTML. Użyj &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;, &lt;a&gt; itd.</p>',
     relatedSlugs: '',
   });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.localStorage?.getItem('blogAdminAuthed') === 'true') {
+      setIsAuthed(true);
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,6 +41,24 @@ const BlogAdminPage = () => {
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '');
       setForm((prev) => ({ ...prev, slug }));
+    }
+  };
+
+  const handleLoginChange = (e) => {
+    const { name, value } = e.target;
+    setLogin((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    if (login.username === 'admin' && login.password === 'Martusia84!') {
+      setIsAuthed(true);
+      if (typeof window !== 'undefined') {
+        window.localStorage?.setItem('blogAdminAuthed', 'true');
+      }
+      setStatus({ type: null, message: '' });
+    } else {
+      setStatus({ type: 'error', message: 'Nieprawidłowy login lub hasło.' });
     }
   };
 
@@ -75,7 +101,7 @@ const BlogAdminPage = () => {
         <Link to="/blog" className="text-green-600 hover:text-green-700 font-medium mb-6 inline-block">
           ← Wróć do bloga
         </Link>
-        <h1 className="text-2xl font-bold text-gray-800 mb-8">Nowy artykuł (admin)</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-8">Panel bloga (admin)</h1>
 
         {status.message && (
           <div
@@ -87,7 +113,45 @@ const BlogAdminPage = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        {!isAuthed ? (
+          <form
+            onSubmit={handleLoginSubmit}
+            className="space-y-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
+          >
+            <p className="text-sm text-gray-600">
+              Zaloguj się, aby dodać lub edytować artykuły na blogu.
+            </p>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Użytkownik</label>
+              <input
+                type="text"
+                name="username"
+                value={login.username}
+                onChange={handleLoginChange}
+                required
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Hasło</label>
+              <input
+                type="password"
+                name="password"
+                value={login.password}
+                onChange={handleLoginChange}
+                required
+                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-2 focus:ring-green-200"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition-colors"
+            >
+              Zaloguj
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Tytuł *</label>
             <input
@@ -202,6 +266,7 @@ const BlogAdminPage = () => {
             Zapisz artykuł
           </button>
         </form>
+        )}
       </div>
     </div>
   );
