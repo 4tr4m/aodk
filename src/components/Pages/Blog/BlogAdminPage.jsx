@@ -5,6 +5,7 @@ import { blocksToHtml, htmlToBlocks } from '../../../utils/blogContentUtils';
 import BlogAdminLogin from './BlogAdminLogin';
 import BlogAdminArticleList from './BlogAdminArticleList';
 import BlogAdminArticleForm from './BlogAdminArticleForm';
+import BlogArticlePreview from './BlogArticlePreview';
 
 const emptyForm = () => ({
   title: '',
@@ -146,65 +147,80 @@ const BlogAdminPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        <Link to="/blog" className="text-green-600 hover:text-green-700 font-medium mb-6 inline-block">
-          ← Wróć do bloga
-        </Link>
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Panel bloga (admin)</h1>
+    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1920px] mx-auto flex flex-col xl:flex-row xl:items-start xl:gap-8">
+        {/* Left: admin form and list */}
+        <div className="xl:min-w-0 xl:max-w-3xl xl:flex-shrink-0 w-full">
+          <Link to="/blog" className="text-green-600 hover:text-green-700 font-medium mb-6 inline-block">
+            ← Wróć do bloga
+          </Link>
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">Panel bloga (admin)</h1>
 
+          {isAuthed && (
+            <p className="mb-6 text-sm text-gray-600">
+              {editingSlug
+                ? `Tryb edycji artykułu: ${editingSlug}`
+                : 'Tryb dodawania nowego artykułu.'}{' '}
+              {editingSlug && (
+                <button
+                  type="button"
+                  onClick={startNewArticle}
+                  className="ml-2 text-green-700 hover:underline"
+                >
+                  + Nowy artykuł
+                </button>
+              )}
+            </p>
+          )}
+
+          {status.message && (
+            <div
+              className={`mb-6 p-4 rounded-lg ${
+                status.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
+              }`}
+            >
+              {status.message}
+            </div>
+          )}
+
+          {!isAuthed ? (
+            <BlogAdminLogin
+              login={login}
+              onLoginChange={handleLoginChange}
+              onSubmit={handleLoginSubmit}
+              status={status}
+            />
+          ) : (
+            <>
+              <BlogAdminArticleList
+                articles={articles}
+                loading={loadingArticles}
+                onEdit={startEditArticle}
+                onNew={startNewArticle}
+              />
+              <BlogAdminArticleForm
+                form={form}
+                onFormChange={setFormField}
+                blocks={blocks}
+                onBlocksChange={setBlocks}
+                onSubmit={handleSubmit}
+                isEditing={Boolean(editingSlug)}
+                slugHint={!editingSlug}
+              />
+            </>
+          )}
+        </div>
+
+        {/* Right: live preview of article page (header + content + footer) */}
         {isAuthed && (
-          <p className="mb-6 text-sm text-gray-600">
-            {editingSlug
-              ? `Tryb edycji artykułu: ${editingSlug}`
-              : 'Tryb dodawania nowego artykułu.'}{' '}
-            {editingSlug && (
-              <button
-                type="button"
-                onClick={startNewArticle}
-                className="ml-2 text-green-700 hover:underline"
-              >
-                + Nowy artykuł
-              </button>
-            )}
-          </p>
-        )}
-
-        {status.message && (
-          <div
-            className={`mb-6 p-4 rounded-lg ${
-              status.type === 'error' ? 'bg-red-50 text-red-800' : 'bg-green-50 text-green-800'
-            }`}
-          >
-            {status.message}
-          </div>
-        )}
-
-        {!isAuthed ? (
-          <BlogAdminLogin
-            login={login}
-            onLoginChange={handleLoginChange}
-            onSubmit={handleLoginSubmit}
-            status={status}
-          />
-        ) : (
-          <>
-            <BlogAdminArticleList
-              articles={articles}
-              loading={loadingArticles}
-              onEdit={startEditArticle}
-              onNew={startNewArticle}
-            />
-            <BlogAdminArticleForm
-              form={form}
-              onFormChange={setFormField}
-              blocks={blocks}
-              onBlocksChange={setBlocks}
-              onSubmit={handleSubmit}
-              isEditing={Boolean(editingSlug)}
-              slugHint={!editingSlug}
-            />
-          </>
+          <aside className="xl:sticky xl:top-8 xl:w-[min(100%,520px)] xl:flex-shrink-0 mt-10 xl:mt-0">
+            <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 px-1">
+              Podgląd artykułu
+            </div>
+            <div className="max-h-[calc(100vh-6rem)] xl:overflow-y-auto rounded-2xl border border-gray-200 bg-white shadow-lg overflow-hidden">
+              <BlogArticlePreview form={form} blocks={blocks} />
+            </div>
+          </aside>
         )}
       </div>
     </div>
