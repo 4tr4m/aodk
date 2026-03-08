@@ -198,34 +198,35 @@ const WaveDivider = memo(({ position = 'top', color }) => {
 
 WaveDivider.displayName = 'WaveDivider';
 
-// Map raw categories from Supabase (or prefetch) to carousel items; supports full image URLs and local paths
+// Default image when category has no image in Supabase (so we never drop categories)
+const DEFAULT_CATEGORY_IMAGE = 'ciasta.jpg';
+
+// Map raw categories from Supabase (or prefetch) to carousel items; supports full image URLs and local paths.
+// All categories from Supabase are shown – missing image uses default (no filtering out).
 function mapCategoriesToItems(categories) {
   if (!categories?.length) return [];
-  return categories
-    .filter((c) => c.image_path || c.image_url || c.image)
-    .map((category) => {
-      let imagePath = category.image_url || category.image_path || category.image;
-      if (!imagePath) return null;
+  return categories.map((category) => {
+    let imagePath = category.image_url || category.image_path || category.image;
+    if (!imagePath) {
+      imagePath = getImageUrl(DEFAULT_CATEGORY_IMAGE);
+    } else if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
       // Full URL (Supabase storage or external) – use as is
-      if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
-        // no change
-      } else {
-        if (imagePath === 'categories/ciasta.webp') imagePath = 'ciasta.jpg';
-        else if (imagePath.includes('categories/') && imagePath.includes('.webp')) {
-          const name = imagePath.replace('categories/', '').replace('.webp', '');
-          imagePath = `${name}.jpg`;
-        }
-        imagePath = getImageUrl(imagePath);
+    } else {
+      if (imagePath === 'categories/ciasta.webp') imagePath = 'ciasta.jpg';
+      else if (imagePath.includes('categories/') && imagePath.includes('.webp')) {
+        const name = imagePath.replace('categories/', '').replace('.webp', '');
+        imagePath = `${name}.jpg`;
       }
-      return {
-        id: category.id,
-        label: category.name || category.label,
-        image: imagePath,
-        shortDesc: category.description || category.shortDesc || 'Odkryj nasze pyszne przepisy!',
-        link: category.link || `/kuchnia/${category.slug || category.id}`,
-      };
-    })
-    .filter(Boolean);
+      imagePath = getImageUrl(imagePath);
+    }
+    return {
+      id: category.id,
+      label: category.name || category.label,
+      image: imagePath,
+      shortDesc: category.description || category.shortDesc || 'Odkryj nasze pyszne przepisy!',
+      link: category.link || `/kuchnia/${category.slug || category.id}`,
+    };
+  });
 }
 
 // Main component
@@ -353,6 +354,7 @@ const CategoryBanner = ({ prefetchedCategories = [] }) => {
       }
     };
 
+    // Tylko gdy Supabase zwróci błąd lub 0 kategorii – wtedy pokazujemy zahardkodowaną listę z category-data.js
     const loadFallbackCategories = () => {
       const items = kuchniaCategories.mainCategories
         .filter((c) => c.image)

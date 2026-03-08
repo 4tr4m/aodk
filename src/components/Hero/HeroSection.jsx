@@ -146,6 +146,20 @@ const HeroSection = () => {
               </div>
             </div>
           </div>
+
+          {/* Teaser: individual support – scroll to #wsparcie */}
+          <div className="absolute bottom-[140px] sm:bottom-[150px] md:bottom-[170px] left-0 right-0 flex flex-col items-center gap-2 z-20">
+            <button
+              type="button"
+              onClick={() => document.getElementById('wsparcie')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              className="group text-white/90 hover:text-white font-['Patrick_Hand'] text-sm sm:text-base tracking-wide flex items-center gap-2 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-400/60 focus:ring-offset-2 focus:ring-offset-transparent rounded-lg px-3 py-1.5"
+              aria-label="Przejdź do sekcji Wsparcie indywidualne"
+            >
+              <span>Potrzebujesz indywidualnego wsparcia?</span>
+              <span className="inline-block text-green-300 group-hover:text-green-200 transition-colors" aria-hidden>↓</span>
+            </button>
+            <span className="text-white/60 text-xs font-['Lato']">Zobacz ofertę</span>
+          </div>
           
           {/* Call-to-action button - scrolls to categories section */}
           <div className="absolute bottom-[85px] sm:bottom-[90px] md:bottom-[100px] left-0 right-0 mx-auto flex justify-center z-30">
