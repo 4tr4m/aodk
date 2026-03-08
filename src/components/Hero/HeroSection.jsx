@@ -13,6 +13,7 @@
 // - Responsive design for mobile, tablet, and desktop
 
 import { useState, useCallback, memo } from 'react';
+import { Link } from 'react-router-dom';
 import InfoModal from '../Modal/InfoModal';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { HeroActionButton } from '../UI/Button';
@@ -153,6 +154,23 @@ const HeroSection = () => {
               text="ODKRYJ PRZEPISY" 
               size="hero"
             />
+          </div>
+
+          {/* Na mobile: pasek doradztwa na hero (na img) – „Potrzebujesz wsparcia? Zobacz ofertę” */}
+          <div className="md:hidden absolute bottom-0 left-0 right-0 z-20 px-4 pb-4 pt-8">
+            <div className="bg-[#2D3748]/90 backdrop-blur-sm rounded-t-2xl px-4 py-3 text-center">
+              <Link
+                to="/uslugi"
+                className="flex flex-wrap items-center justify-center gap-2 text-white/95 hover:text-white font-['Patrick_Hand'] text-sm tracking-wide transition-colors"
+                aria-label="Zobacz ofertę doradztwa"
+              >
+                <span>Potrzebujesz indywidualnego wsparcia?</span>
+                <span className="text-green-300 font-semibold flex items-center gap-1">
+                  Zobacz ofertę
+                  <span aria-hidden>→</span>
+                </span>
+              </Link>
+            </div>
           </div>
           
           {/* Additional gradient for smoother transition to next section */}

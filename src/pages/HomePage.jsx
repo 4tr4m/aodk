@@ -69,7 +69,10 @@ const HomePage = () => {
           </div>
         </div>
         <div className="relative z-10 bg-white">
-          <SupportTeaserBar />
+          {/* Pasek doradztwa tylko na desktopie; na mobile jest na hero */}
+          <div className="hidden md:block">
+            <SupportTeaserBar />
+          </div>
           <CategoryBanner prefetchedCategories={prefetchedCategories} />
           <InfoSection />
           <ServicesSupportSection />

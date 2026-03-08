@@ -5,24 +5,24 @@ import { FaClipboardList, FaUtensils, FaBoxOpen } from 'react-icons/fa';
 
 const cards = [
   {
-    title: 'Przegląd Lodówki',
-    description: 'Zróbmy porządek w Twojej kuchni i znajdźmy zdrowe zamienniki.',
+    title: 'Porządek w kuchni',
+    description: 'Audyt kuchni i szafek – sprawdzimy produkty w Twojej kuchni, wskażę bezpieczne zamienniki i plan pierwszych zmian. Detoks lodówki i szafek krok po kroku.',
     to: '/uslugi#metoda',
     icon: FaClipboardList,
     iconBg: 'bg-green-100',
     iconColor: 'text-green-700',
   },
   {
-    title: 'Wspólne Gotowanie',
-    description: 'Naucz się gotować posiłki 3xBez, które pokocha Twoje dziecko.',
+    title: 'Wspólne gotowanie',
+    description: '3 potrawy w Twojej kuchni – składniki przywożę. Wybierz wariant: Soczewicowa Moc, Jaglane Inspiracje lub Złota Spiżarnia. Proste, powtarzalne dania na co dzień.',
     to: '/uslugi#wspolne-gotowanie',
     icon: FaUtensils,
     iconBg: 'bg-amber-100',
     iconColor: 'text-amber-700',
   },
   {
-    title: 'Kompleksowe Pakiety',
-    description: 'Audyt, zakupy i gotowanie w jednym pakiecie dostosowanym do Twoich potrzeb.',
+    title: 'Pakiety wsparcia',
+    description: 'Szybki Start (600 zł), Kuchnia pod Kontrolą (1900 zł), Metamorfoza Premium (2300 zł). Wrocław i okolice – dojazd w cenie. Umów bezpłatną konsultację.',
     to: '/uslugi#pakiety',
     icon: FaBoxOpen,
     iconBg: 'bg-emerald-100',
@@ -59,7 +59,7 @@ const ServicesSupportSection = () => {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.6 }}
         >
-          Potrzebujesz indywidualnego wsparcia?
+          Praktyczne wsparcie w diecie eliminacyjnej
         </motion.h2>
         <motion.p
           className="text-gray-600 text-center text-lg max-w-2xl mx-auto font-['Lato'] mb-10 sm:mb-14"
@@ -68,7 +68,7 @@ const ServicesSupportSection = () => {
           viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          Oferuję wsparcie dopasowane do Twojej sytuacji i diety 3xBez.
+          Pomagam rodzicom dzieci z autyzmem uporządkować zakupy, produkty i gotowanie – spokojna kuchnia przy diecie bez glutenu, nabiału i cukru jest możliwa.
         </motion.p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
