@@ -142,7 +142,9 @@ export const blogCategories = [
 ];
 
 export const uslugiCategories = [
-  { link: '/uslugi#audyt-kuchni', label: 'Audyt Kuchni' },
-  { link: '/uslugi#wspolne-gotowanie', label: 'Wspólne Gotowanie' },
-  { link: '/uslugi#pakiety', label: 'Pakiety i Cennik' }
+  { link: '/uslugi#metoda', label: 'Metoda pracy' },
+  { link: '/uslugi#pakiety', label: 'Pakiety i cennik' },
+  { link: '/uslugi#wspolne-gotowanie', label: 'Wspólne gotowanie' },
+  { link: '/uslugi#faq', label: 'FAQ' },
+  { link: '/kontakt', label: 'Umów konsultację' }
 ];

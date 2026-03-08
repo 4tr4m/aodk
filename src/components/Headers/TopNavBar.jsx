@@ -135,7 +135,7 @@ const TopNavBar = () => {
       type: 'znajdki',
     },
     {
-      label: 'USŁUGI',
+      label: 'OFERTA',
       link: '/uslugi',
       dropdown: uslugiCategories,
       type: 'uslugi',

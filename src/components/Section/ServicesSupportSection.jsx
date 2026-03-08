@@ -7,7 +7,7 @@ const cards = [
   {
     title: 'Przegląd Lodówki',
     description: 'Zróbmy porządek w Twojej kuchni i znajdźmy zdrowe zamienniki.',
-    to: '/uslugi#audyt-kuchni',
+    to: '/uslugi#metoda',
     icon: FaClipboardList,
     iconBg: 'bg-green-100',
     iconColor: 'text-green-700',
