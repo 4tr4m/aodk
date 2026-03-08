@@ -19,7 +19,6 @@ import categoryService from '../../services/categoryService';
   - src/components/Pages/HistoriaOAutyzmie.jsx
   - src/components/Pages/HistoriaOMnie.jsx
   - src/components/Pages/SearchPage.jsx
-  - src/components/Pages/Wiedza.jsx
   - src/components/Pages/ZnajdkiPage.jsx
   - src/components/Pages/ZnajdkiProductPage.jsx
   - src/components/Pages/RecipePage.jsx

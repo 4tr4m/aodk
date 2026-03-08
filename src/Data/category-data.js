@@ -131,11 +131,6 @@ export const znajdkiCategories = [
   { link: '/znajdki/opis', label: 'Opis' }
 ];
 
-export const wiedzaCategories = [
-  { link: '/wiedza/o-mnie', label: 'O Mnie' },
-  { link: '/wiedza/o-autyzmie', label: 'O Autyźmie' }
-];
-
 export const blogCategories = [
   { link: '/blog/o-mnie', label: 'O Mnie' },
   { link: '/blog/o-autyzmie', label: 'O Autyźmie' }

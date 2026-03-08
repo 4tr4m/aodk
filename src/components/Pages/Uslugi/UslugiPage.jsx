@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   FaLeaf,
   FaUtensils,
@@ -131,6 +131,18 @@ function FaqAccordion() {
 }
 
 const UslugiPage = () => {
+  const { hash } = useLocation();
+
+  useEffect(() => {
+    if (!hash) return;
+    const id = hash.replace('#', '');
+    const el = document.getElementById(id);
+    if (el) {
+      const scroll = () => el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      requestAnimationFrame(() => requestAnimationFrame(scroll));
+    }
+  }, [hash]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <SEO
