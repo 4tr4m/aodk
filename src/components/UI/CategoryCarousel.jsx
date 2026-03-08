@@ -266,53 +266,79 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
-  if (!isMounted) return <div className="min-h-[200px] bg-gray-100/50"></div>;
+  if (!items?.length) {
+    return (
+      <div className="min-h-[240px] flex items-center justify-center text-gray-500 font-['Lato']">
+        Brak kategorii do wyświetlenia.
+      </div>
+    );
+  }
+
+  if (!isMounted) {
+    return (
+      <div className="relative w-full py-4 px-6 sm:px-4 md:px-8 lg:px-12 mx-auto min-h-[280px] flex items-center justify-center">
+        <div className="flex gap-3 w-full max-w-4xl mx-auto justify-center">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex-shrink-0 w-[200px] sm:w-[220px] bg-white rounded-2xl overflow-hidden shadow-md border border-gray-100 animate-pulse">
+              <div className="h-[140px] sm:h-[160px] bg-gray-200" />
+              <div className="p-4 space-y-2">
+                <div className="h-5 bg-gray-200 rounded w-3/4 mx-auto" />
+                <div className="h-4 bg-gray-100 rounded w-full" />
+                <div className="h-4 bg-gray-100 rounded w-2/3 mx-auto" />
+                <div className="h-9 bg-gray-200 rounded-lg w-20 mx-auto mt-3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full py-4 px-0 sm:px-4 md:px-8 lg:px-12 mx-auto">
       <div className="relative mx-auto max-w-full">
-        {/* Navigation buttons positioned outside grid */}
+        {/* Navigation buttons – modern pill-style with ring */}
         <motion.button
-          className="absolute -left-1 sm:-left-6 md:-left-8 lg:-left-10 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg z-40 backdrop-blur-sm bg-opacity-90 hover:bg-green-500 transition-all duration-300"
+          className="absolute -left-1 sm:-left-5 md:-left-6 lg:-left-8 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg z-40 ring-2 ring-white/80 ring-offset-2 ring-offset-gray-100 hover:bg-green-500 hover:ring-green-400/50 transition-all duration-300"
           onClick={handlePrev}
           variants={buttonVariants}
           initial="rest"
           whileHover="hover"
           whileTap="tap"
-          aria-label="Previous item"
+          aria-label="Poprzednia kategoria"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 sm:w-7 sm:h-7">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
           </svg>
         </motion.button>
         
         <motion.button
-          className="absolute -right-1 sm:-right-6 md:-right-8 lg:-right-10 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg z-40 backdrop-blur-sm bg-opacity-90 hover:bg-green-500 transition-all duration-300"
+          className="absolute -right-1 sm:-right-5 md:-right-6 lg:-right-8 top-1/2 -translate-y-1/2 w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-green-600 text-white rounded-full flex items-center justify-center shadow-lg z-40 ring-2 ring-white/80 ring-offset-2 ring-offset-gray-100 hover:bg-green-500 hover:ring-green-400/50 transition-all duration-300"
           onClick={handleNext}
           variants={buttonVariants}
           initial="rest"
           whileHover="hover"
           whileTap="tap"
-          aria-label="Next item"
+          aria-label="Następna kategoria"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 sm:w-7 sm:h-7">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
           </svg>
         </motion.button>
         
-        {/* Improved edge gradients with more subtle appearance */}
-        <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-12 md:w-16 lg:w-20 bg-gradient-to-r from-gray-100 via-gray-100/70 to-transparent z-20 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-12 md:w-16 lg:w-20 bg-gradient-to-l from-gray-100 via-gray-100/70 to-transparent z-20 pointer-events-none" />
+        {/* Edge gradients */}
+        <div className="absolute left-0 top-0 bottom-0 w-10 sm:w-14 md:w-16 lg:w-20 bg-gradient-to-r from-gray-100 via-gray-100/60 to-transparent z-20 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-10 sm:w-14 md:w-16 lg:w-20 bg-gradient-to-l from-gray-100 via-gray-100/60 to-transparent z-20 pointer-events-none" />
         
         <div className="overflow-hidden px-6 sm:px-4">
           <div 
             ref={scrollRef}
-            className="carousel-container flex gap-0 sm:gap-2 md:gap-3 lg:gap-4 mx-auto touch-pan-y"
+            className="carousel-container flex gap-0 sm:gap-3 md:gap-4 lg:gap-5 mx-auto touch-pan-y"
             style={{
               width: `${(100 * extendedItems.length) / itemsPerView}%`,
               transform: `translateX(${-((activeIndex * 100) / extendedItems.length) + (isDragging ? -dragOffset / scrollRef.current?.offsetWidth * 100 : 0)}%)`,
               willChange: 'transform',
-              transition: isDragging ? 'none' : 'transform 1s cubic-bezier(0.22, 1, 0.36, 1)',
+              transition: isDragging ? 'none' : 'transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               cursor: isDragging ? 'grabbing' : 'grab'
             }}
             onTouchStart={handleTouchStart}
@@ -322,38 +348,38 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
             {extendedItems.map((item, index) => (
               <div 
                 key={`${index}-${item.id || item.label}`}
-                className="flex-shrink-0 px-0 sm:px-1 transition-all duration-800"
+                className="flex-shrink-0 px-0 sm:px-1.5 transition-all duration-300"
                 style={{ 
                   width: `${100 / extendedItems.length}%`,
                   willChange: 'transform'
                 }}
               >
                 <motion.div 
-                  className="bg-white h-full rounded-2xl overflow-hidden shadow-[0_5px_15px_rgba(0,0,0,0.08)] hover:shadow-[0_15px_30px_rgba(0,0,0,0.15)] transition-all duration-700 flex flex-col cursor-pointer mx-auto w-full max-w-[98%] sm:max-w-full"
+                  className="bg-white h-full rounded-2xl overflow-hidden shadow-md hover:shadow-xl border border-gray-100/80 transition-all duration-300 flex flex-col cursor-pointer mx-auto w-full max-w-[98%] sm:max-w-full"
                   onClick={() => handleItemClick(item)}
-                  whileHover={{ y: -8, scale: 1.02 }}
+                  whileHover={{ y: -6, scale: 1.02 }}
                   initial={false}
                   transition={{
                     type: "spring",
-                    stiffness: 200,
-                    damping: 25,
-                    duration: 0.7
+                    stiffness: 260,
+                    damping: 24,
+                    duration: 0.4
                   }}
                 >
-                  <div className="relative h-[130px] sm:h-[150px] md:h-[170px] lg:h-[190px] overflow-hidden">
+                  <div className="relative h-[130px] sm:h-[155px] md:h-[175px] lg:h-[195px] overflow-hidden rounded-t-2xl">
                     <motion.div
-                      className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-40"
-                      whileHover={{ opacity: 0 }}
-                      transition={{ duration: 0.5 }}
+                      className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-50 z-10"
+                      whileHover={{ opacity: 0.2 }}
+                      transition={{ duration: 0.4 }}
                     />
                     <motion.img
-                      src={getImageUrl(item.image)}
+                      src={typeof item.image === 'string' && (item.image.startsWith('http') || item.image.startsWith('/')) ? item.image : getImageUrl(item.image)}
                       alt={item.label || item.name}
                       className="w-full h-full object-cover"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 1, ease: "easeOut" }}
+                      whileHover={{ scale: 1.08 }}
+                      transition={{ duration: 0.6, ease: "easeOut" }}
+                      loading="eager"
                       onError={(e) => {
-                        // Fallback to ciasta.jpg if image fails to load
                         const currentSrc = e.target.src;
                         if (!currentSrc.includes('ciasta.jpg')) {
                           e.target.src = getImageUrl('ciasta.jpg');
@@ -367,15 +393,15 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
                       <motion.h2 
                         className="font-['Playfair_Display'] text-xl sm:text-2xl md:text-3xl text-[#2D3748] tracking-wide mb-2 md:mb-3 font-semibold text-center w-full"
                         whileHover={{ scale: 1.02, x: 4 }}
-                        transition={{ type: "spring", stiffness: 200, duration: 0.5 }}
+                        transition={{ type: "spring", stiffness: 200, duration: 0.4 }}
                       >
                         {item.label || item.name}
                       </motion.h2>
                       <motion.p 
                         className="font-['Lato'] text-sm sm:text-base text-gray-600/90 line-clamp-2 leading-relaxed text-center max-w-[95%] mx-auto"
-                        initial={{ opacity: 0.8 }}
+                        initial={{ opacity: 0.9 }}
                         whileHover={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.4 }}
                       >
                         {item.shortDesc || 'Odkryj nasze pyszne i zdrowe przepisy.'}
                       </motion.p>
@@ -396,7 +422,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
                             type: "spring",
                             stiffness: 300,
                             damping: 20,
-                            duration: 0.5
+                            duration: 0.4
                           }}
                         >
                           <Button
@@ -406,7 +432,7 @@ const CategoryCarousel = ({ items, showViewButton = true }) => {
                             to={item.link}
                             animate={false}
                             state={{ scrollToTitle: true }}
-                            className="shadow-md hover:shadow-lg transition-all duration-300 bg-green-600 hover:bg-green-500 text-white font-semibold px-10 sm:px-12 py-2.5 sm:py-3 rounded-lg transform hover:-translate-y-1 relative overflow-hidden before:absolute before:inset-0 before:bg-white/20 before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-300 before:ease-out will-change-transform text-sm sm:text-base"
+                            className="shadow-md hover:shadow-lg transition-all duration-300 bg-green-600 hover:bg-green-500 text-white font-semibold px-10 sm:px-12 py-2.5 sm:py-3 rounded-xl transform hover:-translate-y-0.5 text-sm sm:text-base"
                           />
                         </motion.div>
                       </motion.div>

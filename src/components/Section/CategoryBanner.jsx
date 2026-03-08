@@ -35,6 +35,7 @@ import { FaSearch } from 'react-icons/fa';
 import searchService from '../../services/searchService';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../../lib/supabase-browser';
+import { getImageUrl } from '../../utils/imageUtils';
 
 // Constants
 const BG_COLOR_LIGHTER = "gray-100";
@@ -197,9 +198,39 @@ const WaveDivider = memo(({ position = 'top', color }) => {
 
 WaveDivider.displayName = 'WaveDivider';
 
+// Map raw categories from Supabase (or prefetch) to carousel items; supports full image URLs and local paths
+function mapCategoriesToItems(categories) {
+  if (!categories?.length) return [];
+  return categories
+    .filter((c) => c.image_path || c.image_url || c.image)
+    .map((category) => {
+      let imagePath = category.image_url || category.image_path || category.image;
+      if (!imagePath) return null;
+      // Full URL (Supabase storage or external) – use as is
+      if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
+        // no change
+      } else {
+        if (imagePath === 'categories/ciasta.webp') imagePath = 'ciasta.jpg';
+        else if (imagePath.includes('categories/') && imagePath.includes('.webp')) {
+          const name = imagePath.replace('categories/', '').replace('.webp', '');
+          imagePath = `${name}.jpg`;
+        }
+        imagePath = getImageUrl(imagePath);
+      }
+      return {
+        id: category.id,
+        label: category.name || category.label,
+        image: imagePath,
+        shortDesc: category.description || category.shortDesc || 'Odkryj nasze pyszne przepisy!',
+        link: category.link || `/kuchnia/${category.slug || category.id}`,
+      };
+    })
+    .filter(Boolean);
+}
+
 // Main component
-const CategoryBanner = () => {
-  // State
+const CategoryBanner = ({ prefetchedCategories = [] }) => {
+  // State (used when no prefetched data)
   const [allCategoryItems, setAllCategoryItems] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -286,50 +317,31 @@ const CategoryBanner = () => {
     }
   }, [navigate]);
 
-  // Load categories
+  // Derived: use prefetched categories from HomePage when available, otherwise internal fetch result
+  const categoryItems = prefetchedCategories?.length
+    ? mapCategoriesToItems(prefetchedCategories)
+    : allCategoryItems;
+  const categoriesLoaded = prefetchedCategories?.length > 0 || isLoaded;
+
+  // Load categories (only when no prefetched data – e.g. initial load before parent fetch completes)
   useEffect(() => {
+    if (prefetchedCategories?.length) return;
+
     const fetchCategories = async () => {
       try {
-        // Try simple query first without ordering
         const { data: categories, error } = await supabase
           .from('categories')
           .select('*')
-          .order('id', { ascending: true }); // Sort by id to maintain database order
+          .order('id', { ascending: true });
 
         if (error) {
           console.error("Error fetching categories:", error);
-          // Fallback to hardcoded categories
           loadFallbackCategories();
           return;
         }
 
-        // Filter categories to only include those with images
-        const items = categories
-          .filter(category => category.image_path)
-          .map(category => {
-            // Normalize image path - handle cases where path might be wrong
-            let imagePath = category.image_path;
-            
-            // Fix common path issues
-            if (imagePath === 'categories/ciasta.webp') {
-              imagePath = 'ciasta.jpg';
-            } else if (imagePath && imagePath.includes('categories/') && imagePath.includes('.webp')) {
-              // Convert other categories/*.webp to *.jpg if exists
-              const categoryName = imagePath.replace('categories/', '').replace('.webp', '');
-              imagePath = `${categoryName}.jpg`;
-            }
-            
-            return {
-              id: category.id,
-              label: category.name,
-              image: imagePath,
-              shortDesc: category.description || 'Odkryj nasze pyszne przepisy!',
-              link: `/kuchnia/${category.slug || category.id}`
-            };
-          });
-        
+        const items = mapCategoriesToItems(categories || []);
         if (items.length === 0) {
-          // If no categories found in Supabase, use fallback
           loadFallbackCategories();
         } else {
           setAllCategoryItems(items);
@@ -337,31 +349,26 @@ const CategoryBanner = () => {
         }
       } catch (error) {
         console.error("Error fetching categories:", error);
-        // Fallback to hardcoded categories
         loadFallbackCategories();
       }
     };
 
-    // Helper function to use fallback categories
     const loadFallbackCategories = () => {
-      const categories = kuchniaCategories.mainCategories;
-      
-      const items = categories
-        .filter(category => category.image) // Only include categories with images
-        .map(category => ({
-          id: category.label,
-          label: category.label,
-          image: category.image,
-          shortDesc: category.shortDesc || 'Odkryj nasze pyszne przepisy!',
-          link: category.link
+      const items = kuchniaCategories.mainCategories
+        .filter((c) => c.image)
+        .map((c) => ({
+          id: c.label,
+          label: c.label,
+          image: getImageUrl(c.image),
+          shortDesc: c.shortDesc || 'Odkryj nasze pyszne przepisy!',
+          link: c.link,
         }));
-      
       setAllCategoryItems(items);
       setIsLoaded(true);
     };
 
     fetchCategories();
-  }, []);
+  }, [prefetchedCategories?.length]);
 
   // Start animations when in view
   useEffect(() => {
@@ -486,8 +493,8 @@ const CategoryBanner = () => {
           variants={itemAnimation}
           className="w-full mx-auto"
         >
-          {isLoaded ? (
-            allCategoryItems.length > 0 ? (
+          {categoriesLoaded ? (
+            categoryItems.length > 0 ? (
               <div className="relative flex justify-center">
                 <motion.div 
                   className={`absolute inset-0 bg-gradient-to-r from-transparent via-${BG_COLOR_LIGHTER} to-transparent 
@@ -504,7 +511,7 @@ const CategoryBanner = () => {
                 
                 <div className="relative px-1 sm:px-2 md:px-4 lg:px-8 overflow-hidden w-full max-w-[100%] md:max-w-[900px] lg:max-w-[1200px] xl:max-w-[1400px] mx-auto">
                   <CategoryCarousel 
-                    items={allCategoryItems}
+                    items={categoryItems}
                     showViewButton={true}
                   />
                 </div>
@@ -515,7 +522,7 @@ const CategoryBanner = () => {
               </div>
             )
           ) : (
-            <div className="flex justify-center items-center py-20">
+            <div className="flex justify-center items-center py-20 min-h-[280px]">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
             </div>
           )}
