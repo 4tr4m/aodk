@@ -383,12 +383,11 @@ const RecipePage = () => {
   // Combine structured data
   const structuredData = [recipeSchema, breadcrumbSchema].filter(Boolean);
 
-  // Get absolute canonical URL
+  // Absolute canonical URL (no query/hash) for SEO
   const getRecipeCanonicalUrl = () => {
     if (typeof window !== 'undefined') {
-      return window.location.href;
+      return `${window.location.origin}${window.location.pathname}`;
     }
-    // Fallback: construct URL from recipe data
     const categorySlug = getCategorySlug(recipe.category);
     if (categorySlug) {
       return `${baseUrl}/kuchnia/${categorySlug}/${recipe.id}`;

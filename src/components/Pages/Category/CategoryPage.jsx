@@ -67,8 +67,7 @@ const CategoryPage = () => {
     });
     
     if (supabaseCategory) {
-      // Return the label as the category key (matches state.allRecipes keys)
-      return supabaseCategory.label;
+      return supabaseCategory.name || supabaseCategory.label;
     }
     
     // Fallback: try fuzzy matching in state.allRecipes
@@ -169,31 +168,26 @@ const CategoryPage = () => {
   const getCurrentCategory = () => {
     if (!categorySlug) return null;
     
-    // First, try to find category from Supabase
+    // First, try to find category from Supabase (table has 'name', not 'label')
     const supabaseCategory = categories.find(cat => {
-      // Try matching by slug first (most reliable)
       if (cat.slug === categorySlug) return true;
-      
-      // Try matching by link
       if (cat.link && cat.link.includes(categorySlug)) return true;
-      
-      // Try matching by label (normalized)
-      if (cat.label) {
-        const normalizedLabel = cat.label.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const nameOrLabel = cat.name || cat.label;
+      if (nameOrLabel) {
+        const normalized = nameOrLabel.toLowerCase().replace(/[^a-z0-9]/g, '');
         const normalizedSlug = categorySlug.toLowerCase().replace(/[^a-z0-9]/g, '');
-        if (normalizedLabel === normalizedSlug) return true;
+        if (normalized === normalizedSlug) return true;
       }
-      
       return false;
     });
     
     if (supabaseCategory) {
       return {
-        label: supabaseCategory.label, // Use 'label' from database
+        label: supabaseCategory.name || supabaseCategory.label,
         link: supabaseCategory.link || `/kuchnia/${categorySlug}`,
         description: supabaseCategory.description || 'Odkryj nasze pyszne przepisy!',
         shortDesc: supabaseCategory.short_desc || '',
-        image: supabaseCategory.image || `${categorySlug}.jpg`
+        image: supabaseCategory.image_path || supabaseCategory.image || `${categorySlug}.jpg`
       };
     }
     
@@ -235,8 +229,7 @@ const CategoryPage = () => {
     
     let categoryKey;
     if (supabaseCategory) {
-      // Use the label as the category key
-      categoryKey = supabaseCategory.label;
+      categoryKey = supabaseCategory.name || supabaseCategory.label;
     } else {
       // Fallback: try fuzzy matching
       categoryKey = Object.keys(state.allRecipes).find(key => {

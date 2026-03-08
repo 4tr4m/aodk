@@ -14,7 +14,7 @@ import {
   FaHandHoldingHeart,
   FaSeedling,
   FaCookieBite,
-  FaJar,
+  FaFlask,
 } from 'react-icons/fa';
 import TopNavBar from '../../Headers/TopNavBar';
 import CategoryHeader from '../Category/CategoryHeader';
@@ -632,7 +632,7 @@ const UslugiPage = () => {
           <div className="bg-[#F6EFE9] rounded-2xl p-6 sm:p-8 border border-gray-100">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
-                <FaJar className="w-6 h-6" />
+                <FaFlask className="w-6 h-6" />
               </div>
               <h2 className="font-['Playfair_Display'] text-xl md:text-2xl text-[#1A202C] font-bold">
                 Bonus: Słoik Startowy
