@@ -13,6 +13,7 @@ import HistoriaOAutyzmie from './components/Pages/Historia/HistoriaOAutyzmie';
 import ZnajdkiPage from './components/Pages/Znajdki/ZnajdkiPage';
 import ZnajdkiProductPage from './components/Pages/Znajdki/ZnajdkiProductPage';
 import RecipePage from './components/Pages/Recipe/RecipePage';
+import UslugiPage from './components/Pages/Uslugi/UslugiPage';
 
 // Scroll to top on route change (but respect scrollToTitle state)
 const ScrollToTop = () => {
@@ -84,6 +85,7 @@ const App = () => {
           <Route path="/historia/o-autyzmie" element={<HistoriaOAutyzmie />} />
           <Route path="/znajdki" element={<ZnajdkiPage />} />
           <Route path="/znajdki/:id" element={<ZnajdkiProductPage />} />
+          <Route path="/uslugi" element={<UslugiPage />} />
           <Route path="/kuchnia/:categorySlug/:recipeId" element={<RecipePage />} />
           <Route path="/przepis/:recipeId" element={<RecipePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

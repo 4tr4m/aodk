@@ -30,6 +30,7 @@ import { FiMenu, FiX } from 'react-icons/fi';
 import { 
   kuchniaCategories,
   historiaCategories,
+  uslugiCategories,
 } from '../../Data/category-data';
 import categoryService from '../../services/categoryService';
 
@@ -132,6 +133,12 @@ const TopNavBar = () => {
       label: 'ZNAJDKI',
       link: '/znajdki',
       type: 'znajdki',
+    },
+    {
+      label: 'USŁUGI',
+      link: '/uslugi',
+      dropdown: uslugiCategories,
+      type: 'uslugi',
     },
     { label: 'BLOG', link: '/blog' },
     { label: 'KONTAKT', link: '/kontakt' },

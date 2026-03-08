@@ -1,6 +1,7 @@
 import TopNavBar from '../components/Headers/TopNavBar';
 import CategoryBanner from '../components/Section/CategoryBanner';
 import InfoSection from '../components/Section/InfoSection';
+import ServicesSupportSection from '../components/Section/ServicesSupportSection';
 import Footer from '../components/Footer/Footer';
 import HeroSection from '../components/Hero/HeroSection';
 import SEO from '../components/SEO/SEO';
@@ -55,6 +56,7 @@ const HomePage = () => {
         <div className="relative z-10 bg-white">
           <CategoryBanner />
           <InfoSection />
+          <ServicesSupportSection />
         </div>
       </div>
       <Footer />

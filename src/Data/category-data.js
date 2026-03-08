@@ -140,3 +140,9 @@ export const blogCategories = [
   { link: '/blog/o-mnie', label: 'O Mnie' },
   { link: '/blog/o-autyzmie', label: 'O Autyźmie' }
 ];
+
+export const uslugiCategories = [
+  { link: '/uslugi#audyt-kuchni', label: 'Audyt Kuchni' },
+  { link: '/uslugi#wspolne-gotowanie', label: 'Wspólne Gotowanie' },
+  { link: '/uslugi#pakiety', label: 'Pakiety i Cennik' }
+];
