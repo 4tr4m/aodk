@@ -50,8 +50,9 @@ const generateSitemap = () => {
     });
   }
   
-  // Add additional static pages
+  // Add additional static pages (Oferta, Historia, Znajdki)
   const additionalPages = [
+    { url: '/uslugi', priority: 0.85, changefreq: 'monthly' },
     { url: '/historia/o-mnie', priority: 0.7, changefreq: 'monthly' },
     { url: '/historia/o-autyzmie', priority: 0.7, changefreq: 'monthly' },
     { url: '/znajdki', priority: 0.8, changefreq: 'weekly' },
