@@ -10,8 +10,6 @@ import {
   FaMapMarkerAlt,
   FaBoxOpen,
   FaHeart,
-  FaClock,
-  FaHandHoldingHeart,
   FaSeedling,
   FaCookieBite,
   FaFlask,
@@ -339,7 +337,7 @@ const UslugiPage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Audyt Kuchni */}
             <motion.div
               className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6 sm:p-7 flex flex-col"
@@ -414,7 +412,7 @@ const UslugiPage = () => {
 
             {/* Asysta Zakupowa */}
             <motion.div
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6 sm:p-7 flex flex-col md:col-span-2 lg:col-span-1"
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6 sm:p-7 flex flex-col"
               variants={fadeInUp}
               custom={2}
             >

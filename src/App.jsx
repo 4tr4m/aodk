@@ -54,8 +54,9 @@ const App = () => {
           <Route path="/znajdki" element={<ZnajdkiPage />} />
           <Route path="/znajdki/:id" element={<ZnajdkiProductPage />} />
           <Route path="/uslugi" element={<UslugiPage />} />
-          <Route path="/kuchnia/:categorySlug/:recipeId" element={<RecipePage />} />
-          <Route path="/przepis/:recipeId" element={<RecipePage />} />
+          {/* Legacy category-based recipe route - will redirect to canonical /przepis/:recipeSlug */}
+          <Route path="/kuchnia/:categorySlug/:recipeSlug" element={<RecipePage />} />
+          <Route path="/przepis/:recipeSlug" element={<RecipePage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

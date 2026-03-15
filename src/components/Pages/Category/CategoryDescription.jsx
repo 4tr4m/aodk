@@ -28,9 +28,10 @@ const CategoryDescription = ({
       // Parse the identifier - check if it contains a colon (categorySlug:recipeId format)
       let recipeId, recipeUrl;
       if (recipeIdentifier.includes(':')) {
-        const [categorySlug, id] = recipeIdentifier.split(':');
+        const [, id] = recipeIdentifier.split(':');
         recipeId = id.trim();
-        recipeUrl = `/kuchnia/${categorySlug.trim()}/${recipeId}`;
+        // Always link to canonical /przepis/:id route (slug added later)
+        recipeUrl = `/przepis/${recipeId}`;
       } else {
         // Old format: just recipe ID (backward compatibility)
         recipeId = recipeIdentifier.trim();

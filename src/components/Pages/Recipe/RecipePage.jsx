@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCart } from '../../../context/CartContext';
 import ProductBaseIngredients from './ProductBaseIngredients';
@@ -22,13 +22,21 @@ import NewsletterModal from '../../Modal/NewsletterModal';
 import FeedbackButton from '../../Feedback/FeedbackButton';
 import { useRecipeData } from './hooks/useRecipeData';
 import { useRecipeScrollDetection } from './hooks/useRecipeScrollDetection';
-import { processIngredients as processIngredientsUtil, replaceLinkPlaceholder, getRecipeUrl, getCategorySlug } from '../../../utils/recipeUtils';
+import { processIngredients as processIngredientsUtil, replaceLinkPlaceholder, getCategorySlug, getRecipeCanonicalPath, extractRecipeIdFromSlug } from '../../../utils/recipeUtils';
+
+// Helper to get internal recipe ID from route param (slug or legacy id)
+const getRecipeIdFromRoute = (recipeSlugParam) => {
+  if (!recipeSlugParam) return null;
+  return extractRecipeIdFromSlug(recipeSlugParam);
+};
 
 const RecipePage = () => {
-  const { recipeId } = useParams(); // Support both /przepis/:recipeId and /kuchnia/:categorySlug/:recipeId
+  const { recipeSlug } = useParams(); // Supports both /przepis/:recipeSlug and /kuchnia/:categorySlug/:recipeSlug
   const navigate = useNavigate();
+  const location = useLocation();
   const { dispatch } = useCart();
   
+  const recipeId = getRecipeIdFromRoute(recipeSlug);
   const { recipe, loading, error, isInWishlist, setIsInWishlist } = useRecipeData(recipeId);
   const { isStickyIngredientsVisible, ingredientsRef } = useRecipeScrollDetection(recipe, loading);
   
@@ -195,7 +203,7 @@ const RecipePage = () => {
           "url": `${baseUrl}/img/logo.png`
         }
       },
-      "url": typeof window !== 'undefined' ? window.location.href : `${baseUrl}${getRecipeUrl(recipe.id, recipe.category)}`
+      "url": typeof window !== 'undefined' ? window.location.href : `${baseUrl}${getRecipeCanonicalPath(recipe)}`
     };
 
     // Only add recipeInstructions if we have steps
@@ -239,7 +247,7 @@ const RecipePage = () => {
           "@type": "ListItem",
           "position": categorySlug ? 4 : 3,
           "name": recipe.name,
-          "item": typeof window !== 'undefined' ? window.location.href : `${baseUrl}/przepis/${recipe.id}`
+          "item": typeof window !== 'undefined' ? window.location.href : `${baseUrl}${getRecipeCanonicalPath(recipe)}`
         }
       ]
     };
@@ -343,6 +351,15 @@ const RecipePage = () => {
     return processIngredientsUtil(ingredientsData || recipe?.ingredients);
   };
 
+  // If we arrived via legacy or category-based URL, redirect to canonical /przepis/:slug once data is loaded
+  useEffect(() => {
+    if (!recipe || loading || error) return;
+    const canonicalPath = getRecipeCanonicalPath(recipe);
+    if (location.pathname !== canonicalPath) {
+      navigate(canonicalPath, { replace: true });
+    }
+  }, [recipe, loading, error, location.pathname, navigate]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -388,11 +405,7 @@ const RecipePage = () => {
     if (typeof window !== 'undefined') {
       return `${window.location.origin}${window.location.pathname}`;
     }
-    const categorySlug = getCategorySlug(recipe.category);
-    if (categorySlug) {
-      return `${baseUrl}/kuchnia/${categorySlug}/${recipe.id}`;
-    }
-    return `${baseUrl}/przepis/${recipe.id}`;
+    return `${baseUrl}${getRecipeCanonicalPath(recipe)}`;
   };
 
   return (

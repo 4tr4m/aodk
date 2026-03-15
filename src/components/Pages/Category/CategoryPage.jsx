@@ -19,6 +19,7 @@ import { useCategorySearch } from './hooks/useCategorySearch';
 import { useIngredientFilter } from './hooks/useIngredientFilter';
 import { useScrollDetection } from './hooks/useScrollDetection';
 import { smartCapitalize } from '../../../utils/categoryUtils';
+import { getRecipeCanonicalPath } from '../../../utils/recipeUtils';
 import supabase from '../../../lib/supabase-browser';
 
 const CategoryPage = () => {
@@ -345,25 +346,11 @@ const CategoryPage = () => {
     const allRecipes = Object.values(state.allRecipes).flat();
     const recipe = allRecipes.find(r => r.id === recipeId);
     
-    let url = `/przepis/${recipeId}`; // Fallback to old format
+    let url = `/przepis/${recipeId}`; // Fallback to legacy format
     
-    if (recipe && recipe.category) {
-      // Convert category to slug
-      const categoryMap = {
-        'OBIADY': 'obiady',
-        'ZUPY': 'zupy',
-        'CHLEBY': 'chleby',
-        'SMAROWIDŁA': 'smarowidla',
-        'DESERY': 'desery',
-        'BABECZKI i MUFFINY': 'babeczki-i-muffiny',
-        'CIASTA': 'ciasta',
-        'CIASTKA': 'ciastka',
-        'SMOOTHIE': 'smoothie',
-        'INNE': 'inne',
-        'ŚWIĘTA': 'swieta'
-      };
-      const categorySlug = categoryMap[recipe.category] || recipe.category.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      url = `/kuchnia/${categorySlug}/${recipeId}`;
+    if (recipe) {
+      // Use canonical SEO-friendly slug path
+      url = getRecipeCanonicalPath(recipe);
     }
     
     setPendingNavigation(url);

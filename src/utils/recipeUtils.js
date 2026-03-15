@@ -47,6 +47,76 @@ export const getRecipeUrl = (recipeId, category = null) => {
 };
 
 /**
+ * Slugify helper for recipe titles – removes Polish characters, special signs and normalizes dashes.
+ * Example: "Chleb z mąki gryczanej!" -> "chleb-z-maki-gryczanej"
+ * @param {string} text
+ * @returns {string}
+ */
+export const slugifyText = (text) => {
+  if (!text || typeof text !== 'string') return '';
+  const polishMap = {
+    ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ż: 'z', ź: 'z',
+    Ą: 'a', Ć: 'c', Ę: 'e', Ł: 'l', Ń: 'n', Ó: 'o', Ś: 's', Ż: 'z', Ź: 'z',
+  };
+  const normalized = text
+    .split('')
+    .map((ch) => polishMap[ch] || ch)
+    .join('')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-') // anything non alphanumeric -> dash
+    .replace(/-+/g, '-') // collapse multiple dashes
+    .replace(/^-|-$/g, ''); // trim dashes
+  return normalized;
+};
+
+/**
+ * Build canonical recipe slug part (used in URLs) with stable ID separator.
+ * We use `--` as delimiter to safely keep IDs that may contain `-`.
+ * Example: title="Chleb z mąki", id="abc-1" -> "chleb-z-maki--abc-1"
+ * @param {{id?: string, name?: string}|string} recipe
+ * @returns {string}
+ */
+export const getRecipeSlugForUrl = (recipe) => {
+  if (!recipe) return '';
+  const id = typeof recipe === 'string' ? recipe : recipe.id;
+  const name = typeof recipe === 'string' ? '' : (recipe.name || '');
+  const base = slugifyText(name || id || '');
+  if (!id) return base;
+  // If id is already encoded in the slug (legacy /przepis/abc-1), keep it as-is
+  if (base === id || base.endsWith(`--${id}`)) return base;
+  return `${base}--${id}`;
+};
+
+/**
+ * Extract internal recipe ID from slug used in URL.
+ * Supports:
+ * - "chleb-z-maki--abc-1"  -> "abc-1"
+ * - "abc-1" (legacy URLs) -> "abc-1"
+ * @param {string} slug
+ * @returns {string|null}
+ */
+export const extractRecipeIdFromSlug = (slug) => {
+  if (!slug || typeof slug !== 'string') return null;
+  const parts = slug.split('--');
+  if (parts.length > 1) {
+    return parts[parts.length - 1];
+  }
+  return slug;
+};
+
+/**
+ * Get canonical path for a recipe detail page (one unique URL per recipe).
+ * Example: "/przepis/chleb-z-maki--abc-1"
+ * @param {{id?: string, name?: string}|string} recipe
+ * @returns {string}
+ */
+export const getRecipeCanonicalPath = (recipe) => {
+  const slug = getRecipeSlugForUrl(recipe);
+  if (!slug) return '/przepis/';
+  return `/przepis/${slug}`;
+};
+
+/**
  * Get the full image source path for a recipe
  * @param {string|undefined} image - The image path from recipe data
  * @returns {string} The full image path
@@ -163,8 +233,8 @@ export const replaceLinkPlaceholder = (text) => {
       recipeUrl = normalizeUrl(recipeIdentifier);
     } else if (recipeIdentifier.includes(':')) {
       // Format: {categorySlug:recipeId} - e.g., {obiady:mieszanka-1}
-      const [categorySlug, id] = recipeIdentifier.split(':');
-      recipeUrl = `/kuchnia/${categorySlug.trim()}/${id.trim()}`;
+      const [, id] = recipeIdentifier.split(':');
+      recipeUrl = `/przepis/${id.trim()}`;
     } else {
       // Old format: just recipe ID (backward compatibility) - e.g., {mieszanka-1}
       recipeUrl = `/przepis/${recipeIdentifier}`;

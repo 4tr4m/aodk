@@ -69,12 +69,31 @@ async function generateSitemap() {
   try {
     const { data: recipes, error: recipesError } = await supabase
       .from('recipes')
-      .select('id, category, updated_at')
+      .select('id, name, category, updated_at')
       .eq('is_published', true);
     if (!recipesError && recipes?.length) {
+      // Helper: build SEO-friendly slug from recipe name + stable ID suffix
+      const slugifyText = (text) => {
+        if (!text || typeof text !== 'string') return '';
+        const polishMap = {
+          ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ż: 'z', ź: 'z',
+          Ą: 'a', Ć: 'c', Ę: 'e', Ł: 'l', Ń: 'n', Ó: 'o', Ś: 's', Ż: 'z', Ź: 'z',
+        };
+        const normalized = text
+          .split('')
+          .map((ch) => polishMap[ch] || ch)
+          .join('')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        return normalized;
+      };
+
       recipes.forEach((r) => {
-        const slug = (r.category && categoryToSlug[r.category]) ? categoryToSlug[r.category] : null;
-        const path = slug ? `/kuchnia/${slug}/${r.id}` : `/przepis/${r.id}`;
+        const base = slugifyText(r.name || r.id || '');
+        const slugPart = r.id ? `${base}--${r.id}` : base;
+        const path = `/przepis/${slugPart}`;
         const lastmod = r.updated_at ? r.updated_at.split('T')[0] : currentDate;
         sitemap = addUrl(sitemap, path, lastmod, 'monthly', '0.6');
       });
