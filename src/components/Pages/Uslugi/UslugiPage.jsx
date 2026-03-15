@@ -16,6 +16,12 @@ import {
   FaCookieBite,
   FaFlask,
 } from 'react-icons/fa';
+import {
+  Check as CheckIcon,
+  ChefHat,
+  Refrigerator,
+  ShoppingCart as ShoppingCartIcon,
+} from 'lucide-react';
 import TopNavBar from '../../Headers/TopNavBar';
 import CategoryHeader from '../Category/CategoryHeader';
 import Footer from '../../Footer/Footer';
@@ -311,74 +317,136 @@ const UslugiPage = () => {
           </motion.p>
         </motion.section>
 
-        {/* 5. Metoda – 3 kroki */}
+        {/* 5. Usługi – bento grid */}
         <motion.section
-          id="metoda"
+          id="uslugi"
           className="scroll-mt-24 mb-14 md:mb-18"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.1 }}
-          variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
+          variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
         >
-          <h2 className="font-['Playfair_Display'] text-2xl md:text-3xl text-[#1A202C] font-bold mb-4">
-            Moja metoda pracy z dietą
-          </h2>
-          <p className="font-['Patrick_Hand'] text-xl text-green-700 mb-2">
-            Metoda „Autyzm od Kuchni”
-          </p>
-          <p className="font-['Lato'] text-gray-600 mb-8">
-            Przez ponad 10 lat prowadzenia kuchni eliminacyjnej wypracowałam własny sposób pracy. Opiera się na trzech prostych krokach:
-          </p>
-          <div className="space-y-6">
-            {[
-              {
-                step: 1,
-                title: 'Porządek w kuchni',
-                desc: 'Najpierw upraszczamy przestrzeń i składniki. Sprawdzamy produkty w Twojej kuchni, usuwamy problematyczne składniki i wprowadzamy bezpieczne zamienniki.',
-                icon: FaBoxOpen,
-                bg: 'bg-green-100',
-                color: 'text-green-700',
-              },
-              {
-                step: 2,
-                title: 'Sprawdzona baza potraw',
-                desc: 'Zamiast dziesiątek przepisów skupiamy się na kilku daniach, które można łatwo powtarzać w codziennym życiu. Dzięki temu gotowanie przestaje być stresujące.',
-                icon: FaUtensils,
-                bg: 'bg-amber-100',
-                color: 'text-amber-700',
-              },
-              {
-                step: 3,
-                title: 'Spokojne zakupy',
-                desc: 'Uczysz się, jak robić szybkie i bezpieczne zakupy bez analizowania każdego produktu. Po kilku takich zakupach większość rodziców mówi: „W końcu wiem, co kupować.”',
-                icon: FaShoppingCart,
-                bg: 'bg-emerald-100',
-                color: 'text-emerald-700',
-              },
-            ].map((item, i) => (
-              <motion.div
-                key={item.step}
-                variants={fadeInUp}
-                custom={i}
-                className="flex gap-4 sm:gap-6 p-5 sm:p-6 bg-white rounded-2xl border border-gray-100 shadow-sm"
-              >
-                <div className={`flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${item.bg} ${item.color} shrink-0`}>
-                  <item.icon className="w-6 h-6 sm:w-7 sm:h-7" />
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <p className="font-['Patrick_Hand'] text-sm uppercase tracking-[0.2em] text-green-700 mb-3">
+              Usługi i cennik
+            </p>
+            <h2 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl text-[#0f172a] font-bold mb-3">
+              Usługi, które porządkują Twoją kuchnię
+            </h2>
+            <p className="font-['Lato'] text-sm sm:text-base text-slate-600">
+              Zamiast kolejnej teorii – konkretne, praktyczne działania w Twojej kuchni: od poukładania szafek,
+              przez wspólne gotowanie, po spokojne zakupy.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Audyt Kuchni */}
+            <motion.div
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6 sm:p-7 flex flex-col"
+              variants={fadeInUp}
+              custom={0}
+            >
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-11 h-11 rounded-full bg-green-50 text-green-700 flex items-center justify-center">
+                  <Refrigerator className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-['Playfair_Display'] text-xl font-bold text-[#1A202C] mb-1">
-                    {item.step}. {item.title}
+                  <h3 className="font-['Playfair_Display'] text-xl text-slate-900 font-semibold">
+                    Audyt Kuchni
                   </h3>
-                  <p className="font-['Lato'] text-gray-600 leading-relaxed">{item.desc}</p>
+                  <p className="font-['Lato'] text-slate-600 text-sm mt-1">
+                    Przeglądamy razem Twoje szafki, lodówkę i nawyki. Po spotkaniu dokładnie wiesz, co zostaje,
+                    co znika i czym bezpiecznie zastąpić problematyczne produkty.
+                  </p>
                 </div>
-              </motion.div>
-            ))}
-          </div>
-          <p className="mt-6 font-['Lato'] text-gray-600 italic">
-            Wiele osób korzysta z usług stylistki modowej, aby nauczyć się kupować ubrania. Ja pomagam rodzinom nauczyć się czegoś jeszcze ważniejszego – jak spokojnie prowadzić codzienną kuchnię przy diecie eliminacyjnej.
-          </p>
-          <div className="mt-8 flex justify-center">
-            <CtaButton />
+              </div>
+              <ul className="space-y-2 mt-3 font-['Lato'] text-sm text-slate-700">
+                {[
+                  'Lista produktów do wymiany oraz bezpiecznych zamienników.',
+                  'Czytelne oznaczenie „bezpiecznych półek” w kuchni.',
+                  'Pierwszy, konkretny plan zmian bez poczucia przytłoczenia.',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-[2px] flex items-center justify-center w-5 h-5 rounded-full bg-emerald-50 text-emerald-600">
+                      <CheckIcon className="w-3.5 h-3.5" />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Wspólne Gotowanie */}
+            <motion.div
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6 sm:p-7 flex flex-col"
+              variants={fadeInUp}
+              custom={1}
+            >
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-11 h-11 rounded-full bg-green-50 text-green-700 flex items-center justify-center">
+                  <ChefHat className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-['Playfair_Display'] text-xl text-slate-900 font-semibold">
+                    Wspólne Gotowanie
+                  </h3>
+                  <p className="font-['Lato'] text-slate-600 text-sm mt-1">
+                    Gotujemy razem 3 potrawy dopasowane do Twojej rodziny. Uczysz się prostych, powtarzalnych
+                    schematów zamiast jednorazowych „instagramowych” przepisów.
+                  </p>
+                </div>
+              </div>
+              <ul className="space-y-2 mt-3 font-['Lato'] text-sm text-slate-700">
+                {[
+                  'Wszystkie składniki przywożę ze sobą – sprawdzone produkty z dobrym składem.',
+                  'Uczysz się technik, które później odtworzysz samodzielnie.',
+                  'Gotowe, rodzinne menu na kilka dni po spotkaniu.',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-[2px] flex items-center justify-center w-5 h-5 rounded-full bg-emerald-50 text-emerald-600">
+                      <CheckIcon className="w-3.5 h-3.5" />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Asysta Zakupowa */}
+            <motion.div
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow p-6 sm:p-7 flex flex-col md:col-span-2 lg:col-span-1"
+              variants={fadeInUp}
+              custom={2}
+            >
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-11 h-11 rounded-full bg-green-50 text-green-700 flex items-center justify-center">
+                  <ShoppingCartIcon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-['Playfair_Display'] text-xl text-slate-900 font-semibold">
+                    Asysta Zakupowa
+                  </h3>
+                  <p className="font-['Lato'] text-slate-600 text-sm mt-1">
+                    Razem przechodzimy przez Twój sklep (np. Lidl, Biedronka). Pokazuję, jak wybierać produkty
+                    „automatycznie”, bez godzin spędzonych na czytaniu etykiet.
+                  </p>
+                </div>
+              </div>
+              <ul className="space-y-2 mt-3 font-['Lato'] text-sm text-slate-700">
+                {[
+                  'Nauka szybkiego czytania składów bez paniki przy półce.',
+                  'Lista marek i produktów, po które możesz sięgać w ciemno.',
+                  'Konkretny koszyk zakupów dopasowany do Twojej rodziny i diety.',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-[2px] flex items-center justify-center w-5 h-5 rounded-full bg-emerald-50 text-emerald-600">
+                      <CheckIcon className="w-3.5 h-3.5" />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
           </div>
         </motion.section>
 
@@ -540,7 +608,7 @@ const UslugiPage = () => {
           </ul>
         </motion.section>
 
-        {/* 9. Pakiety i cennik */}
+        {/* 9. Pakiety i cennik – pricing cards */}
         <motion.section
           id="pakiety"
           className="scroll-mt-24 mb-14 md:mb-18"
@@ -549,87 +617,155 @@ const UslugiPage = () => {
           viewport={{ once: true, amount: 0.1 }}
           variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
         >
-          <h2 className="font-['Playfair_Display'] text-2xl md:text-3xl text-[#1A202C] font-bold mb-8">
-            Pakiety wsparcia
-          </h2>
-          <div className="space-y-8">
-            {[
-              {
-                name: 'Szybki Start – pierwszy krok do spokojnej kuchni',
-                price: '600 zł',
-                time: 'ok. 2 godziny',
-                forWho: 'Dla rodziców, którzy potrzebują szybkiego startu i jasnej instrukcji, jak zacząć wprowadzać zdrową dietę w domu bez chaosu i nadmiernego stresu.',
-                points: [
-                  'Audyt kuchni i szafek – razem sprawdzimy, co możesz zostawić, co warto wymienić, a które produkty są źródłem stresu.',
-                  'Lista bezpiecznych zamienników – gotowa lista produktów, które możesz używać od zaraz.',
-                  'Konsultacja i plan pierwszych zmian – krok po kroku ustalimy, od czego zacząć.',
-                ],
-                icon: FaLeaf,
-              },
-              {
-                name: 'Kuchnia pod Kontrolą – gotowanie bez stresu',
-                price: '1900 zł',
-                time: 'ok. 4–5 godzin',
-                forWho: 'Dla rodziców, którzy chcą praktycznie wdrożyć dietę eliminacyjną w swojej kuchni, jednocześnie ucząc się prostych, powtarzalnych metod gotowania.',
-                points: [
-                  'Audyt kuchni i szafek, lista zamienników, konsultacja i plan pierwszych zmian.',
-                  'Wspólne gotowanie (3 potrawy do wyboru) – składniki przywożę ze sobą.',
-                  '2 tygodnie wsparcia online – pozostaję w kontakcie po spotkaniu.',
-                ],
-                icon: FaUtensils,
-              },
-              {
-                name: 'Metamorfoza Premium – pełne wdrożenie w jeden dzień',
-                price: '2300 zł',
-                time: 'ok. 7–8 godzin',
-                forWho: 'Dla rodziców, którzy chcą pełnego, praktycznego wdrożenia diety eliminacyjnej w jednym dniu, zdobyć pewność w codziennym gotowaniu i zakupach.',
-                points: [
-                  'Audyt, lista zamienników, konsultacja i plan zmian.',
-                  'Wspólne gotowanie (3 potrawy) – przywożę składniki, w tym namoczoną fasolę.',
-                  'Shopping Safari – zakupy w Twoim lokalnym sklepie.',
-                  'Miesiąc wsparcia online.',
-                ],
-                icon: FaHandHoldingHeart,
-              },
-            ].map((pkg, i) => (
-              <motion.div
-                key={pkg.name}
-                variants={fadeInUp}
-                custom={i}
-                className="bg-white rounded-2xl p-6 sm:p-8 border-2 border-gray-100 shadow-md hover:border-green-200 transition-colors"
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <p className="font-['Patrick_Hand'] text-sm uppercase tracking-[0.2em] text-green-700 mb-3">
+              Wybierz pakiet
+            </p>
+            <h2 className="font-['Playfair_Display'] text-2xl sm:text-3xl md:text-4xl text-[#0f172a] font-bold mb-3">
+              Wybierz poziom wsparcia dla swojej rodziny
+            </h2>
+            <p className="font-['Lato'] text-sm sm:text-base text-slate-600">
+              Każdy pakiet łączy teorię z praktyką. Bez względu na to, od czego zaczynasz – wychodzisz z jasnym
+              planem, spokojniejszą kuchnią i konkretnymi rozwiązaniami.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Pakiet Szybki Start */}
+            <motion.div
+              variants={fadeInUp}
+              custom={0}
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col p-6 sm:p-7"
+            >
+              <div className="flex items-start justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="font-['Playfair_Display'] text-xl text-slate-900 font-semibold">
+                    Szybki Start
+                  </h3>
+                  <p className="font-['Lato'] text-xs uppercase tracking-[0.2em] text-slate-500 mt-1">
+                    Pierwszy krok do spokojnej kuchni
+                  </p>
+                </div>
+              </div>
+              <div className="mb-4">
+                <div className="font-['Patrick_Hand'] text-3xl text-slate-900">{'600 zł'}</div>
+                <p className="font-['Lato'] text-xs text-slate-500 mt-1">ok. 2 godziny · w Twojej kuchni</p>
+              </div>
+              <hr className="border-slate-200 mb-4" />
+              <ul className="space-y-2 mb-6 font-['Lato'] text-sm text-slate-700 flex-1">
+                {[
+                  'Audyt kuchni i szafek – razem decydujemy, co zostaje, a co warto wymienić.',
+                  'Lista bezpiecznych zamienników, z których możesz korzystać od razu.',
+                  'Plan pierwszych zmian, rozpisany krok po kroku.',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-[2px] flex items-center justify-center w-5 h-5 rounded-full bg-emerald-50 text-emerald-600">
+                      <CheckIcon className="w-3.5 h-3.5" />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/kontakt"
+                className="mt-auto inline-flex items-center justify-center w-full rounded-full bg-green-600 hover:bg-green-700 text-white font-['Patrick_Hand'] text-lg py-2.5 transition-colors"
               >
-                <div className="flex flex-wrap items-start gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-2xl bg-green-100 text-green-700 flex items-center justify-center shrink-0">
-                    <pkg.icon className="w-6 h-6" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-['Playfair_Display'] text-xl font-bold text-[#1A202C]">{pkg.name}</h3>
-                    <div className="flex flex-wrap items-center gap-3 mt-2">
-                      <span className="font-['Patrick_Hand'] text-green-700 text-xl">{pkg.price}</span>
-                      <span className="flex items-center gap-1 text-gray-500 font-['Lato'] text-sm">
-                        <FaClock className="w-4 h-4" />
-                        {pkg.time}
-                      </span>
-                    </div>
-                  </div>
+                Wybieram
+              </Link>
+            </motion.div>
+
+            {/* Pakiet Standard – wyróżniony */}
+            <motion.div
+              variants={fadeInUp}
+              custom={1}
+              className="relative bg-white rounded-2xl border-2 border-green-500 shadow-md md:shadow-lg hover:shadow-xl transition-transform transition-shadow md:scale-105 flex flex-col p-6 sm:p-7"
+            >
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-green-600 text-white text-xs font-['Lato'] shadow-sm">
+                  Najczęściej wybierane
+                </span>
+              </div>
+              <div className="flex items-start justify-between gap-3 mb-4 pt-3">
+                <div>
+                  <h3 className="font-['Playfair_Display'] text-xl text-slate-900 font-semibold">
+                    Kuchnia pod Kontrolą
+                  </h3>
+                  <p className="font-['Lato'] text-xs uppercase tracking-[0.2em] text-slate-500 mt-1">
+                    Standard · gotowanie bez stresu
+                  </p>
                 </div>
-                <p className="font-['Lato'] text-gray-600 mb-4">Co zyskasz:</p>
-                <ul className="space-y-2 mb-4">
-                  {pkg.points.map((pt) => (
-                    <li key={pt} className="flex items-start gap-2 font-['Lato'] text-gray-700">
-                      <FaCheck className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
-                      {pt}
-                    </li>
-                  ))}
-                </ul>
-                <p className="font-['Lato'] text-gray-600 text-sm bg-gray-50 rounded-lg p-3">
-                  💡 Dla kogo? {pkg.forWho}
+              </div>
+              <div className="mb-4">
+                <div className="font-['Patrick_Hand'] text-3xl text-slate-900">{'1900 zł'}</div>
+                <p className="font-['Lato'] text-xs text-slate-500 mt-1">ok. 4–5 godzin · audyt + gotowanie</p>
+              </div>
+              <hr className="border-slate-200 mb-4" />
+              <ul className="space-y-2 mb-6 font-['Lato'] text-sm text-slate-700 flex-1">
+                {[
+                  'Pełny audyt kuchni, lista zamienników i plan pierwszych zmian.',
+                  'Wspólne gotowanie 3 potraw – składniki przywożę ze sobą.',
+                  '2 tygodnie wsparcia online po spotkaniu.',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-[2px] flex items-center justify-center w-5 h-5 rounded-full bg-emerald-50 text-emerald-600">
+                      <CheckIcon className="w-3.5 h-3.5" />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/kontakt"
+                className="mt-auto inline-flex items-center justify-center w-full rounded-full bg-green-600 hover:bg-green-700 text-white font-['Patrick_Hand'] text-lg py-2.5 transition-colors"
+              >
+                Wybieram
+              </Link>
+            </motion.div>
+
+            {/* Pakiet Premium */}
+            <motion.div
+              variants={fadeInUp}
+              custom={2}
+              className="bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col p-6 sm:p-7"
+            >
+              <div className="flex items-start justify-between gap-3 mb-4">
+                <div>
+                  <h3 className="font-['Playfair_Display'] text-xl text-slate-900 font-semibold">
+                    Metamorfoza Premium
+                  </h3>
+                  <p className="font-['Lato'] text-xs uppercase tracking-[0.2em] text-slate-500 mt-1">
+                    Pełne wdrożenie w jeden dzień
+                  </p>
+                </div>
+              </div>
+              <div className="mb-4">
+                <div className="font-['Patrick_Hand'] text-3xl text-slate-900">{'2300 zł'}</div>
+                <p className="font-['Lato'] text-xs text-slate-500 mt-1">
+                  ok. 7–8 godzin · audyt + gotowanie + zakupy
                 </p>
-                <div className="mt-6">
-                  <CtaButton />
-                </div>
-              </motion.div>
-            ))}
+              </div>
+              <hr className="border-slate-200 mb-4" />
+              <ul className="space-y-2 mb-6 font-['Lato'] text-sm text-slate-700 flex-1">
+                {[
+                  'Kompleksowe wdrożenie diety eliminacyjnej w Twoim domu.',
+                  'Wspólne gotowanie 3 potraw z wykorzystaniem sprawdzonych składników.',
+                  'Shopping Safari w Twoim sklepie oraz miesiąc wsparcia online.',
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-[2px] flex items-center justify-center w-5 h-5 rounded-full bg-emerald-50 text-emerald-600">
+                      <CheckIcon className="w-3.5 h-3.5" />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                to="/kontakt"
+                className="mt-auto inline-flex items-center justify-center w-full rounded-full bg-green-600 hover:bg-green-700 text-white font-['Patrick_Hand'] text-lg py-2.5 transition-colors"
+              >
+                Wybieram
+              </Link>
+            </motion.div>
           </div>
         </motion.section>
 
