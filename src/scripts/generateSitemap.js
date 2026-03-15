@@ -1,91 +1,118 @@
 const fs = require('fs');
 const path = require('path');
 
-// Import data
 require('dotenv').config();
 const { kuchniaCategories } = require('../Data/category-data');
+const supabase = require('../lib/supabase');
 
-// Base URL
 const BASE_URL = 'https://www.autyzmodkuchni.pl';
-
-// Current date in YYYY-MM-DD format
 const currentDate = new Date().toISOString().split('T')[0];
 
-// Create sitemap
-const generateSitemap = () => {
+// Category name -> URL slug (must match recipeUtils.getCategorySlug)
+const categoryToSlug = {
+  'OBIADY': 'obiady',
+  'ZUPY': 'zupy',
+  'CHLEBY': 'chleby',
+  'SMAROWIDŁA': 'smarowidla',
+  'DESERY': 'desery',
+  'BABECZKI i MUFFINY': 'babeczki-muffiny',
+  'CIASTA': 'ciasta',
+  'CIASTKA': 'ciastka',
+  'SMOOTHIE': 'smoothie',
+  'INNE': 'inne',
+  'ŚWIĘTA': 'swieta',
+  'SNAKI': 'snaki',
+  'SAŁATKI/SUROWKI': 'salatki-surowki',
+  'LUNCH': 'lunch',
+};
+
+function addUrl(sitemap, path, lastmod = currentDate, changefreq = 'weekly', priority = '0.7') {
+  sitemap += '  <url>\n';
+  sitemap += `    <loc>${BASE_URL}${path}</loc>\n`;
+  sitemap += `    <lastmod>${lastmod}</lastmod>\n`;
+  sitemap += `    <changefreq>${changefreq}</changefreq>\n`;
+  sitemap += `    <priority>${priority}</priority>\n`;
+  sitemap += '  </url>\n';
+  return sitemap;
+}
+
+async function generateSitemap() {
   let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
   sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-  
+
   // Static pages
   const staticPages = [
-    { url: '/', priority: 1.0, changefreq: 'weekly' },
-    { url: '/kuchnia', priority: 0.9, changefreq: 'weekly' },
-    { url: '/blog', priority: 0.8, changefreq: 'weekly' },
-    { url: '/kontakt', priority: 0.7, changefreq: 'monthly' },
+    { url: '/', priority: '1', changefreq: 'weekly' },
+    { url: '/kuchnia', priority: '0.9', changefreq: 'weekly' },
+    { url: '/blog', priority: '0.8', changefreq: 'weekly' },
+    { url: '/kontakt', priority: '0.7', changefreq: 'monthly' },
+    { url: '/uslugi', priority: '0.85', changefreq: 'monthly' },
+    { url: '/historia/o-mnie', priority: '0.7', changefreq: 'monthly' },
+    { url: '/historia/o-autyzmie', priority: '0.7', changefreq: 'monthly' },
+    { url: '/znajdki', priority: '0.8', changefreq: 'weekly' },
   ];
-  
-  // Add static pages
-  staticPages.forEach(page => {
-    sitemap += '  <url>\n';
-    sitemap += `    <loc>${BASE_URL}${page.url}</loc>\n`;
-    sitemap += `    <lastmod>${currentDate}</lastmod>\n`;
-    sitemap += `    <changefreq>${page.changefreq}</changefreq>\n`;
-    sitemap += `    <priority>${page.priority}</priority>\n`;
-    sitemap += '  </url>\n';
+  staticPages.forEach((p) => {
+    sitemap = addUrl(sitemap, p.url, currentDate, p.changefreq, p.priority);
   });
-  
-  // Add category pages
-  if (kuchniaCategories && kuchniaCategories.mainCategories) {
-    kuchniaCategories.mainCategories.forEach(category => {
-      // Extract slug from link (e.g., '/kuchnia/obiady' -> 'obiady')
-      const slug = category.link ? category.link.replace('/kuchnia/', '') : category.slug;
+
+  // Category pages (from category-data)
+  if (kuchniaCategories?.mainCategories) {
+    kuchniaCategories.mainCategories.forEach((cat) => {
+      const slug = cat.link ? cat.link.replace('/kuchnia/', '') : cat.slug;
       if (slug && slug !== 'undefined') {
-        sitemap += '  <url>\n';
-        sitemap += `    <loc>${BASE_URL}/kuchnia/${slug}</loc>\n`;
-        sitemap += `    <lastmod>${currentDate}</lastmod>\n`;
-        sitemap += '    <changefreq>weekly</changefreq>\n';
-        sitemap += '    <priority>0.8</priority>\n';
-        sitemap += '  </url>\n';
+        sitemap = addUrl(sitemap, `/kuchnia/${slug}`, currentDate, 'weekly', '0.8');
       }
     });
   }
-  
-  // Add additional static pages (Oferta, Historia, Znajdki)
-  const additionalPages = [
-    { url: '/uslugi', priority: 0.85, changefreq: 'monthly' },
-    { url: '/historia/o-mnie', priority: 0.7, changefreq: 'monthly' },
-    { url: '/historia/o-autyzmie', priority: 0.7, changefreq: 'monthly' },
-    { url: '/znajdki', priority: 0.8, changefreq: 'weekly' },
-  ];
-  
-  additionalPages.forEach(page => {
-    sitemap += '  <url>\n';
-    sitemap += `    <loc>${BASE_URL}${page.url}</loc>\n`;
-    sitemap += `    <lastmod>${currentDate}</lastmod>\n`;
-    sitemap += `    <changefreq>${page.changefreq}</changefreq>\n`;
-    sitemap += `    <priority>${page.priority}</priority>\n`;
-    sitemap += '  </url>\n';
-  });
-  
-  // Note: Recipes and blog posts from database should be added dynamically
-  // For now, recipes and blog posts are indexed via their category/blog pages
-  // If you need individual URLs in sitemap, you'll need to:
-  // 1. Connect to Supabase in this script
-  // 2. Fetch all recipes/blog posts
-  // 3. Add them with format: /przepis/{recipe.id} or /blog/{post.slug}
-  
-  sitemap += '</urlset>';
-  
-  return sitemap;
-};
 
-// Write sitemap to public directory
-try {
-  const sitemap = generateSitemap();
-  const outputPath = path.resolve(__dirname, '../../public/sitemap.xml');
-  
-  fs.writeFileSync(outputPath, sitemap);
-  console.log(`Sitemap generated successfully at ${outputPath}`);
-} catch (error) {
-  console.error('Error generating sitemap:', error);
-} 
+  // Recipes from Supabase
+  try {
+    const { data: recipes, error: recipesError } = await supabase
+      .from('recipes')
+      .select('id, category, updated_at')
+      .eq('is_published', true);
+    if (!recipesError && recipes?.length) {
+      recipes.forEach((r) => {
+        const slug = (r.category && categoryToSlug[r.category]) ? categoryToSlug[r.category] : null;
+        const path = slug ? `/kuchnia/${slug}/${r.id}` : `/przepis/${r.id}`;
+        const lastmod = r.updated_at ? r.updated_at.split('T')[0] : currentDate;
+        sitemap = addUrl(sitemap, path, lastmod, 'monthly', '0.6');
+      });
+    }
+  } catch (e) {
+    console.warn('Could not fetch recipes for sitemap:', e.message);
+  }
+
+  // Blog articles from Supabase
+  try {
+    const { data: articles, error: blogError } = await supabase
+      .from('blog_articles')
+      .select('slug, date, updated_at')
+      .order('date', { ascending: false });
+    if (!blogError && articles?.length) {
+      articles.forEach((a) => {
+        if (!a.slug) return;
+        const lastmod = (a.updated_at || a.date || '').toString().split('T')[0] || currentDate;
+        sitemap = addUrl(sitemap, `/blog/${a.slug}`, lastmod, 'monthly', '0.7');
+      });
+    }
+  } catch (e) {
+    console.warn('Could not fetch blog articles for sitemap:', e.message);
+  }
+
+  sitemap += '</urlset>';
+  return sitemap;
+}
+
+(async () => {
+  try {
+    const sitemap = await generateSitemap();
+    const outputPath = path.resolve(__dirname, '../../public/sitemap.xml');
+    fs.writeFileSync(outputPath, sitemap);
+    const count = (sitemap.match(/<url>/g) || []).length;
+    console.log(`Sitemap generated: ${count} URLs at ${outputPath}`);
+  } catch (error) {
+    console.error('Error generating sitemap:', error);
+    process.exit(1);
+  }
+})(); 
